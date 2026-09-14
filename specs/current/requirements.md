@@ -215,6 +215,7 @@ As an editor user, I manage models and animations in a nested library: each mode
 - [x] Library sidebar is nested: **Models** collapsible (upload) → each **model** collapsible + sibling **Shared Animations** collapsible
 - [x] Model header shows **ModelIcon** next to the name; actions are icons: Retarget (when conflicted), **Animation** (add), Edit (rename), Replace, Remove
 - [x] Shared Animations header shows **AnimationIcon**; actions: Upload, New animation
+- [x] Shared **Upload** is always available — does not require a loaded or selected model
 - [x] Each clip row shows **AnimationIcon** next to the name; Remove (and Retarget when conflicted) as icons
 - [x] Clips have ownership: `ownerModelId: string | null` (`null` = shared; otherwise listed only under that model)
 - [x] Import / New from Shared → shared (`ownerModelId: null`); create / import under a model → owned by that model

@@ -48,7 +48,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 ## Nested library + clip ownership (US-19)
 
 1. `ClipEntry.ownerModelId: string | null` — `null` = Shared; otherwise only under that model
-2. Shared import / New → `null`; create / import / Add under a model → that model’s id; embedded model GLB clips register as owned
+2. Shared import / New → `null`; create / import / Add under a model → that model’s id; embedded model GLB clips register as owned. Shared **Upload** does not require a loaded or selected model — successful shared imports stay `ready`; skeleton fit is contextual per model in the library UI / export
 3. **Add animation** modal (model-header Animation): Create new | Import | Add existing → owned clone (`cloneClipAs`); source unchanged
 4. Validation (`syncClipsToSkeleton`): owned vs owner skeleton; shared vs previewed (active) skeleton
 5. Retarget scopes: **This model** on shared/other → new owned ready clip (same name), keep source; **This model** on owned-by-target → remap that entry in place; **All models** → remap shared in place, rename bones only on compatible models, leave incompatible conflicted (partial success). Remap keeps the clip name. A ready owned clip with the same name suppresses Needs-retarget for a mismatched shared clip on that model

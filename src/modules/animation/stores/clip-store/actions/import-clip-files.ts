@@ -11,10 +11,13 @@ export async function importClipFiles(
   skeleton: Object3D | null,
   ownerModelId: string | null = null,
 ): Promise<void> {
-  if (!skeleton) {
+  // Owned imports need a skeleton to validate against. Shared imports do not —
+  // mismatch is contextual per model in the library UI.
+  if (ownerModelId !== null && !skeleton) {
     return;
   }
-  const nodeNames = buildSkeletonNodeSet(skeleton);
+
+  const nodeNames = skeleton ? buildSkeletonNodeSet(skeleton) : null;
 
   const entries: ClipEntry[] = [];
 
@@ -23,7 +26,10 @@ export async function importClipFiles(
     try {
       const result = await loadClipsFromFile(file);
       for (const clip of result.clips) {
-        const validation = validateClipAgainstSkeleton(clip, nodeNames);
+        const validation
+          = ownerModelId !== null && nodeNames
+            ? validateClipAgainstSkeleton(clip, nodeNames)
+            : { valid: true, error: null };
         entries.push(applyActiveModelBindOverrides(toEntry(
           validation,
           baseId,

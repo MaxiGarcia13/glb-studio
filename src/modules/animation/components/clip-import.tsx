@@ -11,7 +11,7 @@ export function ClipImport({ onImport }: ClipImportProps) {
 
   return (
     <GltfImportButton
-      disabled={scene === null}
+      disabled={false}
       label="Import animations"
       onImport={onImport}
       onFiles={(files) => {
