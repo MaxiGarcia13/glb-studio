@@ -13,7 +13,6 @@ import {
   accumulateBindPoseDelta,
 } from '@/modules/animation/stores/bind-pose-store';
 import {
-  restoreMixerPose,
   resumeMixerBindings,
   setMixerTime,
 } from '@/modules/animation/utils/mixer-session';
@@ -155,7 +154,13 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
     return;
   }
 
-  const active = state.clips.find((entry) => entry.id === state.activeClipId);
+  // Prefer the clip driving this model (owned override / shared), not only UI focus.
+  const targetClipId = model
+    ? clipIdForModel(state, model.id) ?? state.activeClipId
+    : state.activeClipId;
+  const active = targetClipId
+    ? state.clips.find((entry) => entry.id === targetClipId)
+    : undefined;
 
   // Bind-pose commit (no ready clip): scene TRS + rebase all library clips.
   if (!isReadyClip(active)) {
@@ -185,15 +190,19 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
     holdToEnd ? active.clip.duration : timelineTime,
   );
 
+  // Drop blend preview so the mixer effect binds `working`, not a stale base snapshot.
   $clips.set({
     ...state,
     clips: state.clips.map((entry) =>
       entry.id === active.id ? { ...entry, clip: working } : entry,
     ),
     duration: working.duration,
+    blendBaseClip: null,
+    blendClipId: null,
+    blendWeight: 0,
   });
-  // Rebind + re-sample at the same playhead so non-hold saves are visible immediately.
-  // Plain resume/setTime can keep stale accumulation when time hasn't advanced.
-  restoreMixerPose();
+  // Keep the old action suspended. Do not restoreMixerPose / resume / rebind here —
+  // those race the React actionRef and leave playback/scrubber on a dead mixer action.
+  // useClipMixerAction rebinds `working` and enables the new action.
   clearPoseDirty();
 }

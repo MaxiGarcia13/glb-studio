@@ -39,7 +39,11 @@ export function useClipMixerAction(
     const previousTime = mixer.time;
 
     if (actionRef.current) {
+      const previousClip = actionRef.current.getClip();
       actionRef.current.stop();
+      // Drop the previous action so a hold/rebind cannot leave a ghost binding
+      // that desyncs session.action from this ref (breaks playhead while playing).
+      mixer.uncacheAction(previousClip);
       actionRef.current = null;
       setActiveAction(modelId, null);
     }

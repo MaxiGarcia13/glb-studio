@@ -2,6 +2,8 @@ import type { AnimationClip, KeyframeTrack } from 'three';
 
 import { QuaternionKeyframeTrack, VectorKeyframeTrack } from 'three';
 
+import { splitTrackName } from '@/modules/animation/domain/clip-validate';
+
 export interface NodeTRS {
   position: [number, number, number];
   quaternion: [number, number, number, number];
@@ -72,20 +74,33 @@ function writeHoldWindow(
   track.values = new Float32Array(nextValues);
 }
 
+/**
+ * Update every track whose parsed node + suffix match, preserving existing
+ * track.name (paths / vendor forms). Create `${nodeName}${suffix}` only when
+ * none match — avoids orphan tracks that leave the original animation driving.
+ */
 function writeHoldTrackData(
   clip: AnimationClip,
-  name: string,
+  nodeName: string,
+  suffix: '.position' | '.quaternion' | '.scale',
   start: number,
   end: number,
   sample: ArrayLike<number>,
   valueSize: number,
 ): void {
-  const existing = clip.tracks.find((track) => track.name === name);
-  if (existing) {
-    writeHoldWindow(existing, start, end, sample);
+  const matches = clip.tracks.filter((track) => {
+    const parsed = splitTrackName(track.name);
+    return parsed.nodeName === nodeName && parsed.suffix === suffix;
+  });
+
+  if (matches.length > 0) {
+    for (const existing of matches) {
+      writeHoldWindow(existing, start, end, sample);
+    }
     return;
   }
 
+  const name = `${nodeName}${suffix}`;
   const TrackConstructor = valueSize === 4 ? QuaternionKeyframeTrack : VectorKeyframeTrack;
   const startSample = Array.from(sample);
   if (end > start) {
@@ -107,9 +122,9 @@ export function writeNodeKeyframe(
   const holdEnd = Math.fround(Math.min(Math.max(holdEndTime, keyTime), clip.duration));
   const working = clip.clone();
 
-  writeHoldTrackData(working, `${nodeName}.position`, keyTime, holdEnd, trs.position, 3);
-  writeHoldTrackData(working, `${nodeName}.quaternion`, keyTime, holdEnd, trs.quaternion, 4);
-  writeHoldTrackData(working, `${nodeName}.scale`, keyTime, holdEnd, trs.scale, 3);
+  writeHoldTrackData(working, nodeName, '.position', keyTime, holdEnd, trs.position, 3);
+  writeHoldTrackData(working, nodeName, '.quaternion', keyTime, holdEnd, trs.quaternion, 4);
+  writeHoldTrackData(working, nodeName, '.scale', keyTime, holdEnd, trs.scale, 3);
   working.duration = clip.duration;
   return working;
 }

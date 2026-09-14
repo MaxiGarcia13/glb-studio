@@ -2,7 +2,7 @@ import { cn } from '@maxigarcia/js-utils';
 
 const variants: Record<Variant, string> = {
   ghost: 'text-zinc-400 hover:text-white transition-colors',
-  default: 'text-zinc-400 hover:text-white transition-colors bg-zinc-700 hover:bg-zinc-600',
+  default: 'text-white hover:text-zinc-400 transition-colors bg-zinc-600 hover:bg-zinc-700',
   primary: 'text-white bg-sky-500 hover:bg-sky-600',
 };
 

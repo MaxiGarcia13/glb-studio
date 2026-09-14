@@ -133,13 +133,15 @@ Each library entry stores its own `timeScale` (default `1` on import / new draft
 1. Pause (or scrub) so the timeline playhead is the target timestamp
 2. Raycast → select bone or mesh; attach TransformControls (Edit tool)
 3. Editing the selection with TransformControls marks pose dirty; Save / Restore appear in the preview overlay only while dirty (Hold Pose to End copy when an active ready clip drives the save)
-4. On hold (active ready clip):
+4. On hold (active ready clip on the focused model):
    - Read selection local position, quaternion, scale
-   - Find or create `VectorKeyframeTrack` / `QuaternionKeyframeTrack` for that node on the active clip
+   - Resolve the clip **driving that model** (`resolveActiveClipIdForModel`), not only `activeClipId`
+   - Find tracks by parsed node name + suffix (`splitTrackName`); update all matches (keep existing track.name). Create `${node}.position|quaternion|scale` only when none match
    - Write a hold plateau from clip-local playhead `t` through `duration` (sample at `t` and at `duration`; remove keys strictly inside); do not extend clip duration. Scrub + edit + hold again later overwrites from the new playhead forward
+   - Clear any blend partner / base snapshot so preview uses the updated working clip
    - Clear pose dirty
 5. Restore with an active clip: resume mixer bindings and re-apply the clip at the current playhead (discard unsaved gizmo edit)
-6. After hold, rebind / update the mixer action at that same clip-local time so the edit is audible on next play
+6. After hold, clear pose dirty but **leave the previous action suspended**; `useClipMixerAction` rebinds the updated clip at the same playhead (uncache previous action). Do not call `restoreMixerPose` / `resumeMixerBindings` in `saveKeyframe` — those resample the old action and desync the scrubber playhead
 
 Bind-pose / Move / T-pose Save–Restore branching: see **Edit / Move tools & bind pose (US-15)** below.
 
