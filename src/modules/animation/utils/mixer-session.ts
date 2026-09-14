@@ -2,83 +2,113 @@ import type { AnimationAction, AnimationMixer } from 'three';
 
 import { clearPoseDirty } from '@/modules/viewport/stores/pose-edit-store';
 
-let currentMixer: AnimationMixer | null = null;
-let currentAction: AnimationAction | null = null;
-let blendAction: AnimationAction | null = null;
+interface ModelMixerSession {
+  mixer: AnimationMixer;
+  action: AnimationAction | null;
+  blendAction: AnimationAction | null;
+}
+
+const sessions = new Map<string, ModelMixerSession>();
+let activeModelId: string | null = null;
 let blendWeight = 0;
 
-export function setActiveMixer(mixer: AnimationMixer | null): void {
-  currentMixer = mixer;
-  if (!mixer) {
-    currentAction = null;
-    blendAction = null;
+function activeSession(): ModelMixerSession | null {
+  if (activeModelId === null) {
+    return null;
+  }
+  return sessions.get(activeModelId) ?? null;
+}
+
+function applyBlendWeights(session: ModelMixerSession | null): void {
+  if (!session) {
+    return;
+  }
+  session.action?.setEffectiveWeight(1 - blendWeight);
+  session.blendAction?.setEffectiveWeight(blendWeight);
+}
+
+/** Transport / pose-edit controls target the mixer of this model. */
+export function setActiveModelMixer(modelId: string | null): void {
+  activeModelId = modelId;
+  applyBlendWeights(activeSession());
+}
+
+export function registerModelMixer(modelId: string, mixer: AnimationMixer): void {
+  const session = sessions.get(modelId);
+  if (session) {
+    session.mixer = mixer;
+    session.action = null;
+    session.blendAction = null;
+  } else {
+    sessions.set(modelId, { mixer, action: null, blendAction: null });
   }
 }
 
-export function setActiveAction(action: AnimationAction | null): void {
-  currentAction = action;
-  if (action) {
-    action.setEffectiveWeight(1 - blendWeight);
+export function unregisterModelMixer(modelId: string): void {
+  sessions.delete(modelId);
+  if (activeModelId === modelId) {
+    activeModelId = null;
   }
 }
 
-export function setBlendAction(action: AnimationAction | null): void {
-  blendAction = action;
-  if (action) {
-    action.setEffectiveWeight(blendWeight);
+export function setActiveAction(modelId: string, action: AnimationAction | null): void {
+  const session = sessions.get(modelId);
+  if (!session) {
+    return;
+  }
+  session.action = action;
+  if (modelId === activeModelId) {
+    applyBlendWeights(session);
   }
 }
 
-function applyBlendWeights(): void {
-  currentAction?.setEffectiveWeight(1 - blendWeight);
-  blendAction?.setEffectiveWeight(blendWeight);
-}
-
-/** Re-evaluate bindings at the current playhead (needed when paused — no mixer.update). */
-function flushMixerPose(): void {
-  if (currentMixer) {
-    currentMixer.setTime(currentMixer.time);
+export function setBlendAction(modelId: string, action: AnimationAction | null): void {
+  const session = sessions.get(modelId);
+  if (!session) {
+    return;
+  }
+  session.blendAction = action;
+  if (modelId === activeModelId) {
+    applyBlendWeights(session);
   }
 }
 
 /** Blend weight given to the secondary action; the primary gets 1 - weight. */
 export function setBlendWeight(weight: number): void {
   blendWeight = Math.min(Math.max(weight, 0), 1);
-  applyBlendWeights();
-  flushMixerPose();
+  applyBlendWeights(activeSession());
 }
 
 export function getBlendWeight(): number {
   return blendWeight;
 }
 
-/** Stop clip bindings from overwriting a manual pose edit. */
+/** Stop the active model's clip bindings from overwriting a manual pose edit. */
 export function suspendMixerBindings(): void {
-  if (currentAction) {
-    currentAction.enabled = false;
-  }
-  if (blendAction) {
-    blendAction.enabled = false;
+  const session = activeSession();
+  if (session) {
+    session.action && (session.action.enabled = false);
+    session.blendAction && (session.blendAction.enabled = false);
   }
 }
 
 export function resumeMixerBindings(): void {
-  if (currentAction) {
-    currentAction.enabled = true;
-  }
-  if (blendAction) {
-    blendAction.enabled = true;
+  const session = activeSession();
+  if (session) {
+    session.action && (session.action.enabled = true);
+    session.blendAction && (session.blendAction.enabled = true);
   }
 }
 
 export function getMixerTime(): number {
-  return currentMixer ? currentMixer.time : 0;
+  return activeSession()?.mixer.time ?? 0;
 }
 
 export function setMixerTime(time: number): void {
   resumeMixerBindings();
-  if (currentMixer) {
-    currentMixer.setTime(time);
+  const session = activeSession();
+  if (session) {
+    session.mixer.setTime(time);
   }
   clearPoseDirty();
 }
@@ -93,22 +123,24 @@ export function setMixerTime(time: number): void {
  */
 export function restoreMixerPose(): void {
   resumeMixerBindings();
-  if (currentMixer && currentAction) {
-    const time = currentMixer.time;
-    currentAction.stop();
-    currentAction.play();
-    if (blendAction) {
-      blendAction.stop();
-      blendAction.play();
+  const session = activeSession();
+  if (session && session.action) {
+    const time = session.mixer.time;
+    session.action.stop();
+    session.action.play();
+    if (session.blendAction) {
+      session.blendAction.stop();
+      session.blendAction.play();
     }
-    applyBlendWeights();
-    currentMixer.setTime(time);
+    applyBlendWeights(session);
+    session.mixer.setTime(time);
   }
   clearPoseDirty();
 }
 
 export function setMixerTimeScale(scale: number): void {
-  if (currentMixer) {
-    currentMixer.timeScale = scale;
+  const session = activeSession();
+  if (session) {
+    session.mixer.timeScale = scale;
   }
 }

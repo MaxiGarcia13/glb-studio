@@ -16,9 +16,15 @@ export function removeClip(id: string): void {
   }
 
   const wasActive = state.activeClipId === id;
+  const wasShared = state.activeSharedClipId === id;
+  const removedEntry = state.clips.find((entry) => entry.id === id);
+  const perModelKey = removedEntry?.ownerModelId;
+  const wasPerModel = perModelKey
+    ? state.activeClipByModelId[perModelKey] === id
+    : false;
   const wasBlend = state.blendClipId === id;
 
-  if (!wasActive && !wasBlend) {
+  if (!wasActive && !wasBlend && !wasPerModel && !wasShared) {
     $clips.setKey('clips', clips);
     return;
   }
@@ -26,20 +32,27 @@ export function removeClip(id: string): void {
   const base: ClipLibraryState = {
     ...state,
     clips,
+    activeClipByModelId: wasPerModel && perModelKey
+      ? { ...state.activeClipByModelId, [perModelKey]: null }
+      : state.activeClipByModelId,
     blendBaseClip: wasBlend ? null : state.blendBaseClip,
     blendClipId: wasBlend ? null : state.blendClipId,
     blendWeight: wasBlend ? 0 : state.blendWeight,
   };
 
   if (!wasActive) {
-    $clips.set(base);
+    $clips.set({
+      ...base,
+      activeSharedClipId: wasShared ? null : base.activeSharedClipId,
+    });
     return;
   }
 
-  const nextReady = clips.find((entry) => isReadyClip(entry));
+  const nextReady = clips.find((entry) => entry.id !== id && isReadyClip(entry));
   $clips.set({
     ...base,
     activeClipId: null,
+    activeSharedClipId: wasShared ? null : base.activeSharedClipId,
     playing: false,
     duration: 0,
   });

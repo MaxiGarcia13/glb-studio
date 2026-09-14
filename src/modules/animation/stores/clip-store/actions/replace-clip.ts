@@ -101,6 +101,8 @@ function applyReplacedEntry(clips: ClipEntry[], id: string, replacedIsReady: boo
     blendClipId,
     blendWeight,
     activeClipId: null,
+    activeSharedClipId: null,
+    activeClipByModelId: {},
     playing: false,
     duration: 0,
   });

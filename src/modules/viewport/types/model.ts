@@ -11,6 +11,9 @@ export interface ModelEntry {
 
 export interface ModelLibraryState {
   models: ModelEntry[];
+  /** Models visible in the viewport (library eye toggle). */
+  previewModelIds: string[];
+  /** Focused model for gizmo, transport bar, and export. */
   activeModelId: string | null;
   phase: ModelLibraryPhase;
   error: string | null;

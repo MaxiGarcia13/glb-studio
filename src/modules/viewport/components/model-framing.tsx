@@ -1,10 +1,11 @@
 import type { OrbitControls } from '@react-three/drei';
 import type { ComponentRef } from 'react';
 import type { PerspectiveCamera } from 'three';
+import { useStore } from '@nanostores/react';
 import { useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
-import { computeModelFraming } from '../domain/model-framing';
-import { useActiveModel } from '../hooks/use-active-model';
+import { computeScenesFraming } from '../domain/model-framing';
+import { $model } from '../stores/model-store';
 
 export type OrbitControlsRef = ComponentRef<typeof OrbitControls>;
 
@@ -13,17 +14,27 @@ export interface ModelFramingProps {
 }
 
 export function ModelFraming({ controlsRef }: ModelFramingProps) {
-  const { scene } = useActiveModel();
+  const { models, previewModelIds } = useStore($model, {
+    keys: ['models', 'previewModelIds'],
+  });
 
   const camera = useThree((state) => state.camera);
   const perspectiveCamera = camera as PerspectiveCamera;
 
   useEffect(() => {
-    if (!scene) {
+    const previewSet = new Set(previewModelIds);
+    const visibleScenes = models
+      .filter((model) => previewSet.has(model.id))
+      .map((model) => model.scene);
+
+    if (visibleScenes.length === 0) {
       return;
     }
 
-    const framing = computeModelFraming(scene, perspectiveCamera);
+    const framing = computeScenesFraming(visibleScenes, perspectiveCamera);
+    if (!framing) {
+      return;
+    }
 
     perspectiveCamera.position.copy(framing.position);
     perspectiveCamera.near = framing.distance / 100;
@@ -37,7 +48,7 @@ export function ModelFraming({ controlsRef }: ModelFramingProps) {
       controls.maxDistance = framing.maxDistance;
       controls.update();
     }
-  }, [scene, perspectiveCamera, controlsRef]);
+  }, [models, previewModelIds, perspectiveCamera, controlsRef]);
 
   return null;
 }

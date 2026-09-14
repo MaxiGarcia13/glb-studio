@@ -6,18 +6,22 @@ import { AnimationMixer } from 'three';
 
 import { ensureRestPoseCaptured } from '@/modules/animation/domain/rest-pose';
 import { $clips, syncClipsToSkeleton } from '@/modules/animation/stores/clip-store';
-import { setActiveMixer } from '@/modules/animation/utils/mixer-session';
+import {
+  registerModelMixer,
+  unregisterModelMixer,
+} from '@/modules/animation/utils/mixer-session';
 
 export function useClipMixerMount(
   scene: Group | null,
+  activeClipId: string | null,
+  modelId: string,
   mixerRef: RefObject<AnimationMixer | null>,
   actionRef: RefObject<AnimationAction | null>,
   blendActionRef: RefObject<AnimationAction | null>,
 ): void {
   useEffect(() => {
     if (!scene) {
-      syncClipsToSkeleton(null);
-      setActiveMixer(null);
+      unregisterModelMixer(modelId);
       return;
     }
 
@@ -25,10 +29,13 @@ export function useClipMixerMount(
     syncClipsToSkeleton(scene);
 
     const mixer = new AnimationMixer(scene);
-    const active = $clips.get().clips.find((entry) => entry.id === $clips.get().activeClipId);
+    const active = $clips
+      .get()
+      .clips
+      .find((entry) => entry.id === activeClipId);
     mixer.timeScale = active?.timeScale ?? 1;
     mixerRef.current = mixer;
-    setActiveMixer(mixer);
+    registerModelMixer(modelId, mixer);
 
     return () => {
       mixer.stopAllAction();
@@ -36,7 +43,7 @@ export function useClipMixerMount(
       mixerRef.current = null;
       actionRef.current = null;
       blendActionRef.current = null;
-      setActiveMixer(null);
+      unregisterModelMixer(modelId);
     };
-  }, [scene, mixerRef, actionRef, blendActionRef]);
+  }, [scene, activeClipId, modelId, mixerRef, actionRef, blendActionRef]);
 }

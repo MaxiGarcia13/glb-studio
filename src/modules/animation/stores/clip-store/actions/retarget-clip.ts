@@ -14,15 +14,17 @@ import {
 import { setMixerTime, setMixerTimeScale } from '@/modules/animation/utils/mixer-session';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { $clips } from '../store';
-import { applyActiveModelBindOverrides } from '../utils';
+import { applyActiveModelBindOverrides, nextClipId } from '../utils';
 import { syncClipsToSkeleton } from './sync-clips-to-skeleton';
 
 export type RetargetScope = 'active' | 'all';
 
 export interface RetargetClipOptions {
   scope: RetargetScope;
-  /** Previewed model scene — source of target bind lengths/frames and re-sync. */
+  /** Target model scene — bind lengths/frames and re-sync. */
   activeScene: Object3D | null;
+  /** Model that receives the remapped owned clip (scope `active`). */
+  targetModelId?: string | null;
 }
 
 export interface RetargetClipResult {
@@ -96,6 +98,7 @@ function retargetActive(
   id: string,
   mapping: Map<string, string>,
   activeScene: Object3D | null,
+  targetModelId: string | null,
 ): RetargetClipResult {
   const state = $clips.get();
   const source = state.clips.find((entry) => entry.id === id);
@@ -103,7 +106,18 @@ function retargetActive(
     return { clipId: null, error: 'Clip not found' };
   }
 
-  const scale = computeScaleOrFail(source.sourceBindLengths, mapping, activeScene);
+  if (!targetModelId) {
+    return { clipId: null, error: 'Focus a model in the viewport to retarget onto.' };
+  }
+
+  const targetModel = $model.get().models.find((model) => model.id === targetModelId);
+  if (!targetModel) {
+    return { clipId: null, error: 'Model not found' };
+  }
+
+  const targetScene = activeScene ?? targetModel.scene;
+
+  const scale = computeScaleOrFail(source.sourceBindLengths, mapping, targetScene);
   if ('error' in scale) {
     return { clipId: null, error: scale.error };
   }
@@ -111,7 +125,7 @@ function retargetActive(
   const remapOpts = buildRemapOptionsOrFail(
     mapping,
     source.sourceBindFrames ?? {},
-    activeScene,
+    targetScene,
     scale.ratio,
     source.clip,
   );
@@ -124,8 +138,9 @@ function retargetActive(
     return { clipId: null, error: result.error ?? 'Remap failed' };
   }
 
+  const newId = nextClipId();
   const newEntry = applyActiveModelBindOverrides({
-    id: `${source.id}-retargeted`,
+    id: `${newId}-${result.clip.name}`,
     name: result.clip.name,
     sourceFile: source.sourceFile,
     clip: result.clip,
@@ -135,15 +150,21 @@ function retargetActive(
     timeScale: source.timeScale,
     sourceBindLengths: source.sourceBindLengths ?? {},
     sourceBindFrames: source.sourceBindFrames ?? {},
-    ownerModelId: $model.get().activeModelId ?? source.ownerModelId,
-  });
+    ownerModelId: targetModelId,
+  }, targetModelId);
 
   const clips = [...state.clips, newEntry];
   const duration = newEntry.clip?.duration ?? result.clip.duration;
+  const fromShared = source.ownerModelId === null;
   $clips.set({
     ...state,
     clips,
     activeClipId: newEntry.id,
+    activeSharedClipId: fromShared ? state.activeSharedClipId : null,
+    activeClipByModelId: {
+      ...state.activeClipByModelId,
+      [targetModelId]: newEntry.id,
+    },
     playing: false,
     duration,
     trimStart: 0,
@@ -241,5 +262,5 @@ export function retargetClip(
   if (options.scope === 'all') {
     return retargetAllModels(id, mapping, options.activeScene);
   }
-  return retargetActive(id, mapping, options.activeScene);
+  return retargetActive(id, mapping, options.activeScene, options.targetModelId ?? null);
 }

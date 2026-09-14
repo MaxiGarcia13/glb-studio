@@ -10,6 +10,7 @@ export function useClipMixerBlend(
   blendClip: AnimationClip | null,
   blendWeight: number,
   loop: boolean,
+  modelId: string,
   mixerRef: RefObject<AnimationMixer | null>,
   blendActionRef: RefObject<AnimationAction | null>,
   scene: Group | null,
@@ -23,7 +24,7 @@ export function useClipMixerBlend(
     if (blendActionRef.current) {
       blendActionRef.current.stop();
       blendActionRef.current = null;
-      setBlendAction(null);
+      setBlendAction(modelId, null);
     }
 
     if (!blendClip) {
@@ -32,13 +33,13 @@ export function useClipMixerBlend(
 
     const action = mixer.clipAction(blendClip);
     blendActionRef.current = action;
-    setBlendAction(action);
+    setBlendAction(modelId, action);
     action.enabled = true;
     action.paused = false;
     action.play();
     // Snap both actions to the same playhead so the overlay starts in phase.
     mixer.setTime(mixer.time);
-  }, [blendClip, scene, mixerRef, blendActionRef]);
+  }, [blendClip, scene, modelId, mixerRef, blendActionRef]);
 
   useEffect(() => {
     const action = blendActionRef.current;
@@ -46,7 +47,7 @@ export function useClipMixerBlend(
       return;
     }
     applyLoopMode(action, loop);
-  }, [loop, blendClip, scene, mixerRef, blendActionRef]);
+  }, [loop, blendClip, scene, modelId, mixerRef, blendActionRef]);
 
   useEffect(() => {
     setBlendWeight(blendWeight);

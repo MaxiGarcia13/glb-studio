@@ -38,7 +38,7 @@ export function AssetEntry({
       className={cn(
         'flex flex-col gap-2 rounded-sm p-2 ring-1',
         selected
-          ? 'bg-sky-500/10 ring-sky-400/40'
+          ? 'bg-zinc-900 ring-zinc-700'
           : hasError
             ? 'bg-zinc-800/40 ring-amber-500/25'
             : 'bg-zinc-800/40 ring-zinc-700/80',

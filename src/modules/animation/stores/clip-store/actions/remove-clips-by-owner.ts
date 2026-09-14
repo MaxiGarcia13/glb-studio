@@ -21,6 +21,7 @@ export function removeClipsByOwner(ownerId: string): void {
   const base: ClipLibraryState = {
     ...state,
     clips,
+    activeClipByModelId: { ...state.activeClipByModelId, [ownerId]: null },
     blendBaseClip: blendOwned ? null : state.blendBaseClip,
     blendClipId: blendOwned ? null : state.blendClipId,
     blendWeight: blendOwned ? 0 : state.blendWeight,

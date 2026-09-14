@@ -35,6 +35,10 @@ export function startNewAnimation(
     ...state,
     clips: [...state.clips, entry],
     activeClipId: entry.id,
+    activeSharedClipId: null,
+    activeClipByModelId: ownerModelId
+      ? { ...state.activeClipByModelId, [ownerModelId]: entry.id }
+      : state.activeClipByModelId,
     blendBaseClip: null,
     blendClipId: null,
     blendWeight: 0,

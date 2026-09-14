@@ -13,6 +13,7 @@ export function useClipMixerAction(
   clip: AnimationClip | null,
   playing: boolean,
   loop: boolean,
+  modelId: string,
   mixerRef: RefObject<AnimationMixer | null>,
   actionRef: RefObject<AnimationAction | null>,
   scene: Group | null,
@@ -28,7 +29,7 @@ export function useClipMixerAction(
     if (actionRef.current) {
       actionRef.current.stop();
       actionRef.current = null;
-      setActiveAction(null);
+      setActiveAction(modelId, null);
     }
 
     if (!clip) {
@@ -41,14 +42,14 @@ export function useClipMixerAction(
 
     const action = mixer.clipAction(clip);
     actionRef.current = action;
-    setActiveAction(action);
+    setActiveAction(modelId, action);
     // Keep action unpaused: AnimationMixer.setTime does not advance paused actions,
     // and scrubbing uses setMixerTime. App pause is gated in useClipMixerFrame.
     action.enabled = true;
     action.paused = false;
     action.play();
     mixer.setTime(toTimelineTime(previousTime, clip.duration, $clips.get().loop));
-  }, [clip, scene, mixerRef, actionRef]);
+  }, [clip, scene, modelId, mixerRef, actionRef]);
 
   useEffect(() => {
     const action = actionRef.current;
@@ -72,5 +73,5 @@ export function useClipMixerAction(
     } else if (mixer.time <= 1e-6) {
       action.reset();
     }
-  }, [playing, loop, clip, scene, mixerRef, actionRef]);
+  }, [playing, loop, clip, scene, modelId, mixerRef, actionRef]);
 }

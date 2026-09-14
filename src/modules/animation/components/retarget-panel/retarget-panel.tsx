@@ -7,7 +7,7 @@ import { Text } from '@/components/text';
 import { boneDisplayName } from '@/modules/animation/domain/bone-registry';
 import { useRetarget } from '@/modules/animation/hooks/use-retarget';
 import { retargetClip } from '@/modules/animation/stores/clip-store';
-import { useActiveModel } from '@/modules/viewport/hooks/use-active-model';
+import { $retargetTargetModelId } from '@/modules/animation/stores/retarget-ui-store';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { RetargetBoneTable } from './retarget-bone-table';
 import { RetargetPanelActions } from './retarget-panel-actions';
@@ -21,8 +21,10 @@ interface RetargetPanelProps {
 }
 
 export function RetargetPanel({ entry, onComplete, onCancel }: RetargetPanelProps) {
-  const { scene } = useActiveModel();
+  const targetModelId = useStore($retargetTargetModelId);
   const { models } = useStore($model, { keys: ['models'] });
+  const targetModel = models.find((model) => model.id === targetModelId) ?? null;
+  const targetScene = targetModel?.scene ?? null;
   const {
     sourceBones,
     targetBoneNames,
@@ -30,7 +32,7 @@ export function RetargetPanel({ entry, onComplete, onCancel }: RetargetPanelProp
     mappedCount,
     complete,
     setMapping,
-  } = useRetarget(entry, scene);
+  } = useRetarget(entry, targetScene);
   const [unmappedOnly, setUnmappedOnly] = useState(false);
   const [scope, setScope] = useState<RetargetScope>('active');
   const [applyError, setApplyError] = useState<string | null>(null);
@@ -42,6 +44,14 @@ export function RetargetPanel({ entry, onComplete, onCancel }: RetargetPanelProp
     }),
     [targetBoneNames],
   );
+
+  if (!targetModel) {
+    return (
+      <Text variant="error">
+        Focus a model in the viewport before retargeting.
+      </Text>
+    );
+  }
 
   if (sourceBones.length === 0) {
     return (
@@ -70,7 +80,8 @@ export function RetargetPanel({ entry, onComplete, onCancel }: RetargetPanelProp
     setApplyError(null);
     const result = retargetClip(entry.id, mapping, {
       scope,
-      activeScene: scene,
+      activeScene: targetScene,
+      targetModelId: targetModel.id,
     });
     if (result.error || !result.clipId) {
       setApplyError(result.error ?? 'Retarget failed');

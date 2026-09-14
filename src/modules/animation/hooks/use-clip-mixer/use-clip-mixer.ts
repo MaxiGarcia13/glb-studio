@@ -7,13 +7,14 @@ import { useClipMixerBlend } from './use-clip-mixer-blend';
 import { useClipMixerFrame } from './use-clip-mixer-frame';
 import { useClipMixerMount } from './use-clip-mixer-mount';
 
-export function useClipMixer(scene: Group | null): void {
+export function useClipMixer(scene: Group | null, modelId: string): void {
   const mixerRef = useRef<AnimationMixer | null>(null);
   const actionRef = useRef<AnimationAction | null>(null);
   const blendActionRef = useRef<AnimationAction | null>(null);
 
   const {
-    activeClipId,
+    activeSharedClipId,
+    activeClipByModelId,
     blendBaseClip,
     blendClipId,
     blendWeight,
@@ -22,7 +23,8 @@ export function useClipMixer(scene: Group | null): void {
     clips,
   } = useStore($clips, {
     keys: [
-      'activeClipId',
+      'activeSharedClipId',
+      'activeClipByModelId',
       'blendBaseClip',
       'blendClipId',
       'blendWeight',
@@ -31,6 +33,10 @@ export function useClipMixer(scene: Group | null): void {
       'clips',
     ],
   });
+
+  const activeClipId
+    = (modelId ? (activeClipByModelId[modelId] ?? null) : null)
+      ?? activeSharedClipId;
 
   const entry = clips.find((item) => item.id === activeClipId);
   // While blending, preview layers base + partner; the baked result lives on the entry.
@@ -44,8 +50,8 @@ export function useClipMixer(scene: Group | null): void {
   const blendEntry = clips.find((item) => item.id === blendClipId);
   const blendClip = isReadyClip(blendEntry) ? blendEntry.clip : null;
 
-  useClipMixerMount(scene, mixerRef, actionRef, blendActionRef);
-  useClipMixerAction(clip, playing, loop, mixerRef, actionRef, scene);
-  useClipMixerBlend(blendClip, blendWeight, loop, mixerRef, blendActionRef, scene);
-  useClipMixerFrame(mixerRef);
+  useClipMixerMount(scene, activeClipId, modelId, mixerRef, actionRef, blendActionRef);
+  useClipMixerAction(clip, playing, loop, modelId, mixerRef, actionRef, scene);
+  useClipMixerBlend(blendClip, blendWeight, loop, modelId, mixerRef, blendActionRef, scene);
+  useClipMixerFrame(mixerRef, clip?.duration ?? 0);
 }

@@ -8,6 +8,7 @@ import { TrashIcon } from '@/components/icons/trash-icon';
 import { openRetarget } from '@/modules/animation/stores/retarget-ui-store';
 
 interface LibraryModelActionsProps {
+  modelId: string;
   conflictedClipId: string | null;
   onAddAnimation: () => void;
   onRename: () => void;
@@ -16,6 +17,7 @@ interface LibraryModelActionsProps {
 }
 
 export function LibraryModelActions({
+  modelId,
   conflictedClipId,
   onAddAnimation,
   onRename,
@@ -28,7 +30,7 @@ export function LibraryModelActions({
     <>
       {conflictedClipId !== null && (
         <Button
-          onClick={() => openRetarget(conflictedClipId)}
+          onClick={() => openRetarget(conflictedClipId, modelId)}
           variant="ghost"
           aria-label="Retarget conflicted clips"
           title="Retarget clips"

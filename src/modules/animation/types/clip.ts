@@ -28,7 +28,12 @@ export interface ClipEntry {
 
 export interface ClipLibraryState {
   clips: ClipEntry[];
+  /** Legacy single-selection — kept as the "focused" clip for trim/blend/playback UI. */
   activeClipId: string | null;
+  /** Shared clip playing on all models; when set, per-model selections are cleared. */
+  activeSharedClipId: string | null;
+  /** Per-model owned clip selection (model id → clip id). */
+  activeClipByModelId: Record<string, string | null>;
   /** Primary layer snapshot captured when a blend partner is selected. */
   blendBaseClip: THREE.AnimationClip | null;
   blendClipId: string | null;

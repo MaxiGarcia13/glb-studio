@@ -6,7 +6,7 @@ import { restorePose } from './restore-pose';
 /** Clear the active clip (T-pose / bind pose). Mixer effect restores rest TRS. */
 export function clearActiveClip(): void {
   const state = $clips.get();
-  if (state.activeClipId === null && !state.playing) {
+  if (state.activeClipId === null && !state.activeSharedClipId && !state.playing) {
     return;
   }
 
@@ -18,6 +18,8 @@ export function clearActiveClip(): void {
   $clips.set({
     ...$clips.get(),
     activeClipId: null,
+    activeSharedClipId: null,
+    activeClipByModelId: {},
     blendBaseClip: null,
     blendClipId: null,
     blendWeight: 0,

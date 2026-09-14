@@ -8,6 +8,7 @@ interface Props {
   actions?: React.ReactNode;
   children: React.ReactNode;
   defaultOpen?: boolean;
+  selected?: boolean;
   className?: string;
   headerClassName?: string;
   headerContentClassName?: string;
@@ -21,6 +22,7 @@ export function LibrarySectionCollapsible({
   actions,
   children,
   defaultOpen,
+  selected = false,
   className,
   headerClassName,
   headerContentClassName,
@@ -29,7 +31,13 @@ export function LibrarySectionCollapsible({
 }: Props) {
   return (
     <Collapsible defaultOpen={defaultOpen} className={className}>
-      <CollapsibleHeader className={headerClassName}>
+      <CollapsibleHeader
+        className={cn(
+          'rounded-sm',
+          selected && 'bg-zinc-900 text-zinc-100',
+          headerClassName,
+        )}
+      >
         {leading}
         <div className={cn('flex items-center gap-2 flex-1 min-w-0', headerContentClassName, contentClassName)}>
           {typeof title === 'string'

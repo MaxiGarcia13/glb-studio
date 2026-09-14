@@ -18,6 +18,16 @@ export interface PointerPosition {
   y: number;
 }
 
+interface BonePick {
+  object: Object3D;
+  screenDistance: number;
+}
+
+interface MeshPick {
+  object: Object3D;
+  rayDistance: number;
+}
+
 function isPickableMesh(object: Object3D): boolean {
   const mesh = object as { isMesh?: boolean; isBone?: boolean; geometry?: unknown };
   return Boolean(mesh.isMesh && !mesh.isBone && mesh.geometry && object.visible);
@@ -36,14 +46,13 @@ function pixelsFromNdc(point: { x: number; y: number }, size: ViewportSize): Poi
   };
 }
 
-function pickBone(
+function pickBoneInRoot(
   root: Object3D,
   camera: Camera,
   pointer: PointerPosition,
   size: ViewportSize,
-): Object3D | null {
-  let best: Object3D | null = null;
-  let bestDistance = BONE_PICK_RADIUS_PX;
+): BonePick | null {
+  let best: BonePick | null = null;
 
   root.traverse((object) => {
     const skinned = object as { isSkinnedMesh?: boolean; skeleton?: { bones?: Object3D[] } };
@@ -58,10 +67,12 @@ function pickBone(
       bone.getWorldPosition(BONE_WORLD);
       PROJECTED.copy(BONE_WORLD).project(camera);
       const at = pixelsFromNdc(PROJECTED, size);
-      const distance = Math.hypot(at.x - pointer.x, at.y - pointer.y);
-      if (distance <= bestDistance) {
-        bestDistance = distance;
-        best = bone;
+      const screenDistance = Math.hypot(at.x - pointer.x, at.y - pointer.y);
+      if (screenDistance > BONE_PICK_RADIUS_PX) {
+        continue;
+      }
+      if (!best || screenDistance < best.screenDistance) {
+        best = { object: bone, screenDistance };
       }
     }
   });
@@ -69,23 +80,12 @@ function pickBone(
   return best;
 }
 
-export function pickObjectAtPointer(
+function pickMeshInRoot(
   root: Object3D,
   camera: Camera,
   pointer: PointerPosition,
   size: ViewportSize,
-): Object3D | null {
-  if (size.width <= 0 || size.height <= 0) {
-    return null;
-  }
-
-  root.updateMatrixWorld(true);
-
-  const bone = pickBone(root, camera, pointer, size);
-  if (bone) {
-    return bone;
-  }
-
+): MeshPick | null {
   const candidates: Object3D[] = [];
   root.traverse((object) => {
     if (isPickableMesh(object)) {
@@ -98,5 +98,67 @@ export function pickObjectAtPointer(
 
   RAYCASTER.setFromCamera(ndcFromViewport(pointer, size), camera);
   const hits = RAYCASTER.intersectObjects(candidates, false);
-  return hits[0]?.object ?? null;
+  const hit = hits[0];
+  if (!hit) {
+    return null;
+  }
+
+  return { object: hit.object, rayDistance: hit.distance };
+}
+
+function pickBestAcrossRoots(
+  roots: Object3D[],
+  camera: Camera,
+  pointer: PointerPosition,
+  size: ViewportSize,
+): Object3D | null {
+  let bestBone: BonePick | null = null;
+  let bestMesh: MeshPick | null = null;
+
+  for (const root of roots) {
+    root.updateMatrixWorld(true);
+
+    const bone = pickBoneInRoot(root, camera, pointer, size);
+    if (bone && (!bestBone || bone.screenDistance < bestBone.screenDistance)) {
+      bestBone = bone;
+    }
+
+    const mesh = pickMeshInRoot(root, camera, pointer, size);
+    if (mesh && (!bestMesh || mesh.rayDistance < bestMesh.rayDistance)) {
+      bestMesh = mesh;
+    }
+  }
+
+  if (bestBone) {
+    return bestBone.object;
+  }
+
+  return bestMesh?.object ?? null;
+}
+
+export function pickObjectAtPointer(
+  root: Object3D,
+  camera: Camera,
+  pointer: PointerPosition,
+  size: ViewportSize,
+): Object3D | null {
+  if (size.width <= 0 || size.height <= 0) {
+    return null;
+  }
+
+  return pickBestAcrossRoots([root], camera, pointer, size);
+}
+
+/** Pick the closest bone or mesh across multiple model roots. */
+export function pickObjectAcrossRoots(
+  roots: Object3D[],
+  camera: Camera,
+  pointer: PointerPosition,
+  size: ViewportSize,
+): Object3D | null {
+  if (size.width <= 0 || size.height <= 0 || roots.length === 0) {
+    return null;
+  }
+
+  return pickBestAcrossRoots(roots, camera, pointer, size);
 }

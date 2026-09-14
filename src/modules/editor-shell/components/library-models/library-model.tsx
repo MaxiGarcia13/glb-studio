@@ -12,9 +12,11 @@ import {
 import { $clips } from '@/modules/animation/stores/clip-store';
 import { LibrarySectionCollapsible } from '@/modules/editor-shell/components/library-section-collapsible';
 import {
+  $model,
   removeModel,
   renameModel,
   replaceModel,
+  selectModel,
 } from '@/modules/viewport/stores/model-store';
 import { LibraryModelActions } from './library-model-actions';
 import { LibraryModelAddAnimationModal } from './library-model-add-animation-modal';
@@ -25,9 +27,11 @@ interface LibraryModelProps {
 }
 
 export function LibraryModel({ model }: LibraryModelProps) {
-  const { clips, activeClipId } = useStore($clips, {
-    keys: ['clips', 'activeClipId'],
+  const { clips, activeSharedClipId, activeClipByModelId } = useStore($clips, {
+    keys: ['clips', 'activeSharedClipId', 'activeClipByModelId'],
   });
+  const { activeModelId } = useStore($model, { keys: ['activeModelId'] });
+  const focused = model.id === activeModelId;
   const [addAnimationOpen, setAddAnimationOpen] = useState(false);
   const ownedClips = clips.filter((entry) => entry.ownerModelId === model.id);
   const nodeNames = buildSkeletonNodeSet(model.scene);
@@ -44,7 +48,9 @@ export function LibraryModel({ model }: LibraryModelProps) {
     return !validateClipAgainstSkeleton(entry.clip, nodeNames).valid;
   });
   const selectedConflictedClip = conflictedClips.find(
-    (entry) => entry.id === activeClipId,
+    (entry) =>
+      entry.id === activeSharedClipId
+      || entry.id === (activeClipByModelId[model.id] ?? null),
   );
   const firstConflictedClip = conflictedClips[0];
 
@@ -70,13 +76,17 @@ export function LibraryModel({ model }: LibraryModelProps) {
             modelId={model.id}
             fileName={model.fileName}
             rename={rename}
+            selected={focused}
+            onSelect={() => selectModel(model.id)}
           />
         )}
+        selected={focused}
         className="ml-5"
         headerContentClassName="flex-col w-full"
         actionsClassName="w-full justify-end"
         actions={(
           <LibraryModelActions
+            modelId={model.id}
             conflictedClipId={selectedConflictedClip?.id ?? firstConflictedClip?.id ?? null}
             onAddAnimation={() => setAddAnimationOpen(true)}
             onRename={rename.startEditing}
@@ -85,7 +95,7 @@ export function LibraryModel({ model }: LibraryModelProps) {
           />
         )}
       >
-        <ClipRows clips={ownedClips} />
+        <ClipRows clips={ownedClips} ownerModelId={model.id} />
       </LibrarySectionCollapsible>
 
       {replaceInput}

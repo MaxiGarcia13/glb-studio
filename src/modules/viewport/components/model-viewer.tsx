@@ -1,11 +1,23 @@
-import { useActiveModel } from '../hooks/use-active-model';
+import { useStore } from '@nanostores/react';
+import { $model } from '../stores/model-store';
 
 export function ModelViewer() {
-  const { scene } = useActiveModel();
+  const { models, previewModelIds } = useStore($model, {
+    keys: ['models', 'previewModelIds'],
+  });
 
-  if (!scene) {
+  const previewSet = new Set(previewModelIds);
+  const visible = models.filter((model) => previewSet.has(model.id));
+
+  if (visible.length === 0) {
     return null;
   }
 
-  return <primitive object={scene} />;
+  return (
+    <>
+      {visible.map((model) => (
+        <primitive key={model.id} object={model.scene} />
+      ))}
+    </>
+  );
 }

@@ -15,6 +15,7 @@ import { disposeScene } from '../utils/scene-dispose';
 
 export const $model = map<ModelLibraryState>({
   models: [],
+  previewModelIds: [],
   activeModelId: null,
   phase: 'idle',
   error: null,
@@ -79,14 +80,71 @@ export async function importModelFiles(files: File[]): Promise<void> {
 
   $model.set({
     models: [...current.models, ...loadedEntries],
-    activeModelId: current.activeModelId ?? loadedEntries[0].id,
+    previewModelIds: [
+      ...current.previewModelIds,
+      ...loadedEntries.map((entry) => entry.id),
+    ],
+    activeModelId: loadedEntries.at(-1)?.id ?? current.activeModelId,
     phase: 'loaded',
     error: failureText,
   });
 }
 
-export function setActiveModel(id: string | null): void {
-  $model.setKey('activeModelId', id);
+export function focusModel(modelId: string): void {
+  const state = $model.get();
+  if (!state.previewModelIds.includes(modelId)) {
+    return;
+  }
+  if (state.activeModelId === modelId) {
+    return;
+  }
+  $model.setKey('activeModelId', modelId);
+}
+
+/** Focus a model from the library; shows it in the viewport if it was hidden. */
+export function selectModel(modelId: string): void {
+  const state = $model.get();
+  if (!state.models.some((model) => model.id === modelId)) {
+    return;
+  }
+
+  const previewModelIds = state.previewModelIds.includes(modelId)
+    ? state.previewModelIds
+    : [...state.previewModelIds, modelId];
+
+  if (
+    state.activeModelId === modelId
+    && previewModelIds.length === state.previewModelIds.length
+  ) {
+    return;
+  }
+
+  $model.set({ ...state, previewModelIds, activeModelId: modelId });
+}
+
+export function toggleModelPreview(modelId: string): void {
+  const state = $model.get();
+  if (!state.models.some((model) => model.id === modelId)) {
+    return;
+  }
+
+  const previewSet = new Set(state.previewModelIds);
+  if (previewSet.has(modelId)) {
+    previewSet.delete(modelId);
+  } else {
+    previewSet.add(modelId);
+  }
+
+  const previewModelIds = [...previewSet];
+  let { activeModelId } = state;
+
+  if (previewSet.has(modelId)) {
+    activeModelId = modelId;
+  } else if (activeModelId === modelId) {
+    activeModelId = previewModelIds.at(-1) ?? null;
+  }
+
+  $model.set({ ...state, previewModelIds, activeModelId });
 }
 
 export function renameModel(id: string, name: string): void {
@@ -122,17 +180,21 @@ export function removeModel(id: string): void {
   }
 
   const removed = state.models[index];
-  const wasActive = state.activeModelId === id;
   disposeEntry(removed);
   clearBindPoseOverrides(id);
   removeClipsByOwner(id);
 
   const models = state.models.filter((model) => model.id !== id);
-  const activeModelId = wasActive ? (models[0]?.id ?? null) : state.activeModelId;
+  const previewModelIds = state.previewModelIds.filter((previewId) => previewId !== id);
+  let activeModelId = state.activeModelId;
+  if (activeModelId === id) {
+    activeModelId = previewModelIds.at(-1) ?? null;
+  }
   const phase: ModelLibraryPhase = models.length > 0 ? 'loaded' : 'idle';
 
   $model.set({
     models,
+    previewModelIds,
     activeModelId,
     phase,
     error: null,

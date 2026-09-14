@@ -1,10 +1,34 @@
+import type { AnimationClip } from 'three';
+import type { ClipEntry } from '@/modules/animation/types/clip';
 import { setMixerTime, setMixerTimeScale } from '@/modules/animation/utils/mixer-session';
 import { $clips } from '../store';
 import { isReadyClip } from '../utils';
 import { clearActiveClip } from './clear-active-clip';
 
-/** Library list selection (same pattern as models). */
-export function selectClip(id: string): void {
+function applySharedSelection(target: ClipEntry & { clip: AnimationClip }): void {
+  setMixerTime(0);
+  setMixerTimeScale(target.timeScale);
+  $clips.set({
+    ...$clips.get(),
+    activeClipId: target.id,
+    activeSharedClipId: target.id,
+    activeClipByModelId: {},
+    blendBaseClip: null,
+    blendClipId: null,
+    blendWeight: 0,
+    playing: false,
+    duration: target.clip.duration,
+    trimStart: 0,
+    trimEnd: target.clip.duration,
+  });
+}
+
+/**
+ * Library list selection (same pattern as models). A shared clip broadcasts to
+ * all models and clears per-model owned selections; an owned clip selects only
+ * the owning model.
+ */
+export function selectClip(id: string, modelId?: string): void {
   if (!id) {
     clearActiveClip();
     return;
@@ -15,8 +39,39 @@ export function selectClip(id: string): void {
     return;
   }
 
-  if ($clips.get().activeClipId === id) {
-    clearActiveClip();
+  const state = $clips.get();
+  const isShared = target.ownerModelId === null;
+
+  if (isShared) {
+    if (state.activeSharedClipId === id) {
+      clearActiveClip();
+      return;
+    }
+    applySharedSelection(target);
+    return;
+  }
+
+  const ownerModelId = modelId ?? target.ownerModelId;
+  if (!ownerModelId) {
+    return;
+  }
+
+  if (state.activeClipByModelId[ownerModelId] === id) {
+    $clips.set({
+      ...$clips.get(),
+      activeClipId: state.activeSharedClipId,
+      activeClipByModelId: {
+        ...state.activeClipByModelId,
+        [ownerModelId]: null,
+      },
+      blendBaseClip: null,
+      blendClipId: null,
+      blendWeight: 0,
+      playing: false,
+      duration: 0,
+      trimStart: 0,
+      trimEnd: 0,
+    });
     return;
   }
 
@@ -25,11 +80,16 @@ export function selectClip(id: string): void {
   $clips.set({
     ...$clips.get(),
     activeClipId: id,
+    activeSharedClipId: null,
+    activeClipByModelId: {
+      ...state.activeClipByModelId,
+      [ownerModelId]: id,
+    },
     blendBaseClip: null,
     blendClipId: null,
     blendWeight: 0,
-    duration: target.clip.duration,
     playing: false,
+    duration: target.clip.duration,
     trimStart: 0,
     trimEnd: target.clip.duration,
   });

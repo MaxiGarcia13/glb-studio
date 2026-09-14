@@ -5,6 +5,8 @@ import { map } from 'nanostores';
 export const $clips = map<ClipLibraryState>({
   clips: [],
   activeClipId: null,
+  activeSharedClipId: null,
+  activeClipByModelId: {},
   blendBaseClip: null,
   blendClipId: null,
   blendWeight: 0,

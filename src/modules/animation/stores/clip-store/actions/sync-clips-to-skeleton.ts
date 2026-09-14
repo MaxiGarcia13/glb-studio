@@ -20,6 +20,8 @@ export function syncClipsToSkeleton(skeleton: Object3D | null): void {
     $clips.set({
       ...state,
       activeClipId: null,
+      activeSharedClipId: null,
+      activeClipByModelId: {},
       blendBaseClip: null,
       blendClipId: null,
       blendWeight: 0,
@@ -35,16 +37,23 @@ export function syncClipsToSkeleton(skeleton: Object3D | null): void {
     ownerScenes.set(model.id, model.scene);
   }
 
-  const activeNodeNames = buildSkeletonNodeSet(skeleton);
-
   const clips = state.clips.map((entry): ClipEntry => {
     if (!entry.clip) {
       return entry;
     }
 
-    const ownerScene = entry.ownerModelId ? ownerScenes.get(entry.ownerModelId) : null;
-    const nodeNames = ownerScene ? buildSkeletonNodeSet(ownerScene) : activeNodeNames;
+    // Shared clips: per-model fit is checked in the library UI — do not flip global
+    // status when each model's mixer mounts with a different skeleton.
+    if (entry.ownerModelId === null) {
+      return entry;
+    }
 
+    const ownerScene = ownerScenes.get(entry.ownerModelId);
+    if (!ownerScene) {
+      return entry;
+    }
+
+    const nodeNames = buildSkeletonNodeSet(ownerScene);
     const validation = validateClipAgainstSkeleton(entry.clip, nodeNames);
     if (!validation.valid) {
       return {
@@ -70,19 +79,41 @@ export function syncClipsToSkeleton(skeleton: Object3D | null): void {
     = activeEntry && isReadyClip(activeEntry)
       ? state.activeClipId
       : null;
-  const active = activeClipId ? clips.find((entry) => entry.id === activeClipId) : null;
+
+  // Revalidate shared selection.
+  const sharedEntry = state.activeSharedClipId
+    ? clips.find((entry) => entry.id === state.activeSharedClipId)
+    : null;
+  const activeSharedClipId
+    = sharedEntry && isReadyClip(sharedEntry)
+      ? state.activeSharedClipId
+      : null;
+
+  // Revalidate per-model selections.
+  const activeClipByModelId: Record<string, string | null> = {};
+  for (const [modelId, clipId] of Object.entries(state.activeClipByModelId)) {
+    if (!clipId) {
+      activeClipByModelId[modelId] = null;
+      continue;
+    }
+    const entry = clips.find((e) => e.id === clipId);
+    activeClipByModelId[modelId] = entry && isReadyClip(entry) ? clipId : null;
+  }
 
   const blendClipId
     = state.blendClipId && isReadyClip(clips.find((entry) => entry.id === state.blendClipId))
       ? state.blendClipId
       : null;
 
+  const active = activeClipId ? clips.find((entry) => entry.id === activeClipId) : null;
   const duration = active?.clip?.duration ?? 0;
 
   setMixerTimeScale(active?.timeScale ?? 1);
   $clips.set({
     clips,
     activeClipId,
+    activeSharedClipId,
+    activeClipByModelId,
     blendBaseClip: blendClipId ? state.blendBaseClip : null,
     blendClipId,
     blendWeight: blendClipId ? state.blendWeight : 0,

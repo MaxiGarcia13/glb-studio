@@ -1,11 +1,16 @@
 import type { ClipEntry } from '@/modules/animation/types/clip';
 import { rebaseClipWithOverrides } from '@/modules/animation/domain/bind-pose-rebase';
 import { getBindPoseOverrides } from '@/modules/animation/stores/bind-pose-store';
-import { $activeModel } from '@/modules/viewport/stores/model-store';
+import { $activeModel, $model } from '@/modules/viewport/stores/model-store';
 
-/** Clone and rebase clip tracks with the active model's accumulated bind-pose deltas. */
-export function applyActiveModelBindOverrides(entry: ClipEntry): ClipEntry {
-  const model = $activeModel.get();
+/** Clone and rebase clip tracks with a model's accumulated bind-pose deltas. */
+export function applyActiveModelBindOverrides(
+  entry: ClipEntry,
+  modelId?: string | null,
+): ClipEntry {
+  const model = modelId
+    ? $model.get().models.find((m) => m.id === modelId) ?? null
+    : $activeModel.get();
   if (!model || !entry.clip) {
     return entry;
   }

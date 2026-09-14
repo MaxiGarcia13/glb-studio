@@ -6,7 +6,10 @@ import { useFrame } from '@react-three/fiber';
 import { $clips, pause } from '@/modules/animation/stores/clip-store';
 import { $poseDirty } from '@/modules/viewport/stores/pose-edit-store';
 
-export function useClipMixerFrame(mixerRef: RefObject<AnimationMixer | null>): void {
+export function useClipMixerFrame(
+  mixerRef: RefObject<AnimationMixer | null>,
+  endTime: number,
+): void {
   useFrame((_, delta) => {
     const mixer = mixerRef.current;
     if (!mixer) {
@@ -18,7 +21,7 @@ export function useClipMixerFrame(mixerRef: RefObject<AnimationMixer | null>): v
       return;
     }
     mixer.update(delta);
-    if (!state.loop && mixer.time >= state.duration) {
+    if (!state.loop && endTime > 0 && mixer.time >= endTime) {
       pause();
     }
   });
