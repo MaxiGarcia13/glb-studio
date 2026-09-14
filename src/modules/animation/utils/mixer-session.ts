@@ -114,6 +114,29 @@ export function setMixerTime(time: number): void {
 }
 
 /**
+ * Sample the active clip at `time` without clearing a dirty pose edit.
+ * Temporarily enables bindings, writes the pose, then disables them again so a
+ * pending model-root edit is not overwritten on the next frame.
+ */
+export function sampleMixerAt(time: number): void {
+  const session = activeSession();
+  if (!session?.action) {
+    return;
+  }
+
+  session.action.enabled = true;
+  if (session.blendAction) {
+    session.blendAction.enabled = true;
+  }
+  applyBlendWeights(session);
+  session.mixer.setTime(time);
+  session.action.enabled = false;
+  if (session.blendAction) {
+    session.blendAction.enabled = false;
+  }
+}
+
+/**
  * Discard unsaved gizmo edits and re-apply the active clip(s) at the playhead.
  *
  * Plain setTime(t) is not enough: Three's PropertyMixer skips writing when the

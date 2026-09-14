@@ -12,6 +12,7 @@ import {
 import { preserveGltfExtension } from '@/utils/glb-parse';
 import { loadModelFromFile } from '../adapters/model-loader';
 import { disposeScene } from '../utils/scene-dispose';
+import { clearSelection } from './selection-store';
 
 export const $model = map<ModelLibraryState>({
   models: [],
@@ -101,7 +102,9 @@ export function focusModel(modelId: string): void {
   $model.setKey('activeModelId', modelId);
 }
 
-/** Focus a model from the library; shows it in the viewport if it was hidden. */
+/** Focus a model from the library; shows it in the viewport if it was hidden.
+ * Clicking the already-focused model clears focus (same pattern as clip rows).
+ */
 export function selectModel(modelId: string): void {
   const state = $model.get();
   if (!state.models.some((model) => model.id === modelId)) {
@@ -112,10 +115,9 @@ export function selectModel(modelId: string): void {
     ? state.previewModelIds
     : [...state.previewModelIds, modelId];
 
-  if (
-    state.activeModelId === modelId
-    && previewModelIds.length === state.previewModelIds.length
-  ) {
+  if (state.activeModelId === modelId) {
+    clearSelection();
+    $model.set({ ...state, previewModelIds, activeModelId: null });
     return;
   }
 

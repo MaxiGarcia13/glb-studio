@@ -18,6 +18,7 @@ export function SaveKeyframeButton({ className }: SaveKeyframeButtonProps) {
   const { scene } = useActiveModel();
 
   const writeKeyframe = poseEditKind === 'selection' && activeClipId !== null;
+  const clipRootSave = poseEditKind === 'modelRoot' && activeClipId !== null;
 
   if (!poseDirty || scene === null) {
     return null;
@@ -41,7 +42,9 @@ export function SaveKeyframeButton({ className }: SaveKeyframeButtonProps) {
         title={
           writeKeyframe
             ? 'Keeps this pose from the playhead to the end of the clip. Scrub and edit again anytime to change it.'
-            : 'Commits the current transform onto the model.'
+            : clipRootSave
+              ? 'Saves this model root position on the selected animation only.'
+              : 'Commits the current transform onto the model.'
         }
         className="flex flex-row gap-2 items-center"
       >

@@ -6,8 +6,12 @@ import { Button } from '@/components/button';
 import { useGltfFilePicker } from '@/components/gltf-file-picker/use-gltf-file-picker';
 import { AnimationIcon } from '@/components/icons/animation-icon';
 import { RetargetIcon } from '@/components/icons/retarget-icon';
+import {
+  buildSkeletonNodeSet,
+  validateClipAgainstSkeleton,
+} from '@/modules/animation/domain/clip-validate';
 import { useActiveModel } from '@/modules/viewport/hooks/use-active-model';
-import { $model } from '@/modules/viewport/stores/model-store';
+import { $model, selectModel } from '@/modules/viewport/stores/model-store';
 import {
   $clips,
   removeClip,
@@ -23,6 +27,18 @@ interface ClipRowsProps {
   className?: string;
 }
 
+/** Shared-list mismatch vs the focused model (store status stays global). */
+function sharedConflictError(
+  entry: ClipEntry,
+  nodeNames: Set<string> | null,
+): string | null {
+  if (!nodeNames || !entry.clip || entry.status === 'error') {
+    return null;
+  }
+  const result = validateClipAgainstSkeleton(entry.clip, nodeNames);
+  return result.valid ? null : result.error;
+}
+
 export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
   const { activeSharedClipId, activeClipByModelId, blendClipId } = useStore($clips, {
     keys: ['activeSharedClipId', 'activeClipByModelId', 'blendClipId'],
@@ -31,10 +47,15 @@ export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
   const { activeModelId } = useStore($model, { keys: ['activeModelId'] });
   const { scene } = useActiveModel();
 
+  const isSharedList = ownerModelId === undefined || ownerModelId === null;
   const selectedClipId
-    = ownerModelId === undefined || ownerModelId === null
+    = isSharedList
       ? activeSharedClipId
       : (activeClipByModelId[ownerModelId] ?? null);
+
+  // Shared Animations: re-validate against the focused model when it changes.
+  const activeNodeNames
+    = isSharedList && scene ? buildSkeletonNodeSet(scene) : null;
 
   const { open: openReplace, fileInput: replaceInput } = useGltfFilePicker<string>({
     onFiles: (files, id) => {
@@ -54,7 +75,11 @@ export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
       {replaceInput}
 
       {clips.map((entry) => {
-        const isError = entry.status === 'error';
+        const contextError = isSharedList
+          ? sharedConflictError(entry, activeNodeNames)
+          : null;
+        const isError = entry.status === 'error' || contextError !== null;
+        const errorMessage = entry.status === 'error' ? entry.error : contextError;
         const isDraft = entry.status === 'draft';
         const canRetarget = isError && entry.clip !== null;
         const isRetargeting = retargetClipId === entry.id;
@@ -71,8 +96,8 @@ export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
             leading={<AnimationIcon />}
             label={entry.name}
             title={`${entry.name} (${entry.sourceFile})`}
-            description={isError ? entry.error : entry.sourceFile}
-            errorDetail={entry.error}
+            description={isError ? errorMessage : entry.sourceFile}
+            errorDetail={errorMessage}
             status={isError ? 'error' : undefined}
             statusLabel={
               roleLabel ?? (isError ? (canRetarget ? 'Needs retarget' : 'Failed') : undefined)
@@ -81,7 +106,13 @@ export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
             onSelect={
               isError
                 ? undefined
-                : () => selectClip(entry.id, entry.ownerModelId ?? undefined)
+                : () => {
+                    const ownerId = entry.ownerModelId ?? ownerModelId ?? undefined;
+                    if (ownerId) {
+                      selectModel(ownerId);
+                    }
+                    selectClip(entry.id, ownerId);
+                  }
             }
             onReplace={() => openReplace(entry.id)}
             onRemove={() => removeClip(entry.id)}

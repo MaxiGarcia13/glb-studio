@@ -29,7 +29,7 @@ export function LibraryModelTitle({
           }}
           className="flex-1 min-w-0 text-left cursor-pointer"
           aria-pressed={selected}
-          title="Select model"
+          title={selected ? 'Deselect model' : 'Select model'}
         >
           <Text as="h2" variant="section" className="truncate">
             {fileName}

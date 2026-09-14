@@ -112,7 +112,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Dirty Save / Restore; bind-pose commit (no clip) + Hold Pose (active clip) + root translation (Move)
 - [x] Bind-pose deltas rebase library clips and apply on import / replace / retarget
 - [x] Auto-Restore on tool switch and selection change while dirty
-- [x] Settings General: editable model-root X / Y / Z
+- [x] Settings General: editable model-root X / Y / Z (clip-scoped when a clip is active)
 - [x] Active Clip **T-pose** option restores rest / bind pose
 
 ## US-7 — Multi-clip blending

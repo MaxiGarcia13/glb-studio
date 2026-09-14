@@ -24,6 +24,11 @@ export interface ClipEntry {
   sourceBindFrames: Record<string, BoneBindFrame>;
   /** Owning model id; null = shared (listed under Shared Animations). */
   ownerModelId: string | null;
+  /**
+   * Per-model model-root world position from Move / Settings XYZ while this clip
+   * is active on that model. Missing key = use that model’s rest-pose root.
+   */
+  rootPositionByModelId: Record<string, [number, number, number]>;
 }
 
 export interface ClipLibraryState {

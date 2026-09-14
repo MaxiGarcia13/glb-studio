@@ -3,11 +3,18 @@ import {
   rebaseClipNode,
 } from '@/modules/animation/domain/bind-pose-rebase';
 import { writeNodeKeyframe } from '@/modules/animation/domain/keyframe-write';
-import { refreshRestPoseNode } from '@/modules/animation/domain/rest-pose';
+import {
+  applySceneRootPosition,
+  refreshRestPoseNode,
+} from '@/modules/animation/domain/rest-pose';
 import {
   accumulateBindPoseDelta,
 } from '@/modules/animation/stores/bind-pose-store';
-import { restoreMixerPose, resumeMixerBindings } from '@/modules/animation/utils/mixer-session';
+import {
+  restoreMixerPose,
+  resumeMixerBindings,
+  setMixerTime,
+} from '@/modules/animation/utils/mixer-session';
 import { readClipTimelineTime } from '@/modules/animation/utils/to-timeline-time';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import {
@@ -49,6 +56,14 @@ function commitBindPoseToClips(nodeName: string): void {
   $clips.set({ ...state, clips });
 }
 
+/** Clip currently driving this model (owned selection, else shared). */
+function clipIdForModel(
+  state: ReturnType<typeof $clips.get>,
+  modelId: string,
+): string | null {
+  return state.activeClipByModelId[modelId] ?? state.activeSharedClipId;
+}
+
 export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
   if (!$poseDirty.get()) {
     return;
@@ -65,18 +80,51 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
   }
 
   const state = $clips.get();
-  const active = state.clips.find((entry) => entry.id === state.activeClipId);
   const holdToEnd = options?.holdToEnd ?? true;
 
-  // Model-root commit: TRS already on the scene.
+  // Model-root commit: TRS already on the scene — always scoped to the active model.
   if (kind === 'modelRoot') {
     if (model) {
+      const modelClipId = clipIdForModel(state, model.id);
+      const modelClip = modelClipId
+        ? state.clips.find((entry) => entry.id === modelClipId)
+        : undefined;
+
+      if (isReadyClip(modelClip)) {
+        const rootPosition: [number, number, number] = [
+          object.position.x,
+          object.position.y,
+          object.position.z,
+        ];
+        // Clear dirty before publishing so the mixer effect does not skip apply.
+        clearPoseDirty();
+        $clips.set({
+          ...state,
+          clips: state.clips.map((entry) =>
+            entry.id === modelClip.id
+              ? {
+                  ...entry,
+                  rootPositionByModelId: {
+                    ...entry.rootPositionByModelId,
+                    [model.id]: rootPosition,
+                  },
+                }
+              : entry,
+          ),
+        });
+        applySceneRootPosition(model.scene, rootPosition);
+        // Clip begins at t=0 under the saved root on this model only.
+        setMixerTime(0);
+        return;
+      }
       refreshRestPoseNode(model.scene, object);
     }
     resumeMixerBindings();
     clearPoseDirty();
     return;
   }
+
+  const active = state.clips.find((entry) => entry.id === state.activeClipId);
 
   // Bind-pose commit (no ready clip): scene TRS + rebase all library clips.
   if (!isReadyClip(active)) {

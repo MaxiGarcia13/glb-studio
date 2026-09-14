@@ -6,8 +6,10 @@ import { TransformControls } from '@react-three/drei';
 import { useEffect, useRef } from 'react';
 import { pause } from '@/modules/animation/stores/clip-store/actions/playback';
 import { restorePose } from '@/modules/animation/stores/clip-store/actions/restore-pose';
+import { $clips } from '@/modules/animation/stores/clip-store/store';
 import {
   resumeMixerBindings,
+  sampleMixerAt,
   suspendMixerBindings,
 } from '@/modules/animation/utils/mixer-session';
 import { useActiveModel } from '../hooks/use-active-model';
@@ -59,6 +61,9 @@ export function TransformControlsDriver({ controlsRef }: TransformControlsDriver
         suspendMixerBindings();
       } else if (!$poseDirty.get()) {
         resumeMixerBindings();
+      } else if (isMove && $clips.get().activeClipId) {
+        // Show the clip's start pose under the new root while Save is pending.
+        sampleMixerAt(0);
       }
     };
 
@@ -81,7 +86,7 @@ export function TransformControlsDriver({ controlsRef }: TransformControlsDriver
       gizmo.removeEventListener('objectChange', onObjectChange);
       orbit.enabled = true;
     };
-  }, [controlsRef, gizmoObject]);
+  }, [controlsRef, gizmoObject, isMove]);
 
   if (!gizmoObject) {
     return null;

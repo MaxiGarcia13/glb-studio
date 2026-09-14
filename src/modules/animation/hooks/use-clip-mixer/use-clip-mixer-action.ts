@@ -3,14 +3,24 @@ import type { AnimationAction, AnimationClip, AnimationMixer, Group } from 'thre
 
 import { useEffect } from 'react';
 
-import { applyRestPose } from '@/modules/animation/domain/rest-pose';
+import { applyRestPose, applySceneRootPosition } from '@/modules/animation/domain/rest-pose';
 import { $clips } from '@/modules/animation/stores/clip-store/store';
 import { setActiveAction } from '@/modules/animation/utils/mixer-session';
 import { toTimelineTime } from '@/modules/animation/utils/to-timeline-time';
+import { $activeModel } from '@/modules/viewport/stores/model-store';
+import { $poseDirty, $poseEditKind } from '@/modules/viewport/stores/pose-edit-store';
+import { syncTransformReadout } from '@/modules/viewport/stores/transform-readout-store';
 import { applyLoopMode } from './apply-loop-mode';
+
+function syncReadoutIfFocused(modelId: string, scene: Group): void {
+  if ($activeModel.get()?.id === modelId) {
+    syncTransformReadout(scene);
+  }
+}
 
 export function useClipMixerAction(
   clip: AnimationClip | null,
+  rootPosition: [number, number, number] | null,
   playing: boolean,
   loop: boolean,
   modelId: string,
@@ -36,6 +46,7 @@ export function useClipMixerAction(
       mixer.setTime(0);
       if (scene) {
         applyRestPose(scene);
+        syncReadoutIfFocused(modelId, scene);
       }
       return;
     }
@@ -50,6 +61,18 @@ export function useClipMixerAction(
     action.play();
     mixer.setTime(toTimelineTime(previousTime, clip.duration, $clips.get().loop));
   }, [clip, scene, modelId, mixerRef, actionRef]);
+
+  useEffect(() => {
+    if (!clip || !scene) {
+      return;
+    }
+    // Don't clobber an in-progress Move / Settings XYZ edit.
+    if ($poseDirty.get() && $poseEditKind.get() === 'modelRoot') {
+      return;
+    }
+    applySceneRootPosition(scene, rootPosition);
+    syncReadoutIfFocused(modelId, scene);
+  }, [clip, rootPosition, scene, modelId]);
 
   useEffect(() => {
     const action = actionRef.current;

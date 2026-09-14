@@ -57,6 +57,30 @@ export function refreshRestPoseNode(root: Object3D, node: Object3D): void {
   restPoses.set(root, map);
 }
 
+/**
+ * Apply a clip’s stored model-root position, or restore the rest-pose root when
+ * `position` is null (clip has no override).
+ */
+export function applySceneRootPosition(
+  root: Object3D,
+  position: [number, number, number] | null,
+): void {
+  if (position) {
+    root.position.set(position[0], position[1], position[2]);
+  } else {
+    ensureRestPoseCaptured(root);
+    const transform = restPoses.get(root)?.get(root.uuid);
+    if (transform) {
+      root.position.set(
+        transform.position.x,
+        transform.position.y,
+        transform.position.z,
+      );
+    }
+  }
+  root.updateMatrixWorld(true);
+}
+
 /** Restore captured rest / bind pose after clearing the active clip. */
 export function applyRestPose(root: Object3D): void {
   ensureRestPoseCaptured(root);

@@ -3,6 +3,7 @@ import { useStore } from '@nanostores/react';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/input/input';
 import { Text } from '@/components/text';
+import { $clips } from '@/modules/animation/stores/clip-store';
 import {
   $transformReadout,
   applyTransformPositionAxis,
@@ -19,6 +20,7 @@ function formatAxis(value: number): string {
 
 export function TransformReadout() {
   const value = useStore($transformReadout);
+  const { activeClipId } = useStore($clips, { keys: ['activeClipId'] });
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
   const [focused, setFocused] = useState<TransformAxis | null>(null);
 
@@ -61,7 +63,9 @@ export function TransformReadout() {
 
   return (
     <div className="flex flex-col gap-2">
-      <Text variant="muted">Model root position</Text>
+      <Text variant="muted">
+        {activeClipId ? 'Animation root position' : 'Model root position'}
+      </Text>
 
       <div className="flex gap-2">
         {AXES.map((axis) => (

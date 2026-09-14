@@ -151,6 +151,7 @@ function retargetActive(
     sourceBindLengths: source.sourceBindLengths ?? {},
     sourceBindFrames: source.sourceBindFrames ?? {},
     ownerModelId: targetModelId,
+    rootPositionByModelId: {},
   }, targetModelId);
 
   const clips = [...state.clips, newEntry];

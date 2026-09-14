@@ -41,7 +41,7 @@ Clips have **ownership** (`ownerModelId`: `null` = Shared Animations; otherwise 
 
 Empty overlay when idle; clear error copy on parse failure or missing skeleton. After a successful load **or preview switch**, camera frames the previewed model AABB from a fixed three-quarter elevated angle (`computeModelFraming` + `DEFAULT_VIEW_OFFSET` in `viewport/constants/camera.ts`; spacing in `viewport/domain/model-framing.ts`).
 
-Sidebar **Library** is nested (US-19): **Models** (upload) → each model collapsible (`ModelIcon` + Retarget / Animation / Edit / Replace / Remove) listing owned clips; sibling **Shared Animations** (`AnimationIcon` + Upload / New). Clip rows use `AnimationIcon` + iconized actions. Previewed model is distinct; selecting it sets `activeModelId`, rebinds the mixer, and calls `syncClipsToSkeleton`. Model remove deletes owned clips.
+Sidebar **Library** is nested (US-19): **Models** (upload) → each model collapsible (`ModelIcon` + Retarget / Animation / Edit / Replace / Remove) listing owned clips; sibling **Shared Animations** (`AnimationIcon` + Upload / New). Clip rows use `AnimationIcon` + iconized actions. Previewed model is distinct; selecting it sets `activeModelId`, rebinds the mixer, and calls `syncClipsToSkeleton`. Clicking the focused model again clears `activeModelId` (same toggle pattern as clips). Model remove deletes owned clips.
 
 Do not add a second debug canvas, FPS overlay render path, or smoke-test scene that bypasses the editor viewport lifecycle.
 
@@ -149,12 +149,14 @@ Bind-pose / Move / T-pose Save–Restore branching: see **Edit / Move tools & bi
 5. **Save** (by `$poseEditKind`, not active tool)
    - `selection` + active ready clip → US-4 Hold Pose to End
    - `selection` + no ready clip → keep Object3D TRS; rebase that node’s tracks in every library `clip` / `sourceClip` by pre-edit → current delta; accumulate per `modelId` + node name for import / replace / post-retarget; refresh rest-pose snapshot; clear dirty
-   - `modelRoot` → keep `scene` translation; refresh rest-pose snapshot; no keyframe write / no clip rebase
+   - `modelRoot` + no ready/draft clip → keep `scene` translation; refresh rest-pose snapshot; no keyframe write / no clip rebase
+   - `modelRoot` + active ready/draft clip **on the focused model** → keep `scene` translation; store `[x,y,z]` on that clip’s `rootPositionByModelId[modelId]` only; do **not** refresh the model rest-pose root; seek playhead to **t=0** so the clip starts under the saved root; no keyframe write / no clip rebase; other models are untouched
 6. **Restore** — `selection` + active clip → `restoreMixerPose`; otherwise write snapshot TRS back onto the object
 7. Tool switch or Settings/gizmo kind change while dirty → auto-Restore first. Selection change / clear while dirty → `restorePose()` before updating `$selection`
-8. **Settings General** — live editable X / Y / Z for model root position (independent of tool); same dirty / Save / Restore path as Move
-9. **T-pose** — `activeClipId: null` via clicking the selected Animations row again (or clear); applies captured rest / bind pose (snapshot at mixer mount; refreshed on bind-pose or model-root Save). Skeleton sync does not auto-select a ready clip when already on T-pose
-10. **Bind-pose deltas** — per `modelId` + node name; cleared on model remove/replace. Position `p' = p + Δp`; quaternion `q' = Δq * q`; scale `s' = s * Δs`. Import / Replace / retarget apply accumulated overrides for the active model
+8. **Settings General** — live editable X / Y / Z for model root position (independent of tool); same dirty / Save / Restore path as Move (clip-scoped when a clip is active on the focused model). With an active clip, XYZ edits sample the clip at t=0 so the start pose sits under the new root
+9. **Clip root position** — `ClipEntry.rootPositionByModelId: Record<modelId, [x,y,z]>` (session library metadata). Each model’s mixer applies only its own entry when that clip is playing; missing key restores that model’s rest-pose root. Selecting or saving a clip root always begins playback preview at t=0 on the focused model
+10. **T-pose** — `activeClipId: null` via clicking the selected Animations row again (or clear); applies captured rest / bind pose (snapshot at mixer mount; refreshed on bind-pose or model-root Save **without** an active clip). Skeleton sync does not auto-select a ready clip when already on T-pose
+11. **Bind-pose deltas** — per `modelId` + node name; cleared on model remove/replace. Position `p' = p + Δp`; quaternion `q' = Δq * q`; scale `s' = s * Δs`. Import / Replace / retarget apply accumulated overrides for the active model
 
 Out of scope: whole-model rotate/scale in Move; multi-model simultaneous transform; full undo stack (US-10).
 
@@ -168,7 +170,7 @@ Out of scope: whole-model rotate/scale in Move; multi-model simultaneous transfo
 
 1. `$viewportSettings` (`nanostores` `map`) in `viewport/stores/viewport-settings-store.ts`: `{ axesVisible, axesSize }` with setters; defaults `true` / `AXES_SIZE` (`10`); clamp size to `1`–`50`
 2. Settings sidebar **General** section (above Animation) hosts checkbox + metres `Input` (`WorldAxesControls`) — not library sidebar or preview chrome
-3. General also hosts live editable **model root** X / Y / Z (`TransformReadout`) whenever a model is loaded — independent of Edit / Move (US-15)
+3. General also hosts live editable **model root** X / Y / Z (`TransformReadout`) whenever a model is loaded — independent of Edit / Move (US-15); with an active clip on the focused model, Save stores the value on that clip’s `rootPositionByModelId[modelId]`
 4. `ViewportCanvas` mounts `<WorldAxes axesSize={…} />` only when `axesVisible`; `WorldAxes` rebuilds tick geometry from `axesSize` at runtime (major/minor steps stay in `viewport/constants/world-axes`)
 5. Session-only — no persistence. Out of scope: ground-grid toggle, tick-step UI, unit system changes
 

@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber';
 import { useActiveModel } from '../hooks/use-active-model';
-import { $transformReadout } from '../stores/transform-readout-store';
+import { $transformReadout, syncTransformReadout } from '../stores/transform-readout-store';
 
 const PRECISION = 3;
 
@@ -11,7 +11,7 @@ export function TransformReadoutDriver() {
   useFrame(() => {
     if (!scene) {
       if ($transformReadout.get() !== null) {
-        $transformReadout.set(null);
+        syncTransformReadout(null);
       }
       return;
     }

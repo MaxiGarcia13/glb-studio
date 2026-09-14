@@ -35,8 +35,7 @@ export function useClipMixer(scene: Group | null, modelId: string): void {
   });
 
   const activeClipId
-    = (modelId ? (activeClipByModelId[modelId] ?? null) : null)
-      ?? activeSharedClipId;
+    = activeClipByModelId[modelId] ?? activeSharedClipId;
 
   const entry = clips.find((item) => item.id === activeClipId);
   // While blending, preview layers base + partner; the baked result lives on the entry.
@@ -46,12 +45,14 @@ export function useClipMixer(scene: Group | null, modelId: string): void {
       : isReadyClip(entry)
         ? entry.clip
         : null;
+  const rootPosition
+    = isReadyClip(entry) ? (entry.rootPositionByModelId[modelId] ?? null) : null;
 
   const blendEntry = clips.find((item) => item.id === blendClipId);
   const blendClip = isReadyClip(blendEntry) ? blendEntry.clip : null;
 
   useClipMixerMount(scene, activeClipId, modelId, mixerRef, actionRef, blendActionRef);
-  useClipMixerAction(clip, playing, loop, modelId, mixerRef, actionRef, scene);
+  useClipMixerAction(clip, rootPosition, playing, loop, modelId, mixerRef, actionRef, scene);
   useClipMixerBlend(blendClip, blendWeight, loop, modelId, mixerRef, blendActionRef, scene);
   useClipMixerFrame(mixerRef, clip?.duration ?? 0);
 }
