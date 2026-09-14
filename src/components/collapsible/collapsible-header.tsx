@@ -50,14 +50,14 @@ export function CollapsibleHeader({
         className,
       )}
     >
-      <span className="inline-flex h-7 w-4 shrink-0 items-center justify-center">
-        {showChevron && (
+      {showChevron && (
+        <span className="inline-flex h-7 w-4 shrink-0 items-center justify-center">
           <ChevronRight
             className={cn('transition-transform', open && 'rotate-90')}
             aria-hidden
           />
-        )}
-      </span>
+        </span>
+      )}
 
       <div className="flex min-h-7 flex-1 items-center gap-2 min-w-0">
         {title && (
