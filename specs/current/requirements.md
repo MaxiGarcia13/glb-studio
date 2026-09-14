@@ -4,7 +4,7 @@ Living product contract for the **GLB Character & Animation Editor**.
 
 ## Product summary
 
-Web editor with a full-screen 3D viewport and a collapsible sidebar. Users load one or more model GLBs (one previewed at a time), manage nested model-owned and shared animation clips, play and edit them (trim, speed, keyframes, weighted blend + bake, bind pose, whole-model move), and download a zip of per-model GLBs plus animation-only files.
+Web editor with a full-screen 3D viewport and a collapsible sidebar. Users load one or more model GLBs (several can be previewed at once), manage nested model-owned and shared animation clips, play and edit them (trim, speed, keyframes, weighted blend + bake, bind pose, whole-model move), and download a zip of per-model GLBs plus animation-only files.
 
 **Stack:** Astro shell + React island; React Three Fiber + drei + Three.js.
 
@@ -74,15 +74,15 @@ As an editor user, I can download a zip of each model and of each animation as s
 
 ### US-11 — Model library
 
-As an editor user, I can keep several character GLBs in the session and choose which one the viewport shows.
+As an editor user, I can keep several character GLBs in the session and choose which ones the viewport shows.
 
 **Acceptance**
 
 - [x] User can upload multiple `.glb` / `.gltf` files that each contain a skinned mesh and skeleton; they populate a model library
 - [x] Sidebar library lists each model nested under **Models** with iconized Replace / Remove / Rename (and Animation / Retarget when applicable — US-19)
-- [x] Exactly one model is **previewed** at a time; switching it swaps the viewport graph, re-frames the camera, rebinds the mixer, and re-validates clips (owned vs shared rules — US-19)
-- [x] Removing the previewed model selects another loaded model, or empty state if none remain; removing a model deletes its owned clips
-- [x] Clip import still requires a previewed model
+- [x] Multiple models can be **previewed** at once (US-20); one model is **focused** (`activeModelId`) for gizmo, transport, and Settings XYZ
+- [x] Removing a model deletes its owned clips; if it was focused, focus moves to another previewed model, or empty state if none remain
+- [x] Owned clip import still requires a model in context; Shared Upload does not (US-19)
 
 ### US-13 — Selection name overlay
 
@@ -226,9 +226,22 @@ As an editor user, I manage models and animations in a nested library: each mode
 - [x] Removing a model deletes its owned clips
 - [x] **Retarget → This model:** shared/other source → new remapped ready owned clip (same name, source kept); owned-by-target source → remap in place
 - [x] **Retarget → All models:** remap shared clip in place; normalize bones on models that can resolve; **partial success** — incompatible models stay conflicted (no fail-entire-apply)
-- [x] Conflict (skeleton mismatch) surfaces as Needs retarget / amber treatment relative to the model in context (previewed for Shared; that model for owned rows), except when that model already owns a ready clip with the same name
+- [x] Conflict (skeleton mismatch) surfaces as Needs retarget / amber treatment relative to the model in context (focused for Shared; that model for owned rows), except when that model already owns a ready clip with the same name
 - [x] Model-header Retarget enabled when any clip is conflicted for that model; with multiple conflicts, modal opens a **clip picker step** before the bone map; clip-row Retarget skips the picker
 - [x] Export per model packs that model’s owned clips + shared clips that validate for it; skips conflicted shared
+
+### US-20 — Multi-model preview + per-model clips
+
+As an editor user, I can preview two or more models at once, each playing a different owned animation; selecting a shared animation plays that clip on models that lack a same-name owned ready clip, and those models’ own same-name clip otherwise.
+
+**Acceptance**
+
+- [x] Viewport can show more than one loaded model at a time (eye toggle; new loads join the preview; camera frames the combined bounds)
+- [x] Each model can have its own selected **owned** clip playing
+- [x] Selecting a **shared** clip clears per-model owned selections; each model plays that shared clip **unless** it already owns a ready clip with the same display name (then it plays the owned one)
+- [x] Selecting an owned clip under a model does not clear other models’ owned selections
+- [x] Loading or selecting a model does **not** auto-select an animation (T-pose until the user picks a clip)
+- [x] Playback / mixer works per model (no single-mixer-only limitation for multi-model)
 
 ### US-16 — FBX import via convert API
 

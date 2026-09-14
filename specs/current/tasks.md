@@ -158,11 +158,20 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Retarget This model (shared → owned same-name copy; owned → in place) / All models (partial success); model-header multi-conflict picker; same-name ready owned suppresses shared Needs retarget
 - [x] Export: owned + validating shared; skip other-owned and conflicted shared
 
+## US-20 — Multi-model preview + clip select
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] `previewModelIds` + eye toggle; new loads join the preview; camera frames union AABB
+- [x] Selection: `activeSharedClipId` + `activeClipByModelId`; owned select is per-model; shared select clears per-model
+- [x] Shared playback: same-name ready owned override per model (`resolveActiveClipIdForModel`)
+- [x] Model load / select does not auto-select a clip
+- [x] Viewport renders multiple model scenes; one `AnimationMixer` per previewed model
+
 ## Open deltas
 
 | US                                            | Status                | Tasks                                       |
 | --------------------------------------------- | --------------------- | ------------------------------------------- |
-| **US-20** — Multi-model preview + clip select | not started           | [`specs/us-20/tasks.md`](../us-20/tasks.md) |
 | **US-8** — Morph-target editing               | post-MVP, not started | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 | **US-9** — Graph / curve keyframe UI          | post-MVP, not started | [`specs/us-9/tasks.md`](../us-9/tasks.md)   |
 | **US-10** — Full undo / redo                  | post-MVP, not started | [`specs/us-10/tasks.md`](../us-10/tasks.md) |

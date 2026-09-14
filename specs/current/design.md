@@ -24,24 +24,24 @@ flowchart LR
 
 | Asset              | Role                                                                                  |
 | ------------------ | ------------------------------------------------------------------------------------- |
-| Model GLB/GLTF     | Skinned mesh + skeleton; many in the session, **one** previewed in the viewport       |
+| Model GLB/GLTF     | Skinned mesh + skeleton; many in the session, **several** previewed at once (US-20)   |
 | Animation GLB/GLTF | Source of `AnimationClip`s only; mesh payload ignored or discarded after clip extract |
 | Model / clip FBX   | Converted to GLB via `POST /api/v1/fbx-to-glb`, then the same load path as above      |
 
-Clips have **ownership** (`ownerModelId`: `null` = Shared Animations; otherwise listed only under that model). Owned clips validate against their owner skeleton; shared clips validate against the model in context (previewed for Shared UI; a given model when checking that model’s conflicts / export). Mismatch → user-visible Needs retarget; explicit retarget flow (US-6 / US-19). Switching the previewed model re-validates shared clips against the new skeleton.
+Clips have **ownership** (`ownerModelId`: `null` = Shared Animations; otherwise listed only under that model). Owned clips validate against their owner skeleton; shared clips validate against the model in context (focused for Shared UI; a given model when checking that model’s conflicts / export). Mismatch → user-visible Needs retarget; explicit retarget flow (US-6 / US-19). Shared global status is not flipped when each mixer mounts; per-model fit is checked in the library UI.
 
-## Model load (US-11)
+## Model load (US-11 + US-20)
 
 1. User picks one or more `.glb` / `.gltf` / `.fbx` files (File API); `.fbx` converts first — see **FBX import** below
 2. Adapter parses each via imperative `GLTFLoader` and a blob URL (`viewport/adapters`)
 3. Validate skinned mesh + skeleton per file; else user-visible error and that file does not join the library
-4. Append successful loads to `models[]`. First successful load becomes `activeModelId` (previewed); later loads do not steal the preview
-5. Viewport mounts only the previewed model’s scene graph. Other library graphs stay in memory until Remove
-6. Replace updates that entry only (keep id). If it was previewed, swap the viewport graph and re-frame. Remove disposes that graph / blob URL; if it was previewed, select another loaded model or idle empty state
+4. Append successful loads to `models[]`. New loads join `previewModelIds` (visible by default). The last successful load in that batch becomes `activeModelId` (focused)
+5. Viewport mounts every previewed model’s scene graph (`ModelViewer` primitives). Hidden library graphs stay in memory until Remove. Eye toggle on a model row adds/removes that id from `previewModelIds`
+6. Replace updates that entry only (keep id). If it is previewed, swap that graph and re-frame the union of visible models. Remove disposes that graph / blob URL; if it was focused, focus another previewed model or idle empty state
 
-Empty overlay when idle; clear error copy on parse failure or missing skeleton. After a successful load **or preview switch**, camera frames the previewed model AABB from a fixed three-quarter elevated angle (`computeModelFraming` + `DEFAULT_VIEW_OFFSET` in `viewport/constants/camera.ts`; spacing in `viewport/domain/model-framing.ts`).
+Empty overlay when idle; clear error copy on parse failure or missing skeleton. After a successful load **or preview-set change**, camera frames the **union AABB** of visible scenes from a fixed three-quarter elevated angle (`computeScenesFraming` + `DEFAULT_VIEW_OFFSET` in `viewport/constants/camera.ts`; framing padding in `viewport/domain/model-framing.ts`). Scenes keep their own origins; place them with Move / Settings XYZ.
 
-Sidebar **Library** is nested (US-19): **Models** (upload) → each model collapsible (`ModelIcon` + Retarget / Animation / Edit / Replace / Remove) listing owned clips; sibling **Shared Animations** (`AnimationIcon` + Upload / New). Clip rows use `AnimationIcon` + iconized actions. Previewed model is distinct; selecting it sets `activeModelId`, rebinds the mixer, and calls `syncClipsToSkeleton`. Clicking the focused model again clears `activeModelId` (same toggle pattern as clips). Model remove deletes owned clips.
+Sidebar **Library** is nested (US-19): **Models** (upload) → each model collapsible (`ModelIcon` + eye preview + Retarget / Animation / Edit / Replace / Remove) listing owned clips; sibling **Shared Animations** (`AnimationIcon` + Upload / New). Clip rows use `AnimationIcon` + iconized actions. **Focus** (`activeModelId`) is distinct from preview membership: selecting a model name sets focus (and shows it if hidden); clicking the focused name again clears focus (same toggle pattern as clips). Gizmo, transport bar, and Settings XYZ target the focused model. Model remove deletes owned clips.
 
 Do not add a second debug canvas, FPS overlay render path, or smoke-test scene that bypasses the editor viewport lifecycle.
 
@@ -50,20 +50,21 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 1. `ClipEntry.ownerModelId: string | null` — `null` = Shared; otherwise only under that model
 2. Shared import / New → `null`; create / import / Add under a model → that model’s id; embedded model GLB clips register as owned **without** auto-selecting. Shared **Upload** does not require a loaded or selected model — successful shared imports stay `ready`; skeleton fit is contextual per model in the library UI / export
 3. **Add animation** modal (model-header Animation): Create new | Import | Add existing → owned clone (`cloneClipAs`); source unchanged
-4. Validation (`syncClipsToSkeleton`): owned vs owner skeleton; shared vs previewed (active) skeleton
+4. Validation (`syncClipsToSkeleton`): owned vs owner skeleton; shared mismatch is contextual per model in the library UI (focused model for Shared rows)
 5. Retarget scopes: **This model** on shared/other → new owned ready clip (same name), keep source; **This model** on owned-by-target → remap that entry in place; **All models** → remap shared in place, rename bones only on compatible models, leave incompatible conflicted (partial success). Remap keeps the clip name. A ready owned clip with the same name suppresses Needs-retarget for a mismatched shared clip on that model
 6. Export: per-model GLB = owned ready + validating shared; animation-only zip entries = shared working clips only
 
 ## Playback
 
-- One `AnimationMixer` rooted on the model scene graph (per previewed model)
-- Primary action = active clip for that model (or `blendBaseClip` while a blend partner is selected); optional secondary blend action for the partner clip
-- Per-model clip resolution: explicit `activeClipByModelId[modelId]` wins; else if `activeSharedClipId` is set, that model plays its **ready owned** clip with the **same display name** when one exists, otherwise the shared clip
+- One `AnimationMixer` per previewed model (`ClipMixerDriver` → `useClipMixer` per `modelId`; sessions keyed in `mixer-session`)
+- Primary action = resolved clip for that model (or `blendBaseClip` while a blend partner is selected); optional secondary blend action for the partner clip
+- Selection: owned clip under model M sets `activeClipByModelId[M]` and leaves other models’ owned selections, clearing `activeSharedClipId`; shared clip sets `activeSharedClipId` and clears all `activeClipByModelId`
+- Per-model clip resolution (`resolveActiveClipIdForModel`): explicit `activeClipByModelId[modelId]` wins; else if `activeSharedClipId` is set, that model plays its **ready owned** clip with the **same display name** when one exists, otherwise the shared clip
 - Loading or focusing a model does **not** auto-select a clip (T-pose until the user picks one). Embedded GLB clips register as owned without calling `selectClip`
 - Live blend weights snap via `setEffectiveWeight` (not `crossFadeTo`)
-- Scrubber sets mixer time; Play/Pause/Stop and loop map to action / mixer APIs
-- Speed: per-clip `timeScale` on the library entry; live playback applies the **active** clip’s scale via `mixer.timeScale`
-- Switching active clip stops the previous action(s) and plays the new one; clearing selection (**T-pose**) restores the captured rest / bind pose (not the last animated frame)
+- Play/Pause is a global `$clips.playing` flag that advances every previewed mixer; Stop / scrubber / timeScale target the **focused** model’s session
+- Speed: per-clip `timeScale` on the library entry; live playback applies that clip’s scale via `mixer.timeScale` on the focused session
+- Switching a model’s clip stops that model’s previous action(s) and plays the new one; clearing selection (**T-pose**) restores that model’s captured rest / bind pose (not the last animated frame)
 
 ## Animation library authorship (US-7)
 
@@ -79,7 +80,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 
 1. User selects one or more `.glb` / `.gltf` / `.fbx` files; adapter loads each and collects `animations` into library entries (stable id + display name + clip) — file meshes are never shown. `.fbx` converts first — see **FBX import** below
 2. Validate each clip's track targets against the loaded character node/skeleton map; missing/unknown bones → the entry is marked errored with user-visible copy (no silent remap; no automatic vendor prefix rewriting in playback)
-3. Re-validate entries when the previewed model changes, is replaced, or is removed so stale clips are never silently played on a mismatched rig (`syncClipsToSkeleton`)
+3. Re-validate owned entries when a model is replaced or removed so stale clips are never silently played on a mismatched rig (`syncClipsToSkeleton`)
 4. Sidebar lists clips under their owner model or Shared Animations with Replace / Remove / Rename (iconized). Replace re-picks one file and updates **that** entry only (first clip in the file; keep the entry id and `ownerModelId`). Remove drops the entry; if it was active, select the next ready clip or clear selection. Errored clips that still have a working `AnimationClip` offer **Retarget**
 5. Active clip is chosen from the library list (US-7). Preview chrome owns Play / Pause / Stop / loop and the scrubber; those stay disabled until a valid clip is selected for that skeleton. Clicking the selected row again clears to T-pose
 6. Preview layout: viewport fills remaining height (`flex-1 min-h-0`); playback bar is a shrink-to-content footer under the canvas (not a fixed magic height overlapping the scene)
