@@ -5,11 +5,11 @@ import { captureBindLengths } from '@/modules/animation/domain/bone-registry';
 import { buildSkeletonNodeSet, validateClipAgainstSkeleton } from '@/modules/animation/domain/clip-validate';
 import { $clips } from '../store';
 import { nextClipId, toEntry } from '../utils';
-import { selectClip } from './select-clip';
 
 /**
  * Register already-parsed clips under a model (e.g. embedded GLB animations).
  * Skips clips whose name is already owned by that model.
+ * Does not auto-select — model load/select leaves T-pose until the user picks a clip.
  */
 export function importClipsFromAnimations(
   animations: AnimationClip[],
@@ -56,12 +56,4 @@ export function importClipsFromAnimations(
   }
 
   $clips.setKey('clips', [...$clips.get().clips, ...entries]);
-
-  const state = $clips.get();
-  if (!state.activeClipId) {
-    const firstReady = entries.find((entry) => entry.status === 'ready');
-    if (firstReady) {
-      selectClip(firstReady.id);
-    }
-  }
 }

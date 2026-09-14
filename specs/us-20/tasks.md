@@ -11,6 +11,8 @@ Do not start until US-19 ships (or both are explicitly kicked off). Tick only af
 
 - [ ] Selection state: `activeSharedClipId` + `activeClipByModelId`
 - [ ] Shared select clears per-model selections; owned select is per-model
+- [x] Shared playback: same-name ready owned override per model (`resolveActiveClipIdForModel`)
+- [x] Model load / select does not auto-select a clip
 - [ ] Viewport renders multiple model scenes (spaced)
 - [ ] Mixer / playback per model
 - [ ] Library row selection wired to new selection model

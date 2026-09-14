@@ -24,9 +24,10 @@ function applySharedSelection(target: ClipEntry & { clip: AnimationClip }): void
 }
 
 /**
- * Library list selection (same pattern as models). A shared clip broadcasts to
- * all models and clears per-model owned selections; an owned clip selects only
- * the owning model.
+ * Library list selection (same pattern as models). A shared clip sets
+ * `activeSharedClipId` and clears per-model owned selections; playback may still
+ * use a same-name ready owned clip per model (`resolveActiveClipIdForModel`).
+ * An owned clip selects only the owning model and clears shared selection.
  */
 export function selectClip(id: string, modelId?: string): void {
   if (!id) {

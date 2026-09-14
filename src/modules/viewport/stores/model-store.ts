@@ -102,7 +102,8 @@ export function focusModel(modelId: string): void {
   $model.setKey('activeModelId', modelId);
 }
 
-/** Focus a model from the library; shows it in the viewport if it was hidden.
+/**
+ * Focus a model from the library; shows it in the viewport if it was hidden.
  * Clicking the already-focused model clears focus (same pattern as clip rows).
  */
 export function selectModel(modelId: string): void {

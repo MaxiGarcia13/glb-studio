@@ -8,13 +8,15 @@ Multi-model simultaneous preview and per-model vs shared clip selection. Builds 
 
 Replace single `activeClipId` with:
 
-- `activeSharedClipId: string | null` — when set, that shared clip drives **all** models; clear `activeClipByModelId`
+- `activeSharedClipId: string | null` — when set, shared selection is active; clear `activeClipByModelId`
 - `activeClipByModelId: Record<string, string | null>` — per-model owned clip when no shared clip is active
 
 Rules:
 
-- Select owned clip under model M → set `activeClipByModelId[M]`; leave other models’ selections
+- Select owned clip under model M → set `activeClipByModelId[M]`; leave other models’ selections; clear `activeSharedClipId`
 - Select shared clip → set `activeSharedClipId`, clear all `activeClipByModelId`
+- Playback resolve per model: explicit owned selection, else same-name ready owned override of the shared clip, else the shared clip
+- Loading / selecting a model does not auto-select a clip
 
 ## Viewport / mixer
 

@@ -1,6 +1,7 @@
 import type { AnimationAction, AnimationMixer, Group } from 'three';
 import { useStore } from '@nanostores/react';
 import { useRef } from 'react';
+import { resolveActiveClipIdForModel } from '@/modules/animation/domain/resolve-active-clip';
 import { $clips, isReadyClip } from '@/modules/animation/stores/clip-store';
 import { useClipMixerAction } from './use-clip-mixer-action';
 import { useClipMixerBlend } from './use-clip-mixer-blend';
@@ -34,8 +35,12 @@ export function useClipMixer(scene: Group | null, modelId: string): void {
     ],
   });
 
-  const activeClipId
-    = activeClipByModelId[modelId] ?? activeSharedClipId;
+  const activeClipId = resolveActiveClipIdForModel(
+    clips,
+    modelId,
+    activeClipByModelId,
+    activeSharedClipId,
+  );
 
   const entry = clips.find((item) => item.id === activeClipId);
   // While blending, preview layers base + partner; the baked result lives on the entry.

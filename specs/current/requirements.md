@@ -30,6 +30,8 @@ As an editor user, I can import animation files into a clip library and play the
 - [x] User can upload multiple separate `.glb` / `.gltf` files; their clips populate an animation library
 - [x] Sidebar library lists each clip with Replace (re-pick file for that entry) and Remove
 - [x] Active clip is selected from the Animations library list (same pattern as models); clicking the selected clip again clears to T-pose / bind pose when a model is loaded
+- [x] Loading or selecting a model does **not** auto-select an animation (embedded clips register as owned; T-pose until the user picks a clip)
+- [x] When a **shared** clip is selected, each previewed model plays that shared clip unless it owns a **ready** clip with the same display name — then it plays the owned clip
 - [x] Playback controls: Play, Pause, Stop, loop toggle
 - [x] Timeline scrubber stays tied to `THREE.AnimationMixer` time
 - [x] Clips that do not match the character skeleton (missing tracks / unknown bones) show a user-visible error — no silent retargeting

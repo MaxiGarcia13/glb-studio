@@ -6,9 +6,9 @@ import { DotsVerticalIcon } from '@/components/icons/dots-vertical-icon';
 import { Text } from '@/components/text';
 
 interface ActionMenuProps {
-  items: ActionMenuItem[];
+  'items': ActionMenuItem[];
   'aria-label'?: string;
-  className?: string;
+  'className'?: string;
 }
 
 export function ActionMenu({

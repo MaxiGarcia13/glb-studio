@@ -3,6 +3,7 @@ import {
   rebaseClipNode,
 } from '@/modules/animation/domain/bind-pose-rebase';
 import { writeNodeKeyframe } from '@/modules/animation/domain/keyframe-write';
+import { resolveActiveClipIdForModel } from '@/modules/animation/domain/resolve-active-clip';
 import {
   applySceneRootPosition,
   refreshRestPoseNode,
@@ -56,12 +57,17 @@ function commitBindPoseToClips(nodeName: string): void {
   $clips.set({ ...state, clips });
 }
 
-/** Clip currently driving this model (owned selection, else shared). */
+/** Clip currently driving this model (owned selection, else shared / same-name override). */
 function clipIdForModel(
   state: ReturnType<typeof $clips.get>,
   modelId: string,
 ): string | null {
-  return state.activeClipByModelId[modelId] ?? state.activeSharedClipId;
+  return resolveActiveClipIdForModel(
+    state.clips,
+    modelId,
+    state.activeClipByModelId,
+    state.activeSharedClipId,
+  );
 }
 
 export function saveKeyframe(options?: { holdToEnd?: boolean }): void {

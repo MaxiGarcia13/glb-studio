@@ -27,21 +27,21 @@ export function AssetEntryActions({
   const items: ActionMenuItem[] = [
     ...(primaryAction
       ? [{
-          id: primaryAction.id ?? 'primary',
-          label: primaryAction.label,
-          icon: primaryAction.icon,
-          disabled: primaryAction.disabled,
-          danger: primaryAction.danger,
-          onSelect: primaryAction.onSelect,
-        } satisfies ActionMenuItem]
+        id: primaryAction.id ?? 'primary',
+        label: primaryAction.label,
+        icon: primaryAction.icon,
+        disabled: primaryAction.disabled,
+        danger: primaryAction.danger,
+        onSelect: primaryAction.onSelect,
+      } satisfies ActionMenuItem]
       : []),
     ...(canRename && !editing
       ? [{
-          id: 'rename',
-          label: 'Rename',
-          icon: <EditIcon />,
-          onSelect: onStartRename,
-        } satisfies ActionMenuItem]
+        id: 'rename',
+        label: 'Rename',
+        icon: <EditIcon />,
+        onSelect: onStartRename,
+      } satisfies ActionMenuItem]
       : []),
     {
       id: 'replace',

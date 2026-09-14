@@ -41,7 +41,10 @@ export function LibraryModelTitle({
           </Text>
         </button>
 
-        <LibraryModelPreviewButton modelId={modelId} className="p-1" />      </div>
+        <LibraryModelPreviewButton modelId={modelId} className="p-1" />
+        {' '}
+
+      </div>
     );
   }
 
