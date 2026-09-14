@@ -12,6 +12,7 @@ Tick only after acceptance.
 - [x] Move: honor `$transformMode`; show toolbar + hotkeys without selection
 - [x] Settings: rotation XYZ inputs (0–360°) + sync / apply
 - [x] `rootRotationByModelId` on clip entries; Save / apply / mixer wiring
+- [x] Load-time `hoistRootTransform` so Settings fills from authored wrapper TRS
 
 ## Verify
 

@@ -16,6 +16,7 @@ As an editor user, when Move is selected I can translate, rotate, and scale the 
 - [x] **Save (no active clip):** commits model-root TRS (including rotation) as the rest / bind root
 - [x] **Save (active ready/draft clip on that model):** stores root position **and** rotation on that clip for that model (`rootPositionByModelId` + `rootRotationByModelId`); seeks to t=0; does not refresh the T-pose rest root
 - [x] **Selecting a clip** applies that clip’s stored root position and rotation for the playing model (or rest root when unset)
+- [x] On model load / replace, authored root TRS on single-child GLTF wrappers is hoisted onto `gltf.scene` so Settings rotation / position reflect the loaded orientation
 
 ## Out of scope for this delta
 

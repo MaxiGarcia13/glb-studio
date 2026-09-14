@@ -175,6 +175,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Move: translate / rotate / scale on model root; toolbar + W / E / R while Move active
 - [x] Settings rotation XYZ (0–360°) + sync from loaded root
 - [x] `rootRotationByModelId` Save / apply / mixer wiring
+- [x] Load-time hoist of wrapper TRS onto `gltf.scene`
 
 ## Open deltas
 

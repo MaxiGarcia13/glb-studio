@@ -11,6 +11,7 @@ Extend US-15 Move / Settings root placement from translation-only to full model-
 3. **Clip metadata** — `ClipEntry.rootRotationByModelId: Record<modelId, [x, y, z]>` degrees; missing key → rest-pose root rotation
 4. **Apply** — `applySceneRootTransform(root, position, rotation)` sets position and/or rotation from clip overrides, else restores each from rest pose independently
 5. **Save** — model-root + ready clip writes both `rootPositionByModelId` and `rootRotationByModelId`; no-clip path still `refreshRestPoseNode` (full TRS including scale from gizmo)
+6. **Load hoist** — after GLTF parse, `hoistRootTransform(gltf.scene)` promotes single-child wrapper TRS onto the scene root (compose child matrix, peel identity wrappers) so Settings / Move read the authored orientation
 
 ## Non-goals
 

@@ -3,6 +3,7 @@ import type * as THREE from 'three';
 import type { ModelLoadResult } from '../types/model';
 import { ensureGltfFile } from '@/modules/import/services/ensure-gltf-file';
 import { parseGltfFile } from '@/utils/glb-parse';
+import { hoistRootTransform } from '../domain/hoist-root-transform';
 
 function validateScene(scene: THREE.Group): void {
   let hasSkinnedMesh = false;
@@ -36,6 +37,10 @@ export async function loadModelFromFile(file: File): Promise<ModelLoadResult> {
     URL.revokeObjectURL(blobUrl);
     throw error;
   }
+
+  // GLTF often keeps orientation on a child / wrapper while gltf.scene is identity.
+  // Hoist onto the scene root so Settings + Move match the visible model.
+  hoistRootTransform(gltf.scene);
 
   return {
     fileName: gltfFile.name,

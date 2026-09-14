@@ -200,9 +200,10 @@ As an editor user, when Move is selected I can rotate and scale the whole model,
 **Acceptance**
 
 - [x] **Move** supports translate / rotate / scale on the model root (world); W / E / R toolbar visible while Move is active
-- [x] Settings shows live editable **rotation X / Y / Z** (degrees, 0–360) for the model root when a model is loaded; values reflect the scene root on load / focus
+- [x] Settings shows live editable **rotation X / Y / Z** (degrees, 0–360) for the model root when a model is loaded; values reflect the scene root on load / focus (after hoist of single-child wrapper TRS onto `gltf.scene`)
 - [x] Rotation edits mark dirty as model-root and share Save / Restore with Move / position XYZ
 - [x] Save with no clip commits root TRS to rest pose; Save with an active clip stores position + rotation on that clip per model; selecting the clip reapplies them
+- [x] On load / replace, `hoistRootTransform` promotes authored wrapper TRS onto the editable scene root
 
 ### US-7 — Multi-clip blending
 
