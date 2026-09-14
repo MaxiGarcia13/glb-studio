@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useAssetEntryRename } from '@/components/asset-entry/use-asset-entry-rename';
 import { useGltfFilePicker } from '@/components/gltf-file-picker/use-gltf-file-picker';
 import { ClipRows } from '@/modules/animation/components/clip-rows';
+import { modelHasReadyOwnedClipNamed } from '@/modules/animation/domain/clip-conflict';
 import {
   buildSkeletonNodeSet,
   validateClipAgainstSkeleton,
@@ -27,32 +28,29 @@ interface LibraryModelProps {
 }
 
 export function LibraryModel({ model }: LibraryModelProps) {
-  const { clips, activeSharedClipId, activeClipByModelId } = useStore($clips, {
-    keys: ['clips', 'activeSharedClipId', 'activeClipByModelId'],
+  const { clips } = useStore($clips, {
+    keys: ['clips'],
   });
   const { activeModelId } = useStore($model, { keys: ['activeModelId'] });
   const focused = model.id === activeModelId;
   const [addAnimationOpen, setAddAnimationOpen] = useState(false);
   const ownedClips = clips.filter((entry) => entry.ownerModelId === model.id);
   const nodeNames = buildSkeletonNodeSet(model.scene);
-  const conflictedClips = clips.filter((entry) => {
+  const conflictedClipIds = clips.flatMap((entry) => {
     if (!entry.clip) {
-      return false;
+      return [];
     }
     if (entry.ownerModelId === model.id) {
-      return entry.status === 'error';
+      return entry.status === 'error' ? [entry.id] : [];
     }
     if (entry.ownerModelId !== null) {
-      return false;
+      return [];
     }
-    return !validateClipAgainstSkeleton(entry.clip, nodeNames).valid;
+    if (modelHasReadyOwnedClipNamed(clips, model.id, entry.name)) {
+      return [];
+    }
+    return validateClipAgainstSkeleton(entry.clip, nodeNames).valid ? [] : [entry.id];
   });
-  const selectedConflictedClip = conflictedClips.find(
-    (entry) =>
-      entry.id === activeSharedClipId
-      || entry.id === (activeClipByModelId[model.id] ?? null),
-  );
-  const firstConflictedClip = conflictedClips[0];
 
   const rename = useAssetEntryRename({
     label: model.fileName,
@@ -86,7 +84,7 @@ export function LibraryModel({ model }: LibraryModelProps) {
         actions={(
           <LibraryModelActions
             modelId={model.id}
-            conflictedClipId={selectedConflictedClip?.id ?? firstConflictedClip?.id ?? null}
+            conflictedClipIds={conflictedClipIds}
             onAddAnimation={() => setAddAnimationOpen(true)}
             onRename={rename.startEditing}
             onReplace={() => openReplace()}

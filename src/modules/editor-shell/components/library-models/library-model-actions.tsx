@@ -6,11 +6,11 @@ import { EditIcon } from '@/components/icons/edit-icon';
 import { ReplaceIcon } from '@/components/icons/replace-icon';
 import { RetargetIcon } from '@/components/icons/retarget-icon';
 import { TrashIcon } from '@/components/icons/trash-icon';
-import { openRetarget } from '@/modules/animation/stores/retarget-ui-store';
+import { openRetargetForModel } from '@/modules/animation/stores/retarget-ui-store';
 
 interface LibraryModelActionsProps {
   modelId: string;
-  conflictedClipId: string | null;
+  conflictedClipIds: string[];
   onAddAnimation: () => void;
   onRename: () => void;
   onReplace: () => void;
@@ -19,7 +19,7 @@ interface LibraryModelActionsProps {
 
 export function LibraryModelActions({
   modelId,
-  conflictedClipId,
+  conflictedClipIds,
   onAddAnimation,
   onRename,
   onReplace,
@@ -28,13 +28,13 @@ export function LibraryModelActions({
   const { setOpen } = useCollapsible();
 
   const items: ActionMenuItem[] = [
-    ...(conflictedClipId !== null
+    ...(conflictedClipIds.length > 0
       ? [{
-          id: 'retarget',
-          label: 'Retarget clips',
-          icon: <RetargetIcon />,
-          onSelect: () => openRetarget(conflictedClipId, modelId),
-        } satisfies ActionMenuItem]
+        id: 'retarget',
+        label: 'Retarget clips',
+        icon: <RetargetIcon />,
+        onSelect: () => openRetargetForModel(modelId, conflictedClipIds),
+      } satisfies ActionMenuItem]
       : []),
     {
       id: 'add-animation',

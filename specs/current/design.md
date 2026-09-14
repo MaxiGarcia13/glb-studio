@@ -51,7 +51,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 2. Shared import / New → `null`; create / import / Add under a model → that model’s id; embedded model GLB clips register as owned
 3. **Add animation** modal (model-header Animation): Create new | Import | Add existing → owned clone (`cloneClipAs`); source unchanged
 4. Validation (`syncClipsToSkeleton`): owned vs owner skeleton; shared vs previewed (active) skeleton
-5. Retarget scopes: **This model** → new owned ready clip, keep shared original; **All models** → remap shared in place, rename bones only on compatible models, leave incompatible conflicted (partial success)
+5. Retarget scopes: **This model** on shared/other → new owned ready clip (same name), keep source; **This model** on owned-by-target → remap that entry in place; **All models** → remap shared in place, rename bones only on compatible models, leave incompatible conflicted (partial success). Remap keeps the clip name. A ready owned clip with the same name suppresses Needs-retarget for a mismatched shared clip on that model
 6. Export: per-model GLB = owned ready + validating shared; animation-only zip entries = shared working clips only
 
 ## Playback
@@ -85,11 +85,11 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 ## Cross-rig retargeting (US-6)
 
 1. Detect mismatch (unknown track targets vs character bone names) — same US-2 validation path
-2. Library **Retarget** on errored clips opens a **modal** (`$retargetClipId`); Settings aside stays available; Cancel / overlay / Escape closes
-3. Mapping UI: clip bone → character bone, with registry suggestions, mapped / will-skip status, progress, and “show unmapped only”. Leave blank to skip (drop those tracks). UI shows short vendor labels (e.g. `Hips`); hover/`title` keeps the raw id. Mapping values and remapped tracks always use real bone names
+2. Library **Retarget** on errored clips opens a **modal** (`$retargetClipId`); Settings aside stays available; Cancel / overlay / Escape closes. Model-header Retarget with **multiple** conflicted clips sets `$retargetCandidateIds` and shows a **picker step** before the bone map; a single candidate or clip-row Retarget goes straight to mapping
+3. Mapping UI: clip bone → character bone, with registry suggestions, mapped / will-skip status, progress, and “show unmapped only”. Leave blank to skip (drop those tracks). UI shows short vendor labels (e.g. `Hips`); hover/`title` keeps the raw id. Mapping values and remapped tracks always use real bone names. Remapped clips keep the source display / `AnimationClip` name (no `(retargeted)` suffix)
 4. Target dropdown lists **skeleton bones only** (not meshes / scene roots)
 5. Apply scope (explicit):
-   - **This model** — new ready clip owned by the previewed model; **keep** the shared source clip
+   - **This model** — if the source is owned by the target model, remap that entry in place to ready; otherwise create a new ready owned clip with the **same name** and **keep** the shared/other source
    - **All models** — remap the shared clip in place and **normalize bone names only on models that resolve the map**; incompatible models stay conflicted for that clip (partial success — no whole-apply failure)
 6. Unmapped source bones are **skipped** on Apply (their tracks are omitted from the remapped clip). Apply requires at least one mapped bone; other failures leave a clear error and do not corrupt pose
 7. After a successful remap, apply the previewed model’s accumulated **bind-pose deltas** to the remapped tracks — mismatched imports cannot rebase on import because track names still use the source rig

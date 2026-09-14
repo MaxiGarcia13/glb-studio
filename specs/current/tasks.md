@@ -100,7 +100,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 **Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
 
 - [x] Bone / track alias registry + vendor adapters (`bone-vendors/`); suggestions only — Apply required
-- [x] Retarget modal + mapping UI; This model | All models apply scope
+- [x] Retarget modal + mapping UI; This model (shared → owned copy / owned → in place) | All models apply scope; keep clip name; model-header conflict picker
 - [x] Clip remap → playable working clip; unmapped bones drop tracks; empty map errors without corrupting pose
 - [x] Library Retarget on mismatched clips (including after previewed-model switch)
 
@@ -155,7 +155,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 - [x] `ownerModelId` on clips; Shared vs model-owned import / create / clone
 - [x] Nested Models + Shared Animations UI with iconized actions
-- [x] Retarget This model (owned clone) / All models (partial success)
+- [x] Retarget This model (shared → owned same-name copy; owned → in place) / All models (partial success); model-header multi-conflict picker; same-name ready owned suppresses shared Needs retarget
 - [x] Export: owned + validating shared; skip other-owned and conflicted shared
 
 ## Open deltas

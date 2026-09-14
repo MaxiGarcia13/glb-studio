@@ -5,6 +5,7 @@ import { AssetEntry } from '@/components/asset-entry';
 import { useGltfFilePicker } from '@/components/gltf-file-picker/use-gltf-file-picker';
 import { AnimationIcon } from '@/components/icons/animation-icon';
 import { RetargetIcon } from '@/components/icons/retarget-icon';
+import { modelHasReadyOwnedClipNamed } from '@/modules/animation/domain/clip-conflict';
 import {
   buildSkeletonNodeSet,
   validateClipAgainstSkeleton,
@@ -30,8 +31,16 @@ interface ClipRowsProps {
 function sharedConflictError(
   entry: ClipEntry,
   nodeNames: Set<string> | null,
+  clips: ClipEntry[],
+  activeModelId: string | null,
 ): string | null {
   if (!nodeNames || !entry.clip || entry.status === 'error') {
+    return null;
+  }
+  if (
+    activeModelId
+    && modelHasReadyOwnedClipNamed(clips, activeModelId, entry.name)
+  ) {
     return null;
   }
   const result = validateClipAgainstSkeleton(entry.clip, nodeNames);
@@ -39,8 +48,8 @@ function sharedConflictError(
 }
 
 export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
-  const { activeSharedClipId, activeClipByModelId, blendClipId } = useStore($clips, {
-    keys: ['activeSharedClipId', 'activeClipByModelId', 'blendClipId'],
+  const { clips: allClips, activeSharedClipId, activeClipByModelId, blendClipId } = useStore($clips, {
+    keys: ['clips', 'activeSharedClipId', 'activeClipByModelId', 'blendClipId'],
   });
   const retargetClipId = useStore($retargetClipId);
   const { activeModelId } = useStore($model, { keys: ['activeModelId'] });
@@ -75,7 +84,7 @@ export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
 
       {clips.map((entry) => {
         const contextError = isSharedList
-          ? sharedConflictError(entry, activeNodeNames)
+          ? sharedConflictError(entry, activeNodeNames, allClips, activeModelId)
           : null;
         const isError = entry.status === 'error' || contextError !== null;
         const errorMessage = entry.status === 'error' ? entry.error : contextError;

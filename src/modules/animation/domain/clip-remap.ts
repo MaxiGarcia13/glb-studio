@@ -102,7 +102,7 @@ export function remapClipTracks(
   }
 
   const clip = new THREE.AnimationClip(
-    `${sourceClip.name} (retargeted)`,
+    sourceClip.name,
     sourceClip.duration,
     tracks,
   );

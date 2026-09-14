@@ -1,5 +1,9 @@
 import type { ClipLibraryState } from '@/modules/animation/types/clip';
-import { $retargetClipId, closeRetarget } from '@/modules/animation/stores/retarget-ui-store';
+import {
+  $retargetCandidateIds,
+  $retargetClipId,
+  closeRetarget,
+} from '@/modules/animation/stores/retarget-ui-store';
 import { $clips } from '../store';
 import { isReadyClip } from '../utils';
 import { selectClip } from './select-clip';
@@ -13,6 +17,16 @@ export function removeClip(id: string): void {
 
   if ($retargetClipId.get() === id) {
     closeRetarget();
+  } else {
+    const candidates = $retargetCandidateIds.get();
+    if (candidates?.includes(id)) {
+      const remaining = candidates.filter((candidateId) => candidateId !== id);
+      if (remaining.length === 0) {
+        closeRetarget();
+      } else {
+        $retargetCandidateIds.set(remaining);
+      }
+    }
   }
 
   const wasActive = state.activeClipId === id;

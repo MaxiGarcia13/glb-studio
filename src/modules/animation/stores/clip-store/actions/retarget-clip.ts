@@ -1,6 +1,6 @@
 import type { Object3D } from 'three';
 import type { RemapClipOptions } from '@/modules/animation/domain/clip-remap';
-import type { BoneBindFrame } from '@/modules/animation/types/clip';
+import type { BoneBindFrame, ClipEntry } from '@/modules/animation/types/clip';
 
 import { captureBindFrames } from '@/modules/animation/domain/bind-frame';
 import { computePositionScaleRatio } from '@/modules/animation/domain/bind-length-ratio';
@@ -94,6 +94,140 @@ function buildRemapOptionsOrFail(
   return { options };
 }
 
+function remapSourceOrFail(
+  source: ClipEntry,
+  mapping: Map<string, string>,
+  targetScene: Object3D | null,
+): { clip: NonNullable<ClipEntry['clip']> } | { error: string } {
+  if (!source.clip) {
+    return { error: 'Clip not found' };
+  }
+
+  const scale = computeScaleOrFail(source.sourceBindLengths, mapping, targetScene);
+  if ('error' in scale) {
+    return { error: scale.error };
+  }
+
+  const remapOpts = buildRemapOptionsOrFail(
+    mapping,
+    source.sourceBindFrames ?? {},
+    targetScene,
+    scale.ratio,
+    source.clip,
+  );
+  if ('error' in remapOpts) {
+    return { error: remapOpts.error };
+  }
+
+  const result = remapClipTracks(source.clip, mapping, remapOpts.options);
+  if (!result.clip || result.error) {
+    return { error: result.error ?? 'Remap failed' };
+  }
+
+  return { clip: result.clip };
+}
+
+function commitRetargetedClip(
+  remapped: ClipEntry,
+  targetModelId: string | null,
+): void {
+  const duration = remapped.clip?.duration ?? 0;
+  const state = $clips.get();
+  $clips.set({
+    ...state,
+    clips: state.clips.map((entry) => (entry.id === remapped.id ? remapped : entry)),
+    activeClipId: remapped.id,
+    activeSharedClipId: remapped.ownerModelId === null ? remapped.id : null,
+    activeClipByModelId: targetModelId
+      ? {
+          ...state.activeClipByModelId,
+          [targetModelId]: remapped.id,
+        }
+      : state.activeClipByModelId,
+    playing: false,
+    duration,
+    trimStart: 0,
+    trimEnd: duration,
+  });
+  setMixerTime(0);
+  setMixerTimeScale(remapped.timeScale);
+}
+
+function retargetActiveInPlace(
+  source: ClipEntry,
+  mapping: Map<string, string>,
+  targetScene: Object3D | null,
+  targetModelId: string,
+): RetargetClipResult {
+  const remappedClip = remapSourceOrFail(source, mapping, targetScene);
+  if ('error' in remappedClip) {
+    return { clipId: null, error: remappedClip.error };
+  }
+
+  const remapped = applyActiveModelBindOverrides({
+    ...source,
+    name: source.name,
+    clip: remappedClip.clip,
+    sourceClip: remappedClip.clip,
+    status: 'ready' as const,
+    error: null,
+  }, targetModelId);
+
+  commitRetargetedClip(remapped, targetModelId);
+  syncClipsToSkeleton(targetScene);
+  return { clipId: remapped.id, error: null };
+}
+
+function retargetActiveAsOwnedCopy(
+  source: ClipEntry,
+  mapping: Map<string, string>,
+  targetScene: Object3D | null,
+  targetModelId: string,
+): RetargetClipResult {
+  const remappedClip = remapSourceOrFail(source, mapping, targetScene);
+  if ('error' in remappedClip) {
+    return { clipId: null, error: remappedClip.error };
+  }
+
+  const newId = nextClipId();
+  const newEntry = applyActiveModelBindOverrides({
+    id: `${newId}-${source.name}`,
+    name: source.name,
+    sourceFile: source.sourceFile,
+    clip: remappedClip.clip,
+    sourceClip: remappedClip.clip,
+    status: 'ready' as const,
+    error: null,
+    timeScale: source.timeScale,
+    sourceBindLengths: source.sourceBindLengths ?? {},
+    sourceBindFrames: source.sourceBindFrames ?? {},
+    ownerModelId: targetModelId,
+    rootPositionByModelId: {},
+  }, targetModelId);
+
+  const state = $clips.get();
+  const duration = newEntry.clip?.duration ?? remappedClip.clip.duration;
+  const fromShared = source.ownerModelId === null;
+  $clips.set({
+    ...state,
+    clips: [...state.clips, newEntry],
+    activeClipId: newEntry.id,
+    activeSharedClipId: fromShared ? state.activeSharedClipId : null,
+    activeClipByModelId: {
+      ...state.activeClipByModelId,
+      [targetModelId]: newEntry.id,
+    },
+    playing: false,
+    duration,
+    trimStart: 0,
+    trimEnd: duration,
+  });
+
+  setMixerTime(0);
+  setMixerTimeScale(newEntry.timeScale);
+  return { clipId: newEntry.id, error: null };
+}
+
 function retargetActive(
   id: string,
   mapping: Map<string, string>,
@@ -117,64 +251,11 @@ function retargetActive(
 
   const targetScene = activeScene ?? targetModel.scene;
 
-  const scale = computeScaleOrFail(source.sourceBindLengths, mapping, targetScene);
-  if ('error' in scale) {
-    return { clipId: null, error: scale.error };
+  if (source.ownerModelId === targetModelId) {
+    return retargetActiveInPlace(source, mapping, targetScene, targetModelId);
   }
 
-  const remapOpts = buildRemapOptionsOrFail(
-    mapping,
-    source.sourceBindFrames ?? {},
-    targetScene,
-    scale.ratio,
-    source.clip,
-  );
-  if ('error' in remapOpts) {
-    return { clipId: null, error: remapOpts.error };
-  }
-
-  const result = remapClipTracks(source.clip, mapping, remapOpts.options);
-  if (!result.clip || result.error) {
-    return { clipId: null, error: result.error ?? 'Remap failed' };
-  }
-
-  const newId = nextClipId();
-  const newEntry = applyActiveModelBindOverrides({
-    id: `${newId}-${result.clip.name}`,
-    name: result.clip.name,
-    sourceFile: source.sourceFile,
-    clip: result.clip,
-    sourceClip: result.clip,
-    status: 'ready' as const,
-    error: null,
-    timeScale: source.timeScale,
-    sourceBindLengths: source.sourceBindLengths ?? {},
-    sourceBindFrames: source.sourceBindFrames ?? {},
-    ownerModelId: targetModelId,
-    rootPositionByModelId: {},
-  }, targetModelId);
-
-  const clips = [...state.clips, newEntry];
-  const duration = newEntry.clip?.duration ?? result.clip.duration;
-  const fromShared = source.ownerModelId === null;
-  $clips.set({
-    ...state,
-    clips,
-    activeClipId: newEntry.id,
-    activeSharedClipId: fromShared ? state.activeSharedClipId : null,
-    activeClipByModelId: {
-      ...state.activeClipByModelId,
-      [targetModelId]: newEntry.id,
-    },
-    playing: false,
-    duration,
-    trimStart: 0,
-    trimEnd: duration,
-  });
-
-  setMixerTime(0);
-  setMixerTimeScale(newEntry.timeScale);
-  return { clipId: newEntry.id, error: null };
+  return retargetActiveAsOwnedCopy(source, mapping, targetScene, targetModelId);
 }
 
 function retargetAllModels(
@@ -202,25 +283,9 @@ function retargetAllModels(
     }
   }
 
-  const scale = computeScaleOrFail(source.sourceBindLengths, mapping, activeScene);
-  if ('error' in scale) {
-    return { clipId: null, error: scale.error };
-  }
-
-  const remapOpts = buildRemapOptionsOrFail(
-    mapping,
-    source.sourceBindFrames ?? {},
-    activeScene,
-    scale.ratio,
-    source.clip,
-  );
-  if ('error' in remapOpts) {
-    return { clipId: null, error: remapOpts.error };
-  }
-
-  const result = remapClipTracks(source.clip, mapping, remapOpts.options);
-  if (!result.clip || result.error) {
-    return { clipId: null, error: result.error ?? 'Remap failed' };
+  const remappedClip = remapSourceOrFail(source, mapping, activeScene);
+  if ('error' in remappedClip) {
+    return { clipId: null, error: remappedClip.error };
   }
 
   for (const { scene, renames } of compatible) {
@@ -229,19 +294,17 @@ function retargetAllModels(
 
   const remapped = applyActiveModelBindOverrides({
     ...source,
-    name: result.clip.name,
-    clip: result.clip,
-    sourceClip: result.clip,
+    name: source.name,
+    clip: remappedClip.clip,
+    sourceClip: remappedClip.clip,
     status: 'ready' as const,
     error: null,
   });
 
-  const clips = state.clips.map((entry) => (entry.id === id ? remapped : entry));
-  const duration = remapped.clip?.duration ?? result.clip.duration;
-
+  const duration = remapped.clip?.duration ?? remappedClip.clip.duration;
   $clips.set({
     ...state,
-    clips,
+    clips: state.clips.map((entry) => (entry.id === id ? remapped : entry)),
     activeClipId: id,
     playing: false,
     duration,

@@ -135,7 +135,10 @@ As an editor user, I can apply an animation authored for a different rig to my l
 - [x] Unmapped clip bones may be left blank — Apply drops those tracks; Apply requires at least one mapped bone; other failures leave a clear error and do not corrupt the character pose
 - [x] Retarget mapping UI opens in a modal (Settings aside stays available)
 - [x] After switching the previewed model, clips that no longer match show Fix / Retarget for that character
-- [x] **This model** apply: new ready clip owned by the previewed model; shared original kept in Shared Animations
+- [x] **This model** apply on a **shared** (or other-owned) clip: new ready clip owned by the target model with the **same name**; shared/source original kept
+- [x] **This model** apply on a clip **already owned** by the target model: remap **in place** (same entry id and name; broken entry becomes ready — no duplicate owned row)
+- [x] Remapped `AnimationClip` / library display name stays the source name (no `(retargeted)` suffix) so same-name ownership can detect a fix
+- [x] When a model already owns a **ready** clip with the same name as a mismatched shared clip, that shared mismatch is not treated as Needs retarget for that model
 - [x] **All models** apply: remap the shared clip in place; normalize bones only on models that resolve the map; incompatible models stay conflicted (partial success — no fail-entire-apply)
 - [x] Apply UI offers an explicit This model / All models choice (no silent all-model normalize)
 
@@ -218,10 +221,10 @@ As an editor user, I manage models and animations in a nested library: each mode
 - [x] **Add animation** via model-header **AnimationIcon**: modal offers **Create new**, **Import** (files → owned by that model), and **Add existing** (selector of cloneable clips, excluding already owned / same-name under that model) → Apply → model-owned **clone** (new id); source unchanged
 - [x] Model upload / replace: embedded GLB animations are registered as **owned** by that model (`ownerModelId` set); they never appear under Shared Animations
 - [x] Removing a model deletes its owned clips
-- [x] **Retarget → This model:** new remapped ready clip owned by the previewed model; shared original kept in Shared Animations
+- [x] **Retarget → This model:** shared/other source → new remapped ready owned clip (same name, source kept); owned-by-target source → remap in place
 - [x] **Retarget → All models:** remap shared clip in place; normalize bones on models that can resolve; **partial success** — incompatible models stay conflicted (no fail-entire-apply)
-- [x] Conflict (skeleton mismatch) surfaces as Needs retarget / amber treatment relative to the model in context (previewed for Shared; that model for owned rows)
-- [x] Model-header Retarget enabled when any clip is conflicted for that model; opens retarget for selected / first conflicted clip
+- [x] Conflict (skeleton mismatch) surfaces as Needs retarget / amber treatment relative to the model in context (previewed for Shared; that model for owned rows), except when that model already owns a ready clip with the same name
+- [x] Model-header Retarget enabled when any clip is conflicted for that model; with multiple conflicts, modal opens a **clip picker step** before the bone map; clip-row Retarget skips the picker
 - [x] Export per model packs that model’s owned clips + shared clips that validate for it; skips conflicted shared
 
 ### US-16 — FBX import via convert API
