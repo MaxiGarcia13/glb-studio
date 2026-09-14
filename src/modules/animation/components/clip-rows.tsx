@@ -2,7 +2,6 @@ import type { ClipEntry } from '@/modules/animation/types/clip';
 import { cn } from '@maxigarcia/js-utils';
 import { useStore } from '@nanostores/react';
 import { AssetEntry } from '@/components/asset-entry';
-import { Button } from '@/components/button';
 import { useGltfFilePicker } from '@/components/gltf-file-picker/use-gltf-file-picker';
 import { AnimationIcon } from '@/components/icons/animation-icon';
 import { RetargetIcon } from '@/components/icons/retarget-icon';
@@ -71,7 +70,7 @@ export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
   }
 
   return (
-    <div className={cn('flex flex-col gap-0.5', className)}>
+    <div className={cn('flex flex-col gap-1', className)}>
       {replaceInput}
 
       {clips.map((entry) => {
@@ -121,18 +120,12 @@ export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
             replaceDisabled={scene === null || isDraft}
             primaryAction={
               canRetarget
-                ? (
-                    <Button
-                      onClick={() => openRetarget(entry.id, ownerModelId ?? activeModelId)}
-                      variant="primary"
-                      aria-label="Retarget clip"
-                      title={isRetargeting ? 'Retargeting…' : 'Retarget clip'}
-                      className="p-1.5"
-                      disabled={isRetargeting}
-                    >
-                      <RetargetIcon />
-                    </Button>
-                  )
+                ? {
+                    label: isRetargeting ? 'Retargeting…' : 'Retarget',
+                    icon: <RetargetIcon />,
+                    disabled: isRetargeting,
+                    onSelect: () => openRetarget(entry.id, ownerModelId ?? activeModelId),
+                  }
                 : undefined
             }
           />

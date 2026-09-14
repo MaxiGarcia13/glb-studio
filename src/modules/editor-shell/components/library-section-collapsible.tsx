@@ -38,7 +38,7 @@ export function LibrarySectionCollapsible({
   const canCollapse = showChevron;
 
   return (
-    <Collapsible defaultOpen={defaultOpen} className={cn('gap-0.5', className)}>
+    <Collapsible defaultOpen={defaultOpen} className={cn('gap-1', className)}>
       <CollapsibleHeader
         showChevron={showChevron}
         collapsible={canCollapse}
@@ -59,7 +59,7 @@ export function LibrarySectionCollapsible({
             : title}
           {actions && (
             <div
-              className={cn('flex items-center gap-0.5 shrink-0', actionsClassName)}
+              className={cn('flex items-center gap-1 shrink-0', actionsClassName)}
               onClick={(e) => e.stopPropagation()}
             >
               {actions}
@@ -69,7 +69,7 @@ export function LibrarySectionCollapsible({
       </CollapsibleHeader>
       <CollapsibleContent
         className={cn(
-          'relative w-full gap-0.5',
+          'relative w-full gap-1',
           showTreeGuide && 'pl-4',
           contentClassName,
         )}

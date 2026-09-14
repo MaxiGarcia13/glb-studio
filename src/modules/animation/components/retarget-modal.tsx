@@ -30,7 +30,7 @@ export function RetargetModal() {
     >
       {entry && (
         <div className="flex flex-col gap-3 min-h-0 flex-1 h-full">
-          <div className="flex flex-col gap-0.5 shrink-0">
+          <div className="flex flex-col gap-1 shrink-0">
             <Text as="h2" variant="section">
               Map bones
             </Text>

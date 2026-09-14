@@ -1,4 +1,5 @@
-import { Button } from '@/components/button';
+import type { ActionMenuItem } from '@/components/action-menu';
+import { ActionMenu } from '@/components/action-menu';
 import { useCollapsible } from '@/components/collapsible';
 import { AnimationIcon } from '@/components/icons/animation-icon';
 import { EditIcon } from '@/components/icons/edit-icon';
@@ -26,59 +27,44 @@ export function LibraryModelActions({
 }: LibraryModelActionsProps) {
   const { setOpen } = useCollapsible();
 
-  return (
-    <>
-      {conflictedClipId !== null && (
-        <Button
-          onClick={() => openRetarget(conflictedClipId, modelId)}
-          variant="ghost"
-          aria-label="Retarget conflicted clips"
-          title="Retarget clips"
-          className="p-1.5"
-        >
-          <RetargetIcon />
-        </Button>
-      )}
+  const items: ActionMenuItem[] = [
+    ...(conflictedClipId !== null
+      ? [{
+          id: 'retarget',
+          label: 'Retarget clips',
+          icon: <RetargetIcon />,
+          onSelect: () => openRetarget(conflictedClipId, modelId),
+        } satisfies ActionMenuItem]
+      : []),
+    {
+      id: 'add-animation',
+      label: 'Add animation',
+      icon: <AnimationIcon />,
+      onSelect: () => {
+        setOpen(true);
+        onAddAnimation();
+      },
+    },
+    {
+      id: 'rename',
+      label: 'Rename',
+      icon: <EditIcon />,
+      onSelect: onRename,
+    },
+    {
+      id: 'replace',
+      label: 'Replace',
+      icon: <ReplaceIcon />,
+      onSelect: onReplace,
+    },
+    {
+      id: 'remove',
+      label: 'Remove',
+      icon: <TrashIcon />,
+      danger: true,
+      onSelect: onRemove,
+    },
+  ];
 
-      <Button
-        onClick={() => {
-          setOpen(true);
-          onAddAnimation();
-        }}
-        variant="ghost"
-        aria-label="Add animation"
-        title="Add animation"
-        className="p-1.5"
-      >
-        <AnimationIcon />
-      </Button>
-      <Button
-        onClick={onRename}
-        variant="ghost"
-        aria-label="Rename model"
-        title="Rename model"
-        className="p-1.5"
-      >
-        <EditIcon />
-      </Button>
-      <Button
-        onClick={onReplace}
-        variant="ghost"
-        aria-label="Replace model"
-        title="Replace model"
-        className="p-1.5"
-      >
-        <ReplaceIcon />
-      </Button>
-      <Button
-        onClick={onRemove}
-        variant="ghost"
-        aria-label="Remove model"
-        title="Remove model"
-        className="p-1.5"
-      >
-        <TrashIcon />
-      </Button>
-    </>
-  );
+  return <ActionMenu items={items} aria-label="Model actions" />;
 }

@@ -2,6 +2,13 @@ export type AssetStatus = 'ready' | 'error';
 
 export type AssetEntryVariant = 'card' | 'row';
 
+export interface AssetEntryPrimaryAction {
+  label: string;
+  icon?: React.ReactNode;
+  disabled?: boolean;
+  onSelect: () => void;
+}
+
 export interface AssetEntryProps {
   label: string;
   title?: string;
@@ -18,8 +25,8 @@ export interface AssetEntryProps {
   replaceDisabled?: boolean;
   selected?: boolean;
   onSelect?: () => void;
-  /** Leading action (e.g. Retarget) — rendered before Replace / Remove. */
-  primaryAction?: React.ReactNode;
+  /** Optional leading overflow-menu action (e.g. Retarget). */
+  primaryAction?: AssetEntryPrimaryAction;
   /** When provided, the label can be renamed inline (commit on Enter/blur, cancel on Escape). */
   onRename?: (name: string) => void;
   /**
