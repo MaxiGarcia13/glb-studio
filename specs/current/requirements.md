@@ -4,7 +4,7 @@ Living product contract for the **GLB Character & Animation Editor**.
 
 ## Product summary
 
-Web editor with a full-screen 3D viewport and a collapsible sidebar. Users load one or more model GLBs (several can be previewed at once), manage nested model-owned and shared animation clips, play and edit them (trim, speed, keyframes, weighted blend + bake, bind pose, whole-model move), and download a zip of per-model GLBs plus animation-only files.
+Web editor with a full-screen 3D viewport and a collapsible sidebar. Users load one or more model GLBs (several can be previewed at once), manage nested model-owned and shared animation clips, play and edit them (trim, speed, keyframes, weighted blend + bake, bind pose, whole-model move), and download a zip of per-model (or optionally merged) GLBs plus animation-only files.
 
 **Stack:** Astro shell + React island; React Three Fiber + drei + Three.js.
 
@@ -32,7 +32,7 @@ As an editor user, I can import animation files into a clip library and play the
 - [x] Active clip is selected from the Animations library list (same pattern as models); clicking the selected clip again clears to T-pose / bind pose when a model is loaded
 - [x] Loading or selecting a model does **not** auto-select an animation (embedded clips register as owned; T-pose until the user picks a clip)
 - [x] When a **shared** clip is selected, each previewed model plays that shared clip unless it owns a **ready** clip with the same display name — then it plays the owned clip
-- [x] Playback controls: Play, Pause, Stop, loop toggle
+- [x] Playback controls: Play, Pause, Stop, loop toggle (enabled when a clip is selected and a model is previewed — model focus not required)
 - [x] Timeline scrubber stays tied to `THREE.AnimationMixer` time
 - [x] Clips that do not match the character skeleton (missing tracks / unknown bones) show a user-visible error — no silent retargeting
 
@@ -67,10 +67,25 @@ As an editor user, I can download a zip of each model and of each animation as s
 
 - [x] “Download” uses `GLTFExporter` and builds a zip in the browser — no server round-trip
 - [x] Zip contains one `{model}.glb` per loaded model: that model’s scene plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips)
-- [x] Zip contains one `{clip}.glb` per **shared** library clip that has a working `AnimationClip` — animation-only, no mesh (owned clips ship only inside their model GLB)
+- [x] Zip contains one `{clip}.glb` per **shared** library clip that has a working `AnimationClip` — animation-only, no mesh (owned clips ship only inside their model GLB when not merging)
 - [x] Each clip’s stored `timeScale` is baked into that clip’s exported track times / duration per design
 - [x] Filename collisions inside the zip get a numeric suffix
 - [x] Download is disabled or errors when there is nothing to pack; exporter failure does not download a partial zip
+
+### US-22 — Export modal + merge visible models
+
+As an editor user, when I press Download I can confirm the zip contents and optionally merge every model visible in the viewport into one mesh GLB, with animations as separate files.
+
+**Acceptance**
+
+- [ ] Download opens an **Export** modal (does not pack immediately)
+- [ ] Modal shows a short summary of what will be packed; confirm builds the zip
+- [ ] **Merge visible models** toggle when two or more models are previewed (`previewModelIds`); unavailable otherwise
+- [ ] **Merge off (default):** US-5 separate pack unchanged
+- [ ] **Merge on:** one `merged.glb` from previewed models with unique bone prefixes; modal picks one clip per model → **Scene bake only** (multi-character take); no per-model GLBs; hidden models omitted
+- [ ] **Merge on:** animation-only `{clip}.glb` per shared working clip only (owned clips are not sidecars)
+- [ ] Filename collisions and no-partial-zip rules from US-5 still apply
+- [ ] Modal edits zip basename + merged basename + Scene clip name (merge on) or per-model basenames (merge off); empty/invalid → defaults; extensions auto-applied; animation files keep library names
 
 ### US-11 — Model library
 
@@ -80,7 +95,7 @@ As an editor user, I can keep several character GLBs in the session and choose w
 
 - [x] User can upload multiple `.glb` / `.gltf` files that each contain a skinned mesh and skeleton; they populate a model library
 - [x] Sidebar library lists each model nested under **Models** with iconized Replace / Remove / Rename (and Animation / Retarget when applicable — US-19)
-- [x] Multiple models can be **previewed** at once (US-20); one model is **focused** (`activeModelId`) for gizmo, transport, and Settings XYZ
+- [x] Multiple models can be **previewed** at once (US-20); one model is **focused** (`activeModelId`) for gizmo and Settings XYZ (transport works with a selected clip even when no model is focused)
 - [x] Removing a model deletes its owned clips; if it was focused, focus moves to another previewed model, or empty state if none remain
 - [x] Owned clip import still requires a model in context; Shared Upload does not (US-19)
 

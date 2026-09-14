@@ -11,6 +11,7 @@
 
 | ID | Summary |
 |----|---------|
+| **US-22** | Export modal + merge visible models into one mesh GLB |
 | **US-21** | Whole-model rotate / scale in Move + Settings root rotation XYZ |
 | **US-8** | Morph-target editing (post-MVP) |
 | **US-9** | Graph / curve keyframe UI (post-MVP) |

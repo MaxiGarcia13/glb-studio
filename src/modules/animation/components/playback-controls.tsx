@@ -5,7 +5,7 @@ import { PauseIcon } from '@/components/icons/pause-icon';
 import { PlayIcon } from '@/components/icons/play-icon';
 import { RepeatIcon } from '@/components/icons/repeat-icon';
 import { StopIcon } from '@/components/icons/stop-icon';
-import { useActiveModel } from '@/modules/viewport/hooks/use-active-model';
+import { $model } from '@/modules/viewport/stores/model-store';
 import { $clips, pause, play, stop, toggleLoop } from '../stores/clip-store';
 
 interface PlaybackControlsProps {
@@ -16,9 +16,10 @@ export function PlaybackControls({ className }: PlaybackControlsProps) {
   const { playing, loop, activeClipId } = useStore($clips, {
     keys: ['playing', 'loop', 'activeClipId'],
   });
-  const { scene } = useActiveModel();
+  const { previewModelIds } = useStore($model, { keys: ['previewModelIds'] });
 
-  const enabled = scene !== null && activeClipId !== null;
+  // Clip selection drives play; model focus is not required (US-20 play is global).
+  const enabled = activeClipId !== null && previewModelIds.length > 0;
 
   return (
     <div className={cn('flex items-center gap-1', className)}>

@@ -21,3 +21,29 @@ export function uniqueFileName(fileName: string, taken: Set<string>): string {
   }
   return candidate;
 }
+
+/** Strip path separators / control chars; trim. Empty → null. */
+export function sanitizeBaseName(raw: string): string | null {
+  const cleaned = raw
+    .replace(/[/\\?%*:|"<>]/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return cleaned.length > 0 ? cleaned : null;
+}
+
+/** Ensure a `.glb` basename; falls back to `fallback` when empty/invalid. */
+export function resolveGlbFileName(raw: string | undefined, fallback: string): string {
+  const fromRaw = sanitizeBaseName(stripGlbExtension(raw ?? ''));
+  const fromFallback = stripGlbExtension(fallback);
+  const base = fromRaw ?? (fromFallback || 'export');
+  return `${base}.glb`;
+}
+
+/** Ensure a `.zip` download name; falls back to `fallback` when empty/invalid. */
+export function resolveZipFileName(raw: string | undefined, fallback: string): string {
+  const withoutZip = (raw ?? '').replace(/\.zip$/i, '');
+  const fromRaw = sanitizeBaseName(withoutZip);
+  const fromFallback = fallback.replace(/\.zip$/i, '');
+  const base = fromRaw ?? (fromFallback || 'glb-export');
+  return `${base}.zip`;
+}

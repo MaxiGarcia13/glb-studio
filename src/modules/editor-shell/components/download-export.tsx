@@ -1,26 +1,23 @@
+import { useState } from 'react';
 import { Button } from '@/components/button';
 import { DownloadIcon } from '@/components/icons/download-icon';
-import { Text } from '@/components/text';
-import { useExportZip } from '@/modules/export';
+import { ExportModal, useExportZip } from '@/modules/export';
 
 export function DownloadExport() {
-  const { download, busy, error, canExport } = useExportZip();
+  const { canExport } = useExportZip();
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-2">
       <Button
-        onClick={() => void download()}
-        disabled={!canExport || busy}
+        onClick={() => setOpen(true)}
+        disabled={!canExport}
         className="flex items-center gap-2 w-full justify-center"
       >
         <DownloadIcon />
-        {busy ? 'Packing…' : 'Download'}
+        Download
       </Button>
-      {error && (
-        <Text as="div" variant="error" className="whitespace-pre-line">
-          {error}
-        </Text>
-      )}
+      <ExportModal open={open} onClose={() => setOpen(false)} />
     </div>
   );
 }

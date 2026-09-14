@@ -41,7 +41,7 @@ Clips have **ownership** (`ownerModelId`: `null` = Shared Animations; otherwise 
 
 Empty overlay when idle; clear error copy on parse failure or missing skeleton. After a successful load **or preview-set change**, camera frames the **union AABB** of visible scenes from a fixed three-quarter elevated angle (`computeScenesFraming` + `DEFAULT_VIEW_OFFSET` in `viewport/constants/camera.ts`; framing padding in `viewport/domain/model-framing.ts`). Scenes keep their own origins; place them with Move / Settings XYZ.
 
-Sidebar **Library** is nested (US-19): **Models** (upload) → each model collapsible (`ModelIcon` + eye preview + Retarget / Animation / Edit / Replace / Remove) listing owned clips; sibling **Shared Animations** (`AnimationIcon` + Upload / New). Clip rows use `AnimationIcon` + iconized actions. **Focus** (`activeModelId`) is distinct from preview membership: selecting a model name sets focus (and shows it if hidden); clicking the focused name again clears focus (same toggle pattern as clips). Gizmo, transport bar, and Settings XYZ target the focused model. Model remove deletes owned clips.
+Sidebar **Library** is nested (US-19): **Models** (upload) → each model collapsible (`ModelIcon` + eye preview + Retarget / Animation / Edit / Replace / Remove) listing owned clips; sibling **Shared Animations** (`AnimationIcon` + Upload / New). Clip rows use `AnimationIcon` + iconized actions. **Focus** (`activeModelId`) is distinct from preview membership: selecting a model name sets focus (and shows it if hidden); clicking the focused name again clears focus (same toggle pattern as clips). Gizmo and Settings XYZ target the focused model; Play / Pause / Stop / scrub work with a selected clip even when focus is cleared (transport falls back to all previewed mixers).
 
 Do not add a second debug canvas, FPS overlay render path, or smoke-test scene that bypasses the editor viewport lifecycle.
 
@@ -62,8 +62,9 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 - Per-model clip resolution (`resolveActiveClipIdForModel`): explicit `activeClipByModelId[modelId]` wins; else if `activeSharedClipId` is set, that model plays its **ready owned** clip with the **same display name** when one exists, otherwise the shared clip
 - Loading or focusing a model does **not** auto-select a clip (T-pose until the user picks one). Embedded GLB clips register as owned without calling `selectClip`
 - Live blend weights snap via `setEffectiveWeight` (not `crossFadeTo`)
-- Play/Pause is a global `$clips.playing` flag that advances every previewed mixer; Stop / scrubber / timeScale target the **focused** model’s session
-- Speed: per-clip `timeScale` on the library entry; live playback applies that clip’s scale via `mixer.timeScale` on the focused session
+- Play/Pause is a global `$clips.playing` flag that advances every previewed mixer; enabled whenever a clip is selected and at least one model is previewed (**model focus not required**)
+- Stop / scrubber / timeScale target the **focused** model’s session when one is set; with **no** focused model they apply to every registered (previewed) mixer so transport still works after clearing model focus
+- Speed: per-clip `timeScale` on the library entry; live playback applies that clip’s scale via `mixer.timeScale` on the transport target session(s)
 - Switching a model’s clip stops that model’s previous action(s) and plays the new one; clearing selection (**T-pose**) restores that model’s captured rest / bind pose (not the last animated frame)
 
 ## Animation library authorship (US-7)
@@ -189,19 +190,19 @@ Out of scope: multi-model simultaneous transform; full undo stack (US-10).
 - Collapsible sidebar docks beside the canvas (`editor-shell`); collapse/expand with labelled chevron controls
 - Preview chrome hosts playback + Edit/Move tools + transform mode toolbar (Edit + selection, or Move with a loaded model) + selection name overlay + dirty-only Save / Restore (not the settings sidebar)
 
-## Export (US-5 + US-7 blend contract)
+## Export (US-5 + US-22 modal/merge + US-7 blend contract)
 
-One “Download” control builds a **zip** in the browser (no server):
+**Download** opens an **Export** modal. Confirm builds a **zip** in the browser (no server):
 
-1. If there are no loaded models **and** no working clips → disable or error; do not download
-2. For each loaded model: `GLTFExporter.parse` (`binary: true`) of that scene plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips). Bake each clip’s own `timeScale` into clones when it is not `1`
-3. For each **shared** library clip that has a working `AnimationClip`: animation-only `.glb` (empty / minimal scene, one clip, same bake). Owned clips ship only inside their model GLB
-4. Filename collisions inside the zip get a numeric suffix
-5. Trigger a single download of the zip blob. Any exporter or zip failure → user-visible error; no partial archive
+1. If there are no loaded models **and** no working clips → disable Download; do not open a useless pack
+2. **Merge off (default):** for each loaded model: `GLTFExporter.parse` (`binary: true`) of that scene plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips). Bake each clip’s own `timeScale` into clones when it is not `1`. For each **shared** library clip with a working `AnimationClip`: animation-only `.glb`. Owned clips ship only inside their model GLB
+3. **Merge on** (US-22; requires ≥2 `previewModelIds`): one `merged.glb` — clone each previewed scene, unique bone-name prefix per model, rename named nodes, parent under a temp root. Export modal supplies **per-model clip picks** (`clipIdByModelId`) and optional **Scene** clip name. Bake: rewrite each pick onto that model’s prefix → **one** multi-character **Scene** clip only (e.g. fight: Attack + HitReact). Omit hidden models; skip per-model GLBs. Also emit animation-only `.glb`s for every **shared** working clip (unprefixed sidecars). Do not emit owned clips as sidecars
+4. Filename collisions inside the zip get a numeric suffix. Modal supplies optional basenames: zip archive, merged GLB (merge on), or per-model GLBs (merge off) — sanitized with `resolveZipFileName` / `resolveGlbFileName`; animation-only files keep library clip names
+5. Trigger a single download of the zip blob (download attribute uses the chosen zip name). Any exporter or zip failure → user-visible error; no partial archive
 
-A model with no matching clips still ships as a mesh-only `.glb`. There is no “one combined GLB” option and no per-row download buttons.
+A model with no matching clips still ships as a mesh-only `.glb` when merge is off. There are no per-row download buttons; model selection for merge is the library eye / `previewModelIds` set. Clip selection for the Scene bake is the Export modal.
 
-**Blend vs zip (locked):** live blend is viewport playback only (`blendClipId` / `blendWeight` / `blendBaseClip` never enter the exporter). `packModelGlb` / `packClipGlb` / `downloadExportZip` read each entry’s working `clip` (+ `timeScale` bake) — the same discrete library data as US-5. After **Bake**, the flattened mix replaces the active entry’s `clip` and therefore exports with that clip; without Bake, the zip is unchanged by the overlay.
+**Blend vs zip (locked):** live blend is viewport playback only (`blendClipId` / `blendWeight` / `blendBaseClip` never enter the exporter). `packModelGlb` / `packMergedModelsGlb` / `packClipGlb` / `downloadExportZip` read each entry’s working `clip` (+ `timeScale` bake) — the same discrete library data as US-5. After **Bake**, the flattened mix replaces the active entry’s `clip` and therefore exports with that clip; without Bake, the zip is unchanged by the overlay.
 
 ## FBX import (US-16)
 

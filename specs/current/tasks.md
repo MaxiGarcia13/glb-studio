@@ -72,6 +72,16 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] “Download” sidebar control + blob download of the zip
 - [x] Disable / error when nothing to pack; no partial zip on exporter failure
 
+## US-22 — Export modal + merge visible models
+
+Open delta: [`specs/us-22/`](../us-22/).
+
+- [x] `packMergedModelsGlb` + `downloadExportZip({ mergeModels })`
+- [x] On merge: per-model clip picks → Scene bake only; shared also as unprefixed sidecars
+- [x] `ExportModal` + Download opens modal; merge toggle gated on ≥2 previewed models
+- [x] Filename inputs: zip + merged (merge on) / per-model (merge off); Scene clip + per-model Selects
+- [ ] Manual verify separate vs merge / fight Scene bake
+
 ## US-13 — Selection name overlay
 
 **Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).

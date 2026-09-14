@@ -19,6 +19,19 @@ function activeSession(): ModelMixerSession | null {
   return sessions.get(activeModelId) ?? null;
 }
 
+/**
+ * Transport targets the focused model when one is set; otherwise every
+ * registered (previewed) mixer so Play / Stop / scrub still work with a clip
+ * selected and no model focused.
+ */
+function transportSessions(): ModelMixerSession[] {
+  const focused = activeSession();
+  if (focused) {
+    return [focused];
+  }
+  return [...sessions.values()];
+}
+
 function applyBlendWeights(session: ModelMixerSession | null): void {
   if (!session) {
     return;
@@ -85,29 +98,27 @@ export function getBlendWeight(): number {
 
 /** Stop the active model's clip bindings from overwriting a manual pose edit. */
 export function suspendMixerBindings(): void {
-  const session = activeSession();
-  if (session) {
+  for (const session of transportSessions()) {
     session.action && (session.action.enabled = false);
     session.blendAction && (session.blendAction.enabled = false);
   }
 }
 
 export function resumeMixerBindings(): void {
-  const session = activeSession();
-  if (session) {
+  for (const session of transportSessions()) {
     session.action && (session.action.enabled = true);
     session.blendAction && (session.blendAction.enabled = true);
   }
 }
 
 export function getMixerTime(): number {
-  return activeSession()?.mixer.time ?? 0;
+  const [session] = transportSessions();
+  return session?.mixer.time ?? 0;
 }
 
 export function setMixerTime(time: number): void {
   resumeMixerBindings();
-  const session = activeSession();
-  if (session) {
+  for (const session of transportSessions()) {
     session.mixer.setTime(time);
   }
   clearPoseDirty();
@@ -146,8 +157,10 @@ export function sampleMixerAt(time: number): void {
  */
 export function restoreMixerPose(): void {
   resumeMixerBindings();
-  const session = activeSession();
-  if (session && session.action) {
+  for (const session of transportSessions()) {
+    if (!session.action) {
+      continue;
+    }
     const time = session.mixer.time;
     session.action.stop();
     session.action.play();
@@ -155,15 +168,16 @@ export function restoreMixerPose(): void {
       session.blendAction.stop();
       session.blendAction.play();
     }
-    applyBlendWeights(session);
+    if (session === activeSession()) {
+      applyBlendWeights(session);
+    }
     session.mixer.setTime(time);
   }
   clearPoseDirty();
 }
 
 export function setMixerTimeScale(scale: number): void {
-  const session = activeSession();
-  if (session) {
+  for (const session of transportSessions()) {
     session.mixer.timeScale = scale;
   }
 }
