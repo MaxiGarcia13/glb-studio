@@ -57,6 +57,16 @@ export function refreshRestPoseNode(root: Object3D, node: Object3D): void {
   restPoses.set(root, map);
 }
 
+/** Rest / bind root scale used as Settings “100%” baseline. */
+export function getRestRootScale(root: Object3D): { x: number; y: number; z: number } {
+  ensureRestPoseCaptured(root);
+  const transform = restPoses.get(root)?.get(root.uuid);
+  if (transform) {
+    return { ...transform.scale };
+  }
+  return { x: root.scale.x, y: root.scale.y, z: root.scale.z };
+}
+
 /**
  * Apply a clip’s stored model-root position, rotation (Euler degrees, XYZ), and/or scale.
  * Null for a channel restores that channel from the rest-pose root.

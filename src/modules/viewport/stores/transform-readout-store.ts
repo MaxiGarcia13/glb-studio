@@ -1,5 +1,6 @@
 import type { Object3D } from 'three';
 import { atom } from 'nanostores';
+import { getRestRootScale } from '@/modules/animation/domain/rest-pose';
 import { pause } from '@/modules/animation/stores/clip-store/actions/playback';
 import { restorePose } from '@/modules/animation/stores/clip-store/actions/restore-pose';
 import { $clips } from '@/modules/animation/stores/clip-store/store';
@@ -164,4 +165,25 @@ export function applyTransformScaleAxis(axis: TransformAxis, value: number): voi
   beginModelRootSettingsEdit(object);
   object.scale[axis] = value;
   finishModelRootSettingsEdit(object);
+}
+
+/**
+ * Settings scale as percent of rest / bind root size (`100` = rest scale on that axis).
+ */
+export function applyTransformScalePercentAxis(axis: TransformAxis, percent: number): void {
+  if (!Number.isFinite(percent) || percent <= 0) {
+    return;
+  }
+
+  const object = $activeModel.get()?.scene ?? null;
+  if (!object) {
+    return;
+  }
+
+  const rest = getRestRootScale(object)[axis];
+  if (!(rest > 0)) {
+    return;
+  }
+
+  applyTransformScaleAxis(axis, (percent / 100) * rest);
 }

@@ -3,11 +3,13 @@ import { useStore } from '@nanostores/react';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/input/input';
 import { Text } from '@/components/text';
+import { getRestRootScale } from '@/modules/animation/domain/rest-pose';
+import { $activeModel } from '@/modules/viewport/stores/model-store';
 import {
   $transformReadout,
   applyTransformPositionAxis,
   applyTransformRotationAxis,
-  applyTransformScaleAxis,
+  applyTransformScalePercentAxis,
 } from '@/modules/viewport/stores/transform-readout-store';
 
 type AxisDraft = Record<TransformAxis, string>;
@@ -19,8 +21,17 @@ function formatFixed(value: number, digits: number): string {
   return value.toFixed(digits);
 }
 
+/** Current scale as percent of rest / bind root (`100` = loaded / rest size). */
+function scaleToRestPercent(current: number, rest: number): number {
+  if (!(rest > 0)) {
+    return 100;
+  }
+  return (current / rest) * 100;
+}
+
 export function TransformReadout() {
   const value = useStore($transformReadout);
+  const activeModel = useStore($activeModel);
   const [positionDraft, setPositionDraft] = useState<AxisDraft>(EMPTY_DRAFT);
   const [rotationDraft, setRotationDraft] = useState<AxisDraft>(EMPTY_DRAFT);
   const [scaleDraft, setScaleDraft] = useState<AxisDraft>(EMPTY_DRAFT);
@@ -29,9 +40,14 @@ export function TransformReadout() {
   const [focusedScale, setFocusedScale] = useState<TransformAxis | null>(null);
 
   const enabled = value !== null;
+  const scene = activeModel?.scene ?? null;
+  const restScale = scene ? getRestRootScale(scene) : null;
+  const restScaleX = restScale?.x ?? null;
+  const restScaleY = restScale?.y ?? null;
+  const restScaleZ = restScale?.z ?? null;
 
   useEffect(() => {
-    if (!value) {
+    if (!value || restScaleX === null || restScaleY === null || restScaleZ === null) {
       if (!focusedPosition) {
         setPositionDraft(EMPTY_DRAFT);
       }
@@ -54,11 +70,25 @@ export function TransformReadout() {
       z: focusedRotation === 'z' ? current.z : formatFixed(value.rotationZ, 1),
     }));
     setScaleDraft((current) => ({
-      x: focusedScale === 'x' ? current.x : formatFixed(value.scaleX, 3),
-      y: focusedScale === 'y' ? current.y : formatFixed(value.scaleY, 3),
-      z: focusedScale === 'z' ? current.z : formatFixed(value.scaleZ, 3),
+      x: focusedScale === 'x'
+        ? current.x
+        : formatFixed(scaleToRestPercent(value.scaleX, restScaleX), 1),
+      y: focusedScale === 'y'
+        ? current.y
+        : formatFixed(scaleToRestPercent(value.scaleY, restScaleY), 1),
+      z: focusedScale === 'z'
+        ? current.z
+        : formatFixed(scaleToRestPercent(value.scaleZ, restScaleZ), 1),
     }));
-  }, [value, focusedPosition, focusedRotation, focusedScale]);
+  }, [
+    value,
+    restScaleX,
+    restScaleY,
+    restScaleZ,
+    focusedPosition,
+    focusedRotation,
+    focusedScale,
+  ]);
 
   const handlePositionChange = (axis: TransformAxis, next: string) => {
     setPositionDraft((current) => ({ ...current, [axis]: next }));
@@ -110,19 +140,24 @@ export function TransformReadout() {
     }
     const parsed = Number(next);
     if (Number.isFinite(parsed)) {
-      applyTransformScaleAxis(axis, parsed);
+      applyTransformScalePercentAxis(axis, parsed);
     }
   };
 
   const handleScaleBlur = (axis: TransformAxis) => {
     setFocusedScale(null);
     const current = $transformReadout.get();
-    if (!current) {
+    const scene = $activeModel.get()?.scene ?? null;
+    if (!current || !scene) {
       setScaleDraft(EMPTY_DRAFT);
       return;
     }
+    const rest = getRestRootScale(scene);
     const key = axis === 'x' ? 'scaleX' : axis === 'y' ? 'scaleY' : 'scaleZ';
-    setScaleDraft((prev) => ({ ...prev, [axis]: formatFixed(current[key], 3) }));
+    setScaleDraft((prev) => ({
+      ...prev,
+      [axis]: formatFixed(scaleToRestPercent(current[key], rest[axis]), 1),
+    }));
   };
 
   return (
@@ -172,16 +207,16 @@ export function TransformReadout() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Text variant="muted">Scale</Text>
+        <Text variant="muted">Scale · 100% = rest size</Text>
 
         <div className="flex gap-2">
           {AXES.map((axis) => (
             <Input
               key={`scale-${axis}`}
-              label={axis.toUpperCase()}
+              label={`${axis.toUpperCase()} (%)`}
               type="number"
-              step={0.01}
-              min={0.001}
+              step={1}
+              min={1}
               value={enabled ? scaleDraft[axis] : '—'}
               disabled={!enabled}
               className="flex-1 w-full"

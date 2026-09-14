@@ -7,7 +7,7 @@ Extend US-15 Move / Settings root placement from translation-only to full model-
 ## Approach
 
 1. **Move gizmo** — use `$transformMode` for mode (no longer force `translate`); keep **world** space; show transform-mode toolbar + W / E / R while Move is active (no bone selection required)
-2. **Settings TRS** — extend `$transformReadout` / `TransformReadout` with Euler degrees (order `XYZ`, display wrapped to `[0, 360)`) and scale XYZ (min `0.001`); apply helpers mirror position (pause, suspend mixer, dirty as `modelRoot`, sample at t=0 when a clip is active)
+2. **Settings TRS** — Settings **Model** section; Euler degrees (order `XYZ`, `[0, 360)`) and scale as **percent of rest / bind root** (`100` = rest size on that axis); apply helpers mirror position (pause, suspend mixer, dirty as `modelRoot`, sample at t=0 when a clip is active)
 3. **Clip metadata** — `rootPositionByModelId`, `rootRotationByModelId` (degrees), `rootScaleByModelId`; missing key → rest-pose channel
 4. **Apply** — `applySceneRootTransform(root, position, rotation, scale)` sets each channel from clip overrides, else restores from rest pose independently
 5. **Save** — model-root + ready clip writes all three maps; no-clip path still `refreshRestPoseNode` (full TRS)

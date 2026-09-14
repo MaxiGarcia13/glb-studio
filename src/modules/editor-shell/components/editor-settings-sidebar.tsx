@@ -20,7 +20,12 @@ export function EditorSettingsSidebar() {
             Axes
           </Text>
           <WorldAxesControls />
+        </div>
 
+        <div className="flex flex-col gap-4">
+          <Text as="h2" variant="section">
+            Model
+          </Text>
           <TransformReadout />
         </div>
 
