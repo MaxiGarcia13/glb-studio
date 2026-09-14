@@ -170,11 +170,11 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 ## Open deltas
 
-| US                                            | Status                | Tasks                                       |
-| --------------------------------------------- | --------------------- | ------------------------------------------- |
-| **US-8** — Morph-target editing               | post-MVP, not started | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
-| **US-9** — Graph / curve keyframe UI          | post-MVP, not started | [`specs/us-9/tasks.md`](../us-9/tasks.md)   |
-| **US-10** — Full undo / redo                  | post-MVP, not started | [`specs/us-10/tasks.md`](../us-10/tasks.md) |
+| US                                   | Status                | Tasks                                       |
+| ------------------------------------ | --------------------- | ------------------------------------------- |
+| **US-8** — Morph-target editing      | post-MVP, not started | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
+| **US-9** — Graph / curve keyframe UI | post-MVP, not started | [`specs/us-9/tasks.md`](../us-9/tasks.md)   |
+| **US-10** — Full undo / redo         | post-MVP, not started | [`specs/us-10/tasks.md`](../us-10/tasks.md) |
 
 ## Tech debt
 
