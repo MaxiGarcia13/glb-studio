@@ -114,6 +114,11 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
           object.position.z,
         ];
         const rootRotation = readRootRotationDegrees(object);
+        const rootScale: [number, number, number] = [
+          object.scale.x,
+          object.scale.y,
+          object.scale.z,
+        ];
         // Clear dirty before publishing so the mixer effect does not skip apply.
         clearPoseDirty();
         $clips.set({
@@ -130,11 +135,15 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
                     ...entry.rootRotationByModelId,
                     [model.id]: rootRotation,
                   },
+                  rootScaleByModelId: {
+                    ...entry.rootScaleByModelId,
+                    [model.id]: rootScale,
+                  },
                 }
               : entry,
           ),
         });
-        applySceneRootTransform(model.scene, rootPosition, rootRotation);
+        applySceneRootTransform(model.scene, rootPosition, rootRotation, rootScale);
         // Clip begins at t=0 under the saved root on this model only.
         setMixerTime(0);
         return;

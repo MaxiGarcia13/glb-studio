@@ -34,6 +34,11 @@ export interface ClipEntry {
    * Missing key = use that model’s rest-pose root rotation.
    */
   rootRotationByModelId: Record<string, [number, number, number]>;
+  /**
+   * Per-model model-root scale from Move / Settings.
+   * Missing key = use that model’s rest-pose root scale.
+   */
+  rootScaleByModelId: Record<string, [number, number, number]>;
 }
 
 export interface ClipLibraryState {

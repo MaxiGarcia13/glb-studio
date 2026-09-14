@@ -25,6 +25,7 @@ export function toEntry(
     ownerModelId,
     rootPositionByModelId: {},
     rootRotationByModelId: {},
+    rootScaleByModelId: {},
   };
 }
 
@@ -49,6 +50,7 @@ export function toFailedFileEntry(
     ownerModelId,
     rootPositionByModelId: {},
     rootRotationByModelId: {},
+    rootScaleByModelId: {},
   };
 }
 
@@ -77,5 +79,6 @@ export function toNewAnimationEntry(
     ownerModelId,
     rootPositionByModelId: {},
     rootRotationByModelId: {},
+    rootScaleByModelId: {},
   };
 }

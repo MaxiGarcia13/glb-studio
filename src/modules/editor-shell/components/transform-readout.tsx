@@ -7,53 +7,58 @@ import {
   $transformReadout,
   applyTransformPositionAxis,
   applyTransformRotationAxis,
+  applyTransformScaleAxis,
 } from '@/modules/viewport/stores/transform-readout-store';
 
-type PositionDraft = Record<TransformAxis, string>;
-type RotationDraft = Record<TransformAxis, string>;
+type AxisDraft = Record<TransformAxis, string>;
 
-const EMPTY_POSITION: PositionDraft = { x: '', y: '', z: '' };
-const EMPTY_ROTATION: RotationDraft = { x: '', y: '', z: '' };
+const EMPTY_DRAFT: AxisDraft = { x: '', y: '', z: '' };
 const AXES: TransformAxis[] = ['x', 'y', 'z'];
 
-function formatPosition(value: number): string {
-  return value.toFixed(3);
-}
-
-function formatRotation(value: number): string {
-  return value.toFixed(1);
+function formatFixed(value: number, digits: number): string {
+  return value.toFixed(digits);
 }
 
 export function TransformReadout() {
   const value = useStore($transformReadout);
-  const [positionDraft, setPositionDraft] = useState<PositionDraft>(EMPTY_POSITION);
-  const [rotationDraft, setRotationDraft] = useState<RotationDraft>(EMPTY_ROTATION);
+  const [positionDraft, setPositionDraft] = useState<AxisDraft>(EMPTY_DRAFT);
+  const [rotationDraft, setRotationDraft] = useState<AxisDraft>(EMPTY_DRAFT);
+  const [scaleDraft, setScaleDraft] = useState<AxisDraft>(EMPTY_DRAFT);
   const [focusedPosition, setFocusedPosition] = useState<TransformAxis | null>(null);
   const [focusedRotation, setFocusedRotation] = useState<TransformAxis | null>(null);
+  const [focusedScale, setFocusedScale] = useState<TransformAxis | null>(null);
 
   const enabled = value !== null;
 
   useEffect(() => {
     if (!value) {
       if (!focusedPosition) {
-        setPositionDraft(EMPTY_POSITION);
+        setPositionDraft(EMPTY_DRAFT);
       }
       if (!focusedRotation) {
-        setRotationDraft(EMPTY_ROTATION);
+        setRotationDraft(EMPTY_DRAFT);
+      }
+      if (!focusedScale) {
+        setScaleDraft(EMPTY_DRAFT);
       }
       return;
     }
     setPositionDraft((current) => ({
-      x: focusedPosition === 'x' ? current.x : formatPosition(value.x),
-      y: focusedPosition === 'y' ? current.y : formatPosition(value.y),
-      z: focusedPosition === 'z' ? current.z : formatPosition(value.z),
+      x: focusedPosition === 'x' ? current.x : formatFixed(value.x, 3),
+      y: focusedPosition === 'y' ? current.y : formatFixed(value.y, 3),
+      z: focusedPosition === 'z' ? current.z : formatFixed(value.z, 3),
     }));
     setRotationDraft((current) => ({
-      x: focusedRotation === 'x' ? current.x : formatRotation(value.rotationX),
-      y: focusedRotation === 'y' ? current.y : formatRotation(value.rotationY),
-      z: focusedRotation === 'z' ? current.z : formatRotation(value.rotationZ),
+      x: focusedRotation === 'x' ? current.x : formatFixed(value.rotationX, 1),
+      y: focusedRotation === 'y' ? current.y : formatFixed(value.rotationY, 1),
+      z: focusedRotation === 'z' ? current.z : formatFixed(value.rotationZ, 1),
     }));
-  }, [value, focusedPosition, focusedRotation]);
+    setScaleDraft((current) => ({
+      x: focusedScale === 'x' ? current.x : formatFixed(value.scaleX, 3),
+      y: focusedScale === 'y' ? current.y : formatFixed(value.scaleY, 3),
+      z: focusedScale === 'z' ? current.z : formatFixed(value.scaleZ, 3),
+    }));
+  }, [value, focusedPosition, focusedRotation, focusedScale]);
 
   const handlePositionChange = (axis: TransformAxis, next: string) => {
     setPositionDraft((current) => ({ ...current, [axis]: next }));
@@ -70,10 +75,10 @@ export function TransformReadout() {
     setFocusedPosition(null);
     const current = $transformReadout.get();
     if (!current) {
-      setPositionDraft(EMPTY_POSITION);
+      setPositionDraft(EMPTY_DRAFT);
       return;
     }
-    setPositionDraft((prev) => ({ ...prev, [axis]: formatPosition(current[axis]) }));
+    setPositionDraft((prev) => ({ ...prev, [axis]: formatFixed(current[axis], 3) }));
   };
 
   const handleRotationChange = (axis: TransformAxis, next: string) => {
@@ -91,19 +96,39 @@ export function TransformReadout() {
     setFocusedRotation(null);
     const current = $transformReadout.get();
     if (!current) {
-      setRotationDraft(EMPTY_ROTATION);
+      setRotationDraft(EMPTY_DRAFT);
       return;
     }
     const key = axis === 'x' ? 'rotationX' : axis === 'y' ? 'rotationY' : 'rotationZ';
-    setRotationDraft((prev) => ({ ...prev, [axis]: formatRotation(current[key]) }));
+    setRotationDraft((prev) => ({ ...prev, [axis]: formatFixed(current[key], 1) }));
+  };
+
+  const handleScaleChange = (axis: TransformAxis, next: string) => {
+    setScaleDraft((current) => ({ ...current, [axis]: next }));
+    if (next === '' || next === '-' || next === '.' || next === '-.') {
+      return;
+    }
+    const parsed = Number(next);
+    if (Number.isFinite(parsed)) {
+      applyTransformScaleAxis(axis, parsed);
+    }
+  };
+
+  const handleScaleBlur = (axis: TransformAxis) => {
+    setFocusedScale(null);
+    const current = $transformReadout.get();
+    if (!current) {
+      setScaleDraft(EMPTY_DRAFT);
+      return;
+    }
+    const key = axis === 'x' ? 'scaleX' : axis === 'y' ? 'scaleY' : 'scaleZ';
+    setScaleDraft((prev) => ({ ...prev, [axis]: formatFixed(current[key], 3) }));
   };
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <Text variant="muted">
-          Position
-        </Text>
+        <Text variant="muted">Position</Text>
 
         <div className="flex gap-2">
           {AXES.map((axis) => (
@@ -124,9 +149,7 @@ export function TransformReadout() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Text variant="muted">
-          Rotation
-        </Text>
+        <Text variant="muted">Rotation</Text>
 
         <div className="flex gap-2">
           {AXES.map((axis) => (
@@ -143,6 +166,28 @@ export function TransformReadout() {
               onFocus={() => setFocusedRotation(axis)}
               onChange={(event) => handleRotationChange(axis, event.target.value)}
               onBlur={() => handleRotationBlur(axis)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Text variant="muted">Scale</Text>
+
+        <div className="flex gap-2">
+          {AXES.map((axis) => (
+            <Input
+              key={`scale-${axis}`}
+              label={axis.toUpperCase()}
+              type="number"
+              step={0.01}
+              min={0.001}
+              value={enabled ? scaleDraft[axis] : '—'}
+              disabled={!enabled}
+              className="flex-1 w-full"
+              onFocus={() => setFocusedScale(axis)}
+              onChange={(event) => handleScaleChange(axis, event.target.value)}
+              onBlur={() => handleScaleBlur(axis)}
             />
           ))}
         </div>

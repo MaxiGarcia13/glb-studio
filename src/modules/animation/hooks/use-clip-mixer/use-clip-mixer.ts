@@ -54,6 +54,8 @@ export function useClipMixer(scene: Group | null, modelId: string): void {
     = isReadyClip(entry) ? (entry.rootPositionByModelId[modelId] ?? null) : null;
   const rootRotation
     = isReadyClip(entry) ? (entry.rootRotationByModelId[modelId] ?? null) : null;
+  const rootScale
+    = isReadyClip(entry) ? (entry.rootScaleByModelId[modelId] ?? null) : null;
 
   const blendEntry = clips.find((item) => item.id === blendClipId);
   const blendClip = isReadyClip(blendEntry) ? blendEntry.clip : null;
@@ -63,6 +65,7 @@ export function useClipMixer(scene: Group | null, modelId: string): void {
     clip,
     rootPosition,
     rootRotation,
+    rootScale,
     playing,
     loop,
     modelId,

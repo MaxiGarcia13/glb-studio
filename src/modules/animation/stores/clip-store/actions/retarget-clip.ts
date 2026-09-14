@@ -204,6 +204,7 @@ function retargetActiveAsOwnedCopy(
     ownerModelId: targetModelId,
     rootPositionByModelId: {},
     rootRotationByModelId: {},
+    rootScaleByModelId: {},
   }, targetModelId);
 
   const state = $clips.get();

@@ -22,6 +22,7 @@ export function useClipMixerAction(
   clip: AnimationClip | null,
   rootPosition: [number, number, number] | null,
   rootRotation: [number, number, number] | null,
+  rootScale: [number, number, number] | null,
   playing: boolean,
   loop: boolean,
   modelId: string,
@@ -71,9 +72,9 @@ export function useClipMixerAction(
     if ($poseDirty.get() && $poseEditKind.get() === 'modelRoot') {
       return;
     }
-    applySceneRootTransform(scene, rootPosition, rootRotation);
+    applySceneRootTransform(scene, rootPosition, rootRotation, rootScale);
     syncReadoutIfFocused(modelId, scene);
-  }, [clip, rootPosition, rootRotation, scene, modelId]);
+  }, [clip, rootPosition, rootRotation, rootScale, scene, modelId]);
 
   useEffect(() => {
     const action = actionRef.current;

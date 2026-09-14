@@ -58,13 +58,14 @@ export function refreshRestPoseNode(root: Object3D, node: Object3D): void {
 }
 
 /**
- * Apply a clip’s stored model-root position and/or rotation (Euler degrees, XYZ).
+ * Apply a clip’s stored model-root position, rotation (Euler degrees, XYZ), and/or scale.
  * Null for a channel restores that channel from the rest-pose root.
  */
 export function applySceneRootTransform(
   root: Object3D,
   position: [number, number, number] | null,
   rotationDegrees: [number, number, number] | null,
+  scale: [number, number, number] | null = null,
 ): void {
   ensureRestPoseCaptured(root);
   const transform = restPoses.get(root)?.get(root.uuid);
@@ -93,6 +94,12 @@ export function applySceneRootTransform(
       transform.quaternion.z,
       transform.quaternion.w,
     );
+  }
+
+  if (scale) {
+    root.scale.set(scale[0], scale[1], scale[2]);
+  } else if (transform) {
+    root.scale.set(transform.scale.x, transform.scale.y, transform.scale.z);
   }
 
   root.updateMatrixWorld(true);
