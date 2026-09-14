@@ -71,7 +71,7 @@ export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
   }
 
   return (
-    <div className={cn('flex flex-col gap-3', className)}>
+    <div className={cn('flex flex-col gap-0.5', className)}>
       {replaceInput}
 
       {clips.map((entry) => {
@@ -93,6 +93,7 @@ export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
         return (
           <AssetEntry
             key={entry.id}
+            variant="row"
             leading={<AnimationIcon />}
             label={entry.name}
             title={`${entry.name} (${entry.sourceFile})`}

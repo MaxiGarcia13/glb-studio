@@ -14,7 +14,7 @@ export function Collapsible({
 }: CollapsibleProps) {
   return (
     <CollapsibleProvider defaultOpen={defaultOpen}>
-      <div className={cn('flex flex-col gap-2', className)}>
+      <div className={cn('flex flex-col', className)}>
         {children}
       </div>
     </CollapsibleProvider>

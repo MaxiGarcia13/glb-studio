@@ -81,9 +81,8 @@ export function LibraryModel({ model }: LibraryModelProps) {
           />
         )}
         selected={focused}
-        className="ml-5"
-        headerContentClassName="flex-col w-full"
-        actionsClassName="w-full justify-end"
+        showChevron={ownedClips.length > 0}
+        showTreeGuide={ownedClips.length > 0}
         actions={(
           <LibraryModelActions
             modelId={model.id}

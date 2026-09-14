@@ -13,10 +13,14 @@ function ModelsImportAction() {
 export function LibraryModels() {
   const { models } = useStore($model, { keys: ['models'] });
 
+  const hasModels = models.length > 0;
+
   return (
     <LibrarySectionCollapsible
       title="Models"
       defaultOpen
+      showChevron={hasModels}
+      showTreeGuide={hasModels}
       actions={<ModelsImportAction />}
     >
       {models.map((entry) => (

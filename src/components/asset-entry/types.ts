@@ -1,5 +1,7 @@
 export type AssetStatus = 'ready' | 'error';
 
+export type AssetEntryVariant = 'card' | 'row';
+
 export interface AssetEntryProps {
   label: string;
   title?: string;
@@ -20,4 +22,10 @@ export interface AssetEntryProps {
   primaryAction?: React.ReactNode;
   /** When provided, the label can be renamed inline (commit on Enter/blur, cancel on Escape). */
   onRename?: (name: string) => void;
+  /**
+   * `row` — compact outliner-style row (library tree).
+   * `card` — padded ringed card.
+   * Defaults to `row`.
+   */
+  variant?: AssetEntryVariant;
 }

@@ -20,14 +20,17 @@ function SharedAnimationsActions() {
 export function LibrarySharedAnimations() {
   const { clips } = useStore($clips, { keys: ['clips'] });
   const sharedClips = clips.filter((entry) => entry.ownerModelId === null);
+  const hasClips = sharedClips.length > 0;
 
   return (
     <LibrarySectionCollapsible
       title="Shared Animations"
       defaultOpen
+      showChevron={hasClips}
+      showTreeGuide={hasClips}
       actions={<SharedAnimationsActions />}
     >
-      <ClipRows clips={sharedClips} ownerModelId={null} className="ml-5" />
+      <ClipRows clips={sharedClips} ownerModelId={null} />
     </LibrarySectionCollapsible>
   );
 }

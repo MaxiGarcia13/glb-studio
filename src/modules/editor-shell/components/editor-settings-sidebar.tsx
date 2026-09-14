@@ -32,9 +32,9 @@ export function EditorSettingsSidebar() {
           <ClipTrimInputs />
           <SpeedControl />
 
-          <Collapsible>
+          <Collapsible className="gap-2">
             <CollapsibleHeader title="Blend" />
-            <CollapsibleContent>
+            <CollapsibleContent className="gap-4">
               <BlendControls />
             </CollapsibleContent>
           </Collapsible>

@@ -9,6 +9,10 @@ interface Props {
   children: React.ReactNode;
   defaultOpen?: boolean;
   selected?: boolean;
+  /** Show expand chevron when the section has nested content. Defaults to true. */
+  showChevron?: boolean;
+  /** Draw a vertical tree guide beside nested children when open. Defaults to showChevron. */
+  showTreeGuide?: boolean;
   className?: string;
   headerClassName?: string;
   headerContentClassName?: string;
@@ -23,23 +27,29 @@ export function LibrarySectionCollapsible({
   children,
   defaultOpen,
   selected = false,
+  showChevron = true,
+  showTreeGuide = showChevron,
   className,
   headerClassName,
   headerContentClassName,
   contentClassName,
   actionsClassName,
 }: Props) {
+  const canCollapse = showChevron;
+
   return (
-    <Collapsible defaultOpen={defaultOpen} className={className}>
+    <Collapsible defaultOpen={defaultOpen} className={cn('gap-0.5', className)}>
       <CollapsibleHeader
+        showChevron={showChevron}
+        collapsible={canCollapse}
         className={cn(
-          'rounded-sm',
-          selected && 'bg-zinc-900 text-zinc-100',
+          'rounded-sm px-1.5 hover:bg-zinc-700/40 hover:text-zinc-100',
+          selected && 'bg-sky-500/15 text-zinc-100',
           headerClassName,
         )}
       >
         {leading}
-        <div className={cn('flex items-center gap-2 flex-1 min-w-0', headerContentClassName, contentClassName)}>
+        <div className={cn('flex items-center gap-2 flex-1 min-w-0', headerContentClassName)}>
           {typeof title === 'string'
             ? (
                 <Text as="h2" variant="section" className="flex-1 min-w-0 truncate">
@@ -57,7 +67,19 @@ export function LibrarySectionCollapsible({
           )}
         </div>
       </CollapsibleHeader>
-      <CollapsibleContent className={cn('flex flex-col gap-2 w-full', contentClassName)}>
+      <CollapsibleContent
+        className={cn(
+          'relative w-full gap-0.5',
+          showTreeGuide && 'pl-4',
+          contentClassName,
+        )}
+      >
+        {showTreeGuide && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute top-0 bottom-0 left-2 w-px bg-zinc-700"
+          />
+        )}
         {children}
       </CollapsibleContent>
     </Collapsible>

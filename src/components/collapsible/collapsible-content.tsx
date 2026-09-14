@@ -16,7 +16,7 @@ export function CollapsibleContent({
     return null;
 
   return (
-    <div id={panelId} className={cn('flex flex-col gap-4', className)}>
+    <div id={panelId} className={cn('flex flex-col', className)}>
       {children}
     </div>
   );

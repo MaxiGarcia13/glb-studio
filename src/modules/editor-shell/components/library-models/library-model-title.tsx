@@ -1,4 +1,5 @@
 import type { UseAssetEntryRenameResult } from '@/components/asset-entry/use-asset-entry-rename';
+import { cn } from '@maxigarcia/js-utils';
 import { AssetEntryRenameInput } from '@/components/asset-entry/asset-entry-rename-input';
 import { Text } from '@/components/text';
 import { LibraryModelPreviewButton } from './library-model-preview-button';
@@ -31,13 +32,16 @@ export function LibraryModelTitle({
           aria-pressed={selected}
           title={selected ? 'Deselect model' : 'Select model'}
         >
-          <Text as="h2" variant="section" className="truncate">
+          <Text
+            as="h2"
+            variant="section"
+            className={cn('truncate', selected && 'text-sky-300')}
+          >
             {fileName}
           </Text>
         </button>
 
-        <LibraryModelPreviewButton modelId={modelId} className="p-1" />
-      </div>
+        <LibraryModelPreviewButton modelId={modelId} className="p-1" />      </div>
     );
   }
 

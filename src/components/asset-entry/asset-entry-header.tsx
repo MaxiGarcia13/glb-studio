@@ -14,6 +14,9 @@ interface AssetEntryHeaderProps {
   canRename: boolean;
   onSelect?: () => void;
   onStartRename?: () => void;
+  /** Tighter typography for outliner rows. */
+  compact?: boolean;
+  selected?: boolean;
 }
 
 export function AssetEntryHeader({
@@ -27,6 +30,8 @@ export function AssetEntryHeader({
   canRename,
   onSelect,
   onStartRename,
+  compact = false,
+  selected = false,
 }: AssetEntryHeaderProps) {
   const hasError = status === 'error';
   const badgeText = statusLabel ?? (status ? defaultStatusLabel[status] : null);
@@ -38,30 +43,37 @@ export function AssetEntryHeader({
       onDoubleClick={canRename ? onStartRename : undefined}
       disabled={!onSelect}
       className={cn(
-        'flex w-full flex-col gap-1 rounded-sm text-left',
+        'flex w-full flex-col text-left',
+        compact ? 'gap-0.5 min-h-7 justify-center' : 'gap-1',
         onSelect ? 'cursor-pointer' : 'cursor-default',
         canRename ? 'group' : '',
       )}
     >
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 min-h-7">
         {leading && (
           <span className="shrink-0 text-zinc-400">
             {leading}
           </span>
         )}
-        <div className="flex items-start justify-between gap-2 flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-2 flex-1 min-w-0">
           <Text
-            className="min-w-0 truncate text-zinc-100 group-hover:underline"
+            className={cn(
+              'min-w-0 truncate',
+              labelClass({ compact, hasError, selected }),
+              canRename && 'group-hover:underline',
+            )}
             title={title ?? label}
           >
             {label}
           </Text>
-          {badgeText && status && (
+          {badgeText && (
             <Text
               as="span"
               className={cn(
                 'shrink-0 rounded-sm px-1.5 py-0.5 leading-none',
-                statusBadgeClass[status],
+                status
+                  ? statusBadgeClass[status]
+                  : 'bg-zinc-700/80 text-zinc-300',
               )}
             >
               {badgeText}
@@ -72,7 +84,10 @@ export function AssetEntryHeader({
       {description && (
         <Text
           variant={hasError ? 'error' : 'muted'}
-          className="leading-snug line-clamp-2 pl-5.5"
+          className={cn(
+            'leading-snug line-clamp-2',
+            compact ? 'pl-5' : 'pl-5.5',
+          )}
           title={errorDetail ?? description}
         >
           {description}
@@ -80,4 +95,22 @@ export function AssetEntryHeader({
       )}
     </button>
   );
+}
+
+function labelClass({
+  compact,
+  hasError,
+  selected,
+}: {
+  compact: boolean;
+  hasError: boolean;
+  selected: boolean;
+}): string {
+  if (hasError) {
+    return 'text-amber-200';
+  }
+  if (selected) {
+    return 'text-sky-300';
+  }
+  return compact ? 'text-zinc-200' : 'text-zinc-100';
 }
