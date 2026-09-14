@@ -2,6 +2,7 @@ import { cn } from '@maxigarcia/js-utils';
 import { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '@/components/button';
+import { CloseIcon } from '@/components/icons/close-icon';
 import { Text } from '@/components/text';
 
 interface ModalProps {
@@ -75,8 +76,8 @@ export function Modal({ open, title, onClose, children, className }: ModalProps)
           <Text id={titleId} size="sm" variant="heading">
             {title}
           </Text>
-          <Button onClick={onClose} variant="ghost" aria-label="Close">
-            Close
+          <Button onClick={onClose} variant="ghost" aria-label="Close" className="p-1.5">
+            <CloseIcon />
           </Button>
         </header>
         <div className="flex-1 min-h-0 overflow-hidden p-4 flex flex-col">

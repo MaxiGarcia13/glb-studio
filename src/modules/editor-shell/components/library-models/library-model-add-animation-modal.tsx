@@ -4,6 +4,7 @@ import { useStore } from '@nanostores/react';
 import { useState } from 'react';
 import { Button } from '@/components/button';
 import { useGltfFilePicker } from '@/components/gltf-file-picker/use-gltf-file-picker';
+import { PlusIcon } from '@/components/icons/plus-icon';
 import { UploadIcon } from '@/components/icons/upload-icon';
 import { Modal } from '@/components/modal';
 import { Select } from '@/components/select';
@@ -22,6 +23,9 @@ interface LibraryModelAddAnimationModalProps {
   ownerModelId: string;
   scene: Group;
 }
+
+const choiceRowClassName
+  = 'w-full flex items-center gap-2 justify-start px-3 py-2.5 ring-1 ring-zinc-600/80';
 
 function clipSourceLabel(
   entry: ClipEntry,
@@ -63,6 +67,8 @@ export function LibraryModelAddAnimationModal({
     return !ownedNames.has(entry.name);
   });
 
+  const hasCloneable = cloneableClips.length > 0;
+
   if (sourceId !== '' && !cloneableClips.some((entry) => entry.id === sourceId)) {
     setSourceId('');
   }
@@ -88,52 +94,65 @@ export function LibraryModelAddAnimationModal({
     >
       {fileInput}
       <div className="flex flex-col gap-4">
-        <Button
-          onClick={() => {
-            startNewAnimation(scene, ownerModelId);
-            handleClose();
-          }}
-          variant="default"
-          className="justify-start"
-        >
-          Create new
-        </Button>
-
-        <Button
-          onClick={() => openImport()}
-          variant="default"
-          className="justify-start items-center flex gap-2"
-        >
-          <UploadIcon />
-          Import
-        </Button>
-
         <div className="flex flex-col gap-2">
-          <Text variant="muted">Add existing</Text>
-          <div className="flex items-center gap-1">
-            <Select
-              value={sourceId}
-              onChange={(event) => setSourceId(event.target.value)}
-              aria-label="Clip to add"
-              placeholder="Choose animation…"
-              className="flex-1 min-w-0"
-              options={cloneableClips.map((entry) => ({
-                value: entry.id,
-                label: clipSourceLabel(entry, modelNames),
-              }))}
-            />
-            <Button
-              onClick={() => {
-                cloneClipAs(sourceId, ownerModelId);
-                handleClose();
-              }}
-              disabled={!sourceId}
-              variant="ghost"
-              className="px-2 py-1.5"
-            >
-              <Text as="span" size="xs">Add</Text>
-            </Button>
-          </div>
+          <Button
+            onClick={() => {
+              startNewAnimation(scene, ownerModelId);
+              handleClose();
+            }}
+            variant="default"
+            className={choiceRowClassName}
+          >
+            <PlusIcon />
+            Create new
+          </Button>
+
+          <Button
+            onClick={() => openImport()}
+            variant="default"
+            className={choiceRowClassName}
+          >
+            <UploadIcon />
+            Import
+          </Button>
+        </div>
+
+        <div className="flex flex-col gap-2 border-t border-zinc-700 pt-4">
+          <Text as="h2" variant="section">
+            Add existing
+          </Text>
+          {hasCloneable
+            ? (
+                <div className="flex items-center gap-2">
+                  <Select
+                    value={sourceId}
+                    onChange={(event) => setSourceId(event.target.value)}
+                    aria-label="Clip to add"
+                    placeholder="Choose animation…"
+                    className="flex-1 min-w-0"
+                    options={cloneableClips.map((entry) => ({
+                      value: entry.id,
+                      label: clipSourceLabel(entry, modelNames),
+                    }))}
+                  />
+                  <Button
+                    onClick={() => {
+                      cloneClipAs(sourceId, ownerModelId);
+                      handleClose();
+                    }}
+                    disabled={!sourceId}
+                    variant={sourceId ? 'primary' : 'default'}
+                    className="px-3 py-1.5 shrink-0"
+                  >
+                    Add
+                  </Button>
+                </div>
+              )
+            : (
+                <Text variant="muted">
+                  No other animations to add
+                </Text>
+              )}
         </div>
       </div>
     </Modal>
