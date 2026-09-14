@@ -43,7 +43,7 @@ export function TransformControlsDriver({ controlsRef }: TransformControlsDriver
 
   const isMove = editTool === 'move';
   const gizmoObject = isMove ? scene : selected;
-  const gizmoMode = isMove ? 'translate' : mode;
+  const gizmoMode = mode;
   const gizmoSpace = isMove ? 'world' : 'local';
 
   useEffect(() => {

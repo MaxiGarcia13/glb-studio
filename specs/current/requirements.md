@@ -193,6 +193,17 @@ As an editor user, I can choose Edit or Move in the preview, pose bones/meshes o
 - [x] Settings sidebar (`EditorSettingsSidebar` General) shows live **editable X / Y / Z** fields for the **model root position**, available whenever a model is loaded — **independent of Edit / Move tool**. Committing a number updates `scene.position`, marks dirty as a model-root edit, and uses the same Save / Restore path as Move-mode gizmo edits. With an active clip, Save scopes that position to the clip; without a clip, Save updates the model rest root. (Bone/mesh local position is edited via the Edit gizmo, not these fields.)
 - [x] Clicking the selected Animations list row (or otherwise clearing the active clip) restores the model’s current bind / rest pose in the preview so Edit-without-clip works without leaving an animation frozen on the last frame
 
+### US-21 — Whole-model rotate / scale + Settings root rotation
+
+As an editor user, when Move is selected I can rotate and scale the whole model, and I can set model-root rotation XYZ (0–360°) in Settings with the same Save path as root position.
+
+**Acceptance**
+
+- [x] **Move** supports translate / rotate / scale on the model root (world); W / E / R toolbar visible while Move is active
+- [x] Settings shows live editable **rotation X / Y / Z** (degrees, 0–360) for the model root when a model is loaded; values reflect the scene root on load / focus
+- [x] Rotation edits mark dirty as model-root and share Save / Restore with Move / position XYZ
+- [x] Save with no clip commits root TRS to rest pose; Save with an active clip stores position + rotation on that clip per model; selecting the clip reapplies them
+
 ### US-7 — Multi-clip blending
 
 As an editor user, I can create a new animation from scratch or use an uploaded clip, preview a weighted blend with other library clips, and Bake when I want that mix written into the active clip.

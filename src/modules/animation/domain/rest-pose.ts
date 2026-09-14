@@ -58,27 +58,49 @@ export function refreshRestPoseNode(root: Object3D, node: Object3D): void {
 }
 
 /**
- * Apply a clip’s stored model-root position, or restore the rest-pose root when
- * `position` is null (clip has no override).
+ * Apply a clip’s stored model-root position and/or rotation (Euler degrees, XYZ).
+ * Null for a channel restores that channel from the rest-pose root.
  */
-export function applySceneRootPosition(
+export function applySceneRootTransform(
   root: Object3D,
   position: [number, number, number] | null,
+  rotationDegrees: [number, number, number] | null,
 ): void {
+  ensureRestPoseCaptured(root);
+  const transform = restPoses.get(root)?.get(root.uuid);
+
   if (position) {
     root.position.set(position[0], position[1], position[2]);
-  } else {
-    ensureRestPoseCaptured(root);
-    const transform = restPoses.get(root)?.get(root.uuid);
-    if (transform) {
-      root.position.set(
-        transform.position.x,
-        transform.position.y,
-        transform.position.z,
-      );
-    }
+  } else if (transform) {
+    root.position.set(
+      transform.position.x,
+      transform.position.y,
+      transform.position.z,
+    );
   }
+
+  if (rotationDegrees) {
+    root.rotation.order = 'XYZ';
+    root.rotation.set(
+      degreesToRadians(rotationDegrees[0]),
+      degreesToRadians(rotationDegrees[1]),
+      degreesToRadians(rotationDegrees[2]),
+    );
+  } else if (transform) {
+    root.quaternion.set(
+      transform.quaternion.x,
+      transform.quaternion.y,
+      transform.quaternion.z,
+      transform.quaternion.w,
+    );
+  }
+
   root.updateMatrixWorld(true);
+}
+
+function degreesToRadians(degrees: number): number {
+  const wrapped = ((degrees % 360) + 360) % 360;
+  return (wrapped * Math.PI) / 180;
 }
 
 /** Restore captured rest / bind pose after clearing the active clip. */

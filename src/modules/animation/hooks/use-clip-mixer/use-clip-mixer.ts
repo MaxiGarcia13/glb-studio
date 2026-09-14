@@ -52,12 +52,24 @@ export function useClipMixer(scene: Group | null, modelId: string): void {
         : null;
   const rootPosition
     = isReadyClip(entry) ? (entry.rootPositionByModelId[modelId] ?? null) : null;
+  const rootRotation
+    = isReadyClip(entry) ? (entry.rootRotationByModelId[modelId] ?? null) : null;
 
   const blendEntry = clips.find((item) => item.id === blendClipId);
   const blendClip = isReadyClip(blendEntry) ? blendEntry.clip : null;
 
   useClipMixerMount(scene, activeClipId, modelId, mixerRef, actionRef, blendActionRef);
-  useClipMixerAction(clip, rootPosition, playing, loop, modelId, mixerRef, actionRef, scene);
+  useClipMixerAction(
+    clip,
+    rootPosition,
+    rootRotation,
+    playing,
+    loop,
+    modelId,
+    mixerRef,
+    actionRef,
+    scene,
+  );
   useClipMixerBlend(blendClip, blendWeight, loop, modelId, mixerRef, blendActionRef, scene);
   useClipMixerFrame(mixerRef, clip?.duration ?? 0);
 }

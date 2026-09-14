@@ -2,13 +2,13 @@ import type { TransformMode } from '../stores/transform-mode-store';
 import { cn } from '@maxigarcia/js-utils';
 import { useStore } from '@nanostores/react';
 import { Button } from '@/components/button';
+import { useActiveModel } from '../hooks/use-active-model';
 import { useTransformModeHotkeys } from '../hooks/use-transform-mode-hotkeys';
 import { $editTool } from '../stores/edit-tool-store';
 import { $selection } from '../stores/selection-store';
 import {
   $transformMode,
   setTransformMode,
-
 } from '../stores/transform-mode-store';
 
 const MODES: { mode: TransformMode; label: string; hotkey: string }[] = [
@@ -27,8 +27,14 @@ export function TransformModeToolbar({ className }: TransformModeToolbarProps) {
   const { object: selected } = useStore($selection, { keys: ['object'] });
   const mode = useStore($transformMode);
   const editTool = useStore($editTool);
+  const { scene } = useActiveModel();
 
-  if (!selected || editTool === 'move') {
+  const visible
+    = editTool === 'move'
+      ? scene !== null
+      : selected !== null;
+
+  if (!visible) {
     return null;
   }
 

@@ -3,7 +3,7 @@ import type { AnimationAction, AnimationClip, AnimationMixer, Group } from 'thre
 
 import { useEffect } from 'react';
 
-import { applyRestPose, applySceneRootPosition } from '@/modules/animation/domain/rest-pose';
+import { applyRestPose, applySceneRootTransform } from '@/modules/animation/domain/rest-pose';
 import { $clips } from '@/modules/animation/stores/clip-store/store';
 import { setActiveAction } from '@/modules/animation/utils/mixer-session';
 import { toTimelineTime } from '@/modules/animation/utils/to-timeline-time';
@@ -21,6 +21,7 @@ function syncReadoutIfFocused(modelId: string, scene: Group): void {
 export function useClipMixerAction(
   clip: AnimationClip | null,
   rootPosition: [number, number, number] | null,
+  rootRotation: [number, number, number] | null,
   playing: boolean,
   loop: boolean,
   modelId: string,
@@ -70,9 +71,9 @@ export function useClipMixerAction(
     if ($poseDirty.get() && $poseEditKind.get() === 'modelRoot') {
       return;
     }
-    applySceneRootPosition(scene, rootPosition);
+    applySceneRootTransform(scene, rootPosition, rootRotation);
     syncReadoutIfFocused(modelId, scene);
-  }, [clip, rootPosition, scene, modelId]);
+  }, [clip, rootPosition, rootRotation, scene, modelId]);
 
   useEffect(() => {
     const action = actionRef.current;

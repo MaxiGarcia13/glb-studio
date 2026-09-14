@@ -3,45 +3,60 @@ import { useStore } from '@nanostores/react';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/input/input';
 import { Text } from '@/components/text';
-import { $clips } from '@/modules/animation/stores/clip-store';
 import {
   $transformReadout,
   applyTransformPositionAxis,
+  applyTransformRotationAxis,
 } from '@/modules/viewport/stores/transform-readout-store';
 
-type Draft = Record<TransformAxis, string>;
+type PositionDraft = Record<TransformAxis, string>;
+type RotationDraft = Record<TransformAxis, string>;
 
-const EMPTY_DRAFT: Draft = { x: '', y: '', z: '' };
+const EMPTY_POSITION: PositionDraft = { x: '', y: '', z: '' };
+const EMPTY_ROTATION: RotationDraft = { x: '', y: '', z: '' };
 const AXES: TransformAxis[] = ['x', 'y', 'z'];
 
-function formatAxis(value: number): string {
+function formatPosition(value: number): string {
   return value.toFixed(3);
+}
+
+function formatRotation(value: number): string {
+  return value.toFixed(1);
 }
 
 export function TransformReadout() {
   const value = useStore($transformReadout);
-  const { activeClipId } = useStore($clips, { keys: ['activeClipId'] });
-  const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
-  const [focused, setFocused] = useState<TransformAxis | null>(null);
+  const [positionDraft, setPositionDraft] = useState<PositionDraft>(EMPTY_POSITION);
+  const [rotationDraft, setRotationDraft] = useState<RotationDraft>(EMPTY_ROTATION);
+  const [focusedPosition, setFocusedPosition] = useState<TransformAxis | null>(null);
+  const [focusedRotation, setFocusedRotation] = useState<TransformAxis | null>(null);
 
   const enabled = value !== null;
 
   useEffect(() => {
     if (!value) {
-      if (!focused) {
-        setDraft(EMPTY_DRAFT);
+      if (!focusedPosition) {
+        setPositionDraft(EMPTY_POSITION);
+      }
+      if (!focusedRotation) {
+        setRotationDraft(EMPTY_ROTATION);
       }
       return;
     }
-    setDraft((current) => ({
-      x: focused === 'x' ? current.x : formatAxis(value.x),
-      y: focused === 'y' ? current.y : formatAxis(value.y),
-      z: focused === 'z' ? current.z : formatAxis(value.z),
+    setPositionDraft((current) => ({
+      x: focusedPosition === 'x' ? current.x : formatPosition(value.x),
+      y: focusedPosition === 'y' ? current.y : formatPosition(value.y),
+      z: focusedPosition === 'z' ? current.z : formatPosition(value.z),
     }));
-  }, [value, focused]);
+    setRotationDraft((current) => ({
+      x: focusedRotation === 'x' ? current.x : formatRotation(value.rotationX),
+      y: focusedRotation === 'y' ? current.y : formatRotation(value.rotationY),
+      z: focusedRotation === 'z' ? current.z : formatRotation(value.rotationZ),
+    }));
+  }, [value, focusedPosition, focusedRotation]);
 
-  const handleChange = (axis: TransformAxis, next: string) => {
-    setDraft((current) => ({ ...current, [axis]: next }));
+  const handlePositionChange = (axis: TransformAxis, next: string) => {
+    setPositionDraft((current) => ({ ...current, [axis]: next }));
     if (next === '' || next === '-' || next === '.' || next === '-.') {
       return;
     }
@@ -51,37 +66,86 @@ export function TransformReadout() {
     }
   };
 
-  const handleBlur = (axis: TransformAxis) => {
-    setFocused(null);
+  const handlePositionBlur = (axis: TransformAxis) => {
+    setFocusedPosition(null);
     const current = $transformReadout.get();
     if (!current) {
-      setDraft(EMPTY_DRAFT);
+      setPositionDraft(EMPTY_POSITION);
       return;
     }
-    setDraft((prev) => ({ ...prev, [axis]: formatAxis(current[axis]) }));
+    setPositionDraft((prev) => ({ ...prev, [axis]: formatPosition(current[axis]) }));
+  };
+
+  const handleRotationChange = (axis: TransformAxis, next: string) => {
+    setRotationDraft((current) => ({ ...current, [axis]: next }));
+    if (next === '' || next === '-' || next === '.' || next === '-.') {
+      return;
+    }
+    const parsed = Number(next);
+    if (Number.isFinite(parsed)) {
+      applyTransformRotationAxis(axis, parsed);
+    }
+  };
+
+  const handleRotationBlur = (axis: TransformAxis) => {
+    setFocusedRotation(null);
+    const current = $transformReadout.get();
+    if (!current) {
+      setRotationDraft(EMPTY_ROTATION);
+      return;
+    }
+    const key = axis === 'x' ? 'rotationX' : axis === 'y' ? 'rotationY' : 'rotationZ';
+    setRotationDraft((prev) => ({ ...prev, [axis]: formatRotation(current[key]) }));
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <Text variant="muted">
-        {activeClipId ? 'Animation root position' : 'Model root position'}
-      </Text>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
+        <Text variant="muted">
+          Position
+        </Text>
 
-      <div className="flex gap-2">
-        {AXES.map((axis) => (
-          <Input
-            key={axis}
-            label={`${axis.toUpperCase()} (m)`}
-            type="number"
-            step={0.01}
-            value={enabled ? draft[axis] : '—'}
-            disabled={!enabled}
-            className="flex-1 w-full"
-            onFocus={() => setFocused(axis)}
-            onChange={(event) => handleChange(axis, event.target.value)}
-            onBlur={() => handleBlur(axis)}
-          />
-        ))}
+        <div className="flex gap-2">
+          {AXES.map((axis) => (
+            <Input
+              key={`pos-${axis}`}
+              label={`${axis.toUpperCase()} (m)`}
+              type="number"
+              step={0.01}
+              value={enabled ? positionDraft[axis] : '—'}
+              disabled={!enabled}
+              className="flex-1 w-full"
+              onFocus={() => setFocusedPosition(axis)}
+              onChange={(event) => handlePositionChange(axis, event.target.value)}
+              onBlur={() => handlePositionBlur(axis)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Text variant="muted">
+          Rotation
+        </Text>
+
+        <div className="flex gap-2">
+          {AXES.map((axis) => (
+            <Input
+              key={`rot-${axis}`}
+              label={`${axis.toUpperCase()} (°)`}
+              type="number"
+              step={1}
+              min={0}
+              max={360}
+              value={enabled ? rotationDraft[axis] : '—'}
+              disabled={!enabled}
+              className="flex-1 w-full"
+              onFocus={() => setFocusedRotation(axis)}
+              onChange={(event) => handleRotationChange(axis, event.target.value)}
+              onBlur={() => handleRotationBlur(axis)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

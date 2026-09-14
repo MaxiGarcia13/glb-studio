@@ -24,6 +24,7 @@ export function toEntry(
     sourceBindFrames,
     ownerModelId,
     rootPositionByModelId: {},
+    rootRotationByModelId: {},
   };
 }
 
@@ -47,6 +48,7 @@ export function toFailedFileEntry(
     sourceBindFrames: {},
     ownerModelId,
     rootPositionByModelId: {},
+    rootRotationByModelId: {},
   };
 }
 
@@ -74,5 +76,6 @@ export function toNewAnimationEntry(
     sourceBindFrames: {},
     ownerModelId,
     rootPositionByModelId: {},
+    rootRotationByModelId: {},
   };
 }

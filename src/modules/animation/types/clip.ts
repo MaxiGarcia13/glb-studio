@@ -29,6 +29,11 @@ export interface ClipEntry {
    * is active on that model. Missing key = use that model’s rest-pose root.
    */
   rootPositionByModelId: Record<string, [number, number, number]>;
+  /**
+   * Per-model model-root Euler rotation in degrees (XYZ) from Move / Settings.
+   * Missing key = use that model’s rest-pose root rotation.
+   */
+  rootRotationByModelId: Record<string, [number, number, number]>;
 }
 
 export interface ClipLibraryState {

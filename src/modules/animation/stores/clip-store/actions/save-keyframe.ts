@@ -1,3 +1,4 @@
+import type { Object3D } from 'three';
 import {
   computeBindPoseDelta,
   rebaseClipNode,
@@ -5,7 +6,7 @@ import {
 import { writeNodeKeyframe } from '@/modules/animation/domain/keyframe-write';
 import { resolveActiveClipIdForModel } from '@/modules/animation/domain/resolve-active-clip';
 import {
-  applySceneRootPosition,
+  applySceneRootTransform,
   refreshRestPoseNode,
 } from '@/modules/animation/domain/rest-pose';
 import {
@@ -17,6 +18,7 @@ import {
   setMixerTime,
 } from '@/modules/animation/utils/mixer-session';
 import { readClipTimelineTime } from '@/modules/animation/utils/to-timeline-time';
+import { radiansToDegrees } from '@/modules/viewport/domain/euler-degrees';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import {
   $poseDirty,
@@ -70,6 +72,15 @@ function clipIdForModel(
   );
 }
 
+function readRootRotationDegrees(object: Object3D): [number, number, number] {
+  object.rotation.setFromQuaternion(object.quaternion, 'XYZ');
+  return [
+    radiansToDegrees(object.rotation.x),
+    radiansToDegrees(object.rotation.y),
+    radiansToDegrees(object.rotation.z),
+  ];
+}
+
 export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
   if (!$poseDirty.get()) {
     return;
@@ -102,6 +113,7 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
           object.position.y,
           object.position.z,
         ];
+        const rootRotation = readRootRotationDegrees(object);
         // Clear dirty before publishing so the mixer effect does not skip apply.
         clearPoseDirty();
         $clips.set({
@@ -114,11 +126,15 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
                     ...entry.rootPositionByModelId,
                     [model.id]: rootPosition,
                   },
+                  rootRotationByModelId: {
+                    ...entry.rootRotationByModelId,
+                    [model.id]: rootRotation,
+                  },
                 }
               : entry,
           ),
         });
-        applySceneRootPosition(model.scene, rootPosition);
+        applySceneRootTransform(model.scene, rootPosition, rootRotation);
         // Clip begins at t=0 under the saved root on this model only.
         setMixerTime(0);
         return;

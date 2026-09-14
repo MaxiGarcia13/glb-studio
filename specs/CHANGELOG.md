@@ -11,6 +11,7 @@
 
 | ID | Summary |
 |----|---------|
+| **US-21** | Whole-model rotate / scale in Move + Settings root rotation XYZ |
 | **US-8** | Morph-target editing (post-MVP) |
 | **US-9** | Graph / curve keyframe UI (post-MVP) |
 | **US-10** | Full undo / redo stack (post-MVP) |
