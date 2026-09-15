@@ -3,6 +3,7 @@ export interface PartSizeParamsById {
   sphere: { radius: number };
   cylinder: { radius: number; height: number };
   capsule: { radius: number; length: number };
+  plane: { width: number; height: number };
 }
 
 export type PartKindId = keyof PartSizeParamsById;

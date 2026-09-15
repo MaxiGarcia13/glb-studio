@@ -12,6 +12,7 @@ import {
   CylinderGeometry,
   Mesh,
   MeshStandardMaterial,
+  PlaneGeometry,
   SphereGeometry,
 } from 'three';
 import { withGroundOrigin } from './geometry-ground';
@@ -93,11 +94,27 @@ const capsuleKind: PartKind<'capsule'> = {
     partMesh('capsule', capsuleKind.createGeometry(params), params),
 };
 
+/** Vertical panel on the ground; rotate -90 deg on X for a floor. 2x2 m default. */
+const planeKind: PartKind<'plane'> = {
+  id: 'plane',
+  label: 'Plane',
+  defaultParams: { width: 2, height: 2 },
+  sizeFields: [
+    { param: 'width', label: 'Width', min: 0.01 },
+    { param: 'height', label: 'Height', min: 0.01 },
+  ],
+  createGeometry: ({ width, height }) =>
+    withGroundOrigin(new PlaneGeometry(width, height), height / 2),
+  createMesh: (params) =>
+    partMesh('plane', planeKind.createGeometry(params), params),
+};
+
 export const PART_KINDS: { [K in PartKindId]: PartKind<K> } = {
   box: boxKind,
   sphere: sphereKind,
   cylinder: cylinderKind,
   capsule: capsuleKind,
+  plane: planeKind,
 };
 
 export function getPartKind<K extends PartKindId>(id: K): PartKind<K> {

@@ -201,7 +201,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 | US                                     | Status                    | Tasks                                       |
 | -------------------------------------- | ------------------------- | ------------------------------------------- |
-| **US-24** — Primitive palette          | not started (after US-23) | [`specs/us-24/tasks.md`](../us-24/tasks.md) |
+| **US-24** — Primitive palette          | in progress               | [`specs/us-24/tasks.md`](../us-24/tasks.md) |
 | **US-25** — Grid / rotation snap       | not started (after US-23) | [`specs/us-25/tasks.md`](../us-25/tasks.md) |
 | **US-26** — Part hierarchy + outliner  | not started (after US-23) | [`specs/us-26/tasks.md`](../us-26/tasks.md) |
 | **US-27** — Additional kits            | not started (after US-23) | [`specs/us-27/tasks.md`](../us-27/tasks.md) |

@@ -9,6 +9,7 @@ const PART_KIND_IDS: ReadonlySet<string> = new Set([
   'sphere',
   'cylinder',
   'capsule',
+  'plane',
 ]);
 
 export interface CreatePartUserData<K extends PartKindId = PartKindId> {

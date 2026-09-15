@@ -49,7 +49,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 ## Create empty model + parts (US-23)
 
 1. **New model** (Plus next to Load) calls `createEmptyModel()` immediately — empty `Group` scene, `source: 'created'`, name like `New model N.glb`, joins preview + focus. No kit picker (kits are US-27)
-2. Domain `create/` owns `PartKind` registry (`box` / `sphere` / `cylinder` / `capsule`), `Kit` seam (unused by New model), `spawnPart` / `duplicatePart` / `deletePart`, ground-origin geometry, size rebuild from `userData.createPart`
+2. Domain `create/` owns `PartKind` registry (`box` / `sphere` / `cylinder` / `capsule` / `plane`), `Kit` seam (unused by New model), `spawnPart` / `duplicatePart` / `deletePart`, ground-origin geometry, size rebuild from `userData.createPart`
 3. Parts are named meshes (`nextPartName` → `box`, `box_2`, …); metres + Y-up; bottom-origin geometry so identity TRS sits on the ground
 4. When focused model is `source: 'created'`: vertical create **ToolBar** after Settings (color, duplicate, delete); Settings **PartInspector** for kind size fields; first-run hint when nothing is selected
 5. Edit Save / Restore for created-part selection: always commit local TRS on the mesh (scene graph + rest-pose refresh); never write keyframes or rebase library clips

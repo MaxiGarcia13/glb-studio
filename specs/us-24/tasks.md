@@ -4,12 +4,12 @@
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Do not implement until this US is explicitly kicked off
+- [x] **Confirm kickoff** — Do not implement until this US is explicitly kicked off
 - [ ] **Fold prep note** — On ship: fold into `current/`, changelog, delete this folder
 
 ## Part kinds
 
-- [ ] **Add `plane` PartKind** — Default size useful for floors/panels; inspector fields for width / height; register beside existing kinds
+- [x] **Add `plane` PartKind** — Default size useful for floors/panels; inspector fields for width / height; register beside existing kinds
 - [ ] **`addPart(modelId, kindId)` domain action** — Instantiates default mesh, assigns unique name, parents under the created model scene, returns the object for selection
 
 ## UI
