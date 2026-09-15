@@ -189,11 +189,17 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 ## Open deltas
 
-| US                                   | Status                | Tasks                                       |
-| ------------------------------------ | --------------------- | ------------------------------------------- |
-| **US-8** — Morph-target editing      | post-MVP, not started | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
-| **US-9** — Graph / curve keyframe UI | post-MVP, not started | [`specs/us-9/tasks.md`](../us-9/tasks.md)   |
-| **US-10** — Full undo / redo         | post-MVP, not started | [`specs/us-10/tasks.md`](../us-10/tasks.md) |
+| US                                     | Status                    | Tasks                                       |
+| -------------------------------------- | ------------------------- | ------------------------------------------- |
+| **US-23** — Create model from kits     | not started               | [`specs/us-23/tasks.md`](../us-23/tasks.md) |
+| **US-24** — Primitive palette          | not started (after US-23) | [`specs/us-24/tasks.md`](../us-24/tasks.md) |
+| **US-25** — Grid / rotation snap       | not started (after US-23) | [`specs/us-25/tasks.md`](../us-25/tasks.md) |
+| **US-26** — Part hierarchy + outliner  | not started (after US-23) | [`specs/us-26/tasks.md`](../us-26/tasks.md) |
+| **US-27** — Additional kits            | not started (after US-23) | [`specs/us-27/tasks.md`](../us-27/tasks.md) |
+| **US-28** — Part color maps (textures) | not started (after US-23) | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
+| **US-8** — Morph-target editing        | post-MVP, not started     | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
+| **US-9** — Graph / curve keyframe UI   | post-MVP, not started     | [`specs/us-9/tasks.md`](../us-9/tasks.md)   |
+| **US-10** — Full undo / redo           | post-MVP, not started     | [`specs/us-10/tasks.md`](../us-10/tasks.md) |
 
 ## Tech debt
 

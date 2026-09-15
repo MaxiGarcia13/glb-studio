@@ -1,0 +1,36 @@
+# US-23 — Create model from kits
+
+Delta for beginner-friendly model creation via starter kits. Parent contract: [`specs/current/requirements.md`](../current/requirements.md).
+
+**Depends on:** US-11 (model library), US-15 (Edit + Save / Restore), US-5 (zip export).
+
+**Status:** Not started — do not implement until explicitly kicked off.
+
+## Story
+
+As an editor user with little or no 3D experience, I can create a new model from a starter kit, tweak its parts in the viewport, and download a GLB — without uploading a file or knowing about skeletons.
+
+## Acceptance
+
+- [ ] Models library has a **New model** action (alongside Load) that opens a kit picker
+- [ ] Kits available in MVP: **Empty**, **Simple car**, **Block figure** (no skeleton — parented meshes only)
+- [ ] Choosing a kit adds a `ModelEntry` with `source: 'created'`, joins preview, and becomes focused (same as a successful import)
+- [ ] Created models use metres, Y-up, and sit on the ground (`y = 0`); default name like `New model 1.glb`
+- [ ] Kit parts are named meshes (`body`, `wheel_FL`, …); selection name overlay shows those names
+- [ ] **Edit** tool + TransformControls move / rotate / scale parts; dirty **Save** / **Restore** follows US-15 (bind-pose style commit on the scene graph — no animation keyframes required)
+- [ ] When a part is selected, an inspector shows **color** and **size** fields for that part kind; changes update the viewport live
+- [ ] User can **Duplicate** and **Delete** the selected part (delete removes the mesh only, not the library model)
+- [ ] Created models do **not** require a skinned mesh or skeleton; imported models still do
+- [ ] Zip export (US-5 / US-22 path) packs created model scenes as `{model}.glb` like any other model
+- [ ] Empty / first-run hint when a created model has no selection: short copy that points users to pick a part and use Edit
+
+## Out of scope
+
+- Freeform “add primitive” palette (US-24)
+- Grid / rotation snap (US-25)
+- Parenting UI / part outliner (US-26)
+- Extra kits beyond the three MVP kits (US-27)
+- Image textures / PBR maps (US-28)
+- Bones, skinning, Mixamo / retarget on created models
+- Material / texture editing on **imported** characters
+- Cloth simulation, sculpting, boolean mesh ops

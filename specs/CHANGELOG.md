@@ -11,6 +11,12 @@
 
 | ID | Summary |
 |----|---------|
+| **US-28** | Part color maps (textures) on created models only |
+| **US-27** | Additional create kits via registry (building, robot, …) |
+| **US-26** | Part hierarchy + outliner for created models |
+| **US-25** | Grid / rotation snap for created-model edits |
+| **US-24** | Primitive palette + add part on created models |
+| **US-23** | Create model from kits (car, block figure, empty) + part edit/export |
 | **US-8** | Morph-target editing (post-MVP) |
 | **US-9** | Graph / curve keyframe UI (post-MVP) |
 | **US-10** | Full undo / redo stack (post-MVP) |
