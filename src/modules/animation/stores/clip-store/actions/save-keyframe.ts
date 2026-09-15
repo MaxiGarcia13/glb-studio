@@ -154,6 +154,14 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
     return;
   }
 
+  // Created parts (US-23): keep local TRS on the mesh only — never keyframes or clip rebase.
+  if (model?.source === 'created') {
+    refreshRestPoseNode(model.scene, object);
+    resumeMixerBindings();
+    clearPoseDirty();
+    return;
+  }
+
   // Prefer the clip driving this model (owned override / shared), not only UI focus.
   const targetClipId = model
     ? clipIdForModel(state, model.id) ?? state.activeClipId

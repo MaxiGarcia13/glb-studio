@@ -15,9 +15,13 @@ export function SaveKeyframeButton({ className }: SaveKeyframeButtonProps) {
   const { activeClipId } = useStore($clips, { keys: ['activeClipId'] });
   const poseDirty = useStore($poseDirty);
   const poseEditKind = useStore($poseEditKind);
-  const { scene } = useActiveModel();
+  const { scene, activeModel } = useActiveModel();
 
-  const writeKeyframe = poseEditKind === 'selection' && activeClipId !== null;
+  // Created parts always commit scene TRS (US-23) — never Hold Pose keyframes.
+  const writeKeyframe
+    = poseEditKind === 'selection'
+      && activeClipId !== null
+      && activeModel?.source !== 'created';
   const clipRootSave = poseEditKind === 'modelRoot' && activeClipId !== null;
 
   if (!poseDirty || scene === null) {

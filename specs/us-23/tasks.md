@@ -26,7 +26,7 @@ Tick only after the matching acceptance criteria pass.
 
 ## Part editing
 
-- [ ] **Wire Edit Save / Restore for created parts** — Reuse US-15 dirty Save / Restore
+- [x] **Wire Edit Save / Restore for created parts** — Reuse US-15 dirty Save / Restore
 - [x] **Create toolbar — color** — Vertical rail after Settings; live `MeshStandardMaterial` color via color tool
 - [ ] **Part inspector — size** — Kind-specific size fields rebuild geometry
 - [ ] **Duplicate selected part** — Clone + slight offset + select clone (toolbar)

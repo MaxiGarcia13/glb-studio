@@ -23,16 +23,22 @@ export function restorePose(): void {
 
   const kind = $poseEditKind.get();
   const { activeClipId } = $clips.get();
+  const model = $activeModel.get();
   const object
     = kind === 'modelRoot'
-      ? $activeModel.get()?.scene ?? null
+      ? model?.scene ?? null
       : $selection.get().object;
 
   if (object) {
     restoreFromSnapshot(object);
   }
 
-  if (kind === 'modelRoot' || !activeClipId) {
+  // Created part edits are scene-graph only — do not re-apply a shared clip mixer.
+  if (
+    kind === 'modelRoot'
+    || !activeClipId
+    || (kind === 'selection' && model?.source === 'created')
+  ) {
     clearPoseDirty();
     return;
   }

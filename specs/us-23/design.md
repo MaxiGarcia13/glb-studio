@@ -41,7 +41,7 @@ New model: always empty scene via `createEmptyModel()`.
 
 ## Edit / Save
 
-Reuse US-15 Edit + Save / Restore for part TRS. Save with no active clip commits local TRS on the mesh (scene graph).
+Reuse US-15 Edit + Save / Restore for part TRS. For `source: 'created'` selection edits, Save always commits local TRS on the mesh (scene graph + rest-pose refresh) and never writes keyframes or rebases library clips — even if a shared clip is selected in the UI. Restore is snapshot-only for those edits.
 
 ## Inspector + create toolbar
 
