@@ -10,7 +10,7 @@
 ## Part kinds
 
 - [x] **Add `plane` PartKind** — Default size useful for floors/panels; inspector fields for width / height; register beside existing kinds
-- [ ] **`addPart(modelId, kindId)` domain action** — Instantiates default mesh, assigns unique name, parents under the created model scene, returns the object for selection
+- [x] **`addPart(modelId, kindId)` domain action** — Instantiates default mesh, assigns unique name, parents under the created model scene, returns the object for selection
 
 ## UI
 

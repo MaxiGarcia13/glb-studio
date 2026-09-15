@@ -9,7 +9,8 @@
 
 ## Layers
 
-- `create/domain/` — `addPart`, naming helper, `plane` kind
+- `create/domain/` — `plane` kind, `spawnPart` / naming helpers
+- `create/actions/` — `addPart(modelId, kindId)` (store lookup + created-only guard; returns mesh for selection)
 - `create/components/` or `editor-shell` — palette UI gated on `source === 'created'`
 - No changes to import validation or animation
 
