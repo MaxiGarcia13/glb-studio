@@ -9,8 +9,8 @@
 
 ## Domain foundations
 
-- [ ] **Add `create` module skeleton** — Create `src/modules/create/` with `domain/` (and types) so kit/part logic stays out of `animation/` and out of ad-hoc UI
-- [ ] **Define `PartKind` registry** — Register `box`, `sphere`, `cylinder`, `capsule` with `createMesh`, default size params, and a way for the inspector to know which fields to show
+- [x] **Add `create` module skeleton** — Create `src/modules/create/` with `domain/` (and types) so kit/part logic stays out of `animation/` and out of ad-hoc UI
+- [x] **Define `PartKind` registry** — Register `box`, `sphere`, `cylinder`, `capsule` with `createMesh`, default size params, and a way for the inspector to know which fields to show
 - [ ] **Define `Kit` registry + recipes** — Data-only kits: `empty` (no parts), `simple-car` (body + four wheels), `block-figure` (torso, head, arms, legs); metres, Y-up, ground at y = 0
 - [ ] **Extend `ModelEntry` with `source`** — `'imported' | 'created'`; imports stay `'imported'`; dispose safely when `blobUrl` is absent for created models
 
