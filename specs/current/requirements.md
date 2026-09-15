@@ -285,35 +285,11 @@ As an editor user, I can upload a `.fbx` model or animation file and have it con
 
 ## Post-MVP user stories
 
-Deltas exist under `specs/us-8/` … `specs/us-10/`. Not started; do not implement until explicitly kicked off.
+Not started; do not implement until explicitly kicked off. Full requirements, design, and tasks live only in the delta folders (not duplicated here):
 
-### US-8 — Morph-target editing
-
-As an editor user, I can adjust morph target influences and save them as animation keyframes.
-
-**Acceptance**
-
-- [ ] Morph list + influence sliders when morphs exist
-- [ ] Live updates; save morph keyframes at `mixer.time` on the active clip
-- [ ] Empty state without morphs; export includes morph tracks when present
-
-### US-9 — Graph / curve keyframe UI
-
-As an editor user, I can inspect and edit keyframe curves for tracks on the active clip.
-
-**Acceptance**
-
-- [ ] Track list (filterable by selection); edit / add / delete keyframes
-- [ ] Edits update the working clip and mixer; interpolation visible where supported
-
-### US-10 — Full undo / redo
-
-As an editor user, I can undo and redo animation edits within the session.
-
-**Acceptance**
-
-- [ ] Undo / Redo UI + shortcuts for discrete clip mutations (trim, keyframes, …)
-- [ ] Per-session stack; mixer never left on a stale clip; integrates with or replaces US-3 pre-trim restore
+- **US-8** — Morph-target editing → [`specs/us-8/`](../us-8/)
+- **US-9** — Graph / curve keyframe UI → [`specs/us-9/`](../us-9/)
+- **US-10** — Full undo / redo → [`specs/us-10/`](../us-10/)
 
 ## Non-functional requirements
 
