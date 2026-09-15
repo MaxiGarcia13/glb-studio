@@ -30,7 +30,7 @@ Tick only after the matching acceptance criteria pass.
 - [x] **Create toolbar — color** — Vertical rail after Settings; live `MeshStandardMaterial` color via color tool
 - [x] **Part inspector — size** — Kind-specific size fields rebuild geometry
 - [x] **Duplicate selected part** — Clone + slight offset + select clone (toolbar)
-- [ ] **Delete selected part** — Remove mesh; clear selection; keep library entry (toolbar)
+- [x] **Delete selected part** — Remove mesh; clear selection; keep library entry (toolbar)
 
 ## Export / verify
 

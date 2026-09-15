@@ -1,9 +1,10 @@
 import { PartColorTool } from './part-color-tool';
+import { PartDeleteTool } from './part-delete-tool';
 import { PartDuplicateTool } from './part-duplicate-tool';
 
 /**
  * Vertical create rail docked after Settings.
- * Hosts part tools (color, duplicate; delete later) without bloating one file.
+ * Hosts part tools (color, duplicate, delete) without bloating one file.
  */
 export function ToolBar() {
   return (
@@ -14,6 +15,7 @@ export function ToolBar() {
     >
       <PartColorTool />
       <PartDuplicateTool />
+      <PartDeleteTool />
     </section>
   );
 }

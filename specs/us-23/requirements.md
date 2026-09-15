@@ -19,7 +19,7 @@ As an editor user with little or no 3D experience, I can create a new empty mode
 - [ ] Parts are named meshes; selection name overlay shows those names
 - [x] **Edit** tool + TransformControls move / rotate / scale parts; dirty **Save** / **Restore** follows US-15 (bind-pose style commit on the scene graph — no animation keyframes required)
 - [x] When a part is selected on a created model, the create toolbar offers **color** and the Settings inspector shows **size** fields for that part kind; changes update the viewport live
-- [ ] User can **Duplicate** and **Delete** the selected part from the create toolbar (delete removes the mesh only, not the library model)
+- [x] User can **Duplicate** and **Delete** the selected part from the create toolbar (delete removes the mesh only, not the library model)
 - [ ] Zip export (US-5 / US-22 path) packs created model scenes as `{model}.glb` like any other model
 - [ ] Empty / first-run hint when a created model has no selection: short copy that points users to add / pick a part and use Edit
 
