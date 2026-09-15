@@ -14,9 +14,9 @@
 
 ## UI
 
-- [ ] **Add-part palette** — Visible only when focused model has `source: 'created'`; one control per kind (or compact select + Add)
-- [ ] **Select after add** — New part becomes the raycast / TransformControls selection so beginners can move it immediately
-- [ ] **Guard imported models** — Palette not offered (or no-ops with clear reason) when focus is an imported character
+- [x] **Add-part palette** — Visible only when focused model has `source: 'created'`; one control per kind (or compact select + Add)
+- [x] **Select after add** — New part becomes the raycast / TransformControls selection so beginners can move it immediately
+- [x] **Guard imported models** — Palette not offered (or no-ops with clear reason) when focus is an imported character
 
 ## Verify
 

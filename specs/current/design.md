@@ -51,7 +51,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 1. **New model** (Plus next to Load) calls `createEmptyModel()` immediately — empty `Group` scene, `source: 'created'`, name like `New model N.glb`, joins preview + focus. No kit picker (kits are US-27)
 2. Domain `create/` owns `PartKind` registry (`box` / `sphere` / `cylinder` / `capsule` / `plane`), `Kit` seam (unused by New model), `spawnPart` / `duplicatePart` / `deletePart`, ground-origin geometry, size rebuild from `userData.createPart`. Action `addPart(modelId, kindId)` spawns a default part under a **created** model and returns the mesh for selection (US-24)
 3. Parts are named meshes (`nextPartName` → `box`, `box_2`, …); metres + Y-up; bottom-origin geometry so identity TRS sits on the ground
-4. When focused model is `source: 'created'`: vertical create **ToolBar** after Settings (color, duplicate, delete); Settings **PartInspector** for kind size fields; first-run hint when nothing is selected
+4. When focused model is `source: 'created'`: vertical create **ToolBar** after Settings (Add part palette, color, duplicate, delete); Settings **PartInspector** for kind size fields; first-run hint when nothing is selected. Toolbar (and palette) hidden for imported focus
 5. Edit Save / Restore for created-part selection: always commit local TRS on the mesh (scene graph + rest-pose refresh); never write keyframes or rebase library clips
 6. `packModelGlb`: created models export mesh scene only (no shared-clip attach). Animation-only zip fallback prefers an imported rig when one exists
 7. Growth seams: primitive palette (US-24), snap (US-25), hierarchy (US-26), kits (US-27), textures (US-28)
