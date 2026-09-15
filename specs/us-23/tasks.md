@@ -22,7 +22,7 @@ Tick only after the matching acceptance criteria pass.
 ## UI — create flow
 
 - [x] **New model control** — Plus next to Load; creates empty model immediately (no modal)
-- [ ] **Beginner hint** — When a created model is focused and nothing is selected, short hint to add / select a part and use Edit
+- [x] **Beginner hint** — When a created model is focused and nothing is selected, short hint to add / select a part and use Edit
 
 ## Part editing
 

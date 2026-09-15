@@ -6,6 +6,7 @@ import { TransformModeToolbar } from '@/modules/viewport/components/transform-mo
 import { ViewportCanvas } from '@/modules/viewport/components/viewport-canvas';
 import { ViewportStatusOverlay } from '@/modules/viewport/components/viewport-status-overlay';
 import { isMobileViewport } from '@/utils/device';
+import { CreatedModelHint } from './created-model-hint';
 import { PreviewPlaybackBar } from './preview-playback-bar';
 
 export function EditorPreview() {
@@ -28,6 +29,10 @@ export function EditorPreview() {
         </div>
         <div className="pointer-events-none absolute z-10 flex right-2 bottom-4 justify-end pr-4">
           <SelectionNameOverlay />
+        </div>
+
+        <div className="pointer-events-none absolute right-4 top-1/2 z-10 -translate-y-1/2">
+          <CreatedModelHint />
         </div>
 
         <div className={
