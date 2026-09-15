@@ -1,6 +1,7 @@
 import type { PartKindId, PartSizeParams } from './part';
 
-export type KitId = 'empty' | 'simple-car' | 'block-figure';
+/** Kit ids — MVP only has empty; more kits arrive in US-27. */
+export type KitId = 'empty';
 
 export type ColorHex = `#${string}`;
 

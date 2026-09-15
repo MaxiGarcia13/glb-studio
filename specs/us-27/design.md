@@ -2,10 +2,11 @@
 
 ## Approach
 
-1. Add recipe modules or entries under `create/domain/kits/` (e.g. `simple-building.ts`, `block-robot.ts`)
-2. Register in the kit index used by the New model modal — **data only**
-3. Optional: “clothes” as extra colored meshes on block figure variants can live here as a third kit (e.g. block figure with shirt/pants parts) without US-28 textures
+1. Add recipe modules or entries under `create/domain/kits/` (e.g. `simple-building.ts`, `block-robot.ts`, optional `simple-car`)
+2. Register in the kit index — **data only**
+3. UX: separate “From kit…” entry (not the Plus → empty shortcut). Plus always stays empty-from-scratch
+4. Optional: clothed block figure as extra colored meshes without US-28 textures
 
 ## Non-goals
 
-No changes to spawn, inspector, or validation unless a bug is found; this US is content + registration.
+Do not put a kit modal back on the primary New model Plus. No changes to spawn/inspector unless a bug is found; this US is content + registration + secondary entry point.

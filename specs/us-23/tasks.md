@@ -1,41 +1,40 @@
 # US-23 — Tasks
 
-**Do not start until explicitly kicked off.** Tick only after the matching acceptance criteria pass.
+Tick only after the matching acceptance criteria pass.
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Product owner asks to implement US-23; until then this delta stays open and unchecked
+- [x] **Confirm kickoff** — Create flow started; New model → empty shipped in code
 - [ ] **Fold prep note** — On ship: fold requirements into `current/requirements.md`, design seams into `current/design.md`, changelog row, delete this folder
 
 ## Domain foundations
 
-- [x] **Add `create` module skeleton** — Create `src/modules/create/` with `domain/` (and types) so kit/part logic stays out of `animation/` and out of ad-hoc UI
-- [x] **Define `PartKind` registry** — Register `box`, `sphere`, `cylinder`, `capsule` with `createMesh`, default size params, and a way for the inspector to know which fields to show
-- [x] **Define `Kit` registry + recipes** — Data-only kits: `empty` (no parts), `simple-car` (body + four wheels), `block-figure` (torso, head, arms, legs); metres, Y-up, ground at y = 0
-- [x] **Extend `ModelEntry` with `source`** — `'imported' | 'created'`; imports stay `'imported'`; dispose safely when `blobUrl` is absent for created models
+- [x] **Add `create` module skeleton** — `src/modules/create/` with `domain/` (and types)
+- [x] **Define `PartKind` registry** — `box`, `sphere`, `cylinder`, `capsule`
+- [x] **Kit registry seam** — Keep `Kit` types / empty entry for US-27; New model does not open a picker
+- [x] **Extend `ModelEntry` with `source`** — `'imported' | 'created'`; dispose safely when `blobUrl` is absent
 
 ## Store / library
 
-- [x] **`createModelFromKit(kitId)` action** — Build scene from kit recipe, assign id + default `New model N.glb` name, set `source: 'created'`, append to library, add to `previewModelIds`, set `activeModelId`
-- [x] **Skip skeleton validation for created models** — Keep strict skinned + skeleton checks only on the file load path (`loadModelFromFile`)
+- [x] **`createEmptyModel()` action** — Blank scene, `New model N.glb`, `source: 'created'`, preview + focus
+- [x] **Skip skeleton validation for created models** — Strict checks only on file load
 
 ## UI — create flow
 
-- [ ] **New model control on Models section** — Place next to Load; opens kit picker (modal)
-- [ ] **Kit picker modal** — List Empty / Simple car / Block figure with short beginner copy; Cancel / Create
-- [ ] **Beginner hint** — When a created model is focused and nothing is selected, show brief non-blocking hint to select a part and use Edit
+- [x] **New model control** — Plus next to Load; creates empty model immediately (no modal)
+- [ ] **Beginner hint** — When a created model is focused and nothing is selected, short hint to add / select a part and use Edit
 
 ## Part editing
 
-- [ ] **Wire Edit Save / Restore for created parts** — Reuse US-15 dirty Save / Restore so part TRS commits to the scene graph (no clip keyframes required)
-- [ ] **Part inspector — color** — Selected part: color control updates `MeshStandardMaterial` live
-- [ ] **Part inspector — size** — Selected part: kind-specific size fields rebuild geometry without resetting useful TRS / material color
-- [ ] **Duplicate selected part** — Clone mesh (geometry/material as appropriate), offset slightly so it is visible, select the clone
-- [ ] **Delete selected part** — Remove mesh from the scene; clear selection; do not remove the library model entry
+- [ ] **Wire Edit Save / Restore for created parts** — Reuse US-15 dirty Save / Restore
+- [ ] **Part inspector — color** — Live `MeshStandardMaterial` color
+- [ ] **Part inspector — size** — Kind-specific size fields rebuild geometry
+- [ ] **Duplicate selected part** — Clone + slight offset + select clone
+- [ ] **Delete selected part** — Remove mesh; clear selection; keep library entry
 
 ## Export / verify
 
-- [ ] **Export created model** — Confirm Download / zip includes the created scene as a normal `{model}.glb`
-- [ ] **Regression — imported models** — Upload a character GLB still requires skinned mesh + skeleton; create path did not weaken import validation
-- [ ] **Manual beginner pass** — Create car kit → recolor wheel → move body → duplicate wheel → export → open GLB in an external viewer
+- [ ] **Export created model** — Zip includes created scene as `{model}.glb`
+- [ ] **Regression — imported models** — Upload still requires skinned mesh + skeleton
+- [ ] **Manual beginner pass** — New empty model → add/edit parts → export → open externally
 - [ ] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md) checked

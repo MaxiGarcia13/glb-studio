@@ -1,35 +1,34 @@
-# US-23 — Create model from kits
+# US-23 — Create empty model + part edit
 
-Delta for beginner-friendly model creation via starter kits. Parent contract: [`specs/current/requirements.md`](../current/requirements.md).
+Delta for beginner-friendly model creation from scratch. Parent contract: [`specs/current/requirements.md`](../current/requirements.md).
 
 **Depends on:** US-11 (model library), US-15 (Edit + Save / Restore), US-5 (zip export).
 
-**Status:** Not started — do not implement until explicitly kicked off.
+**Status:** In progress — New model → empty is implemented; remaining tasks are part editing / export verify.
 
 ## Story
 
-As an editor user with little or no 3D experience, I can create a new model from a starter kit, tweak its parts in the viewport, and download a GLB — without uploading a file or knowing about skeletons.
+As an editor user with little or no 3D experience, I can create a new empty model, add and tweak parts in the viewport, and download a GLB — without uploading a file or knowing about skeletons.
 
 ## Acceptance
 
-- [ ] Models library has a **New model** action (alongside Load) that opens a kit picker
-- [ ] Kits available in MVP: **Empty**, **Simple car**, **Block figure** (no skeleton — parented meshes only)
-- [ ] Choosing a kit adds a `ModelEntry` with `source: 'created'`, joins preview, and becomes focused (same as a successful import)
-- [ ] Created models use metres, Y-up, and sit on the ground (`y = 0`); default name like `New model 1.glb`
-- [ ] Kit parts are named meshes (`body`, `wheel_FL`, …); selection name overlay shows those names
+- [x] Models library has a **New model** action (alongside Load) that **immediately** creates an empty `source: 'created'` model (no kit picker modal)
+- [x] New model joins preview and becomes focused (same as a successful import); default name like `New model 1.glb`
+- [x] Created models do **not** require a skinned mesh or skeleton; imported models still do
+- [ ] Created models use metres, Y-up; parts sit on the ground when added (`y = 0` as appropriate)
+- [ ] Parts are named meshes; selection name overlay shows those names
 - [ ] **Edit** tool + TransformControls move / rotate / scale parts; dirty **Save** / **Restore** follows US-15 (bind-pose style commit on the scene graph — no animation keyframes required)
 - [ ] When a part is selected, an inspector shows **color** and **size** fields for that part kind; changes update the viewport live
 - [ ] User can **Duplicate** and **Delete** the selected part (delete removes the mesh only, not the library model)
-- [ ] Created models do **not** require a skinned mesh or skeleton; imported models still do
 - [ ] Zip export (US-5 / US-22 path) packs created model scenes as `{model}.glb` like any other model
-- [ ] Empty / first-run hint when a created model has no selection: short copy that points users to pick a part and use Edit
+- [ ] Empty / first-run hint when a created model has no selection: short copy that points users to add / pick a part and use Edit
 
 ## Out of scope
 
-- Freeform “add primitive” palette (US-24)
+- Kit picker / starter kits in the New model flow (presets are US-27 if wanted later)
+- Freeform “add primitive” palette (US-24) — required to place first parts after empty create
 - Grid / rotation snap (US-25)
 - Parenting UI / part outliner (US-26)
-- Extra kits beyond the three MVP kits (US-27)
 - Image textures / PBR maps (US-28)
 - Bones, skinning, Mixamo / retarget on created models
 - Material / texture editing on **imported** characters

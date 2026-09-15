@@ -1,5 +1,6 @@
 import { useStore } from '@nanostores/react';
 import { useCollapsible } from '@/components/collapsible';
+import { NewModelButton } from '@/modules/create/components/new-model-button';
 import { LibrarySectionCollapsible } from '@/modules/editor-shell/components/library-section-collapsible';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { ModelImport } from '../model-import';
@@ -21,7 +22,12 @@ export function LibraryModels() {
       defaultOpen
       showChevron={hasModels}
       showTreeGuide={hasModels}
-      actions={<ModelsImportAction />}
+      actions={(
+        <>
+          <NewModelButton />
+          <ModelsImportAction />
+        </>
+      )}
     >
       {models.map((entry) => (
         <LibraryModel
