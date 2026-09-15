@@ -1,4 +1,3 @@
-import { useIsCreatedModelFocused } from '../hooks/use-selected-created-part';
 import { PartColorTool } from './part-color-tool';
 
 /**
