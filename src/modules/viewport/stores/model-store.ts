@@ -52,6 +52,7 @@ export async function importModelFiles(files: File[]): Promise<void> {
         fileName: result.fileName,
         blobUrl: result.blobUrl,
         scene: result.scene,
+        source: 'imported',
       };
       loadedEntries.push(entry);
       importClipsFromAnimations(
@@ -171,7 +172,9 @@ export function renameModel(id: string, name: string): void {
 }
 
 function disposeEntry(entry: ModelEntry): void {
-  URL.revokeObjectURL(entry.blobUrl);
+  if (entry.blobUrl) {
+    URL.revokeObjectURL(entry.blobUrl);
+  }
   disposeScene(entry.scene);
 }
 

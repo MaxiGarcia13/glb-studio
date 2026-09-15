@@ -2,11 +2,15 @@ import type * as THREE from 'three';
 
 export type ModelLibraryPhase = 'idle' | 'loading' | 'loaded' | 'error';
 
+export type ModelSource = 'imported' | 'created';
+
 export interface ModelEntry {
   id: string;
   fileName: string;
-  blobUrl: string;
+  /** Present for imported models; created-from-kit models have no file blob. */
+  blobUrl?: string;
   scene: THREE.Group;
+  source: ModelSource;
 }
 
 export interface ModelLibraryState {
