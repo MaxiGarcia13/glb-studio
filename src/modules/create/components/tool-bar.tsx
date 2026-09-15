@@ -6,12 +6,12 @@ import { PartColorTool } from './part-color-tool';
  */
 export function ToolBar() {
   return (
-    <div
+    <section
       role="toolbar"
       aria-label="Create tools"
       className="flex h-full shrink-0 flex-col items-center gap-1 border-l border-zinc-700 bg-zinc-800 py-2 px-1"
     >
       <PartColorTool />
-    </div>
+    </section>
   );
 }
