@@ -4,7 +4,7 @@ Delta for beginner-friendly model creation from scratch. Parent contract: [`spec
 
 **Depends on:** US-11 (model library), US-15 (Edit + Save / Restore), US-5 (zip export).
 
-**Status:** In progress — create flow + part edit + export packing done; remaining tasks are regression / manual verify.
+**Status:** Acceptance met — ready to fold into `current/` on ship.
 
 ## Story
 
@@ -15,8 +15,8 @@ As an editor user with little or no 3D experience, I can create a new empty mode
 - [x] Models library has a **New model** action (alongside Load) that **immediately** creates an empty `source: 'created'` model (no kit picker modal)
 - [x] New model joins preview and becomes focused (same as a successful import); default name like `New model 1.glb`
 - [x] Created models do **not** require a skinned mesh or skeleton; imported models still do
-- [ ] Created models use metres, Y-up; parts sit on the ground when added (`y = 0` as appropriate)
-- [ ] Parts are named meshes; selection name overlay shows those names
+- [x] Created models use metres, Y-up; parts sit on the ground when added (`y = 0` as appropriate)
+- [x] Parts are named meshes; selection name overlay shows those names
 - [x] **Edit** tool + TransformControls move / rotate / scale parts; dirty **Save** / **Restore** follows US-15 (bind-pose style commit on the scene graph — no animation keyframes required)
 - [x] When a part is selected on a created model, the create toolbar offers **color** and the Settings inspector shows **size** fields for that part kind; changes update the viewport live
 - [x] User can **Duplicate** and **Delete** the selected part from the create toolbar (delete removes the mesh only, not the library model)

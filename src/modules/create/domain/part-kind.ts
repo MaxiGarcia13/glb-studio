@@ -14,6 +14,7 @@ import {
   MeshStandardMaterial,
   SphereGeometry,
 } from 'three';
+import { withGroundOrigin } from './geometry-ground';
 import { readCreatePart, writeCreatePart } from './part-data';
 
 /** One registered primitive kind: how to build it and what the inspector edits. */
@@ -32,6 +33,7 @@ function partMesh<K extends PartKindId>(
   params: PartSizeParams<K>,
 ): Mesh {
   const mesh = new Mesh(geometry, new MeshStandardMaterial());
+  mesh.name = kind;
   writeCreatePart(mesh, { kind, params: { ...params } });
   return mesh;
 }
@@ -45,7 +47,8 @@ const boxKind: PartKind<'box'> = {
     { param: 'height', label: 'Height', min: 0.01 },
     { param: 'depth', label: 'Depth', min: 0.01 },
   ],
-  createGeometry: ({ width, height, depth }) => new BoxGeometry(width, height, depth),
+  createGeometry: ({ width, height, depth }) =>
+    withGroundOrigin(new BoxGeometry(width, height, depth), height / 2),
   createMesh: (params) => partMesh('box', boxKind.createGeometry(params), params),
 };
 
@@ -54,7 +57,8 @@ const sphereKind: PartKind<'sphere'> = {
   label: 'Sphere',
   defaultParams: { radius: 0.5 },
   sizeFields: [{ param: 'radius', label: 'Radius', min: 0.01 }],
-  createGeometry: ({ radius }) => new SphereGeometry(radius, 32, 16),
+  createGeometry: ({ radius }) =>
+    withGroundOrigin(new SphereGeometry(radius, 32, 16), radius),
   createMesh: (params) => partMesh('sphere', sphereKind.createGeometry(params), params),
 };
 
@@ -67,7 +71,7 @@ const cylinderKind: PartKind<'cylinder'> = {
     { param: 'height', label: 'Height', min: 0.01 },
   ],
   createGeometry: ({ radius, height }) =>
-    new CylinderGeometry(radius, radius, height, 32),
+    withGroundOrigin(new CylinderGeometry(radius, radius, height, 32), height / 2),
   createMesh: (params) =>
     partMesh('cylinder', cylinderKind.createGeometry(params), params),
 };
@@ -80,7 +84,11 @@ const capsuleKind: PartKind<'capsule'> = {
     { param: 'radius', label: 'Radius', min: 0.01 },
     { param: 'length', label: 'Length', min: 0.01 },
   ],
-  createGeometry: ({ radius, length }) => new CapsuleGeometry(radius, length, 4, 8),
+  createGeometry: ({ radius, length }) =>
+    withGroundOrigin(
+      new CapsuleGeometry(radius, length, 4, 8),
+      length / 2 + radius,
+    ),
   createMesh: (params) =>
     partMesh('capsule', capsuleKind.createGeometry(params), params),
 };

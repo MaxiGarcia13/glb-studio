@@ -22,6 +22,8 @@ Do **not** put geometry factories inside `animation/`. `viewport` keeps raycast,
 - Created entries: no file blob; dispose must not revoke a missing URL
 - Parts are children of `model.scene`; each mesh `name` is the stable part id for overlay + inspector
 - Created part meshes stamp `userData.createPart = { kind, params }` so size rebuild / duplicate can round-trip
+- Spawn uses metres, Y-up; geometry is bottom-origin so identity TRS sits on the ground (`y = 0`)
+- `spawnPart(scene, kind)` + `nextPartName` assign stable mesh names for the selection overlay (palette UI is US-24)
 
 ## Registries (growth seams)
 
