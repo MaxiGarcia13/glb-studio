@@ -1,22 +1,30 @@
 import type * as THREE from 'three';
-import type { MeshStandardMaterial } from 'three';
+import type { Mesh, MeshStandardMaterial } from 'three';
 
 export function toHexColor(material: MeshStandardMaterial): string {
   return `#${material.color.getHexString()}`;
 }
 
-export function findMeshStandardMaterial(
-  object: THREE.Object3D | null,
-): MeshStandardMaterial | null {
+export function asMesh(object: THREE.Object3D | null): Mesh | null {
   if (!object) {
     return null;
   }
-  const mesh = object as { material?: unknown; isMesh?: boolean };
+  const mesh = object as Mesh;
   if (!mesh.isMesh) {
     return null;
   }
-  const mat = mesh.material as MeshStandardMaterial | undefined;
-  if (!mat || !('isMeshStandardMaterial' in mat)) {
+  return mesh;
+}
+
+export function findMeshStandardMaterial(
+  object: THREE.Object3D | null,
+): MeshStandardMaterial | null {
+  const mesh = asMesh(object);
+  if (!mesh) {
+    return null;
+  }
+  const mat = mesh.material as MeshStandardMaterial | MeshStandardMaterial[] | undefined;
+  if (!mat || Array.isArray(mat) || !('isMeshStandardMaterial' in mat)) {
     return null;
   }
   return mat;

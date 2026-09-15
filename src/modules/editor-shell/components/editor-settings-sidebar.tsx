@@ -2,6 +2,7 @@ import { Collapsible, CollapsibleContent, CollapsibleHeader } from '@/components
 import { CollapsibleAside } from '@/components/collapsible-aside/collapsible-aside';
 import { Text } from '@/components/text';
 import { BlendControls, ClipTrimInputs, SpeedControl } from '@/modules/animation';
+import { PartInspector } from '@/modules/create/components/part-inspector';
 import { DownloadExport } from './download-export';
 import { TransformReadout } from './transform-readout';
 import { WorldAxesControls } from './world-axes-controls';
@@ -28,6 +29,8 @@ export function EditorSettingsSidebar() {
           </Text>
           <TransformReadout />
         </div>
+
+        <PartInspector />
 
         <Text as="h2" variant="section">
           Animation

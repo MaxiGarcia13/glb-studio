@@ -21,6 +21,7 @@ Do **not** put geometry factories inside `animation/`. `viewport` keeps raycast,
 - `ModelEntry.source: 'imported' | 'created'`
 - Created entries: no file blob; dispose must not revoke a missing URL
 - Parts are children of `model.scene`; each mesh `name` is the stable part id for overlay + inspector
+- Created part meshes stamp `userData.createPart = { kind, params }` so size rebuild / duplicate can round-trip
 
 ## Registries (growth seams)
 
@@ -48,7 +49,7 @@ Reuse US-15 Edit + Save / Restore for part TRS. For `source: 'created'` selectio
 When selection is a mesh belonging to the focused created model:
 
 - Color → `MeshStandardMaterial.color` (vertical create toolbar, right of Settings)
-- Size → rebuild geometry from kind params (keep material + TRS) in Settings part inspector
+- Size → rebuild geometry from kind params stamped on `mesh.userData.createPart` (keep material + TRS) in Settings `PartInspector`
 
 ## UX
 
