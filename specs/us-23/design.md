@@ -12,7 +12,7 @@ New domain **`create`** under `src/modules/create/`:
 |-------|------|
 | `domain/` | `PartKind` registry, optional kit recipes (US-27), spawn/duplicate helpers, geometry rebuild from params |
 | `actions/` | `createEmptyModel`, duplicate/delete part |
-| `components/` | New model button, part inspector (shell may mount these) |
+| `components/` | New model button, create `ToolBar` (color + later duplicate/delete), part inspector (shell may mount these) |
 
 Do **not** put geometry factories inside `animation/`. `viewport` keeps raycast, TransformControls, selection. `export` keeps packing `model.scene` unchanged aside from validation differences at load time.
 
@@ -43,19 +43,20 @@ New model: always empty scene via `createEmptyModel()`.
 
 Reuse US-15 Edit + Save / Restore for part TRS. Save with no active clip commits local TRS on the mesh (scene graph).
 
-## Inspector
+## Inspector + create toolbar
 
 When selection is a mesh belonging to the focused created model:
 
-- Color → `MeshStandardMaterial.color`
-- Size → rebuild geometry from kind params (keep material + TRS)
+- Color → `MeshStandardMaterial.color` (vertical create toolbar, right of Settings)
+- Size → rebuild geometry from kind params (keep material + TRS) in Settings part inspector
 
 ## UX
 
 1. Models section **New model** (Plus) → `createEmptyModel()` immediately
 2. User adds parts via US-24 palette (or interim create tools when available)
-3. Part inspector in Settings — prefer Settings so preview stays uncluttered
-4. Duplicate / Delete near the inspector
+3. Vertical **create toolbar** docks after Settings (`Library | Preview | Settings | ToolBar`); hidden unless focused model is `source: 'created'`
+4. Part size fields stay in Settings inspector so preview stays uncluttered
+5. Duplicate / Delete on the create toolbar (near color)
 
 ## Non-goals
 
