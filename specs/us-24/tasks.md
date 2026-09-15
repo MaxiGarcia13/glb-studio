@@ -1,10 +1,10 @@
 # US-24 — Tasks
 
-**Do not start until US-23 is done (or explicitly waived) and this US is kicked off.** Tick only after acceptance.
+**Do not start until this US is explicitly kicked off.** Tick only after acceptance.
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Do not implement while US-23 is still open unless product explicitly combines the work
+- [ ] **Confirm kickoff** — Do not implement until this US is explicitly kicked off
 - [ ] **Fold prep note** — On ship: fold into `current/`, changelog, delete this folder
 
 ## Part kinds

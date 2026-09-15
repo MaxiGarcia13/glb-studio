@@ -18,13 +18,14 @@ flowchart LR
 ```
 
 - [`src/pages/index.astro`](../../src/pages/index.astro) mounts `EditorSidebar` and `EditorPreview` as `client:only="react"` islands
-- Domains: `editor-shell`, `viewport`, `animation`, `export`, `import` under `src/modules/`
+- Domains: `editor-shell`, `viewport`, `animation`, `export`, `import`, `create` under `src/modules/`
 
 ## Assets
 
 | Asset              | Role                                                                                  |
 | ------------------ | ------------------------------------------------------------------------------------- |
-| Model GLB/GLTF     | Skinned mesh + skeleton; many in the session, **several** previewed at once (US-20)   |
+| Model GLB/GLTF     | Skinned mesh + skeleton when **imported**; many in the session, **several** previewed at once (US-20) |
+| Created model      | Empty or primitive mesh scene (`source: 'created'`); no skeleton required (US-23)      |
 | Animation GLB/GLTF | Source of `AnimationClip`s only; mesh payload ignored or discarded after clip extract |
 | Model / clip FBX   | Converted to GLB via `POST /api/v1/fbx-to-glb`, then the same load path as above      |
 
@@ -34,16 +35,26 @@ Clips have **ownership** (`ownerModelId`: `null` = Shared Animations; otherwise 
 
 1. User picks one or more `.glb` / `.gltf` / `.fbx` files (File API); `.fbx` converts first — see **FBX import** below
 2. Adapter parses each via imperative `GLTFLoader` and a blob URL (`viewport/adapters`)
-3. Validate skinned mesh + skeleton per file; else user-visible error and that file does not join the library
-4. Append successful loads to `models[]`. New loads join `previewModelIds` (visible by default). The last successful load in that batch becomes `activeModelId` (focused)
+3. Validate skinned mesh + skeleton per **imported** file; else user-visible error and that file does not join the library. **Created** models skip this path (`createEmptyModel`)
+4. Append successful loads to `models[]` with `source: 'imported'`. New loads join `previewModelIds` (visible by default). The last successful load in that batch becomes `activeModelId` (focused)
 5. Viewport mounts every previewed model’s scene graph (`ModelViewer` primitives). Hidden library graphs stay in memory until Remove. Eye toggle on a model row adds/removes that id from `previewModelIds`
-6. Replace updates that entry only (keep id). If it is previewed, swap that graph and re-frame the union of visible models. Remove disposes that graph / blob URL; if it was focused, focus another previewed model or idle empty state
+6. Replace updates that entry only (keep id). If it is previewed, swap that graph and re-frame the union of visible models. Remove disposes that graph / blob URL (skip revoke when `blobUrl` is absent on created models); if it was focused, focus another previewed model or idle empty state
 
 Empty overlay when idle; clear error copy on parse failure or missing skeleton. After a successful load **or preview-set change**, camera frames the **union AABB** of visible scenes from a fixed three-quarter elevated angle (`computeScenesFraming` + `DEFAULT_VIEW_OFFSET` in `viewport/constants/camera.ts`; framing padding in `viewport/domain/model-framing.ts`). Scenes keep their own origins; place them with Move / Settings XYZ.
 
-Sidebar **Library** is nested (US-19): **Models** (upload) → each model collapsible (`ModelIcon` + eye preview + Retarget / Animation / Edit / Replace / Remove) listing owned clips; sibling **Shared Animations** (`AnimationIcon` + Upload / New). Clip rows use `AnimationIcon` + iconized actions. **Focus** (`activeModelId`) is distinct from preview membership: selecting a model name sets focus (and shows it if hidden); clicking the focused name again clears focus (same toggle pattern as clips). Gizmo and Settings XYZ target the focused model; Play / Pause / Stop / scrub work with a selected clip even when focus is cleared (transport falls back to all previewed mixers).
+Sidebar **Library** is nested (US-19): **Models** (New model Plus + upload) → each model collapsible (`ModelIcon` + eye preview + Retarget / Animation / Edit / Replace / Remove) listing owned clips; sibling **Shared Animations** (`AnimationIcon` + Upload / New). Clip rows use `AnimationIcon` + iconized actions. **Focus** (`activeModelId`) is distinct from preview membership: selecting a model name sets focus (and shows it if hidden); clicking the focused name again clears focus (same toggle pattern as clips). Gizmo and Settings XYZ target the focused model; Play / Pause / Stop / scrub work with a selected clip even when focus is cleared (transport falls back to all previewed mixers).
 
 Do not add a second debug canvas, FPS overlay render path, or smoke-test scene that bypasses the editor viewport lifecycle.
+
+## Create empty model + parts (US-23)
+
+1. **New model** (Plus next to Load) calls `createEmptyModel()` immediately — empty `Group` scene, `source: 'created'`, name like `New model N.glb`, joins preview + focus. No kit picker (kits are US-27)
+2. Domain `create/` owns `PartKind` registry (`box` / `sphere` / `cylinder` / `capsule`), `Kit` seam (unused by New model), `spawnPart` / `duplicatePart` / `deletePart`, ground-origin geometry, size rebuild from `userData.createPart`
+3. Parts are named meshes (`nextPartName` → `box`, `box_2`, …); metres + Y-up; bottom-origin geometry so identity TRS sits on the ground
+4. When focused model is `source: 'created'`: vertical create **ToolBar** after Settings (color, duplicate, delete); Settings **PartInspector** for kind size fields; first-run hint when nothing is selected
+5. Edit Save / Restore for created-part selection: always commit local TRS on the mesh (scene graph + rest-pose refresh); never write keyframes or rebase library clips
+6. `packModelGlb`: created models export mesh scene only (no shared-clip attach). Animation-only zip fallback prefers an imported rig when one exists
+7. Growth seams: primitive palette (US-24), snap (US-25), hierarchy (US-26), kits (US-27), textures (US-28)
 
 ## Nested library + clip ownership (US-19)
 
@@ -153,6 +164,7 @@ Bind-pose / Move / T-pose Save–Restore branching: see **Edit / Move tools & bi
 3. **Move** — attach TransformControls to the active model root in **world** space; mode from `$transformMode` (translate / rotate / scale); show W / E / R toolbar while Move is active; ignore raycast picks so the user stays on the root
 4. **Dirty + snapshot** — on first gizmo / Settings root change, mark `$poseDirty`, set `$poseEditKind` (`modelRoot` | `selection`), snapshot pre-edit local TRS
 5. **Save** (by `$poseEditKind`, not active tool)
+   - `selection` on a **created** model part → keep Object3D TRS; refresh rest-pose snapshot; **never** write keyframes or rebase library clips (even if a shared clip is selected)
    - `selection` + active ready clip → US-4 Hold Pose to End
    - `selection` + no ready clip → keep Object3D TRS; rebase that node’s tracks in every library `clip` / `sourceClip` by pre-edit → current delta; accumulate per `modelId` + node name for import / replace / post-retarget; refresh rest-pose snapshot; clear dirty
    - `modelRoot` + no ready/draft clip → keep `scene` TRS; refresh rest-pose snapshot; no keyframe write / no clip rebase
@@ -195,7 +207,7 @@ Out of scope: multi-model simultaneous transform; full undo stack (US-10).
 **Download** opens an **Export** modal. Confirm builds a **zip** in the browser (no server):
 
 1. If there are no loaded models **and** no working clips → disable Download; do not open a useless pack
-2. **Merge off (default):** for each loaded model: `GLTFExporter.parse` (`binary: true`) of that scene plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips). Bake each clip’s own `timeScale` into clones when it is not `1`. For each **shared** library clip with a working `AnimationClip`: animation-only `.glb`. Owned clips ship only inside their model GLB
+2. **Merge off (default):** for each loaded model: `GLTFExporter.parse` (`binary: true`) of that scene. **Imported:** plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips). **Created:** mesh scene only (no skeleton / clip attach). Bake each included clip’s own `timeScale` into clones when it is not `1`. For each **shared** library clip with a working `AnimationClip`: animation-only `.glb` (skeleton fallback prefers an imported model when one exists). Owned clips ship only inside their model GLB
 3. **Merge on** (US-22; requires ≥2 `previewModelIds`): one `merged.glb` — clone each previewed scene, unique bone-name prefix per model, rename named nodes, parent under a temp root. Export modal supplies **per-model clip picks** (`clipIdByModelId`) and optional **Scene** clip name. Bake: rewrite each pick onto that model’s prefix → **one** multi-character **Scene** clip only (e.g. fight: Attack + HitReact). Omit hidden models; skip per-model GLBs. Also emit animation-only `.glb`s for every **shared** working clip (unprefixed sidecars). Do not emit owned clips as sidecars
 4. Filename collisions inside the zip get a numeric suffix. Modal supplies optional basenames: zip archive, merged GLB (merge on), or per-model GLBs (merge off) — sanitized with `resolveZipFileName` / `resolveGlbFileName`; animation-only files keep library clip names
 5. Trigger a single download of the zip blob (download attribute uses the chosen zip name). Any exporter or zip failure → user-visible error; no partial archive

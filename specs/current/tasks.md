@@ -187,11 +187,20 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `rootRotationByModelId` Save / apply / mixer wiring
 - [x] Load-time hoist of wrapper TRS onto `gltf.scene`
 
+## US-23 — Create empty model + part edit
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] `create` module + `PartKind` / `Kit` registries; `ModelEntry.source`
+- [x] `createEmptyModel()` + New model Plus (no kit modal); skip skeleton validation
+- [x] Create toolbar (color / duplicate / delete) + Settings part size inspector
+- [x] Edit Save / Restore for created parts; beginner hint; zip packs created `{model}.glb`
+- [x] Ground-origin spawn + named parts; import path still requires skinned mesh + skeleton
+
 ## Open deltas
 
 | US                                     | Status                    | Tasks                                       |
 | -------------------------------------- | ------------------------- | ------------------------------------------- |
-| **US-23** — Create empty model + part edit | in progress (empty create done) | [`specs/us-23/tasks.md`](../us-23/tasks.md) |
 | **US-24** — Primitive palette          | not started (after US-23) | [`specs/us-24/tasks.md`](../us-24/tasks.md) |
 | **US-25** — Grid / rotation snap       | not started (after US-23) | [`specs/us-25/tasks.md`](../us-25/tasks.md) |
 | **US-26** — Part hierarchy + outliner  | not started (after US-23) | [`specs/us-26/tasks.md`](../us-26/tasks.md) |

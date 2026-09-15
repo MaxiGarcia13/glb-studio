@@ -4,7 +4,7 @@ Delta for freeform part creation on top of US-23 kits. Parent contract: [`specs/
 
 **Depends on:** US-23 (create module, part kinds, created models).
 
-**Status:** Not started — do not implement until US-23 has shipped (or is explicitly combined) and this US is kicked off.
+**Status:** Not started — do not implement until this US is kicked off (US-23 has shipped).
 
 ## Story
 

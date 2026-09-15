@@ -29,6 +29,7 @@ Domains under `src/modules/<domain>/`. Pages stay thin. No flat `src/components/
 | `animation`    | Clip library, mixer/playback, trim, time scale, keyframe write    |
 | `export`       | GLTFExporter pack + download                                      |
 | `import`       | FBX convert API + client `ensureGltfFile` service                 |
+| `create`       | Empty model create, part kinds, spawn / duplicate / delete, create toolbar |
 
 ## Hard constraints (3D / animation)
 
@@ -42,4 +43,4 @@ See [`.cursor/rules/plan-before-implementing.mdc`](.cursor/rules/plan-before-imp
 ## Post-MVP / still excluded
 
 - Post-MVP stories **US-8…US-10** (morphs, curve UI, undo) live under `specs/us-8/` … `specs/us-10/` — do not start unless explicitly kicked off
-- Still excluded: material/texture editing, server accounts, collab — see [`specs/current/requirements.md`](specs/current/requirements.md)
+- Still excluded: material/texture editing on **imported** characters, server accounts, collab — see [`specs/current/requirements.md`](specs/current/requirements.md)

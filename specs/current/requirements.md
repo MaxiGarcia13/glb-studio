@@ -4,7 +4,7 @@ Living product contract for the **GLB Character & Animation Editor**.
 
 ## Product summary
 
-Web editor with a full-screen 3D viewport and a collapsible sidebar. Users load one or more model GLBs (several can be previewed at once), manage nested model-owned and shared animation clips, play and edit them (trim, speed, keyframes, weighted blend + bake, bind pose, whole-model move), and download a zip of per-model (or optionally merged) GLBs plus animation-only files.
+Web editor with a full-screen 3D viewport and a collapsible sidebar. Users load one or more model GLBs (several can be previewed at once), **create empty models from scratch** and edit primitive parts, manage nested model-owned and shared animation clips, play and edit them (trim, speed, keyframes, weighted blend + bake, bind pose, whole-model move), and download a zip of per-model (or optionally merged) GLBs plus animation-only files.
 
 **Stack:** Astro shell + React island; React Three Fiber + drei + Three.js.
 
@@ -66,7 +66,7 @@ As an editor user, I can download a zip of each model and of each animation as s
 **Acceptance**
 
 - [x] “Download” uses `GLTFExporter` and builds a zip in the browser — no server round-trip
-- [x] Zip contains one `{model}.glb` per loaded model: that model’s scene plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips)
+- [x] Zip contains one `{model}.glb` per loaded model: that model’s scene plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips). **Created** models (`source: 'created'`) pack mesh-only — no skeleton / clip attachment required
 - [x] Zip contains one `{clip}.glb` per **shared** library clip that has a working `AnimationClip` — animation-only, no mesh (owned clips ship only inside their model GLB when not merging)
 - [x] Each clip’s stored `timeScale` is baked into that clip’s exported track times / duration per design
 - [x] Filename collisions inside the zip get a numeric suffix
@@ -283,6 +283,23 @@ As an editor user, I can upload a `.fbx` model or animation file and have it con
 - [x] Convert / oversize / non-fbx failures are user-visible (same surfaces as a bad GLB: model `error`, clip failed entry)
 - [x] Convert API is a Vercel Node serverless function (`@astrojs/vercel`, not Edge); request body cap matches Vercel’s payload limit (typically 4.5MB)
 
+### US-23 — Create empty model + part edit
+
+As an editor user with little or no 3D experience, I can create a new empty model, tweak parts in the viewport, and download a GLB — without uploading a file or knowing about skeletons.
+
+**Acceptance**
+
+- [x] Models library has a **New model** action (alongside Load) that **immediately** creates an empty `source: 'created'` model (no kit picker modal)
+- [x] New model joins preview and becomes focused (same as a successful import); default name like `New model 1.glb`
+- [x] Created models do **not** require a skinned mesh or skeleton; imported models still do
+- [x] Created models use metres, Y-up; parts sit on the ground when added (`y = 0` as appropriate)
+- [x] Parts are named meshes; selection name overlay shows those names
+- [x] **Edit** tool + TransformControls move / rotate / scale parts; dirty **Save** / **Restore** follows US-15 (bind-pose style commit on the scene graph — no animation keyframes required)
+- [x] When a part is selected on a created model, the create toolbar offers **color** and the Settings inspector shows **size** fields for that part kind; changes update the viewport live
+- [x] User can **Duplicate** and **Delete** the selected part from the create toolbar (delete removes the mesh only, not the library model)
+- [x] Zip export (US-5 / US-22 path) packs created model scenes as `{model}.glb` like any other model
+- [x] Empty / first-run hint when a created model has no selection: short copy that points users to add / pick a part and use Edit
+
 ## Post-MVP user stories
 
 Not started; do not implement until explicitly kicked off. Full requirements, design, and tasks live only in the delta folders (not duplicated here):
@@ -293,7 +310,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 
 ## Non-functional requirements
 
-- **NFR-1 Modular domains:** Logic lives under `src/modules/<domain>/` (`editor-shell`, `viewport`, `animation`, `export`, `import`); pages stay thin
+- **NFR-1 Modular domains:** Logic lives under `src/modules/<domain>/` (`editor-shell`, `viewport`, `animation`, `export`, `import`, `create`); pages stay thin
 - **NFR-2 Layering:** `services/` = HTTP; `domain/` = business logic; `utils/` = shareable helpers; `adapters/` = external boundaries + mappers; `actions/` = store commands. No R3F / Tailwind / GSAP in `services/` / `domain/` / `utils/` (`three` OK for 3D code)
 - **NFR-3 Island boundary:** Canvas and editor interactivity hydrate as a client React island; Astro owns the static shell
 - **NFR-4 Accessibility:** Sidebar controls are keyboard-operable and properly labelled
@@ -301,7 +318,9 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 
 ## Out of scope (still excluded)
 
-- Material / texture editing
+- Material / texture editing on **imported** characters (created-model color maps are US-28)
+- Kit picker / starter kits on New model (US-27); freeform add-part palette (US-24); snap (US-25); part outliner (US-26)
+- Bones, skinning, Mixamo / retarget on created models
 - Server accounts (FBX convert via US-16 is the allowed server round-trip; no user accounts)
 - Collaborative editing / durable undo across reloads
 - Full NLA strip editorial beyond US-7 blend/cross-fade
