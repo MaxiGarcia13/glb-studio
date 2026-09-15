@@ -16,8 +16,8 @@
 
 ## Store / library
 
-- [ ] **`createModelFromKit(kitId)` action** — Build scene from kit recipe, assign id + default `New model N.glb` name, set `source: 'created'`, append to library, add to `previewModelIds`, set `activeModelId`
-- [ ] **Skip skeleton validation for created models** — Keep strict skinned + skeleton checks only on the file load path (`loadModelFromFile`)
+- [x] **`createModelFromKit(kitId)` action** — Build scene from kit recipe, assign id + default `New model N.glb` name, set `source: 'created'`, append to library, add to `previewModelIds`, set `activeModelId`
+- [x] **Skip skeleton validation for created models** — Keep strict skinned + skeleton checks only on the file load path (`loadModelFromFile`)
 
 ## UI — create flow
 
