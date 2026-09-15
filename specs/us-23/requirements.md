@@ -4,7 +4,7 @@ Delta for beginner-friendly model creation from scratch. Parent contract: [`spec
 
 **Depends on:** US-11 (model library), US-15 (Edit + Save / Restore), US-5 (zip export).
 
-**Status:** In progress — New model → empty is implemented; remaining tasks are part editing / export verify.
+**Status:** In progress — create flow + part edit + export packing done; remaining tasks are regression / manual verify.
 
 ## Story
 
@@ -20,8 +20,8 @@ As an editor user with little or no 3D experience, I can create a new empty mode
 - [x] **Edit** tool + TransformControls move / rotate / scale parts; dirty **Save** / **Restore** follows US-15 (bind-pose style commit on the scene graph — no animation keyframes required)
 - [x] When a part is selected on a created model, the create toolbar offers **color** and the Settings inspector shows **size** fields for that part kind; changes update the viewport live
 - [x] User can **Duplicate** and **Delete** the selected part from the create toolbar (delete removes the mesh only, not the library model)
-- [ ] Zip export (US-5 / US-22 path) packs created model scenes as `{model}.glb` like any other model
-- [ ] Empty / first-run hint when a created model has no selection: short copy that points users to add / pick a part and use Edit
+- [x] Zip export (US-5 / US-22 path) packs created model scenes as `{model}.glb` like any other model
+- [x] Empty / first-run hint when a created model has no selection: short copy that points users to add / pick a part and use Edit
 
 ## Out of scope
 

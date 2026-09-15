@@ -34,7 +34,7 @@ Tick only after the matching acceptance criteria pass.
 
 ## Export / verify
 
-- [ ] **Export created model** — Zip includes created scene as `{model}.glb`
+- [x] **Export created model** — Zip includes created scene as `{model}.glb`
 - [ ] **Regression — imported models** — Upload still requires skinned mesh + skeleton
 - [ ] **Manual beginner pass** — New empty model → add/edit parts → export → open externally
 - [ ] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md) checked

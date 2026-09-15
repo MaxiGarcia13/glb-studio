@@ -16,10 +16,11 @@ export interface ModelGlbResult {
   fileName: string;
 }
 
-export async function packModelGlb(
+/** Collect clips that belong in an imported model GLB (owned + matching shared). */
+function collectImportedModelAnimations(
   model: ModelEntry,
   clips: ClipEntry[],
-): Promise<ModelGlbResult> {
+): AnimationClip[] {
   const nodeNames = buildSkeletonNodeSet(model.scene);
   const animations: AnimationClip[] = [];
 
@@ -43,6 +44,22 @@ export async function packModelGlb(
       animations.push(bakeTimeScale(entry.clip, entry.timeScale));
     }
   }
+
+  return animations;
+}
+
+/**
+ * Serialize a library model scene as `{fileName}.glb`.
+ * Created models pack the mesh scene only (no skeleton / animation tracks).
+ */
+export async function packModelGlb(
+  model: ModelEntry,
+  clips: ClipEntry[],
+): Promise<ModelGlbResult> {
+  const animations
+    = model.source === 'created'
+      ? []
+      : collectImportedModelAnimations(model, clips);
 
   const arrayBuffer = await exportGlbBinary(model.scene, animations);
   return { arrayBuffer, fileName: `${stripGlbExtension(model.fileName)}.glb` };

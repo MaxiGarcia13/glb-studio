@@ -49,6 +49,22 @@ function sharedAnimationOnlyClips(clips: readonly ClipEntry[]): ClipEntry[] {
   return clips.filter((entry) => entry.clip !== null && entry.ownerModelId === null);
 }
 
+/** Prefer an imported rig; created scenes have no skeleton for animation-only GLBs. */
+function resolveSkeletonFallback(
+  models: readonly ModelEntry[],
+  previewed: readonly ModelEntry[],
+  active: ModelEntry | null,
+): Group {
+  const preferred
+    = (active?.source === 'imported' ? active : null)
+      ?? models.find((model) => model.source === 'imported')
+      ?? active
+      ?? previewed[0]
+      ?? null;
+
+  return preferred?.scene ?? new Group();
+}
+
 export async function downloadExportZip(
   options: ExportZipOptions = {},
 ): Promise<void> {
@@ -66,11 +82,11 @@ export async function downloadExportZip(
   const previewed = resolvePreviewedModels(models, modelState.previewModelIds);
   const mergeModels = mergeRequested && previewed.length >= 2;
   const modelFileNames = options.modelFileNames ?? {};
-
-  const skeletonFallback
-    = $activeModel.get()?.scene
-      ?? previewed[0]?.scene
-      ?? new Group();
+  const skeletonFallback = resolveSkeletonFallback(
+    models,
+    previewed,
+    $activeModel.get(),
+  );
 
   const entries: ZipEntry[] = [];
 
