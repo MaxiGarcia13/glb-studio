@@ -74,13 +74,13 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 ## US-22 — Export modal + merge visible models
 
-Open delta: [`specs/us-22/`](../us-22/).
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
 
 - [x] `packMergedModelsGlb` + `downloadExportZip({ mergeModels })`
 - [x] On merge: per-model clip picks → Scene bake only; shared also as unprefixed sidecars
 - [x] `ExportModal` + Download opens modal; merge toggle gated on ≥2 previewed models
 - [x] Filename inputs: zip + merged (merge on) / per-model (merge off); Scene clip + per-model Selects
-- [ ] Manual verify separate vs merge / fight Scene bake
+- [x] Manual verify separate vs merge / fight Scene bake
 
 ## US-13 — Selection name overlay
 
@@ -180,7 +180,7 @@ Open delta: [`specs/us-22/`](../us-22/).
 
 ## US-21 — Whole-model rotate / scale + Settings root rotation
 
-**Done** — see [`specs/us-21/`](../us-21/). Fold into changelog when shipping.
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
 
 - [x] Move: translate / rotate / scale on model root; toolbar + W / E / R while Move active
 - [x] Settings rotation XYZ (0–360°) + sync from loaded root
@@ -191,7 +191,6 @@ Open delta: [`specs/us-22/`](../us-22/).
 
 | US                                   | Status                | Tasks                                       |
 | ------------------------------------ | --------------------- | ------------------------------------------- |
-| **US-21** — Whole-model rotate/scale + Settings rotation | implemented (fold on ship) | [`specs/us-21/tasks.md`](../us-21/tasks.md) |
 | **US-8** — Morph-target editing      | post-MVP, not started | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 | **US-9** — Graph / curve keyframe UI | post-MVP, not started | [`specs/us-9/tasks.md`](../us-9/tasks.md)   |
 | **US-10** — Full undo / redo         | post-MVP, not started | [`specs/us-10/tasks.md`](../us-10/tasks.md) |

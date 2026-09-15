@@ -78,14 +78,14 @@ As an editor user, when I press Download I can confirm the zip contents and opti
 
 **Acceptance**
 
-- [ ] Download opens an **Export** modal (does not pack immediately)
-- [ ] Modal shows a short summary of what will be packed; confirm builds the zip
-- [ ] **Merge visible models** toggle when two or more models are previewed (`previewModelIds`); unavailable otherwise
-- [ ] **Merge off (default):** US-5 separate pack unchanged
-- [ ] **Merge on:** one `merged.glb` from previewed models with unique bone prefixes; modal picks one clip per model → **Scene bake only** (multi-character take); no per-model GLBs; hidden models omitted
-- [ ] **Merge on:** animation-only `{clip}.glb` per shared working clip only (owned clips are not sidecars)
-- [ ] Filename collisions and no-partial-zip rules from US-5 still apply
-- [ ] Modal edits zip basename + merged basename + Scene clip name (merge on) or per-model basenames (merge off); empty/invalid → defaults; extensions auto-applied; animation files keep library names
+- [x] Download opens an **Export** modal (does not pack immediately)
+- [x] Modal shows a short summary of what will be packed; confirm builds the zip
+- [x] **Merge visible models** toggle when two or more models are previewed (`previewModelIds`); unavailable otherwise
+- [x] **Merge off (default):** US-5 separate pack unchanged
+- [x] **Merge on:** one `merged.glb` from previewed models with unique bone prefixes; modal picks one clip per model → **Scene bake only** (multi-character take); no per-model GLBs; hidden models omitted
+- [x] **Merge on:** animation-only `{clip}.glb` per shared working clip only (owned clips are not sidecars)
+- [x] Filename collisions and no-partial-zip rules from US-5 still apply
+- [x] Modal edits zip basename + merged basename + Scene clip name (merge on) or per-model basenames (merge off); empty/invalid → defaults; extensions auto-applied; animation files keep library names
 
 ### US-11 — Model library
 
