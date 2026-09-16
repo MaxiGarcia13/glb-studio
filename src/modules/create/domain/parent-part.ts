@@ -60,3 +60,8 @@ export function parentPart(
   parent.attach(child);
   return true;
 }
+
+/** Move a stamped create part under the parts root, preserving world transform. */
+export function unparentPart(child: Mesh, partsRoot: Object3D): boolean {
+  return parentPart(child, partsRoot, partsRoot);
+}

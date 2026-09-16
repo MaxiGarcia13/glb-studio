@@ -5,6 +5,7 @@ import { AddPartPalette } from './add-part-palette';
 import { PartColorTool } from './part-color-tool';
 import { PartDeleteTool } from './part-delete-tool';
 import { PartDuplicateTool } from './part-duplicate-tool';
+import { PartUnparentTool } from './part-unparent-tool';
 
 interface CreateToolbarProps {
   className?: string;
@@ -26,6 +27,7 @@ export function CreateToolbar({ className }: CreateToolbarProps) {
       <div className="mx-2 h-6 w-px bg-border" aria-hidden />
       <PartColorTool />
       <PartDuplicateTool />
+      <PartUnparentTool />
       <PartDeleteTool />
     </FloatingToolbar>
   );

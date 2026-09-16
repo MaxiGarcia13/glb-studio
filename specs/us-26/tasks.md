@@ -10,7 +10,7 @@
 ## Hierarchy
 
 - [x] **`parentPart(child, parent)` helper** — Reparent with world-transform preservation; allow parent = parts root
-- [ ] **Unparent control** — Move selected part back under the parts root without jumping in world space
+- [x] **Unparent control** — Move selected part back under the parts root without jumping in world space
 - [ ] **Parent picker UI** — Choose target parent from other parts on the same created model (exclude self / descendants to avoid cycles)
 
 ## Outliner
