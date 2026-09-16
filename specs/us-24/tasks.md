@@ -21,5 +21,5 @@
 ## Verify
 
 - [ ] **Build beyond kit** — Empty kit → add box + cylinder → transform → export opens correctly externally
-- [ ] **Naming** — Adding two boxes yields distinct overlay names
+- [x] **Naming** — Adding two boxes yields distinct overlay names
 - [ ] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md) checked
