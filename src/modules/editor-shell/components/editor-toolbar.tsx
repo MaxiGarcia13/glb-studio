@@ -61,7 +61,7 @@ export function EditorToolbar() {
     },
   ];
 
-return (
+  return (
     <div className="w-full shrink-0">
       {fileInput}
       <header

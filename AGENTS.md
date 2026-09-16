@@ -20,7 +20,7 @@ See [`.cursor/rules/specs-workflow.md`](.cursor/rules/specs-workflow.md) and [`.
 
 ## Module map
 
-Domains under `src/modules/<domain>/`. Pages stay thin. No flat `src/components/` for domain logic. Layer roles: [`.cursor/rules/module-layers.mdc`](.cursor/rules/module-layers.mdc) (see also [ddd-solid](.cursor/rules/ddd-solid.md)). Chrome colors/spacing: [`.cursor/rules/chrome-ui-tokens.mdc`](.cursor/rules/chrome-ui-tokens.mdc).
+Domains under `src/modules/<domain>/`. Pages stay thin. No flat `src/components/` for domain logic. Layer roles: [`.cursor/rules/module-layers.mdc`](.cursor/rules/module-layers.mdc) (see also [ddd-solid](.cursor/rules/ddd-solid.md)). Editor UI tokens: [`.cursor/rules/editor-ui-tokens.mdc`](.cursor/rules/editor-ui-tokens.mdc).
 
 | Domain         | Owns                                                                       |
 | -------------- | -------------------------------------------------------------------------- |

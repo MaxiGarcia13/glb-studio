@@ -15,7 +15,6 @@
 - [ ] **File: Export** — Opens `ExportModal`; respect `canExport`; remove Settings aside Download
 - [ ] **Settings: axes** — Show world axes + Axes Length (m); remove aside Axes block
 
-
 ## Smart Import
 
 - [ ] **Content router** — Per file: skinned+skeleton → model; animations-only → shared; else error; batch continues

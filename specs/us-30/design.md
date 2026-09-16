@@ -11,12 +11,12 @@
 
 ## File actions (`ActionMenu`)
 
-| Control       | Wire to                                                      | Remove from                               |
-| ------------- | ------------------------------------------------------------ | ----------------------------------------- |
-| New model     | `createEmptyModel`                                           | Models header (`NewModelButton`)          |
-| New animation | `startNewAnimation(scene)` with default `ownerModelId: null` | Shared header (`ClipNewAnimation`)        |
+| Control       | Wire to                                                         | Remove from                               |
+| ------------- | --------------------------------------------------------------- | ----------------------------------------- |
+| New model     | `createEmptyModel`                                              | Models header (`NewModelButton`)          |
+| New animation | `startNewAnimation(scene)` with default `ownerModelId: null`    | Shared header (`ClipNewAnimation`)        |
 | Import        | new content-routing entry (below); open via `useGltfFilePicker` | Models `ModelImport`, Shared `ClipImport` |
-| Export        | open existing `ExportModal` (`canExport` gate)               | Settings aside `DownloadExport`           |
+| Export        | open existing `ExportModal` (`canExport` gate)                  | Settings aside `DownloadExport`           |
 
 Keep model-row **Add animation** modal unchanged (owned create / import / clone).
 

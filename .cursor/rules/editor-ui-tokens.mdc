@@ -1,12 +1,12 @@
 ---
-description: Editor chrome colors and even spacing via Tailwind @theme tokens
+description: Editor UI colors and even spacing via Tailwind @theme tokens
 globs: src/**/*.{tsx,astro,css}
 alwaysApply: false
 ---
 
-# Chrome UI tokens
+# Editor UI tokens
 
-Colors and spacing for editor chrome are defined in `src/styles/global.css` `@theme`. Do not invent new zinc/sky recipes in components.
+Colors and spacing for editor UI are defined in `src/styles/global.css` `@theme`. Do not invent new zinc/sky recipes in components.
 
 Theme colors must be **solid hex** (or explicit `rgb(...)`) in `@theme`. Do not alias with `var(--color-zinc-800)` — Tailwind v4 can leave overlays translucent (menus, floating toolbars).
 
