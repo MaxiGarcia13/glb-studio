@@ -9,6 +9,8 @@ interface LibraryModelTitleProps {
   rename: UseAssetEntryRenameResult;
   modelId: string;
   selected?: boolean;
+  /** Last-clicked anchor in a model multi-selection. */
+  active?: boolean;
   onSelect?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
@@ -17,6 +19,7 @@ export function LibraryModelTitle({
   modelId,
   rename,
   selected = false,
+  active = false,
   onSelect,
 }: LibraryModelTitleProps) {
   if (!rename.editing) {
@@ -35,7 +38,11 @@ export function LibraryModelTitle({
           <Text
             as="h2"
             variant="section"
-            className={cn('truncate', selected && 'text-accent')}
+            className={cn(
+              'truncate',
+              selected && 'text-accent',
+              active && 'font-semibold',
+            )}
           >
             {fileName}
           </Text>

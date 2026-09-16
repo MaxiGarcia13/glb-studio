@@ -42,7 +42,9 @@ function isUnderCollapsedAncestor(
  */
 export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
   useStore($createPartsRevision);
-  const { objects } = useStore($selection, { keys: ['objects'] });
+  const { object: active, objects } = useStore($selection, {
+    keys: ['object', 'objects'],
+  });
   const [collapsedIds, setCollapsedIds] = useState<ReadonlySet<string>>(
     () => new Set(),
   );
@@ -64,6 +66,7 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
     >
       {visible.map(({ mesh, depth, hasChildren }) => {
         const isSelected = objects.includes(mesh);
+        const isActive = active === mesh;
         const label = mesh.name || mesh.uuid;
         const expanded = hasChildren && !collapsedIds.has(mesh.uuid);
 
@@ -75,9 +78,11 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
             aria-expanded={hasChildren ? expanded : undefined}
             className={cn(
               'flex w-full min-h-8 items-center gap-2 rounded-sm py-2 pr-2 transition-colors',
-              isSelected
-                ? 'bg-accent/15 text-accent'
-                : 'text-fg hover:bg-surface-hover/40',
+              isActive
+                ? 'bg-accent/25 text-accent'
+                : isSelected
+                  ? 'bg-accent/15 text-accent'
+                  : 'text-fg hover:bg-surface-hover/40',
             )}
             style={{ paddingLeft: `${8 + depth * 16}px` }}
           >

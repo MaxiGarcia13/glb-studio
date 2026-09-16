@@ -43,9 +43,11 @@ export function LibraryModel({ model }: LibraryModelProps) {
   const { kind, modelIds } = useStore($selection, { keys: ['kind', 'modelIds'] });
   useStore($createPartsRevision);
   const focused = model.id === activeModelId;
-  const selected = kind === 'models'
-    ? modelIds.includes(model.id)
-    : focused;
+  const inModelMulti = kind === 'models' && modelIds.includes(model.id);
+  const isActiveModelAnchor = kind === 'models'
+    && modelIds.length > 0
+    && modelIds[modelIds.length - 1] === model.id;
+  const selected = inModelMulti || (kind !== 'models' && focused);
   const [addAnimationOpen, setAddAnimationOpen] = useState(false);
   const ownedClips = clips.filter((entry) => entry.ownerModelId === model.id);
   const isCreated = model.source === 'created';
@@ -91,6 +93,7 @@ export function LibraryModel({ model }: LibraryModelProps) {
             fileName={model.fileName}
             rename={rename}
             selected={selected}
+            active={isActiveModelAnchor}
             onSelect={(event) => {
               if (event.shiftKey) {
                 toggleModelId(model.id);
@@ -104,6 +107,7 @@ export function LibraryModel({ model }: LibraryModelProps) {
           />
         )}
         selected={selected}
+        headerClassName={isActiveModelAnchor ? 'bg-accent/25' : undefined}
         showChevron={hasNested}
         showTreeGuide={hasNested}
         actions={(

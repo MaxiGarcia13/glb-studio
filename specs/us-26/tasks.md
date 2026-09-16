@@ -24,7 +24,7 @@ Tick only after acceptance.
 
 - [x] **Multi-selection store** — Active + additional targets (parts and/or model ids); plain click replaces; clear rules for not mixing parts with models
 - [x] **Shift+click in library** — Toggle model rows and part outliner rows in the multi-selection
-- [ ] **Shift+click in viewport** — Toggle raycast-picked parts (and model roots if applicable) in the multi-selection
+- [x] **Shift+click in viewport** — Toggle raycast-picked parts (and model roots if applicable) in the multi-selection
 - [ ] **Selection highlight** — Multi-selected parts/models readable in library + viewport
 
 ## Context menu (Group / Ungroup)
