@@ -154,21 +154,6 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
     return;
   }
 
-  // Created parts with no ready driving clip (US-23): keep local TRS on the mesh only.
-  // With a ready clip (Add animation → Create/Import), write Hold Pose like imported models.
-  if (model?.source === 'created') {
-    const createdClipId = clipIdForModel(state, model.id) ?? state.activeClipId;
-    const createdClip = createdClipId
-      ? state.clips.find((entry) => entry.id === createdClipId)
-      : undefined;
-    if (!isReadyClip(createdClip)) {
-      refreshRestPoseNode(model.scene, object);
-      resumeMixerBindings();
-      clearPoseDirty();
-      return;
-    }
-  }
-
   // Prefer the clip driving this model (owned override / shared), not only UI focus.
   const targetClipId = model
     ? clipIdForModel(state, model.id) ?? state.activeClipId
@@ -177,8 +162,22 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
     ? state.clips.find((entry) => entry.id === targetClipId)
     : undefined;
 
+  // Created parts (US-23): Hold Pose only into a ready clip **owned by this model**.
+  // Shared / other-owned driving clips must not gain part tracks (e.g. `capsule.*`),
+  // or character clips pick up Needs-retarget mismatches.
+  if (model?.source === 'created') {
+    const ownedReady
+      = isReadyClip(active) && active.ownerModelId === model.id;
+    if (!ownedReady) {
+      refreshRestPoseNode(model.scene, object);
+      resumeMixerBindings();
+      clearPoseDirty();
+      return;
+    }
+  }
+
   // Bind-pose commit (no ready clip): scene TRS + rebase all library clips.
-  // Created models never reach here without a ready clip (handled above).
+  // Created models never reach here without an owned ready clip (handled above).
   if (!isReadyClip(active)) {
     const nodeName = object.name || object.uuid;
     commitBindPoseToClips(nodeName);

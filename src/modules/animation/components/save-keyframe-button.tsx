@@ -38,11 +38,18 @@ export function SaveKeyframeButton({ className }: SaveKeyframeButtonProps) {
     ? clips.find((entry) => entry.id === drivingClipId)
     : undefined;
   const hasReadyDrivingClip = isReadyClip(drivingClip);
+  // Created models: only Hold Pose into clips owned by that model (never shared).
+  const canHoldPoseIntoDrivingClip
+    = hasReadyDrivingClip
+      && (
+        activeModel?.source !== 'created'
+        || drivingClip.ownerModelId === activeModel.id
+      );
 
-  // Hold Pose when a ready clip drives the edit. Created models without a clip
-  // stay scene-TRS-only (US-23).
+  // Hold Pose when a writable ready clip drives the edit. Created models without
+  // an owned ready clip stay scene-TRS-only (US-23).
   const writeKeyframe
-    = poseEditKind === 'selection' && hasReadyDrivingClip;
+    = poseEditKind === 'selection' && canHoldPoseIntoDrivingClip;
   const clipRootSave = poseEditKind === 'modelRoot' && hasReadyDrivingClip;
 
   if (!poseDirty || scene === null) {
