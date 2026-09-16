@@ -16,7 +16,8 @@ export function ModelViewer() {
   return (
     <>
       {visible.map((model) => (
-        <primitive key={model.id} object={model.scene} />
+        // Library owns the scene for the session — do not dispose on eye-toggle unmount.
+        <primitive key={model.id} object={model.scene} dispose={null} />
       ))}
     </>
   );

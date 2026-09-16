@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '@/layouts/base-layout.astro';
-import { ToolBar } from '@/modules/create/components/tool-bar';
 import { EditorPreview, EditorLibrarySidebar, EditorSettingsSidebar } from '@/modules/editor-shell';
 ---
 
@@ -9,6 +8,5 @@ import { EditorPreview, EditorLibrarySidebar, EditorSettingsSidebar } from '@/mo
     <EditorLibrarySidebar client:only="react" />
     <EditorPreview client:only="react" />
     <EditorSettingsSidebar client:only="react" />
-    <ToolBar client:only="react" />
   </main>
 </BaseLayout>

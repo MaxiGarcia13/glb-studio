@@ -30,7 +30,7 @@ export function OpenButton({ direction, onToggle, title }: OpenButtonProps) {
     <Button
       onClick={onToggle}
       aria-label={ariaLabel}
-      className="absolute top-3 z-1 right-14 flex items-center gap-2"
+      className="absolute top-3 z-1 right-3 flex items-center gap-2"
     >
       <ChevronLeft />
 

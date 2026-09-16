@@ -1,12 +1,12 @@
 import { cn } from '@maxigarcia/js-utils';
 import { SaveKeyframeButton } from '@/modules/animation';
+import { ModelToolBar } from '@/modules/create/components/model-tool-bar';
 import { EditToolToolbar } from '@/modules/viewport/components/edit-tool-toolbar';
 import { SelectionNameOverlay } from '@/modules/viewport/components/selection-name-overlay';
 import { TransformModeToolbar } from '@/modules/viewport/components/transform-mode-toolbar';
 import { ViewportCanvas } from '@/modules/viewport/components/viewport-canvas';
 import { ViewportStatusOverlay } from '@/modules/viewport/components/viewport-status-overlay';
 import { isMobileViewport } from '@/utils/device';
-import { CreatedModelHint } from './created-model-hint';
 import { PreviewPlaybackBar } from './preview-playback-bar';
 
 export function EditorPreview() {
@@ -27,25 +27,27 @@ export function EditorPreview() {
         >
           <TransformModeToolbar />
         </div>
-        <div className="pointer-events-none absolute z-10 flex right-2 bottom-4 justify-end pr-4">
+        <div className={cn(
+          'pointer-events-none absolute z-10 flex right-2  justify-end pr-4',
+          isMobile ? 'bottom-16' : 'bottom-4',
+        )}
+        >
           <SelectionNameOverlay />
         </div>
 
-        <div className="pointer-events-none absolute right-4 top-1/2 z-10 -translate-y-1/2">
-          <CreatedModelHint />
-        </div>
+        <ModelToolBar />
 
         <div className={
           cn(
-            'pointer-events-none absolute inset-x-0  z-10 flex justify-center px-4',
-            isMobile ? 'bottom-18' : 'bottom-4',
+            'pointer-events-none absolute inset-x-0 z-10 flex left-4 justify-center',
+            'bottom-18',
           )
         }
         >
           <SaveKeyframeButton />
         </div>
 
-        <div className="pointer-events-none absolute z-10 flex left-4 bottom-4 px-4">
+        <div className="pointer-events-none absolute z-10 flex left-4 bottom-4">
           <EditToolToolbar />
         </div>
       </div>

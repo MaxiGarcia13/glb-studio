@@ -37,7 +37,7 @@ Clips have **ownership** (`ownerModelId`: `null` = Shared Animations; otherwise 
 2. Adapter parses each via imperative `GLTFLoader` and a blob URL (`viewport/adapters`)
 3. Validate skinned mesh + skeleton per **imported** file; else user-visible error and that file does not join the library. **Created** models skip this path (`createEmptyModel`)
 4. Append successful loads to `models[]` with `source: 'imported'`. New loads join `previewModelIds` (visible by default). The last successful load in that batch becomes `activeModelId` (focused)
-5. Viewport mounts every previewed model’s scene graph (`ModelViewer` primitives). Hidden library graphs stay in memory until Remove. Eye toggle on a model row adds/removes that id from `previewModelIds`
+5. Viewport mounts every previewed model’s scene graph (`ModelViewer` primitives with `dispose={null}` so eye-toggle unmount does not destroy geometries). Hidden library graphs stay in memory until Remove. Eye toggle on a model row adds/removes that id from `previewModelIds`
 6. Replace updates that entry only (keep id). If it is previewed, swap that graph and re-frame the union of visible models. Remove disposes that graph / blob URL (skip revoke when `blobUrl` is absent on created models); if it was focused, focus another previewed model or idle empty state
 
 Empty overlay when idle; clear error copy on parse failure or missing skeleton. After a successful load **or preview-set change**, camera frames the **union AABB** of visible scenes from a fixed three-quarter elevated angle (`computeScenesFraming` + `DEFAULT_VIEW_OFFSET` in `viewport/constants/camera.ts`; framing padding in `viewport/domain/model-framing.ts`). Scenes keep their own origins; place them with Move / Settings XYZ.

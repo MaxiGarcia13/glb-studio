@@ -1,22 +1,34 @@
+import { cn } from '@maxigarcia/js-utils';
 import { useIsCreatedModelFocused } from '../hooks/use-selected-created-part';
 import { AddPartPalette } from './add-part-palette';
 import { PartColorTool } from './part-color-tool';
 import { PartDeleteTool } from './part-delete-tool';
 import { PartDuplicateTool } from './part-duplicate-tool';
 
-/**
- * Vertical create rail docked after Settings.
- * Shown only when the focused model is `source: 'created'`.
- */
-export function ToolBar() {
+interface ModelToolBarProps {
+  className?: string;
+}
+
+export function ModelToolBar({ className }: ModelToolBarProps) {
+  const isFocused = useIsCreatedModelFocused();
+
+  if (!isFocused) {
+    return null;
+  }
+
   return (
     <section
       role="toolbar"
       aria-label="Create tools"
-      className="flex h-full shrink-0 flex-col items-center gap-1 border-l border-zinc-700 bg-zinc-800 py-2 px-1"
+      className={cn(
+        'flex items-center gap-1 p-1',
+        'absolute bottom-4 left-1/2',
+        'rounded-sm bg-zinc-800/90',
+        className,
+      )}
     >
       <AddPartPalette />
-      <div className="my-1 h-px w-6 bg-zinc-700" aria-hidden />
+      <div className="mx-1 h-6 w-0.5 bg-zinc-700" aria-hidden />
       <PartColorTool />
       <PartDuplicateTool />
       <PartDeleteTool />
