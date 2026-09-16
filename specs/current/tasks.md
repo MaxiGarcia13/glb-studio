@@ -69,7 +69,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `GLTFExporter` adapter: model scene + matching working clips → `.glb`
 - [x] `GLTFExporter` adapter: animation-only (empty/minimal scene + one working clip) → `.glb`
 - [x] Zip helper; numeric suffix on filename collisions
-- [x] “Download” sidebar control + blob download of the zip
+- [x] File → Export control + blob download of the zip
 - [x] Disable / error when nothing to pack; no partial zip on exporter failure
 
 ## US-22 — Export modal + merge visible models
@@ -78,7 +78,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 - [x] `packMergedModelsGlb` + `downloadExportZip({ mergeModels })`
 - [x] On merge: per-model clip picks → Scene bake only; shared also as unprefixed sidecars
-- [x] `ExportModal` + Download opens modal; merge toggle gated on ≥2 previewed models
+- [x] `ExportModal` + File → Export opens modal; merge toggle gated on ≥2 previewed models
 - [x] Filename inputs: zip + merged (merge on) / per-model (merge off); Scene clip + per-model Selects
 - [x] Manual verify separate vs merge / fight Scene bake
 
@@ -201,7 +201,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 **Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
 
 - [x] `create` module + `PartKind` / `Kit` registries; `ModelEntry.source`
-- [x] `createEmptyModel()` + New model Plus (no kit modal); skip skeleton validation
+- [x] `createEmptyModel()` + File → New model (no kit modal); skip skeleton validation
 - [x] Create toolbar (color / duplicate / delete) + Settings part size inspector
 - [x] Edit Save / Restore for created parts; beginner hint; zip packs created `{model}.glb`
 - [x] Ground-origin spawn + named parts; import path still requires skinned mesh + skeleton

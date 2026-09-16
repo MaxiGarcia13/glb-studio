@@ -4,7 +4,7 @@ Living product contract for the **GLB Character & Animation Editor**.
 
 ## Product summary
 
-Web editor with a full-screen 3D viewport and a collapsible sidebar. Users load one or more model GLBs (several can be previewed at once), **create empty models from scratch** and edit primitive parts, manage nested model-owned and shared animation clips, play and edit them (trim, speed, keyframes, weighted blend + bake, bind pose, whole-model move), and download a zip of per-model (or optionally merged) GLBs plus animation-only files.
+Web editor with a full-screen 3D viewport, a Blender-style top **File / Settings** menu bar, and a collapsible sidebar. Users load one or more model GLBs (several can be previewed at once), **create empty models from scratch** and edit primitive parts, manage nested model-owned and shared animation clips, play and edit them (trim, speed, keyframes, weighted blend + bake, bind pose, whole-model move), and download a zip of per-model (or optionally merged) GLBs plus animation-only files.
 
 **Stack:** Astro shell + React island; React Three Fiber + drei + Three.js.
 
@@ -65,20 +65,20 @@ As an editor user, I can download a zip of each model and of each animation as s
 
 **Acceptance**
 
-- [x] “Download” uses `GLTFExporter` and builds a zip in the browser — no server round-trip
+- [x] **File → Export** uses `GLTFExporter` and builds a zip in the browser — no server round-trip
 - [x] Zip contains one `{model}.glb` per loaded model: that model’s scene plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips). **Created** models (`source: 'created'`) pack mesh-only — no skeleton / clip attachment required
 - [x] Zip contains one `{clip}.glb` per **shared** library clip that has a working `AnimationClip` — animation-only, no mesh (owned clips ship only inside their model GLB when not merging)
 - [x] Each clip’s stored `timeScale` is baked into that clip’s exported track times / duration per design
 - [x] Filename collisions inside the zip get a numeric suffix
-- [x] Download is disabled or errors when there is nothing to pack; exporter failure does not download a partial zip
+- [x] Export is disabled or errors when there is nothing to pack; exporter failure does not download a partial zip
 
 ### US-22 — Export modal + merge visible models
 
-As an editor user, when I press Download I can confirm the zip contents and optionally merge every model visible in the viewport into one mesh GLB, with animations as separate files.
+As an editor user, when I choose **File → Export** I can confirm the zip contents and optionally merge every model visible in the viewport into one mesh GLB, with animations as separate files.
 
 **Acceptance**
 
-- [x] Download opens an **Export** modal (does not pack immediately)
+- [x] **File → Export** opens an **Export** modal (does not pack immediately)
 - [x] Modal shows a short summary of what will be packed; confirm builds the zip
 - [x] **Merge visible models** toggle when two or more models are previewed (`previewModelIds`); unavailable otherwise
 - [x] **Merge off (default):** US-5 separate pack unchanged
@@ -93,11 +93,11 @@ As an editor user, I can keep several character GLBs in the session and choose w
 
 **Acceptance**
 
-- [x] User can upload multiple `.glb` / `.gltf` files that each contain a skinned mesh and skeleton; they populate a model library
+- [x] User can import multiple `.glb` / `.gltf` / `.fbx` files via **File → Import** (US-30 content routing); usable skinned mesh + skeleton files populate the model library
 - [x] Sidebar library lists each model nested under **Models** with iconized Replace / Remove / Rename (and Animation / Retarget when applicable — US-19)
 - [x] Multiple models can be **previewed** at once (US-20); one model is **focused** (`activeModelId`) for gizmo and Settings XYZ (transport works with a selected clip even when no model is focused)
 - [x] Removing a model deletes its owned clips; if it was focused, focus moves to another previewed model, or empty state if none remain
-- [x] Owned clip import still requires a model in context; Shared Upload does not (US-19)
+- [x] Owned clip import via model **Add animation** still requires a model in context; File Import animation-only files go to Shared without a model (US-19 / US-30)
 
 ### US-13 — Selection name overlay
 
@@ -127,13 +127,13 @@ As an editor user, I can rename the selected bone or mesh from Settings so the o
 
 ### US-14 — Viewport general settings (axes)
 
-As an editor user, I can show or hide the world axes and change how far the metre rulers extend from the Settings sidebar.
+As an editor user, I can show or hide the world axes and change how far the metre rulers extend from the top **Settings** menu (US-30).
 
 **Acceptance**
 
-- [x] Settings sidebar (`editor-settings-sidebar`) has a **General** section above Animation
-- [x] General includes a checkbox to show/hide world XYZ axes (and X/Y metre rulers)
-- [x] General includes a numeric control for axes length in metres
+- [x] Top **Settings** menu hosts world-axes controls (`WorldAxesControls`) — not the Settings aside
+- [x] Checkbox to show/hide world XYZ axes (and X/Y metre rulers)
+- [x] Numeric control for axes length in metres
 - [x] Toggling visibility mounts/unmounts axes in the viewport immediately
 - [x] Changing length updates `axesHelper` and X/Y rulers live
 - [x] Defaults match prior behavior: axes visible, length `10`
@@ -258,15 +258,15 @@ As an editor user, I manage models and animations in a nested library: each mode
 
 **Acceptance**
 
-- [x] Library sidebar is nested: **Models** collapsible (upload) → each **model** collapsible + sibling **Shared Animations** collapsible
+- [x] Library sidebar is nested: **Models** collapsible → each **model** collapsible + sibling **Shared Animations** collapsible (session I/O lives on **File** — US-30)
 - [x] Model header shows **ManIcon** next to the name; actions are icons: Retarget (when conflicted), **Animation** (add), Edit (rename), Replace, Remove
-- [x] Shared Animations header shows **AnimationIcon**; actions: Upload, New animation
-- [x] Shared **Upload** is always available — does not require a loaded or selected model
+- [x] Shared Animations header shows **AnimationIcon**; no Upload / New header actions (those are **File → Import** / **File → New animation**)
+- [x] **File → Import** is always available — does not require a loaded or selected model for animation-only files
 - [x] Each clip row shows **AnimationIcon** next to the name; Remove (and Retarget when conflicted) as icons
 - [x] Clips have ownership: `ownerModelId: string | null` (`null` = shared; otherwise listed only under that model)
-- [x] Import / New from Shared → shared (`ownerModelId: null`); create / import under a model → owned by that model
-- [x] **Add animation** via model-header **AnimationIcon**: modal offers **Create new**, **Import** (files → owned by that model), and **Add existing** (selector of cloneable clips, excluding already owned / same-name under that model) → Apply → model-owned **clone** (new id); source unchanged
-- [x] Model upload / replace: embedded GLB animations are registered as **owned** by that model (`ownerModelId` set); they never appear under Shared Animations
+- [x] File Import animation-only / **File → New animation** → shared (`ownerModelId: null`); create / import under a model → owned by that model
+- [x] **Add animation** via model-header **AnimationIcon**: modal offers **Create new**, **Import** (files → owned by that model), and **Add existing** (selector of cloneable clips, excluding already owned / same-name under that model) → Apply → model-owned **clone** (new id); source unchanged — not replaced by File Import
+- [x] Model import / replace: embedded GLB animations are registered as **owned** by that model (`ownerModelId` set); they never appear under Shared Animations
 - [x] Removing a model deletes its owned clips
 - [x] **Retarget → This model:** shared/other source → new remapped ready owned clip (same name, source kept); owned-by-target source → remap in place
 - [x] **Retarget → All models:** remap shared clip in place; normalize bones on models that can resolve; **partial success** — incompatible models stay conflicted (no fail-entire-apply)
@@ -306,7 +306,7 @@ As an editor user with little or no 3D experience, I can create a new empty mode
 
 **Acceptance**
 
-- [x] Models library has a **New model** action (alongside Load) that **immediately** creates an empty `source: 'created'` model (no kit picker modal)
+- [x] **File → New model** **immediately** creates an empty `source: 'created'` model (no kit picker modal); not on the Models library header
 - [x] New model joins preview and becomes focused (same as a successful import); default name like `New model 1.glb`
 - [x] Created models do **not** require a skinned mesh or skeleton; imported models still do
 - [x] Created models use metres, Y-up; parts sit on the ground when added (`y = 0` as appropriate)
@@ -329,6 +329,22 @@ As an editor user, I can add common primitive shapes to my created model so I ca
 - [x] Added parts support the same inspector, Duplicate, Delete, and Edit Save / Restore behavior as kit parts (US-23)
 - [x] Palette is hidden or disabled for **imported** models (no accidental mesh editing of uploaded characters in this US)
 - [x] Export still packs the updated scene
+
+### US-30 — EditorToolbar
+
+As an editor user, I can create models / shared animations, import files, and export from a top **File** menu, and tweak world axes from a top **Settings** menu — without hunting through library headers or the Settings aside.
+
+**Acceptance**
+
+- [x] Full-width `EditorToolbar` exposes a **File** text menu with: **New model**, **New animation**, **Import**, **Export**
+- [x] **New model** creates an empty `source: 'created'` model; removed from the Models library header
+- [x] **New animation** creates a **shared** draft (`ownerModelId: null`); disabled when no focused model scene; removed from the Shared Animations header
+- [x] **Import** opens a multi-file picker (`.glb` / `.gltf` / `.fbx`); removed from Models and Shared headers
+- [x] Per file, Import routes by content: usable skinned mesh + skeleton → model library (embedded clips **owned**); animations but no usable model → Shared Animations; neither → user-visible error for that file; other files in the batch still process
+- [x] **Export** opens the existing **Export** modal (US-22); does not pack immediately; removed from the Settings aside footer
+- [x] Per-model **Add animation** modal (Create / Import / Add existing → owned) stays on the model row — not replaced by File Import
+- [x] The same menu bar exposes a **Settings** text menu with **Show world axes** and **Axes Length (m)** (same store / behavior as US-14); removed from the Settings aside Axes block
+- [x] Blender-style full-width top bar (above asides + preview); text triggers open menus — not a floating viewport toolbar; mounted outside `EditorPreview`; does not block orbit, pick, or existing Edit / Move / create toolbars
 
 ## Post-MVP user stories
 

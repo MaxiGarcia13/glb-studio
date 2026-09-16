@@ -37,4 +37,3 @@ Not copy-pasted files. Extract only if the helper stays small.
 - `SpeedControl` native range vs `Input` is intentional (slider + `1.0x` readout)
 - Camera, grid, axes, selection, GLTF, and timeline constants each have a single owner
 - Kit registry (`create/domain/kit.ts`, `types/kit.ts`) — unused by New model until US-27; leave as seam
-- Dual library Import / header `+` buttons — product UI; fold in US-30 (File toolbar + Smart Import), not cleanup here

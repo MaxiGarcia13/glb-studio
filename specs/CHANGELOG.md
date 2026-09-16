@@ -11,7 +11,6 @@
 
 | ID | Summary |
 |----|---------|
-| **US-30** | EditorToolbar (Blender-style File / Settings menu bar) |
 | **US-28** | Part color maps (textures) on created models only |
 | **US-27** | Additional create kits via registry (building, robot, …) |
 | **US-26** | Part hierarchy + outliner for created models |
@@ -24,6 +23,7 @@
 
 | ID | Summary |
 |----|---------|
+| **US-30** | EditorToolbar (Blender-style File / Settings menu bar) |
 | **US-29** | Rename selected bone / mesh from Settings (owned clip + bind-pose remap) |
 | **US-24** | Primitive palette + add part on created models |
 | **US-23** | Create empty model (no kit modal) + part edit/export |
