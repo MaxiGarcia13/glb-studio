@@ -1,20 +1,13 @@
 import { useStore } from '@nanostores/react';
 import { useCollapsible } from '@/components/collapsible';
 import { ClipImport } from '@/modules/animation/components/clip-import';
-import { ClipNewAnimation } from '@/modules/animation/components/clip-new-animation';
 import { ClipRows } from '@/modules/animation/components/clip-rows';
 import { $clips } from '@/modules/animation/stores/clip-store';
 import { LibrarySectionCollapsible } from '@/modules/editor-shell/components/library-section-collapsible';
 
 function SharedAnimationsActions() {
   const { setOpen } = useCollapsible();
-
-  return (
-    <>
-      <ClipNewAnimation onCreate={() => setOpen(true)} />
-      <ClipImport onImport={() => setOpen(true)} />
-    </>
-  );
+  return <ClipImport onImport={() => setOpen(true)} />;
 }
 
 export function LibrarySharedAnimations() {
