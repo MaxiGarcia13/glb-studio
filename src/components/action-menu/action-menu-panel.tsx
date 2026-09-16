@@ -1,13 +1,19 @@
+import type { MenuAlign, MenuSide } from './placement';
 import { cn } from '@maxigarcia/js-utils';
 import { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from '@/components/button';
 import { Text } from '@/components/text';
+import { useMenuPlacement } from './use-menu-placement';
 
 interface ActionMenuPanelProps {
   'label': string;
   'children': React.ReactNode;
   'aria-label'?: string;
-  'align'?: 'start' | 'end';
+  /** Preferred open direction. Flips if it would leave the viewport. */
+  'side'?: MenuSide;
+  /** Cross-axis alignment relative to the trigger. */
+  'align'?: MenuAlign;
   'open'?: boolean;
   'onOpenChange'?: (open: boolean) => void;
   'className'?: string;
@@ -19,6 +25,7 @@ export function ActionMenuPanel({
   label,
   children,
   'aria-label': ariaLabel,
+  side = 'bottom',
   align = 'start',
   open: openControlled,
   onOpenChange,
@@ -35,8 +42,17 @@ export function ActionMenuPanel({
   };
 
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
   const resolvedAriaLabel = ariaLabel ?? label;
+  const placement = useMenuPlacement({
+    open,
+    side,
+    align,
+    triggerRef,
+    panelRef,
+  });
 
   useEffect(() => {
     if (!open) {
@@ -44,9 +60,14 @@ export function ActionMenuPanel({
     }
 
     const onPointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+      const target = event.target as Node;
+      if (
+        rootRef.current?.contains(target)
+        || panelRef.current?.contains(target)
+      ) {
+        return;
       }
+      setOpen(false);
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -66,6 +87,7 @@ export function ActionMenuPanel({
   return (
     <div ref={rootRef} className={cn('relative', className)}>
       <Button
+        ref={triggerRef}
         variant="ghost"
         aria-label={resolvedAriaLabel}
         aria-haspopup="dialog"
@@ -80,20 +102,27 @@ export function ActionMenuPanel({
         </Text>
       </Button>
 
-      {open && (
-        <div
-          id={menuId}
-          role="dialog"
-          aria-label={resolvedAriaLabel}
-          className={cn(
-            'absolute top-full z-50 mt-1 min-w-56 rounded-sm border border-border-strong bg-surface p-4 shadow-lg',
-            align === 'start' ? 'left-0' : 'right-0',
-            panelClassName,
-          )}
-        >
-          {children}
-        </div>
-      )}
+      {open
+        && createPortal(
+          <div
+            ref={panelRef}
+            id={menuId}
+            role="dialog"
+            aria-label={resolvedAriaLabel}
+            className={cn(
+              'fixed z-50 min-w-56 rounded-sm border border-border-strong bg-surface p-4 shadow-lg',
+              panelClassName,
+            )}
+            style={{
+              top: placement?.top ?? 0,
+              left: placement?.left ?? 0,
+              visibility: placement ? 'visible' : 'hidden',
+            }}
+          >
+            {children}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

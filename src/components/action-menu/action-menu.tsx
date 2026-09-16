@@ -1,16 +1,24 @@
+import type { MenuAlign, MenuSide } from './placement';
 import type { ActionMenuItem } from './types';
 import { cn } from '@maxigarcia/js-utils';
 import { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from '@/components/button';
 import { DotsVerticalIcon } from '@/components/icons/dots-vertical-icon';
 import { Text } from '@/components/text';
+import { useMenuPlacement } from './use-menu-placement';
 
 interface ActionMenuProps {
   'items': ActionMenuItem[];
-  /** Visible trigger text (menu-bar style). Defaults to ⋮ icon. */
+  /** Visible trigger text (menu-bar style). Defaults to icon. */
   'label'?: string;
+  /** Custom trigger icon when `label` is omitted. Defaults to ⋮. */
+  'icon'?: React.ReactNode;
   'aria-label'?: string;
-  'align'?: 'start' | 'end';
+  /** Preferred open direction. Flips if it would leave the viewport. */
+  'side'?: MenuSide;
+  /** Cross-axis alignment relative to the trigger. */
+  'align'?: MenuAlign;
   'open'?: boolean;
   'onOpenChange'?: (open: boolean) => void;
   'className'?: string;
@@ -19,7 +27,9 @@ interface ActionMenuProps {
 export function ActionMenu({
   items,
   label,
+  icon,
   'aria-label': ariaLabel,
+  side = 'bottom',
   align = 'end',
   open: openControlled,
   onOpenChange,
@@ -35,8 +45,17 @@ export function ActionMenu({
   };
 
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
   const resolvedAriaLabel = ariaLabel ?? label ?? 'More actions';
+  const placement = useMenuPlacement({
+    open,
+    side,
+    align,
+    triggerRef,
+    panelRef,
+  });
 
   useEffect(() => {
     if (!open) {
@@ -44,9 +63,14 @@ export function ActionMenu({
     }
 
     const onPointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+      const target = event.target as Node;
+      if (
+        rootRef.current?.contains(target)
+        || panelRef.current?.contains(target)
+      ) {
+        return;
       }
+      setOpen(false);
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -70,6 +94,7 @@ export function ActionMenu({
   return (
     <div ref={rootRef} className={cn('relative', className)}>
       <Button
+        ref={triggerRef}
         variant="ghost"
         aria-label={resolvedAriaLabel}
         aria-haspopup="menu"
@@ -85,54 +110,59 @@ export function ActionMenu({
                 {label}
               </Text>
             )
-          : <DotsVerticalIcon />}
+          : (icon ?? <DotsVerticalIcon />)}
       </Button>
 
-      {open && (
-        <div
-          id={menuId}
-          role="menu"
-          aria-label={resolvedAriaLabel}
-          className={cn(
-            'absolute top-full z-50 mt-1 min-w-40 rounded-sm border border-border-strong bg-surface py-2 shadow-lg',
-            align === 'start' ? 'left-0' : 'right-0',
-          )}
-        >
-          {items.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              role="menuitem"
-              disabled={item.disabled}
-              className={cn(
-                'flex w-full items-center gap-2 px-2 py-2 text-left text-xs transition-colors',
-                item.disabled
-                  ? 'cursor-not-allowed opacity-50'
-                  : 'cursor-pointer hover:bg-surface-hover',
-                item.danger ? 'text-danger' : 'text-fg',
-              )}
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                if (item.disabled) {
-                  return;
-                }
-                setOpen(false);
-                item.onSelect();
-              }}
-            >
-              {item.icon && (
-                <span className="inline-flex shrink-0 text-current [&_svg]:size-4">
-                  {item.icon}
-                </span>
-              )}
-              <Text as="span" className="min-w-0 truncate text-current">
-                {item.label}
-              </Text>
-            </button>
-          ))}
-        </div>
-      )}
+      {open
+        && createPortal(
+          <div
+            ref={panelRef}
+            id={menuId}
+            role="menu"
+            aria-label={resolvedAriaLabel}
+            className="fixed z-50 min-w-40 rounded-sm border border-border-strong bg-surface py-2 shadow-lg"
+            style={{
+              top: placement?.top ?? 0,
+              left: placement?.left ?? 0,
+              visibility: placement ? 'visible' : 'hidden',
+            }}
+          >
+            {items.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                role="menuitem"
+                disabled={item.disabled}
+                className={cn(
+                  'flex w-full items-center gap-2 px-2 py-2 text-left text-xs transition-colors',
+                  item.disabled
+                    ? 'cursor-not-allowed opacity-50'
+                    : 'cursor-pointer hover:bg-surface-hover',
+                  item.danger ? 'text-danger' : 'text-fg',
+                )}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  if (item.disabled) {
+                    return;
+                  }
+                  setOpen(false);
+                  item.onSelect();
+                }}
+              >
+                {item.icon && (
+                  <span className="inline-flex shrink-0 text-current [&_svg]:size-4">
+                    {item.icon}
+                  </span>
+                )}
+                <Text as="span" className="min-w-0 truncate text-current">
+                  {item.label}
+                </Text>
+              </button>
+            ))}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
