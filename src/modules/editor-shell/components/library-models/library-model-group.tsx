@@ -1,5 +1,5 @@
-import type { ModelGroup } from '@/modules/viewport/types/model-group';
 import type { ModelEntry } from '@/modules/viewport/types/model';
+import type { ModelGroup } from '@/modules/viewport/types/model-group';
 import { cn } from '@maxigarcia/js-utils';
 import { useStore } from '@nanostores/react';
 import { Text } from '@/components/text';

@@ -1,12 +1,12 @@
 import type { Object3D } from 'three';
 import { $model, selectModel } from '../stores/model-store';
+import { openSelectionContextMenu } from '../stores/selection-context-menu-store';
 import {
   isModelInSelection,
   isObjectInSelection,
   selectModelIds,
   selectObject,
 } from '../stores/selection-store';
-import { openSelectionContextMenu } from '../stores/selection-context-menu-store';
 
 /** Ensure a model is the (sole) model selection, then open the context menu. */
 export function openContextMenuForModel(

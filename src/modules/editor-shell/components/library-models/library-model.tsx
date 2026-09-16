@@ -15,6 +15,7 @@ import { PartOutliner } from '@/modules/create/components/part-outliner';
 import { listCreatedParts } from '@/modules/create/domain/list-created-parts';
 import { $createPartsRevision } from '@/modules/create/stores/create-parts-revision-store';
 import { LibrarySectionCollapsible } from '@/modules/editor-shell/components/library-section-collapsible';
+import { openContextMenuForModel } from '@/modules/viewport/actions/open-selection-context-menu';
 import {
   $model,
   removeModel,
@@ -27,7 +28,6 @@ import {
   selectModelIds,
   toggleModelId,
 } from '@/modules/viewport/stores/selection-store';
-import { openContextMenuForModel } from '@/modules/viewport/actions/open-selection-context-menu';
 import { LibraryModelActions } from './library-model-actions';
 import { LibraryModelAddAnimationModal } from './library-model-add-animation-modal';
 import { LibraryModelTitle } from './library-model-title';

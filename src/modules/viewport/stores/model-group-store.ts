@@ -1,5 +1,5 @@
-import { map } from 'nanostores';
 import type { ModelGroup, ModelGroupsState } from '../types/model-group';
+import { map } from 'nanostores';
 
 export const $modelGroups = map<ModelGroupsState>({
   groups: [],
@@ -27,12 +27,10 @@ export function removeModelsFromGroups(modelIds: readonly string[]): void {
     return;
   }
   const drop = new Set(modelIds);
-  const groups = $modelGroups.get().groups
-    .map((group) => ({
-      ...group,
-      modelIds: group.modelIds.filter((id) => !drop.has(id)),
-    }))
-    .filter((group) => group.modelIds.length > 0);
+  const groups = $modelGroups.get().groups.map((group) => ({
+    ...group,
+    modelIds: group.modelIds.filter((id) => !drop.has(id)),
+  })).filter((group) => group.modelIds.length > 0);
   $modelGroups.setKey('groups', groups);
 }
 

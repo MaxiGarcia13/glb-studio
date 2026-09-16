@@ -18,11 +18,11 @@ import {
   getUngroupModelsAvailability,
   ungroupSelectedModels,
 } from '@/modules/viewport/actions/ungroup-selected-models';
+import { $modelGroups } from '@/modules/viewport/stores/model-group-store';
 import {
   $selectionContextMenu,
   closeSelectionContextMenu,
 } from '@/modules/viewport/stores/selection-context-menu-store';
-import { $modelGroups } from '@/modules/viewport/stores/model-group-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
 
 function buildMenuItems(): ActionMenuItem[] {

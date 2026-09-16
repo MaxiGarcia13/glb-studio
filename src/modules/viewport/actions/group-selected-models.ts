@@ -1,7 +1,7 @@
-import { $model } from '@/modules/viewport/stores/model-store';
 import {
   createModelGroup,
 } from '@/modules/viewport/stores/model-group-store';
+import { $model } from '@/modules/viewport/stores/model-store';
 import { $selection, selectModelIds } from '@/modules/viewport/stores/selection-store';
 
 export interface GroupModelsAvailability {
