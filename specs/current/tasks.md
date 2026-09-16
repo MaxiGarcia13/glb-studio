@@ -72,15 +72,15 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] File → Export control + blob download of the zip
 - [x] Disable / error when nothing to pack; no partial zip on exporter failure
 
-## US-22 — Export modal + merge visible models
+## US-22 — Export modal + multi-model pack
 
-**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+**Shipped** — folded into `current/` (multi-model opt-in superseded by US-26 groups). See [`CHANGELOG.md`](../CHANGELOG.md).
 
-- [x] `packMergedModelsGlb` + `downloadExportZip({ mergeModels })`
-- [x] On merge: per-model clip picks → Scene bake only; shared also as unprefixed sidecars
-- [x] `ExportModal` + File → Export opens modal; merge toggle gated on ≥2 previewed models
-- [x] Filename inputs: zip + merged (merge on) / per-model (merge off); Scene clip + per-model Selects
-- [x] Manual verify separate vs merge / fight Scene bake
+- [x] `packMergedModelsGlb` + `downloadExportZip` (group / single units)
+- [x] On multi-model group: per-model clip picks → Scene bake only; shared also as unprefixed sidecars
+- [x] `ExportModal` + File → Export opens modal (no Merge checkbox — US-26)
+- [x] Filename inputs: zip + group / per-model basenames; Scene clip + per-model Selects when groups exist
+- [x] Manual verify separate vs grouped / fight Scene bake
 
 ## US-13 — Selection name overlay
 
@@ -223,11 +223,20 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `SnapControls` in top Settings menu; labelled checkboxes + step inputs
 - [x] TransformControls built-in snaps for created models only (Edit + Move); imported ignore
 
+## US-26 — Hierarchy, outliner, group + export-via-group
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] `parentPart` / `attachUnder` / empty create groups; cycle guard; world preserve
+- [x] `PartOutliner` (indent, collapse, click + Shift+click select); `$createPartsRevision`
+- [x] Multi-selection store (`kind: parts | models`); Shift+click library + viewport; selection highlight
+- [x] Context-menu Group / Ungroup for parts and models; remove Settings Parent + toolbar Unparent
+- [x] Export packs model groups as one GLB; ungrouped separate; Merge checkbox removed
+
 ## Open deltas
 
 | US                                                        | Status                    | Tasks                                       |
 | --------------------------------------------------------- | ------------------------- | ------------------------------------------- |
-| **US-26** — Hierarchy, outliner, group + export-via-group | in progress               | [`specs/us-26/tasks.md`](../us-26/tasks.md) |
 | **US-27** — Additional kits                               | not started (after US-23) | [`specs/us-27/tasks.md`](../us-27/tasks.md) |
 | **US-28** — Part color maps (textures)                    | not started (after US-23) | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
 | **US-8** — Morph-target editing                           | post-MVP, not started     | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |

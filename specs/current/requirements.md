@@ -4,7 +4,7 @@ Living product contract for the **GLB Character & Animation Editor**.
 
 ## Product summary
 
-Web editor with a full-screen 3D viewport, a Blender-style top **File / Settings** menu bar, and a collapsible sidebar. Users load one or more model GLBs (several can be previewed at once), **create empty models from scratch** and edit primitive parts, manage nested model-owned and shared animation clips, play and edit them (trim, speed, keyframes, weighted blend + bake, bind pose, whole-model move), and download a zip of per-model (or optionally merged) GLBs plus animation-only files.
+Web editor with a full-screen 3D viewport, a Blender-style top **File / Settings** menu bar, and a collapsible sidebar. Users load one or more model GLBs (several can be previewed at once), **create empty models from scratch** and edit primitive parts (including hierarchy / outliner / Group), manage nested model-owned and shared animation clips, play and edit them (trim, speed, keyframes, weighted blend + bake, bind pose, whole-model move), and download a zip of per-model GLBs (or one GLB per editor **model group**) plus animation-only files.
 
 **Stack:** Astro shell + React island; React Three Fiber + drei + Three.js.
 
@@ -72,20 +72,18 @@ As an editor user, I can download a zip of each model and of each animation as s
 - [x] Filename collisions inside the zip get a numeric suffix
 - [x] Export is disabled or errors when there is nothing to pack; exporter failure does not download a partial zip
 
-### US-22 — Export modal + merge visible models
+### US-22 — Export modal (+ multi-model pack; superseded opt-in by US-26)
 
-As an editor user, when I choose **File → Export** I can confirm the zip contents and optionally merge every model visible in the viewport into one mesh GLB, with animations as separate files.
+As an editor user, when I choose **File → Export** I can confirm the zip contents before packing. Multi-model one-file packing uses editor **model groups** (US-26); the former **Merge visible models** checkbox is removed.
 
 **Acceptance**
 
 - [x] **File → Export** opens an **Export** modal (does not pack immediately)
 - [x] Modal shows a short summary of what will be packed; confirm builds the zip
-- [x] **Merge visible models** toggle when two or more models are previewed (`previewModelIds`); unavailable otherwise
-- [x] **Merge off (default):** US-5 separate pack unchanged
-- [x] **Merge on:** one `merged.glb` from previewed models with unique bone prefixes; modal picks one clip per model → **Scene bake only** (multi-character take); no per-model GLBs; hidden models omitted
-- [x] **Merge on:** animation-only `{clip}.glb` per shared working clip only (owned clips are not sidecars)
+- [x] Ungrouped **exportable** models pack as separate GLBs (US-5); empty created models (no stamped mesh parts) are omitted
+- [x] Each editor **model group** with ≥2 exportable members packs as **one** GLB via bone-prefixed merge + optional **Scene** bake (US-26); shared clips still ship as animation-only sidecars
 - [x] Filename collisions and no-partial-zip rules from US-5 still apply
-- [x] Modal edits zip basename + merged basename + Scene clip name (merge on) or per-model basenames (merge off); empty/invalid → defaults; extensions auto-applied; animation files keep library names
+- [x] Modal edits zip basename + per-group / per-model basenames + Scene clip name when a multi-model group exists; empty/invalid → defaults; extensions auto-applied; animation files keep library names
 
 ### US-11 — Model library
 
@@ -355,10 +353,25 @@ As an editor user, I can create models / shared animations, import files, and ex
 - [x] **New animation** creates a **shared** draft (`ownerModelId: null`); disabled when no focused model scene; removed from the Shared Animations header
 - [x] **Import** opens a multi-file picker (`.glb` / `.gltf` / `.fbx`); removed from Models and Shared headers
 - [x] Per file, Import routes by content: usable skinned mesh + skeleton → model library (`imported`, embedded clips **owned**); mesh-only scenes → model library (`created`, embedded clips **owned**); animations but no usable model → Shared Animations; neither → user-visible error for that file; other files in the batch still process
-- [x] **Export** opens the existing **Export** modal (US-22); does not pack immediately; removed from the Settings aside footer
+- [x] **Export** opens the existing **Export** modal (US-22 / US-26); does not pack immediately; removed from the Settings aside footer
 - [x] Per-model **Add animation** modal (Create / Import / Add existing → owned) stays on the model row — not replaced by File Import
 - [x] The same menu bar exposes a **Settings** text menu with **Show world axes**, **Axes Length (m)** (US-14), and snap controls (US-25); removed from the Settings aside Axes block
 - [x] Blender-style full-width top bar (above asides + preview); text triggers open menus — not a floating viewport toolbar; mounted outside `EditorPreview`; does not block orbit, pick, or existing Edit / Move / create toolbars
+
+### US-26 — Part hierarchy, outliner, and group
+
+As an editor user, I can group parts (and models) with multi-select + context menu so a car body moves with its wheels, find parts by name in an outliner, and export models that share a group as one GLB without a Merge checkbox.
+
+**Acceptance**
+
+- [x] Created-model parts can be **grouped** into an empty group node so moving the group in Edit moves children (`Object3D` hierarchy; world transform preserved; cycle guard)
+- [x] **Ungroup** dissolves empty groups or lifts nested parts to the parts root (world preserved)
+- [x] **Part outliner** lists mesh parts and group nodes under created models; click selects; parents collapse/expand; list stays in sync on add / duplicate / delete / rename / regroup
+- [x] No skeleton-bone outliner for imported models in this story
+- [x] **Shift+click** multi-selects in the library (model rows + part outliner) and viewport; parts and models never mix in one selection
+- [x] **Right-click** opens Group / Ungroup when the selection allows it (library + preview); Group creates a new empty container (not “parent under last-clicked mesh/model”)
+- [x] Settings **Parent** `<select>` and create-toolbar Unparent are removed (context menu only)
+- [x] Models can be **grouped / ungrouped** the same way; each model group with ≥2 exportable members packs as one GLB; ungrouped models stay separate; empty created models omitted; Export modal Merge checkbox removed
 
 ## Post-MVP user stories
 
@@ -379,7 +392,8 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 ## Out of scope (still excluded)
 
 - Material / texture editing on **imported** characters (created-model color maps are US-28)
-- Kit picker / starter kits on New model (US-27); part/model group + outliner + export-via-group (US-26)
+- Kit picker / starter kits on New model (US-27)
+- Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
 - Bones, skinning, Mixamo / retarget on created models
 - Server accounts (FBX convert via US-16 is the allowed server round-trip; no user accounts)

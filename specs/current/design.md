@@ -63,8 +63,14 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
    - **No ready clip owned by this model** (including when only a **shared** clip is driving playback): commit local TRS on the mesh (scene graph + rest-pose refresh); never write keyframes into shared/other-owned clips or rebase library clips — avoids part names (e.g. `capsule`) contaminating character animations
    - **Ready clip owned by this model:** Hold Pose to End into that owned clip (same as imported selection edits)
 6. `packModelGlb`: created models pack mesh scene **plus owned ready clips**; shared clips are not attached. Created models with **zero stamped mesh parts** (`listCreatedParts`) are omitted from `resolveExportUnits` / the zip. Content import accepts mesh-only GLBs back as `source: 'created'`. Animation-only zip fallback prefers an imported rig when one exists
-7. Growth seams: hierarchy (US-26), kits (US-27), textures (US-28)
+7. **Hierarchy + outliner + Group (US-26):**
+   - Domain `parentPart` / `attachUnder` / `attachAllUnder` via `Object3D.attach` (world preserve); cycle guard rejects self / descendant parents; empty create groups (`createGroup` stamp) + `listCreatedPartEntries`
+   - `PartOutliner` under each created model in Models — names, depth indent, collapse chevron; click → Edit + `selectObject`; `$createPartsRevision` on add / duplicate / delete / parent / ungroup
+   - `$selection.kind`: `'none' | 'parts' | 'models'` — never mix; plain click replaces (`selectObject` / `selectModelIds`); Shift+click toggles (`toggleObject` / `toggleModelId`) in library + viewport
+   - Right-click `PointerActionMenu` (Group / Ungroup) from library rows and viewport; parts Group = empty group under parts root + attach selection; parts Ungroup = dissolve groups or lift to parts root; models Group / Ungroup via `$modelGroups` session store (library tree + export units)
+   - No Settings Parent `<select>`; no toolbar Unparent
 8. **Snap (US-25):** when focused model `source === 'created'`, TransformControls use built-in `translationSnap` / `rotationSnap` from `$viewportSettings` (Move = world, Edit = local; scale never). Imported models never quantize. Settings XYZ typing does not auto-snap
+9. Growth seams: kits (US-27), textures (US-28)
 
 ## Nested library + clip ownership (US-19)
 
@@ -236,17 +242,18 @@ Semantic colors live in `src/styles/global.css` `@theme` (`canvas`, `surface`, `
 
 **Spacing:** padding, gap, and margin use even Tailwind units (`2`, `4`, `6`, `8`, and larger even steps). Avoid odd and half units (`1`, `3`, `1.5`, …) except hairlines (`w-px`, `w-0.5`). Shared primitives (`Button`, `Input`, `Modal`, `CollapsibleAside`, `FloatingToolbar`) encode the defaults — prefer not overriding with ad-hoc padding.
 
-## Export (US-5 + US-22 modal/merge + US-7 blend contract)
+## Export (US-5 + US-22 modal + US-26 groups + US-7 blend contract)
 
 **File → Export** opens an **Export** modal. Confirm builds a **zip** in the browser (no server):
 
-1. If there are no loaded models **and** no working clips → disable Export; do not open a useless pack
-2. **Merge off (default):** for each **exportable** loaded model: `GLTFExporter.parse` (`binary: true`) of that scene. **Imported:** plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips). **Created:** mesh scene + owned ready clips (no shared-clip attach); **omit** created models with zero stamped mesh parts. Bake each included clip’s own `timeScale` into clones when it is not `1`. For each **shared** library clip with a working `AnimationClip`: animation-only `.glb` (skeleton fallback prefers an imported model when one exists). Owned clips ship only inside their model GLB
-3. **Merge on** (US-22; requires ≥2 `previewModelIds`): one `merged.glb` — clone each previewed scene, unique bone-name prefix per model, rename named nodes, parent under a temp root. Export modal supplies **per-model clip picks** (`clipIdByModelId`) and optional **Scene** clip name. Bake: rewrite each pick onto that model’s prefix → **one** multi-character **Scene** clip only (e.g. fight: Attack + HitReact). Omit hidden models; skip per-model GLBs. Also emit animation-only `.glb`s for every **shared** working clip (unprefixed sidecars). Do not emit owned clips as sidecars
-4. Filename collisions inside the zip get a numeric suffix. Modal supplies optional basenames: zip archive, merged GLB (merge on), or per-model GLBs (merge off) — sanitized with `resolveZipFileName` / `resolveGlbFileName`; animation-only files keep library clip names
-5. Trigger a single download of the zip blob (download attribute uses the chosen zip name). Any exporter or zip failure → user-visible error; no partial archive
+1. If there are no **exportable** models **and** no working clips → disable Export; do not open a useless pack
+2. `resolveExportUnits`: each `$modelGroups` entry with ≥2 **exportable** members → one **group** unit; leftover / ungrouped exportable models → one **single** unit each. Created models with zero stamped mesh parts are not exportable (omitted from units and from group pack membership)
+3. **Single units:** `packModelGlb` — **Imported:** mesh + owned ready + validating shared; **Created:** mesh + owned ready (no shared attach). Bake each included clip’s `timeScale` when ≠ `1`. Shared working clips also ship as animation-only `.glb`s (skeleton fallback prefers an imported model). Owned clips never leave their model GLB
+4. **Group units:** `packMergedModelsGlb` — clone member scenes, unique bone-name prefix per model, parent under a temp root named after the group. Modal supplies **per-model clip picks** (`clipIdByModelId`) and optional **Scene** clip name when any multi-model group exists → bake one multi-character **Scene** clip. Shared clips still emit as unprefixed animation-only sidecars
+5. Filename collisions inside the zip get a numeric suffix. Modal supplies optional basenames: zip archive, each group GLB, each ungrouped model GLB — sanitized with `resolveZipFileName` / `resolveGlbFileName`; animation-only files keep library clip names. No **Merge visible models** checkbox / `mergeModels` opt-in — editor groups are the opt-in
+6. Trigger a single download of the zip blob. Any exporter or zip failure → user-visible error; no partial archive
 
-A model with no matching clips still ships as a mesh-only `.glb` when merge is off. There are no per-row download buttons; model selection for merge is the library eye / `previewModelIds` set. Clip selection for the Scene bake is the Export modal.
+A model with no matching clips still ships as a mesh-only `.glb` when packed as a single unit. There are no per-row download buttons. Clip selection for the Scene bake is the Export modal.
 
 **Blend vs zip (locked):** live blend is viewport playback only (`blendClipId` / `blendWeight` / `blendBaseClip` never enter the exporter). `packModelGlb` / `packMergedModelsGlb` / `packClipGlb` / `downloadExportZip` read each entry’s working `clip` (+ `timeScale` bake) — the same discrete library data as US-5. After **Bake**, the flattened mix replaces the active entry’s `clip` and therefore exports with that clip; without Bake, the zip is unchanged by the overlay.
 
