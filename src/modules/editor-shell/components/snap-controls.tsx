@@ -37,6 +37,7 @@ export function SnapControls() {
   };
 
   const handleGridStepBlur = () => {
+    // Sync draft to clamped store value (e.g. out-of-range input).
     setGridDraft(String(gridStepMetres));
   };
 
@@ -81,6 +82,9 @@ export function SnapControls() {
         onChange={handleGridStepChange}
         onBlur={handleGridStepBlur}
       />
+      <Text variant="muted">
+        Coarse steps need a longer drag (half the step). Try 0.1 for parts.
+      </Text>
       <label className="flex items-center gap-2 cursor-pointer shrink-0">
         <input
           type="checkbox"

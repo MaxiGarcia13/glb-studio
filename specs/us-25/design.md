@@ -3,9 +3,9 @@
 ## Approach
 
 1. Store snap flags + steps on `$viewportSettings` — session-only like axes (same `map`, not a separate `$createSettings`)
-2. On TransformControls `objectChange` / Save commit path for created-model edits, round position (world or local — pick **world XZ + Y** for position snap) and Euler degrees for rotation
-3. Scale snap is optional and **out of MVP** for this US unless trivial
-4. UI: `SnapControls` in top **Settings** menu under Axes — checkboxes + step inputs (labelled; step fields disabled when their snap flag is off)
+2. **Live path:** `TransformControls` built-in `translationSnap` / `rotationSnap` when focused model `source === 'created'` (Move = world space, Edit = local). Rotation snap is degrees→radians. Scale never. Avoid post-`objectChange` re-quantize — it fights the gizmo and makes large steps feel dead
+3. Scale snap is **out of MVP** for this US
+4. UI: `SnapControls` in top **Settings** menu under Axes — checkboxes + step inputs (labelled; step fields disabled when their snap flag is off). Note that coarse steps (e.g. `10` m) only jump after dragging about half a step
 
 ## `$viewportSettings` snap fields
 
@@ -21,7 +21,9 @@ Setters: `setSnapToGrid`, `setGridStepMetres`, `setSnapRotation`, `setRotationSt
 ## Policy
 
 - Apply when focused model `source === 'created'` so Mixamo character posing is not surprising
-- Move tool on created model root also snaps
+- Move tool on created model root also snaps (same `objectChange` + `applySnapToObject`)
+- Imported models: gizmo never quantizes, even if snap flags are on
+- Settings XYZ readout typing does not auto-snap (gizmo-only for this US)
 
 ## Non-goals
 

@@ -22,6 +22,7 @@ import {
 } from '../stores/pose-edit-store';
 import { $selection } from '../stores/selection-store';
 import { $transformMode } from '../stores/transform-mode-store';
+import { $viewportSettings } from '../stores/viewport-settings-store';
 
 export type TransformControlsRef = ComponentRef<typeof TransformControls>;
 
@@ -38,7 +39,15 @@ export function TransformControlsDriver({ controlsRef }: TransformControlsDriver
   const { object: selected } = useStore($selection, { keys: ['object'] });
   const mode = useStore($transformMode);
   const editTool = useStore($editTool);
-  const { scene } = useActiveModel();
+  const { activeModel, scene } = useActiveModel();
+  const {
+    snapToGrid,
+    gridStepMetres,
+    snapRotation,
+    rotationStepDegrees,
+  } = useStore($viewportSettings, {
+    keys: ['snapToGrid', 'gridStepMetres', 'snapRotation', 'rotationStepDegrees'],
+  });
   const gizmoRef = useRef<TransformControlsRef>(null);
 
   const isMove = editTool === 'move';
@@ -50,6 +59,12 @@ export function TransformControlsDriver({ controlsRef }: TransformControlsDriver
         : selected;
   const gizmoMode = mode;
   const gizmoSpace = isMove ? 'world' : 'local';
+
+  // Built-in TC snaps (US-25): created models only. Rotation snap is radians.
+  const created = activeModel?.source === 'created';
+  const translationSnap = created && snapToGrid ? gridStepMetres : null;
+  const rotationSnap
+    = created && snapRotation ? (rotationStepDegrees * Math.PI) / 180 : null;
 
   useEffect(() => {
     const gizmo = gizmoRef.current as TransformControlsEvents | null;
@@ -104,6 +119,8 @@ export function TransformControlsDriver({ controlsRef }: TransformControlsDriver
       object={gizmoObject}
       mode={gizmoMode}
       space={gizmoSpace}
+      translationSnap={translationSnap}
+      rotationSnap={rotationSnap}
     />
   );
 }

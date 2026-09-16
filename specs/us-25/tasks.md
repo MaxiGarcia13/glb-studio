@@ -14,9 +14,9 @@
 
 ## Transform integration
 
-- [ ] **Quantize on edit** — When snap is enabled and focused model is created, round translation / rotation during gizmo edit or on Save (pick one path in implementation and stick to it — prefer live gizmo feel)
-- [ ] **Scope to created models** — Imported character Edit poses ignore snap (or document exception if global — default is created-only)
-- [ ] **Move tool root** — Whole-model Move on a created model respects the same snap flags
+- [x] **Quantize on edit** — When snap is enabled and focused model is created, round translation / rotation during gizmo edit or on Save (pick one path in implementation and stick to it — prefer live gizmo feel)
+- [x] **Scope to created models** — Imported character Edit poses ignore snap (or document exception if global — default is created-only)
+- [x] **Move tool root** — Whole-model Move on a created model respects the same snap flags
 
 ## Verify
 
