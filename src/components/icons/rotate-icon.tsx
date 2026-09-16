@@ -16,8 +16,11 @@ export function RotateIcon(props: IconProps) {
       {...props}
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M10.09 4.01l.496 -.495a2 2 0 0 1 2.828 0l7.071 7.07a2 2 0 0 1 0 2.83l-7.07 7.07a2 2 0 0 1 -2.83 0l-7.07 -7.07a2 2 0 0 1 0 -2.83l3.535 -3.535h-3.988" />
-      <path d="M7.05 11.038v-3.988" />
+      <path d="M12 3a7 7 0 0 1 7 7v4l-3 -3" />
+      <path d="M22 11l-3 3" />
+      <path d="M8 15.5l-5 -3l5 -3l5 3v5.5l-5 3l0 -5.5" />
+      <path d="M3 12.5v5.5l5 3" />
+      <path d="M8 15.545l5 -3.03" />
     </svg>
   );
 }

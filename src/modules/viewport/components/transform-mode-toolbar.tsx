@@ -4,7 +4,7 @@ import { cn } from '@maxigarcia/js-utils';
 import { useStore } from '@nanostores/react';
 import { Button } from '@/components/button';
 import { FloatingToolbar } from '@/components/floating-toolbar';
-import { PointerIcon } from '@/components/icons/pointer-icon';
+import { MoveIcon } from '@/components/icons/move-icon';
 import { RotateIcon } from '@/components/icons/rotate-icon';
 import { ScaleIcon } from '@/components/icons/scale-icon';
 import { useActiveModel } from '../hooks/use-active-model';
@@ -22,7 +22,7 @@ const MODES: {
   hotkey: string;
   Icon: (props: IconProps) => React.ReactNode;
 }[] = [
-  { mode: 'translate', label: 'Move', hotkey: 'W', Icon: PointerIcon },
+  { mode: 'translate', label: 'Move', hotkey: 'W', Icon: MoveIcon },
   { mode: 'rotate', label: 'Rotate', hotkey: 'E', Icon: RotateIcon },
   { mode: 'scale', label: 'Scale', hotkey: 'R', Icon: ScaleIcon },
 ];

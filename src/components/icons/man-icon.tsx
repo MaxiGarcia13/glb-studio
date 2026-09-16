@@ -1,7 +1,7 @@
 import type { IconProps } from './type';
 import { ICON_SIZE } from './constants';
 
-export function PointerIcon(props: IconProps) {
+export function ManIcon(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +16,12 @@ export function PointerIcon(props: IconProps) {
       {...props}
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M7.904 17.563a1.2 1.2 0 0 0 2.228 .308l2.09 -3.093l4.907 4.907a1.067 1.067 0 0 0 1.509 0l1.047 -1.047a1.067 1.067 0 0 0 0 -1.509l-4.907 -4.907l3.113 -2.09a1.2 1.2 0 0 0 -.309 -2.228l-13.582 -3.904l3.904 13.563" />
+      <path d="M10 16v5" />
+      <path d="M14 16v5" />
+      <path d="M9 9h6l-1 7h-4l-1 -7" />
+      <path d="M5 11c1.333 -1.333 2.667 -2 4 -2" />
+      <path d="M19 11c-1.333 -1.333 -2.667 -2 -4 -2" />
+      <path d="M10 4a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
     </svg>
   );
 }
