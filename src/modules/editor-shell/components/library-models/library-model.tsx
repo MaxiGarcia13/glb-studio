@@ -53,7 +53,7 @@ export function LibraryModel({ model }: LibraryModelProps) {
   const ownedClips = clips.filter((entry) => entry.ownerModelId === model.id);
   const isCreated = model.source === 'created';
   const partCount = isCreated ? listCreatedParts(model.scene).length : 0;
-  const hasNested = isCreated ? partCount > 0 : ownedClips.length > 0;
+  const hasNested = (isCreated && partCount > 0) || ownedClips.length > 0;
   const nodeNames = buildSkeletonNodeSet(model.scene);
   const conflictedClipIds = clips.flatMap((entry) => {
     if (!entry.clip) {
@@ -127,7 +127,10 @@ export function LibraryModel({ model }: LibraryModelProps) {
       >
         {isCreated
           ? <PartOutliner modelId={model.id} scene={model.scene} />
-          : <ClipRows clips={ownedClips} ownerModelId={model.id} />}
+          : null}
+        {ownedClips.length > 0
+          ? <ClipRows clips={ownedClips} ownerModelId={model.id} />
+          : null}
       </LibrarySectionCollapsible>
 
       {replaceInput}
