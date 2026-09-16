@@ -4,7 +4,7 @@ Delta for easier alignment while building created models. Parent contract: [`spe
 
 **Depends on:** US-23 (created models + Edit transforms). Benefits from US-14 (axes / metres) already shipped.
 
-**Status:** Not started — do not implement until explicitly kicked off.
+**Status:** In progress (kicked off).
 
 ## Story
 

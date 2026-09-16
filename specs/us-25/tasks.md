@@ -4,12 +4,12 @@
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Leave unchecked until product asks to implement snap
+- [x] **Confirm kickoff** — Leave unchecked until product asks to implement snap
 - [ ] **Fold prep note** — On ship: fold into `current/`, changelog, delete this folder
 
 ## Settings
 
-- [ ] **Snap state on settings store** — `snapToGrid`, `gridStepMetres`, `snapRotation`, `rotationStepDegrees` with documented defaults; session-only
+- [x] **Snap state on settings store** — `snapToGrid`, `gridStepMetres`, `snapRotation`, `rotationStepDegrees` with documented defaults; session-only
 - [ ] **Settings UI** — Controls in General or Create section; labelled for keyboard / a11y (NFR-4)
 
 ## Transform integration
