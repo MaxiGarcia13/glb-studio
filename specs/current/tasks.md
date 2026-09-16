@@ -214,11 +214,18 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Add-part palette on created-model create toolbar; hidden for imported focus
 - [x] Added parts reuse US-23 inspector / duplicate / delete / Save–Restore; export packs scene
 
+## US-25 — Grid and rotation snap
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] `$viewportSettings` snap fields + setters (session-only; defaults off / `0.1` m / `15°`)
+- [x] `SnapControls` in top Settings menu; labelled checkboxes + step inputs
+- [x] TransformControls built-in snaps for created models only (Edit + Move); imported ignore
+
 ## Open deltas
 
 | US                                     | Status                    | Tasks                                       |
 | -------------------------------------- | ------------------------- | ------------------------------------------- |
-| **US-25** — Grid / rotation snap       | not started (after US-23) | [`specs/us-25/tasks.md`](../us-25/tasks.md) |
 | **US-26** — Part hierarchy + outliner  | not started (after US-23) | [`specs/us-26/tasks.md`](../us-26/tasks.md) |
 | **US-27** — Additional kits            | not started (after US-23) | [`specs/us-27/tasks.md`](../us-27/tasks.md) |
 | **US-28** — Part color maps (textures) | not started (after US-23) | [`specs/us-28/tasks.md`](../us-28/tasks.md) |

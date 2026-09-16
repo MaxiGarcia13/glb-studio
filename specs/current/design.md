@@ -48,7 +48,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 ## EditorToolbar (US-30)
 
 1. Full-width Blender-style app menu bar at the top of the window (above Library / Preview / Settings columns) — **not** inside `EditorPreview`, not a floating viewport overlay
-2. `EditorToolbar` is a `menubar` with text triggers: **File** (`ActionMenu`: New model, New animation, Import, Export) and **Settings** (`ActionMenuPanel`: `WorldAxesControls`)
+2. `EditorToolbar` is a `menubar` with text triggers: **File** (`ActionMenu`: New model, New animation, Import, Export) and **Settings** (`ActionMenuPanel`: `WorldAxesControls`, `SnapControls`)
 3. **New model** → `createEmptyModel`; **New animation** → `startNewAnimation(scene)` with default `ownerModelId: null` (disabled without focused scene); **Import** → `routeContentImport` + `importModelResults` / `importClipResults`; **Export** → open `ExportModal` (`canExport` gate)
 4. Keep model-row **Add animation** modal unchanged (owned create / import / clone)
 5. Reuse chrome tokens (`bg-surface`, `border-border`, `Button` ghost, `ActionMenu`); one open menu at a time
@@ -61,7 +61,8 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 4. When focused model is `source: 'created'`: vertical create **ToolBar** after Settings (Add part palette, color, duplicate, delete); Settings **PartInspector** for kind size fields; first-run hint when nothing is selected. Toolbar (and palette) hidden for imported focus. **Edit** gizmo targets the selected part; **Move** targets the model root (all parts)
 5. Edit Save / Restore for created-part selection: always commit local TRS on the mesh (scene graph + rest-pose refresh); never write keyframes or rebase library clips
 6. `packModelGlb`: created models export mesh scene only (no shared-clip attach). Animation-only zip fallback prefers an imported rig when one exists
-7. Growth seams: snap (US-25), hierarchy (US-26), kits (US-27), textures (US-28)
+7. Growth seams: hierarchy (US-26), kits (US-27), textures (US-28)
+8. **Snap (US-25):** when focused model `source === 'created'`, TransformControls use built-in `translationSnap` / `rotationSnap` from `$viewportSettings` (Move = world, Edit = local; scale never). Imported models never quantize. Settings XYZ typing does not auto-snap
 
 ## Nested library + clip ownership (US-19)
 
@@ -202,13 +203,14 @@ Out of scope: multi-model simultaneous transform; full undo stack (US-10).
 5. Shared clips (`ownerModelId === null`) are left unchanged; skeleton conflict UI may appear for that model until retarget
 6. Do not rewrite `sourceBindLengths` / `sourceBindFrames` (source-side keys)
 
-## Viewport general settings (US-14 + US-30)
+## Viewport general settings (US-14 + US-25 + US-30)
 
-1. `$viewportSettings` (`nanostores` `map`) in `viewport/stores/viewport-settings-store.ts`: `{ axesVisible, axesSize }` with setters; defaults `true` / `AXES_SIZE` (`10`); clamp size to `1`–`50`
-2. Top **Settings** menu hosts checkbox + metres `Input` (`WorldAxesControls`) — not library sidebar, Settings aside, or preview chrome
-3. Settings aside hosts **Model** (and Animation / Part / Name) — not Axes. Model has live editable **model root** position (m), rotation (degrees), and scale as **percent of rest size** (`100` = rest / bind root) via `TransformReadout` whenever a model is loaded — independent of Edit / Move (US-15 / US-21); with an active clip on the focused model, Save stores values on that clip’s `rootPositionByModelId` / `rootRotationByModelId` / `rootScaleByModelId` (scale stored as Three.js factor)
+1. `$viewportSettings` (`nanostores` `map`) in `viewport/stores/viewport-settings-store.ts`: `{ axesVisible, axesSize, snapToGrid, gridStepMetres, snapRotation, rotationStepDegrees }` with setters. Axes defaults `true` / `AXES_SIZE` (`10`); clamp size `1`–`50`. Snap defaults `false` / `0.1` m / `false` / `15°`; clamp grid `0.01`–`10`, rotation `1`–`180`
+2. Top **Settings** menu hosts axes (`WorldAxesControls`) and snap (`SnapControls`: checkboxes + step inputs; step fields disabled when their flag is off) — not library sidebar, Settings aside, or preview chrome
+3. Settings aside hosts **Model** (and Animation / Part / Name) — not Axes / Snap. Model has live editable **model root** position (m), rotation (degrees), and scale as **percent of rest size** (`100` = rest / bind root) via `TransformReadout` whenever a model is loaded — independent of Edit / Move (US-15 / US-21); with an active clip on the focused model, Save stores values on that clip’s `rootPositionByModelId` / `rootRotationByModelId` / `rootScaleByModelId` (scale stored as Three.js factor)
 4. `ViewportCanvas` mounts `<WorldAxes axesSize={…} />` only when `axesVisible`; `WorldAxes` rebuilds tick geometry from `axesSize` at runtime (major/minor steps stay in `viewport/constants/world-axes`)
-5. Session-only — no persistence. Out of scope: ground-grid toggle, tick-step UI, unit system changes
+5. `TransformControlsDriver` passes `translationSnap` / `rotationSnap` (degrees→radians) only when focused model is created and the matching snap flag is on — prefer built-in TC snaps over post-`objectChange` re-quantize
+6. Session-only — no persistence. Out of scope: ground-grid toggle, unit system changes, scale snap, vertex/edge/magnet snap
 
 ## Viewport
 

@@ -330,9 +330,22 @@ As an editor user, I can add common primitive shapes to my created model so I ca
 - [x] Palette is hidden or disabled for **imported** models (no accidental mesh editing of uploaded characters in this US)
 - [x] Export still packs the updated scene
 
+### US-25 — Grid and rotation snap
+
+As an editor user, I can snap part moves and rotations to the grid so wheels, walls, and limbs line up without careful freehand nudging.
+
+**Acceptance**
+
+- [x] Top **Settings** menu exposes **Snap to grid** (position) with a step in metres (default `0.1`)
+- [x] Settings exposes **Snap rotation** with a step in degrees (default `15`)
+- [x] While snap is on and the user transforms a part (or model root in Move) on a **created** model, TransformControls quantize to the step
+- [x] Snap can be toggled off for free placement; session-only (no persistence)
+- [x] Imported character editing ignores snap even when flags are on (created-model focus only)
+- [x] World axes / rulers (US-14) remain the visual reference; snap step is in metres
+
 ### US-30 — EditorToolbar
 
-As an editor user, I can create models / shared animations, import files, and export from a top **File** menu, and tweak world axes from a top **Settings** menu — without hunting through library headers or the Settings aside.
+As an editor user, I can create models / shared animations, import files, and export from a top **File** menu, and tweak world axes and snap from a top **Settings** menu — without hunting through library headers or the Settings aside.
 
 **Acceptance**
 
@@ -343,7 +356,7 @@ As an editor user, I can create models / shared animations, import files, and ex
 - [x] Per file, Import routes by content: usable skinned mesh + skeleton → model library (embedded clips **owned**); animations but no usable model → Shared Animations; neither → user-visible error for that file; other files in the batch still process
 - [x] **Export** opens the existing **Export** modal (US-22); does not pack immediately; removed from the Settings aside footer
 - [x] Per-model **Add animation** modal (Create / Import / Add existing → owned) stays on the model row — not replaced by File Import
-- [x] The same menu bar exposes a **Settings** text menu with **Show world axes** and **Axes Length (m)** (same store / behavior as US-14); removed from the Settings aside Axes block
+- [x] The same menu bar exposes a **Settings** text menu with **Show world axes**, **Axes Length (m)** (US-14), and snap controls (US-25); removed from the Settings aside Axes block
 - [x] Blender-style full-width top bar (above asides + preview); text triggers open menus — not a floating viewport toolbar; mounted outside `EditorPreview`; does not block orbit, pick, or existing Edit / Move / create toolbars
 
 ## Post-MVP user stories
@@ -365,7 +378,8 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 ## Out of scope (still excluded)
 
 - Material / texture editing on **imported** characters (created-model color maps are US-28)
-- Kit picker / starter kits on New model (US-27); snap (US-25); part outliner (US-26)
+- Kit picker / starter kits on New model (US-27); part outliner (US-26)
+- Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
 - Bones, skinning, Mixamo / retarget on created models
 - Server accounts (FBX convert via US-16 is the allowed server round-trip; no user accounts)
 - Collaborative editing / durable undo across reloads
