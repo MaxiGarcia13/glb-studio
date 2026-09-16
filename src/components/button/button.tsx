@@ -1,9 +1,9 @@
 import { cn } from '@maxigarcia/js-utils';
 
 const variants: Record<Variant, string> = {
-  ghost: 'text-zinc-400 hover:text-white transition-colors',
-  default: 'text-white hover:text-zinc-400 transition-colors bg-zinc-600 hover:bg-zinc-700',
-  primary: 'text-white bg-sky-500 hover:bg-sky-600',
+  ghost: 'text-fg-muted hover:text-fg transition-colors',
+  default: 'text-fg hover:text-fg-muted transition-colors bg-control-strong hover:bg-surface-hover',
+  primary: 'text-fg bg-accent hover:bg-accent-hover',
 };
 
 type Variant = 'ghost' | 'default' | 'primary';

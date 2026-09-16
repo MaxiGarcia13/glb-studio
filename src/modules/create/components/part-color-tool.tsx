@@ -1,5 +1,6 @@
 import { useStore } from '@nanostores/react';
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Button } from '@/components/button';
 import { ColorPickerIcon } from '@/components/icons/color-picker-icon';
 import { $selection } from '@/modules/viewport/stores/selection-store';
 import { useSelectedCreatedPartMaterial } from '../hooks/use-selected-created-part';
@@ -8,7 +9,7 @@ import { toHexColor } from '../utils/selected-part';
 export function PartColorTool() {
   const material = useSelectedCreatedPartMaterial();
   const { object: selected } = useStore($selection, { keys: ['object'] });
-  const inputId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [draft, setDraft] = useState('#808080');
   const enabled = material !== null;
 
@@ -34,18 +35,9 @@ export function PartColorTool() {
   };
 
   return (
-    <label
-      htmlFor={inputId}
-      title={enabled ? 'Part color' : 'Select a part to edit color'}
-      className={
-        enabled
-          ? 'flex size-9 cursor-pointer items-center justify-center rounded-sm text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white'
-          : 'flex size-9 cursor-not-allowed items-center justify-center rounded-sm text-zinc-600 opacity-50'
-      }
-    >
-      <ColorPickerIcon aria-hidden />
+    <>
       <input
-        id={inputId}
+        ref={inputRef}
         type="color"
         aria-label="Part color"
         disabled={!enabled}
@@ -54,6 +46,15 @@ export function PartColorTool() {
         onBlur={handleBlur}
         className="sr-only"
       />
-    </label>
+      <Button
+        variant="ghost"
+        disabled={!enabled}
+        title={enabled ? 'Part color' : 'Select a part to edit color'}
+        aria-label="Part color"
+        onClick={() => inputRef.current?.click()}
+      >
+        <ColorPickerIcon aria-hidden />
+      </Button>
+    </>
   );
 }

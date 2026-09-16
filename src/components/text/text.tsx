@@ -7,10 +7,10 @@ const sizes: Record<Size, string> = {
 
 const variants: Record<Variant, string> = {
   default: '',
-  muted: 'text-zinc-400',
+  muted: 'text-fg-muted',
   heading: 'font-semibold tracking-wide',
-  section: 'font-semibold uppercase tracking-wider text-zinc-500',
-  error: 'text-red-400',
+  section: 'font-semibold uppercase tracking-wider text-fg-subtle',
+  error: 'text-danger',
   numeric: 'tabular-nums leading-none',
 };
 

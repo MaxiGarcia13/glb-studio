@@ -79,7 +79,7 @@ export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
   }
 
   return (
-    <div className={cn('flex flex-col gap-1', className)}>
+    <div className={cn('flex flex-col gap-2', className)}>
       {replaceInput}
 
       {clips.map((entry) => {

@@ -57,7 +57,7 @@ export function Modal({ open, title, onClose, children, className }: ModalProps)
       <button
         type="button"
         aria-label="Close dialog"
-        className="absolute inset-0 bg-black/60 cursor-pointer border-0"
+        className="absolute inset-0 bg-overlay cursor-pointer border-0"
         onClick={onClose}
       />
       <div
@@ -68,15 +68,15 @@ export function Modal({ open, title, onClose, children, className }: ModalProps)
         tabIndex={-1}
         className={cn(
           'relative z-10 flex flex-col max-h-[min(90vh,42rem)] w-full max-w-3xl',
-          'rounded-sm bg-zinc-800 border border-zinc-700 shadow-xl outline-none text-white',
+          'rounded-sm bg-surface border border-border shadow-xl outline-none text-fg',
           className,
         )}
       >
-        <header className="flex items-center justify-between gap-3 px-4 py-3 border-b border-zinc-700 shrink-0">
+        <header className="flex items-center justify-between gap-4 px-4 py-2 border-b border-border shrink-0">
           <Text id={titleId} size="sm" variant="heading">
             {title}
           </Text>
-          <Button onClick={onClose} variant="ghost" aria-label="Close" className="p-1.5">
+          <Button onClick={onClose} variant="ghost" aria-label="Close" className="p-2">
             <CloseIcon />
           </Button>
         </header>

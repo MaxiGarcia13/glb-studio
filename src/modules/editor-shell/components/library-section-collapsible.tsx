@@ -38,13 +38,13 @@ export function LibrarySectionCollapsible({
   const canCollapse = showChevron;
 
   return (
-    <Collapsible defaultOpen={defaultOpen} className={cn('gap-1', className)}>
+    <Collapsible defaultOpen={defaultOpen} className={cn('gap-2', className)}>
       <CollapsibleHeader
         showChevron={showChevron}
         collapsible={canCollapse}
         className={cn(
-          'rounded-sm px-1.5 hover:bg-zinc-700/40 hover:text-zinc-100',
-          selected && 'bg-sky-500/15 text-zinc-100',
+          'rounded-sm px-2 hover:bg-surface-hover/40 hover:text-fg',
+          selected && 'bg-accent/15 text-fg',
           headerClassName,
         )}
       >
@@ -59,7 +59,7 @@ export function LibrarySectionCollapsible({
             : title}
           {actions && (
             <div
-              className={cn('flex items-center gap-1 shrink-0', actionsClassName)}
+              className={cn('flex items-center gap-2 shrink-0', actionsClassName)}
               onClick={(e) => e.stopPropagation()}
             >
               {actions}
@@ -69,7 +69,7 @@ export function LibrarySectionCollapsible({
       </CollapsibleHeader>
       <CollapsibleContent
         className={cn(
-          'relative w-full gap-1',
+          'relative w-full gap-2',
           showTreeGuide && 'pl-4',
           contentClassName,
         )}
@@ -77,7 +77,7 @@ export function LibrarySectionCollapsible({
         {showTreeGuide && (
           <span
             aria-hidden
-            className="pointer-events-none absolute top-0 bottom-0 left-2 w-px bg-zinc-700"
+            className="pointer-events-none absolute top-0 bottom-0 left-2 w-px bg-border"
           />
         )}
         {children}

@@ -15,7 +15,7 @@ export function AsideHeader({ direction, title, onToggle }: AsideHeaderProps) {
 
   if (direction === 'left') {
     return (
-      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-700">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border">
         <Text size="sm" variant="heading">{title}</Text>
         <Button
           onClick={onToggle}
@@ -29,7 +29,7 @@ export function AsideHeader({ direction, title, onToggle }: AsideHeaderProps) {
   }
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-700">
+    <div className="flex items-center justify-between px-4 py-2 border-b border-border">
       <Button
         onClick={onToggle}
         aria-label={ariaLabel}

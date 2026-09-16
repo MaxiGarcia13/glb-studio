@@ -14,7 +14,7 @@ export function RetargetScopeFields({
   onScopeChange,
 }: RetargetScopeFieldsProps) {
   return (
-    <fieldset className="flex flex-col gap-1.5">
+    <fieldset className="flex flex-col gap-2">
       <Text variant="section">
         Apply to
       </Text>
@@ -24,9 +24,9 @@ export function RetargetScopeFields({
           name="retarget-scope"
           checked={scope === 'active'}
           onChange={() => onScopeChange('active')}
-          className="mt-0.5 accent-sky-500"
+          className="mt-1 accent-accent"
         />
-        <span className="flex flex-col gap-0.5">
+        <span className="flex flex-col gap-2">
           <Text>This model</Text>
           <Text variant="muted">
             New remapped clip for the previewed character; keep the original clip.
@@ -40,9 +40,9 @@ export function RetargetScopeFields({
           checked={scope === 'all'}
           disabled={!multiModel}
           onChange={() => onScopeChange('all')}
-          className="mt-0.5 accent-sky-500"
+          className="mt-1 accent-accent"
         />
-        <span className="flex flex-col gap-0.5">
+        <span className="flex flex-col gap-2">
           <Text>All models</Text>
           <Text variant="muted">
             {multiModel

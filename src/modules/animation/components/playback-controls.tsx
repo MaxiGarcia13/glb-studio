@@ -22,7 +22,7 @@ export function PlaybackControls({ className }: PlaybackControlsProps) {
   const enabled = activeClipId !== null && previewModelIds.length > 0;
 
   return (
-    <div className={cn('flex items-center gap-1', className)}>
+    <div className={cn('flex items-center gap-2', className)}>
       <Button
         onClick={playing ? pause : play}
         disabled={!enabled}
@@ -48,7 +48,7 @@ export function PlaybackControls({ className }: PlaybackControlsProps) {
         aria-label="Toggle loop"
         aria-pressed={loop}
         variant="ghost"
-        className={`flex-1 flex items-center justify-center gap-2 max-w-20 ${loop ? 'text-sky-400' : ''}`}
+        className={`flex-1 flex items-center justify-center gap-2 max-w-20 ${loop ? 'text-accent' : ''}`}
       >
         <RepeatIcon />
         {loop ? 'Loop' : 'Once'}

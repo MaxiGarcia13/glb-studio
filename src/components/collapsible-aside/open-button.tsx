@@ -1,4 +1,5 @@
 import { Button } from '../button';
+import { FloatingToolbar } from '../floating-toolbar';
 import { ChevronLeft } from '../icons/chevron-left-icon';
 import { ChevronRight } from '../icons/chevron-right-icon';
 import { Text } from '../text';
@@ -14,27 +15,37 @@ export function OpenButton({ direction, onToggle, title }: OpenButtonProps) {
 
   if (direction === 'left') {
     return (
-      <Button
-        onClick={onToggle}
+      <FloatingToolbar
         aria-label={ariaLabel}
-        className="absolute top-3 z-1 left-3 flex items-center gap-2"
+        className="absolute top-4 z-10 left-4"
       >
-        <Text size="sm" variant="heading">{title}</Text>
-
-        <ChevronRight />
-      </Button>
+        <Button
+          onClick={onToggle}
+          variant="ghost"
+          aria-label={ariaLabel}
+          className="flex items-center gap-2"
+        >
+          <Text size="sm" variant="heading">{title}</Text>
+          <ChevronRight aria-hidden />
+        </Button>
+      </FloatingToolbar>
     );
   }
 
   return (
-    <Button
-      onClick={onToggle}
+    <FloatingToolbar
       aria-label={ariaLabel}
-      className="absolute top-3 z-1 right-3 flex items-center gap-2"
+      className="absolute top-4 z-10 right-4"
     >
-      <ChevronLeft />
-
-      <Text size="sm" variant="heading">{title}</Text>
-    </Button>
+      <Button
+        onClick={onToggle}
+        variant="ghost"
+        aria-label={ariaLabel}
+        className="flex items-center gap-2"
+      >
+        <ChevronLeft aria-hidden />
+        <Text size="sm" variant="heading">{title}</Text>
+      </Button>
+    </FloatingToolbar>
   );
 }

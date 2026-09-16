@@ -35,13 +35,13 @@ export function LibraryModelTitle({
           <Text
             as="h2"
             variant="section"
-            className={cn('truncate', selected && 'text-sky-300')}
+            className={cn('truncate', selected && 'text-accent')}
           >
             {fileName}
           </Text>
         </button>
 
-        <LibraryModelPreviewButton modelId={modelId} className="p-1" />
+        <LibraryModelPreviewButton modelId={modelId} className="p-2" />
         {' '}
 
       </div>

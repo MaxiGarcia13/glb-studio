@@ -22,7 +22,7 @@ export function LibraryModelPreviewButton({ modelId, className }: LibraryModelPr
       aria-pressed={previewed}
       title={previewed ? 'Hide from preview' : 'Show in preview'}
       className={cn(
-        previewed && 'text-sky-500 hover:text-sky-400',
+        previewed && 'text-accent hover:text-accent-hover',
         className,
       )}
     >

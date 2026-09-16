@@ -25,7 +25,7 @@ interface LibraryModelAddAnimationModalProps {
 }
 
 const choiceRowClassName
-  = 'w-full flex items-center gap-2 justify-start px-3 py-2.5 ring-1 ring-zinc-600/80';
+  = 'w-full flex items-center gap-2 justify-start px-4 py-2 ring-1 ring-border-strong/80';
 
 function clipSourceLabel(
   entry: ClipEntry,
@@ -117,7 +117,7 @@ export function LibraryModelAddAnimationModal({
           </Button>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-zinc-700 pt-4">
+        <div className="flex flex-col gap-2 border-t border-border pt-4">
           <Text as="h2" variant="section">
             Add existing
           </Text>
@@ -142,7 +142,7 @@ export function LibraryModelAddAnimationModal({
                     }}
                     disabled={!sourceId}
                     variant={sourceId ? 'primary' : 'default'}
-                    className="px-3 py-1.5 shrink-0"
+                    className="px-4 py-2 shrink-0"
                   >
                     Add
                   </Button>

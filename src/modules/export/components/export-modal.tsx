@@ -140,7 +140,7 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
       className="max-w-md"
     >
       <div className="flex flex-col gap-4 min-h-0 overflow-y-auto">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <Text as="h2" variant="section">
             Zip contents
           </Text>
@@ -182,9 +182,9 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
             checked={mergeActive}
             disabled={!canMerge || busy}
             onChange={(event) => setMergeModels(event.target.checked)}
-            className="size-3.5 shrink-0 mt-0.5 rounded-sm border-zinc-600 accent-sky-500"
+            className="size-4 shrink-0 mt-1 rounded-sm border-border-strong accent-accent"
           />
-          <span className="flex flex-col gap-0.5">
+          <span className="flex flex-col gap-2">
             <Text variant="muted">Merge visible models</Text>
             <Text size="sm" variant="muted">
               {canMerge
@@ -195,7 +195,7 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
         </label>
 
         {mergeActive && (
-          <div className="flex flex-col gap-3 border-t border-zinc-700 pt-4">
+          <div className="flex flex-col gap-4 border-t border-border pt-4">
             <Text as="h2" variant="section">
               Scene animations
             </Text>
@@ -241,7 +241,7 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
           </div>
         )}
 
-        <div className="flex flex-col gap-3 border-t border-zinc-700 pt-4">
+        <div className="flex flex-col gap-4 border-t border-border pt-4">
           <Text as="h2" variant="section">
             File names
           </Text>

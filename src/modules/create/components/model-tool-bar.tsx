@@ -1,4 +1,5 @@
 import { cn } from '@maxigarcia/js-utils';
+import { FloatingToolbar } from '@/components/floating-toolbar';
 import { useIsCreatedModelFocused } from '../hooks/use-selected-created-part';
 import { AddPartPalette } from './add-part-palette';
 import { PartColorTool } from './part-color-tool';
@@ -17,21 +18,15 @@ export function ModelToolBar({ className }: ModelToolBarProps) {
   }
 
   return (
-    <section
-      role="toolbar"
+    <FloatingToolbar
       aria-label="Create tools"
-      className={cn(
-        'flex items-center gap-1 p-1',
-        'absolute bottom-4 left-1/2',
-        'rounded-sm bg-zinc-800/90',
-        className,
-      )}
+      className={cn(className)}
     >
       <AddPartPalette />
-      <div className="mx-1 h-6 w-0.5 bg-zinc-700" aria-hidden />
+      <div className="mx-2 h-6 w-px bg-border" aria-hidden />
       <PartColorTool />
       <PartDuplicateTool />
       <PartDeleteTool />
-    </section>
+    </FloatingToolbar>
   );
 }

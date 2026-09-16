@@ -45,13 +45,13 @@ export function CollapsibleHeader({
           }
         : undefined}
       className={cn(
-        'flex items-start gap-1 min-h-7 w-full text-left text-zinc-400 transition-colors',
-        canToggle && 'cursor-pointer hover:text-zinc-100',
+        'flex items-start gap-2 min-h-8 w-full text-left text-fg-muted transition-colors',
+        canToggle && 'cursor-pointer hover:text-fg',
         className,
       )}
     >
       {showChevron && (
-        <span className="inline-flex h-7 w-4 shrink-0 items-center justify-center">
+        <span className="inline-flex h-8 w-4 shrink-0 items-center justify-center">
           <ChevronRight
             className={cn('transition-transform', open && 'rotate-90')}
             aria-hidden
@@ -59,7 +59,7 @@ export function CollapsibleHeader({
         </span>
       )}
 
-      <div className="flex min-h-7 flex-1 items-center gap-2 min-w-0">
+      <div className="flex min-h-8 flex-1 items-center gap-2 min-w-0">
         {title && (
           <Text as="h2" variant="section">
             {title}

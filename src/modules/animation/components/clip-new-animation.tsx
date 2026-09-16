@@ -21,7 +21,7 @@ export function ClipNewAnimation({ onCreate }: ClipNewAnimationProps) {
       variant="ghost"
       aria-label="New animation"
       title="New animation"
-      className="p-1.5"
+      className="p-2"
     >
       <PlusIcon />
     </Button>

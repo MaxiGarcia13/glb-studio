@@ -58,7 +58,7 @@ export function ActionMenu({
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
         title={ariaLabel}
-        className="p-1.5"
+        className="p-2"
         onClick={() => setOpen((current) => !current)}
       >
         <DotsVerticalIcon />
@@ -69,7 +69,7 @@ export function ActionMenu({
           id={menuId}
           role="menu"
           aria-label={ariaLabel}
-          className="absolute right-0 top-full z-50 mt-0.5 min-w-40 rounded-sm border border-zinc-600 bg-zinc-800 py-1 shadow-lg"
+          className="absolute right-0 top-full z-50 mt-2 min-w-40 rounded-sm border border-border-strong bg-surface py-2 shadow-lg"
         >
           {items.map((item) => (
             <button
@@ -78,11 +78,11 @@ export function ActionMenu({
               role="menuitem"
               disabled={item.disabled}
               className={cn(
-                'flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-xs transition-colors',
+                'flex w-full items-center gap-2 px-2 py-2 text-left text-xs transition-colors',
                 item.disabled
                   ? 'cursor-not-allowed opacity-50'
-                  : 'cursor-pointer hover:bg-zinc-700',
-                item.danger ? 'text-red-400' : 'text-zinc-200',
+                  : 'cursor-pointer hover:bg-surface-hover',
+                item.danger ? 'text-danger' : 'text-fg',
               )}
               onClick={(event) => {
                 event.preventDefault();
@@ -95,7 +95,7 @@ export function ActionMenu({
               }}
             >
               {item.icon && (
-                <span className="inline-flex shrink-0 text-current [&_svg]:size-3.5">
+                <span className="inline-flex shrink-0 text-current [&_svg]:size-4">
                   {item.icon}
                 </span>
               )}

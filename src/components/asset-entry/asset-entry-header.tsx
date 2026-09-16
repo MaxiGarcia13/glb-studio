@@ -44,14 +44,14 @@ export function AssetEntryHeader({
       disabled={!onSelect}
       className={cn(
         'flex w-full flex-col text-left',
-        compact ? 'gap-0.5 min-h-7 justify-center' : 'gap-1',
+        compact ? 'gap-2 min-h-8 justify-center' : 'gap-2',
         onSelect ? 'cursor-pointer' : 'cursor-default',
         canRename ? 'group' : '',
       )}
     >
-      <div className="flex items-center gap-1.5 min-h-7">
+      <div className="flex items-center gap-2 min-h-8">
         {leading && (
-          <span className="shrink-0 text-zinc-400">
+          <span className="shrink-0 text-fg-muted">
             {leading}
           </span>
         )}
@@ -59,7 +59,7 @@ export function AssetEntryHeader({
           <Text
             className={cn(
               'min-w-0 truncate',
-              labelClass({ compact, hasError, selected }),
+              labelClass({ hasError, selected }),
               canRename && 'group-hover:underline',
             )}
             title={title ?? label}
@@ -70,10 +70,10 @@ export function AssetEntryHeader({
             <Text
               as="span"
               className={cn(
-                'shrink-0 rounded-sm px-1.5 py-0.5 leading-none',
+                'shrink-0 rounded-sm px-2 py-0.5 leading-none',
                 status
                   ? statusBadgeClass[status]
-                  : 'bg-zinc-700/80 text-zinc-300',
+                  : 'bg-control/80 text-fg-muted',
               )}
             >
               {badgeText}
@@ -86,7 +86,7 @@ export function AssetEntryHeader({
           variant={hasError ? 'error' : 'muted'}
           className={cn(
             'leading-snug line-clamp-2',
-            compact ? 'pl-5' : 'pl-5.5',
+            'pl-6',
           )}
           title={errorDetail ?? description}
         >
@@ -98,19 +98,17 @@ export function AssetEntryHeader({
 }
 
 function labelClass({
-  compact,
   hasError,
   selected,
 }: {
-  compact: boolean;
   hasError: boolean;
   selected: boolean;
 }): string {
   if (hasError) {
-    return 'text-amber-200';
+    return 'text-warning';
   }
   if (selected) {
-    return 'text-sky-300';
+    return 'text-accent';
   }
-  return compact ? 'text-zinc-200' : 'text-zinc-100';
+  return 'text-fg';
 }

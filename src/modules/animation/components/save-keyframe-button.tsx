@@ -1,6 +1,7 @@
 import { cn } from '@maxigarcia/js-utils';
 import { useStore } from '@nanostores/react';
 import { Button } from '@/components/button';
+import { FloatingToolbar } from '@/components/floating-toolbar';
 import { RestoreIcon } from '@/components/icons/restore-icon';
 import { SaveIcon } from '@/components/icons/save-icon';
 import { useActiveModel } from '@/modules/viewport/hooks/use-active-model';
@@ -28,33 +29,31 @@ export function SaveKeyframeButton({ className }: SaveKeyframeButtonProps) {
     return null;
   }
 
+  const saveLabel = writeKeyframe ? 'Hold pose to end of clip' : 'Save edit';
+  const saveTitle = writeKeyframe
+    ? 'Keeps this pose from the playhead to the end of the clip. Scrub and edit again anytime to change it.'
+    : clipRootSave
+      ? 'Saves this model root position on the selected animation only.'
+      : 'Commits the current transform onto the model.';
+
   return (
-    <div className={cn('pointer-events-auto flex items-center gap-2', className)}>
+    <FloatingToolbar aria-label="Pose edit" className={cn(className)}>
       <Button
-        variant="default"
+        variant="ghost"
         onClick={restorePose}
         aria-label="Restore edit"
-        className="flex flex-row gap-2 items-center"
+        title="Restore edit"
       >
-        <RestoreIcon />
-        Restore
+        <RestoreIcon aria-hidden />
       </Button>
       <Button
         variant="primary"
         onClick={() => saveKeyframe({ holdToEnd: writeKeyframe })}
-        aria-label={writeKeyframe ? 'Hold pose to end of clip' : 'Save edit'}
-        title={
-          writeKeyframe
-            ? 'Keeps this pose from the playhead to the end of the clip. Scrub and edit again anytime to change it.'
-            : clipRootSave
-              ? 'Saves this model root position on the selected animation only.'
-              : 'Commits the current transform onto the model.'
-        }
-        className="flex flex-row gap-2 items-center"
+        aria-label={saveLabel}
+        title={saveTitle}
       >
-        <SaveIcon />
-        {writeKeyframe ? 'Hold Pose to End' : 'Save'}
+        <SaveIcon aria-hidden />
       </Button>
-    </div>
+    </FloatingToolbar>
   );
 }

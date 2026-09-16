@@ -1,7 +1,12 @@
 import type { TransformMode } from '../stores/transform-mode-store';
+import type { IconProps } from '@/components/icons/type';
 import { cn } from '@maxigarcia/js-utils';
 import { useStore } from '@nanostores/react';
 import { Button } from '@/components/button';
+import { FloatingToolbar } from '@/components/floating-toolbar';
+import { PointerIcon } from '@/components/icons/pointer-icon';
+import { RotateIcon } from '@/components/icons/rotate-icon';
+import { ScaleIcon } from '@/components/icons/scale-icon';
 import { useActiveModel } from '../hooks/use-active-model';
 import { useTransformModeHotkeys } from '../hooks/use-transform-mode-hotkeys';
 import { $editTool } from '../stores/edit-tool-store';
@@ -11,10 +16,15 @@ import {
   setTransformMode,
 } from '../stores/transform-mode-store';
 
-const MODES: { mode: TransformMode; label: string; hotkey: string }[] = [
-  { mode: 'translate', label: 'Move', hotkey: 'W' },
-  { mode: 'rotate', label: 'Rotate', hotkey: 'E' },
-  { mode: 'scale', label: 'Scale', hotkey: 'R' },
+const MODES: {
+  mode: TransformMode;
+  label: string;
+  hotkey: string;
+  Icon: (props: IconProps) => React.ReactNode;
+}[] = [
+  { mode: 'translate', label: 'Move', hotkey: 'W', Icon: PointerIcon },
+  { mode: 'rotate', label: 'Rotate', hotkey: 'E', Icon: RotateIcon },
+  { mode: 'scale', label: 'Scale', hotkey: 'R', Icon: ScaleIcon },
 ];
 
 interface TransformModeToolbarProps {
@@ -39,12 +49,8 @@ export function TransformModeToolbar({ className }: TransformModeToolbarProps) {
   }
 
   return (
-    <div
-      role="toolbar"
-      aria-label="Transform mode"
-      className={cn('pointer-events-auto flex items-center gap-1 rounded-sm bg-zinc-800/90 p-1', className)}
-    >
-      {MODES.map(({ mode: nextMode, label, hotkey }) => {
+    <FloatingToolbar aria-label="Transform mode" className={cn(className)}>
+      {MODES.map(({ mode: nextMode, label, hotkey, Icon }) => {
         const active = mode === nextMode;
         return (
           <Button
@@ -54,12 +60,11 @@ export function TransformModeToolbar({ className }: TransformModeToolbarProps) {
             aria-pressed={active}
             title={`${label} (${hotkey})`}
             onClick={() => setTransformMode(nextMode)}
-            className="min-w-16"
           >
-            {label}
+            <Icon aria-hidden />
           </Button>
         );
       })}
-    </div>
+    </FloatingToolbar>
   );
 }

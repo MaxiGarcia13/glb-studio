@@ -26,7 +26,7 @@ export function RetargetBoneRow({
 
   return (
     <div
-      className={`${RETARGET_ROW_GRID} py-1.5 border-b border-zinc-700/50 last:border-b-0`}
+      className={`${RETARGET_ROW_GRID} py-2 border-b border-border/50 last:border-b-0`}
     >
       <Text className="truncate" title={sourceBone}>
         {sourceLabel}
@@ -39,8 +39,8 @@ export function RetargetBoneRow({
         onChange={(event) => onMap(sourceBone, event.target.value)}
         aria-label={`Map ${sourceLabel} (${sourceBone}) to character bone`}
         className={
-          `w-full min-w-0 bg-zinc-700 rounded-sm px-2 py-1.5 text-xs text-zinc-100 ${
-            isMapped ? '' : 'ring-1 ring-amber-500/60'
+          `w-full min-w-0 bg-control rounded-sm px-2 py-2 text-xs text-fg ${
+            isMapped ? '' : 'ring-1 ring-warning/60'
           }`
         }
       >
@@ -53,7 +53,7 @@ export function RetargetBoneRow({
       </select>
       <Text
         variant="muted"
-        className={`text-right tabular-nums ${isMapped ? '' : 'text-amber-400'}`}
+        className={`text-right tabular-nums ${isMapped ? '' : 'text-warning'}`}
       >
         {isMapped ? 'Mapped' : 'Will skip'}
       </Text>

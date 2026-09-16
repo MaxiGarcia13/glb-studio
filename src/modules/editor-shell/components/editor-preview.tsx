@@ -1,6 +1,7 @@
 import { cn } from '@maxigarcia/js-utils';
 import { SaveKeyframeButton } from '@/modules/animation';
 import { ModelToolBar } from '@/modules/create/components/model-tool-bar';
+import { useIsCreatedModelFocused } from '@/modules/create/hooks/use-selected-created-part';
 import { EditToolToolbar } from '@/modules/viewport/components/edit-tool-toolbar';
 import { SelectionNameOverlay } from '@/modules/viewport/components/selection-name-overlay';
 import { TransformModeToolbar } from '@/modules/viewport/components/transform-mode-toolbar';
@@ -11,44 +12,64 @@ import { PreviewPlaybackBar } from './preview-playback-bar';
 
 export function EditorPreview() {
   const isMobile = isMobileViewport();
+  const createFocused = useIsCreatedModelFocused();
 
   return (
-    <div className="relative flex-1 flex flex-col min-w-0 h-full bg-zinc-900">
+    <div className="relative flex-1 flex flex-col min-w-0 h-full bg-canvas">
       <div className="relative flex-1 min-h-0">
         <ViewportCanvas />
         <ViewportStatusOverlay />
 
-        <div className={
-          cn(
+        {/* Below Library / Settings open chips on mobile (chips sit at top-4). */}
+        <div
+          className={cn(
             'pointer-events-none absolute inset-x-0 z-10 flex justify-center px-4',
-            isMobile ? 'top-16' : 'top-4',
-          )
-        }
+            isMobile ? 'top-20' : 'top-4',
+          )}
         >
           <TransformModeToolbar />
         </div>
-        <div className={cn(
-          'pointer-events-none absolute z-10 flex right-2  justify-end pr-4',
-          isMobile ? 'bottom-16' : 'bottom-4',
-        )}
+
+        <div
+          className={cn(
+            'pointer-events-none absolute z-10 flex right-4 justify-end',
+            isMobile ? 'bottom-28' : 'bottom-4',
+          )}
         >
           <SelectionNameOverlay />
         </div>
 
-        <ModelToolBar />
-
-        <div className={
-          cn(
-            'pointer-events-none absolute inset-x-0 z-10 flex left-4 justify-center',
-            'bottom-18',
-          )
-        }
+        {/* Create tools: bottom center. Edit stacks above them on mobile. */}
+        <div
+          className={cn(
+            'pointer-events-none absolute z-10 flex left-1/2 -translate-x-1/2',
+            'bottom-4',
+          )}
         >
-          <SaveKeyframeButton />
+          <ModelToolBar />
         </div>
 
-        <div className="pointer-events-none absolute z-10 flex left-4 bottom-4">
+        <div
+          className={cn(
+            'pointer-events-none absolute z-10 flex',
+            isMobile
+              ? cn(
+                  'left-1/2 -translate-x-1/2',
+                  createFocused ? 'bottom-18' : 'bottom-4',
+                )
+              : 'left-4 bottom-4',
+          )}
+        >
           <EditToolToolbar />
+        </div>
+
+        <div
+          className={cn(
+            'pointer-events-none absolute inset-x-0 z-10 flex justify-center px-4',
+            isMobile ? 'bottom-32' : 'bottom-18',
+          )}
+        >
+          <SaveKeyframeButton />
         </div>
       </div>
 

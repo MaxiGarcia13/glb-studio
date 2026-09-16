@@ -49,7 +49,7 @@ export function CollapsibleAside({
     <aside
       className={
         cn(
-          'flex flex-col shrink-0 bg-zinc-800 border-l border-zinc-700',
+          'flex flex-col shrink-0 bg-surface border-l border-border',
           borderDirection,
           isMobile && `absolute z-20 h-full ${direction === 'left' ? 'left-0' : 'right-0'}`,
           className,

@@ -16,7 +16,7 @@ export function RetargetPanelHeader({
   onUnmappedOnlyChange,
 }: RetargetPanelHeaderProps) {
   return (
-    <div className="flex flex-col gap-3 shrink-0">
+    <div className="flex flex-col gap-4 shrink-0">
       <Text as="p" variant="muted">
         Map each clip bone to a character bone, or leave blank to skip. Short
         names are for reading; full ids stay on the tracks. Apply is still
@@ -40,7 +40,7 @@ export function RetargetPanelHeader({
             type="checkbox"
             checked={unmappedOnly}
             onChange={(event) => onUnmappedOnlyChange(event.target.checked)}
-            className="size-3.5 shrink-0 rounded-sm border-zinc-600 accent-sky-500"
+            className="size-4 shrink-0 rounded-sm border-border-strong accent-accent"
           />
           <Text variant="muted">Show unmapped only</Text>
         </label>

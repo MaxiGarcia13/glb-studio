@@ -69,7 +69,7 @@ export function BlendControls() {
         }))}
       />
 
-      <label className="flex flex-col gap-1">
+      <label className="flex flex-col gap-2">
         <Text variant="muted">Blend Weight</Text>
         <div className="flex items-center gap-2">
           <input
@@ -85,9 +85,9 @@ export function BlendControls() {
             }}
             disabled={!blendEnabled}
             aria-label="Blend weight"
-            className="flex-1 accent-sky-500 disabled:opacity-40"
+            className="flex-1 accent-accent disabled:opacity-40"
           />
-          <Text variant="numeric" className="w-9 text-right text-zinc-100">
+          <Text variant="numeric" className="w-8 text-right text-fg">
             {Math.round(draftWeight * 100)}
             %
           </Text>
@@ -99,7 +99,7 @@ export function BlendControls() {
           onClick={() => resetBlend()}
           disabled={!canReset}
           variant="ghost"
-          className="px-3 flex-1"
+          className="px-4 flex-1"
         >
           Reset
         </Button>
@@ -107,7 +107,7 @@ export function BlendControls() {
           onClick={() => bakeBlend()}
           disabled={!canBake}
           variant="primary"
-          className="px-3 flex-1"
+          className="px-4 flex-1"
         >
           Bake
         </Button>

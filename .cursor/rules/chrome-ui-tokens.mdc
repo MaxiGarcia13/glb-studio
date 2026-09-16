@@ -1,0 +1,78 @@
+---
+description: Editor chrome colors and even spacing via Tailwind @theme tokens
+globs: src/**/*.{tsx,astro,css}
+alwaysApply: false
+---
+
+# Chrome UI tokens
+
+Colors and spacing for editor chrome are defined in `src/styles/global.css` `@theme`. Do not invent new zinc/sky recipes in components.
+
+Theme colors must be **solid hex** (or explicit `rgb(...)`) in `@theme`. Do not alias with `var(--color-zinc-800)` — Tailwind v4 can leave overlays translucent (menus, floating toolbars).
+
+
+## Colors
+
+| Token | Use |
+| --- | --- |
+| `bg-canvas` | Page shell, viewport, timeline track |
+| `bg-surface` | Asides, modals, playback bar, floating toolbars (opaque only) |
+| `bg-surface-hover` / `hover:bg-surface-hover` | Hover fills |
+| `bg-control` | Inputs, selects, rename fields |
+| `bg-control-strong` | Default filled buttons |
+| `border-border` / `border-border-strong` | Dividers and chrome borders |
+| `text-fg` / `text-fg-muted` / `text-fg-subtle` | Body, secondary, section labels |
+| `bg-accent` / `text-accent` / `accent-accent` | Primary, selected, playhead, range accents |
+| `text-danger` / `text-warning` / `text-success` | Error / conflict / ready |
+
+```tsx
+// ❌ BAD — raw palette + translucent surface mix
+<div className="bg-zinc-800/90 border-zinc-700 text-zinc-400" />
+
+// ✅ GOOD
+<div className="bg-surface border-border text-fg-muted" />
+```
+
+Do **not** use `bg-surface/90` or `bg-surface/95` for toolbars or the playback bar.
+
+## Spacing
+
+Padding, gap, and margin: even Tailwind units only — `2`, `4`, `6`, `8` (and larger even steps like `10`, `12`, `16`).
+
+```tsx
+// ❌ BAD
+<div className="gap-1 p-1.5 px-3 py-3 top-3" />
+
+// ✅ GOOD
+<div className="gap-2 p-2 px-4 py-2 top-4" />
+```
+
+Exceptions: hairlines (`w-px`, `w-0.5`) and 1px playhead/divider lines.
+
+Prefer defaults on shared primitives (`Button` `p-2`, aside/modal `p-4`) over one-off overrides.
+
+## Floating toolbars
+
+Viewport overlay chrome (Edit/Move, transform modes, create tools, aside open chips, Save/Restore) uses `FloatingToolbar` from `src/components/floating-toolbar/`:
+
+- Shell: opaque `bg-surface`, `p-2`, `gap-2` (via `floatingToolbarClassName`)
+- Controls: shared `Button` (`ghost` / `primary`) — icon-only; put the name in `aria-label` + `title`
+- Do not invent ad-hoc `size-8` rails or `bg-control-strong` chips for floating chrome
+
+```tsx
+// ❌ BAD
+<div className="bg-zinc-800/90 p-1">
+  <button className="size-8">…</button>
+</div>
+
+// ✅ GOOD
+<FloatingToolbar aria-label="Edit tool">
+  <Button variant="ghost" aria-label="Edit" title="Edit"><CursorIcon /></Button>
+</FloatingToolbar>
+```
+
+## When adding UI
+
+1. Reuse `Button`, `Input`, `Select`, `Text`, `Modal`, `CollapsibleAside`, `FloatingToolbar` before new class strings.
+2. New colors → add a `@theme` token in `global.css`, then use the utility — do not hardcode `zinc-*` / `sky-*` in chrome.
+3. Keep overlay insets at `*-4` on desktop. On mobile (`max-width: 640px`), stack floating chrome so it clears aside open chips and sibling toolbars — transform at `top-20`, edit above create (`bottom-18` / `bottom-4`), selection / save further up (`bottom-28` / `bottom-32`). Own positions in `editor-preview`, not inside each toolbar.

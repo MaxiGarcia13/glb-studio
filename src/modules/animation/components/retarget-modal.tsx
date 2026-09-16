@@ -28,7 +28,7 @@ function RetargetClipPicker({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
         <Text as="h2" variant="section">
           Choose animation
         </Text>
@@ -103,8 +103,8 @@ export function RetargetModal() {
         />
       )}
       {entry && (
-        <div className="flex flex-col gap-3 min-h-0 flex-1 h-full">
-          <div className="flex flex-col gap-1 shrink-0">
+        <div className="flex flex-col gap-4 min-h-0 flex-1 h-full">
+          <div className="flex flex-col gap-2 shrink-0">
             <Text as="h2" variant="section">
               Map bones
             </Text>

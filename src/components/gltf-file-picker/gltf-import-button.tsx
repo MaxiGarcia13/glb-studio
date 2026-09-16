@@ -30,7 +30,7 @@ export function GltfImportButton({ disabled, label, onImport, onFiles }: GltfImp
         variant="ghost"
         aria-label={label}
         title={label}
-        className="p-1.5"
+        className="p-2"
       >
         <UploadIcon />
       </Button>

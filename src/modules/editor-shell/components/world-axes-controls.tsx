@@ -37,7 +37,7 @@ export function WorldAxesControls() {
           type="checkbox"
           checked={axesVisible}
           onChange={handleVisibleChange}
-          className="size-3.5 shrink-0 rounded-sm border-zinc-600 accent-sky-500"
+          className="size-4 shrink-0 rounded-sm border-border-strong accent-accent"
         />
         <Text variant="muted">Show world axes</Text>
       </label>

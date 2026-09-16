@@ -202,6 +202,16 @@ Out of scope: multi-model simultaneous transform; full undo stack (US-10).
 - Collapsible sidebar docks beside the canvas (`editor-shell`); collapse/expand with labelled chevron controls
 - Preview chrome hosts playback + Edit/Move tools + transform mode toolbar (Edit + selection, or Move with a loaded model) + selection name overlay + dirty-only Save / Restore (not the settings sidebar)
 
+## Chrome tokens (UI)
+
+Semantic colors live in `src/styles/global.css` `@theme` (`canvas`, `surface`, `control`, `border`, `fg*`, `accent`, `danger`, `warning`, `success`, `overlay`) as solid hex values. Prefer `bg-surface` / `border-border` / `text-fg-muted` over raw `zinc-*` / `sky-*` in editor chrome. Do not define theme colors as `var(--color-zinc-*)` aliases — overlays (menus, floating toolbars) can render translucent.
+
+**Surfaces:** page + viewport = `bg-canvas`; asides, modals, playback bar, and floating toolbars = opaque `bg-surface` (no `/90` / `/95` variants).
+
+**Floating chrome:** `FloatingToolbar` (`src/components/floating-toolbar/`) wraps Edit/Move, transform modes, create tools, aside open chips, and Save/Restore. Controls are shared `Button` (`ghost` / `primary`), **icon-only** (name in `aria-label` + `title`).
+
+**Spacing:** padding, gap, and margin use even Tailwind units (`2`, `4`, `6`, `8`, and larger even steps). Avoid odd and half units (`1`, `3`, `1.5`, …) except hairlines (`w-px`, `w-0.5`). Shared primitives (`Button`, `Input`, `Modal`, `CollapsibleAside`, `FloatingToolbar`) encode the defaults — prefer not overriding with ad-hoc padding.
+
 ## Export (US-5 + US-22 modal/merge + US-7 blend contract)
 
 **Download** opens an **Export** modal. Confirm builds a **zip** in the browser (no server):

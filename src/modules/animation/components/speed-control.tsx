@@ -14,7 +14,7 @@ export function SpeedControl() {
   const enabled = activeClipId !== null && isReadyClip(active);
 
   return (
-    <label className="flex flex-col gap-1">
+    <label className="flex flex-col gap-2">
       <Text variant="muted">Speed</Text>
       <div className="flex items-center gap-2">
         <input
@@ -26,9 +26,9 @@ export function SpeedControl() {
           onChange={(event) => setTimeScale(Number(event.currentTarget.value))}
           disabled={!enabled}
           aria-label="Playback speed multiplier"
-          className="flex-1 accent-sky-500 disabled:opacity-40"
+          className="flex-1 accent-accent disabled:opacity-40"
         />
-        <Text variant="numeric" className="w-9 text-right text-zinc-100">
+        <Text variant="numeric" className="w-8 text-right text-fg">
           {timeScale.toFixed(1)}
           x
         </Text>

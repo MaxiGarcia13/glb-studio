@@ -13,7 +13,7 @@ export function TimelineRuler({ majorFrames, totalFrames }: TimelineRulerProps) 
         <Text
           key={`label-${frame}`}
           variant="numeric"
-          className="absolute top-0.5 text-zinc-400"
+          className="absolute top-0 text-fg-muted"
           style={{
             left: `${(frame / totalFrames) * 100}%`,
             transform: labelOffset(frame, totalFrames),

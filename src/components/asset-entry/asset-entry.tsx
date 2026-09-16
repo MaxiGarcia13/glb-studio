@@ -79,20 +79,20 @@ export function AssetEntry({
       className={cn(
         isRow
           ? cn(
-              'flex items-start gap-1 rounded-sm px-1.5 py-0.5',
+              'flex items-start gap-2 rounded-sm px-2 py-2',
               selected
-                ? 'bg-sky-500/15'
+                ? 'bg-accent/15'
                 : hasError
-                  ? 'bg-amber-500/10'
-                  : 'hover:bg-zinc-700/40',
+                  ? 'bg-warning/10'
+                  : 'hover:bg-surface-hover/40',
             )
           : cn(
               'flex flex-col gap-2 rounded-sm p-2 ring-1',
               selected
-                ? 'bg-sky-500/15 ring-sky-500/30'
+                ? 'bg-accent/15 ring-accent/30'
                 : hasError
-                  ? 'bg-zinc-800/40 ring-amber-500/25'
-                  : 'bg-zinc-800/40 ring-zinc-700/80',
+                  ? 'bg-surface/40 ring-warning/25'
+                  : 'bg-surface/40 ring-border/80',
             ),
       )}
     >

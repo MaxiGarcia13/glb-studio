@@ -1,9 +1,30 @@
 @import 'tailwindcss';
 
+/* Solid hex values — do not alias via var(--color-zinc-*) or overlays go translucent. */
+@theme {
+  --color-canvas: #18181b;
+  --color-surface: #27272a;
+  --color-surface-hover: #3f3f46;
+  --color-control: #3f3f46;
+  --color-control-strong: #52525b;
+  --color-border: #3f3f46;
+  --color-border-strong: #52525b;
+  --color-fg: #ffffff;
+  --color-fg-muted: #a1a1aa;
+  --color-fg-subtle: #71717a;
+  --color-fg-disabled: #52525b;
+  --color-accent: #0ea5e9;
+  --color-accent-hover: #0284c8;
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+  --color-success: #34d399;
+  --color-overlay: rgb(0 0 0 / 0.6);
+}
+
 @layer base {
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgb(82 82 91) transparent;
+    scrollbar-color: var(--color-border) transparent;
   }
 
   *::-webkit-scrollbar {
@@ -16,7 +37,7 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: rgb(82 82 91);
+    background-color: var(--color-border);
     border-radius: 9999px;
   }
 }
