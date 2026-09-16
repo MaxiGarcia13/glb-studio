@@ -9,16 +9,12 @@ import { $model, focusModel } from '../stores/model-store';
 import { clearSelection, selectObject } from '../stores/selection-store';
 
 export function useRaycastSelection(): void {
-  const { models, previewModelIds, activeModelId } = useStore($model, {
-    keys: ['models', 'previewModelIds', 'activeModelId'],
+  const { models, previewModelIds } = useStore($model, {
+    keys: ['models', 'previewModelIds'],
   });
   const gl = useThree((state) => state.gl);
   const camera = useThree((state) => state.camera);
   const viewport = useThree((state) => state.size);
-
-  useEffect(() => {
-    clearSelection();
-  }, [activeModelId]);
 
   useEffect(() => {
     const canvas = gl.domElement;

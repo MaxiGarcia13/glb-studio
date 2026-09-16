@@ -15,6 +15,8 @@
    - **Models:** `modelIds` = selected library ids (last = Group/Ungroup anchor); `object` / `objects` empty.
    - **API:** `selectObject` / `selectModelIds` = plain click replace; `toggleObject` / `toggleModelId` = Shift+click; `clearSelection` clears all. Switching kind clears the other side (and discards unsaved pose when leaving a part).
 2. **Surfaces:** library model rows, part outliner rows, viewport raycast picks — same modifiers.
+   - Library: plain click replaces (`selectModel` + `selectModelIds([id])`, or `selectObject`); **Shift+click** calls `toggleModelId` / `toggleObject` (does not toggle model focus off).
+   - Row highlight: model rows use `$selection.modelIds` when `kind === 'models'`, else focus; part rows use `$selection.objects`.
 3. **Context menu:** ActionMenu-style floating panel on **right-click** (reuse placement / portal patterns from `action-menu`). Items: **Group**, **Ungroup** (disabled with clear reason when invalid).
 4. **Group (parts):** non-active selected parts parent under the **active** (last-clicked) part on the same created model; skip / reject cycles.
 5. **Ungroup (parts):** selected parts → parts root (`unparentPart`), world preserved.

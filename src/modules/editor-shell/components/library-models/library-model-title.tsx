@@ -9,7 +9,7 @@ interface LibraryModelTitleProps {
   rename: UseAssetEntryRenameResult;
   modelId: string;
   selected?: boolean;
-  onSelect?: () => void;
+  onSelect?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export function LibraryModelTitle({
@@ -26,7 +26,7 @@ export function LibraryModelTitle({
           type="button"
           onClick={(event) => {
             event.stopPropagation();
-            onSelect?.();
+            onSelect?.(event);
           }}
           className="flex-1 min-w-0 text-left cursor-pointer"
           aria-pressed={selected}

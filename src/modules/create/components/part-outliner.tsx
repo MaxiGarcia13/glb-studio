@@ -6,7 +6,11 @@ import { ChevronRight } from '@/components/icons/chevron-right-icon';
 import { Text } from '@/components/text';
 import { setEditTool } from '@/modules/viewport/stores/edit-tool-store';
 import { $model, selectModel } from '@/modules/viewport/stores/model-store';
-import { $selection, selectObject } from '@/modules/viewport/stores/selection-store';
+import {
+  $selection,
+  selectObject,
+  toggleObject,
+} from '@/modules/viewport/stores/selection-store';
 import { listCreatedPartEntries } from '../domain/list-created-parts';
 import { $createPartsRevision } from '../stores/create-parts-revision-store';
 
@@ -33,11 +37,12 @@ function isUnderCollapsedAncestor(
 /**
  * Library outliner of stamped parts for a created model.
  * Click a row to focus the model (if needed), switch to Edit, and select the part.
+ * Shift+click toggles the part in the multi-selection.
  * Parents with children can be collapsed via the row chevron.
  */
 export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
   useStore($createPartsRevision);
-  const { object: selected } = useStore($selection, { keys: ['object'] });
+  const { objects } = useStore($selection, { keys: ['objects'] });
   const [collapsedIds, setCollapsedIds] = useState<ReadonlySet<string>>(
     () => new Set(),
   );
@@ -58,7 +63,7 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
       aria-label="Parts"
     >
       {visible.map(({ mesh, depth, hasChildren }) => {
-        const isSelected = selected === mesh;
+        const isSelected = objects.includes(mesh);
         const label = mesh.name || mesh.uuid;
         const expanded = hasChildren && !collapsedIds.has(mesh.uuid);
 
@@ -114,12 +119,16 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
               type="button"
               title={label}
               className="min-w-0 flex-1 cursor-pointer truncate text-left"
-              onClick={() => {
+              onClick={(event) => {
                 // selectModel toggles focus off when already active — only focus when needed.
                 if ($model.get().activeModelId !== modelId) {
                   selectModel(modelId);
                 }
                 setEditTool('edit');
+                if (event.shiftKey) {
+                  toggleObject(mesh);
+                  return;
+                }
                 selectObject(mesh);
               }}
             >

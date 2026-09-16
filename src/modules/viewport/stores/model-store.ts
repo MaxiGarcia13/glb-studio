@@ -93,6 +93,8 @@ export function focusModel(modelId: string): void {
   if (state.activeModelId === modelId) {
     return;
   }
+  // Clear here (not in a React effect) so callers can re-select synchronously after.
+  clearSelection();
   $model.setKey('activeModelId', modelId);
 }
 
@@ -116,6 +118,7 @@ export function selectModel(modelId: string): void {
     return;
   }
 
+  clearSelection();
   $model.set({ ...state, previewModelIds, activeModelId: modelId });
 }
 
@@ -139,6 +142,10 @@ export function toggleModelPreview(modelId: string): void {
     activeModelId = modelId;
   } else if (activeModelId === modelId) {
     activeModelId = previewModelIds.at(-1) ?? null;
+  }
+
+  if (activeModelId !== state.activeModelId) {
+    clearSelection();
   }
 
   $model.set({ ...state, previewModelIds, activeModelId });

@@ -22,6 +22,11 @@ import {
   replaceModel,
   selectModel,
 } from '@/modules/viewport/stores/model-store';
+import {
+  $selection,
+  selectModelIds,
+  toggleModelId,
+} from '@/modules/viewport/stores/selection-store';
 import { LibraryModelActions } from './library-model-actions';
 import { LibraryModelAddAnimationModal } from './library-model-add-animation-modal';
 import { LibraryModelTitle } from './library-model-title';
@@ -35,8 +40,12 @@ export function LibraryModel({ model }: LibraryModelProps) {
     keys: ['clips'],
   });
   const { activeModelId } = useStore($model, { keys: ['activeModelId'] });
+  const { kind, modelIds } = useStore($selection, { keys: ['kind', 'modelIds'] });
   useStore($createPartsRevision);
   const focused = model.id === activeModelId;
+  const selected = kind === 'models'
+    ? modelIds.includes(model.id)
+    : focused;
   const [addAnimationOpen, setAddAnimationOpen] = useState(false);
   const ownedClips = clips.filter((entry) => entry.ownerModelId === model.id);
   const isCreated = model.source === 'created';
@@ -81,11 +90,20 @@ export function LibraryModel({ model }: LibraryModelProps) {
             modelId={model.id}
             fileName={model.fileName}
             rename={rename}
-            selected={focused}
-            onSelect={() => selectModel(model.id)}
+            selected={selected}
+            onSelect={(event) => {
+              if (event.shiftKey) {
+                toggleModelId(model.id);
+                return;
+              }
+              selectModel(model.id);
+              if ($model.get().activeModelId === model.id) {
+                selectModelIds([model.id]);
+              }
+            }}
           />
         )}
-        selected={focused}
+        selected={selected}
         showChevron={hasNested}
         showTreeGuide={hasNested}
         actions={(
