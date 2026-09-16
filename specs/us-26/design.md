@@ -22,7 +22,7 @@
    - Viewport: `SelectionHighlight` draws a wireframe marker per selected part/bone, or an AABB per selected model root; name overlay shows active name `(+N)` or model count.
 3. **Context menu:** `PointerActionMenu` (ActionMenu-style portal) at pointer via `$selectionContextMenu`. Hosted once in `EditorToolbar`. Opens from library model/part rows and viewport canvas right-click (click without drag — drag keeps orbit/pan). Dismiss on outside pointerdown / Escape. Group / Ungroup items stubbed disabled until following tasks.
 4. **Group (parts):** `groupSelectedParts` — non-active selected create parts parent under the **active** (last-clicked) part on the same created model via `groupPartsUnder` / `parentPart` (`Object3D.attach`); cycle guard; world preserve. Context menu **Group** enabled when ≥2 valid parts can move.
-5. **Ungroup (parts):** selected parts → parts root (`unparentPart`), world preserved.
+5. **Ungroup (parts):** `ungroupSelectedParts` — selected create parts → parts root via `ungroupPartsToRoot` / `unparentPart`; world preserved. Context menu **Ungroup** enabled when any selected part is nested.
 6. **Group (models):** record a session **model group** (library tree + shared transform root or explicit group id). Do not mix models and parts in one Group action.
 7. **Ungroup (models):** dissolve group membership; models become independent again.
 

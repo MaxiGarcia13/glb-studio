@@ -7,6 +7,10 @@ import {
   groupSelectedParts,
 } from '@/modules/create/actions/group-selected-parts';
 import {
+  getUngroupPartsAvailability,
+  ungroupSelectedParts,
+} from '@/modules/create/actions/ungroup-selected-parts';
+import {
   $selectionContextMenu,
   closeSelectionContextMenu,
 } from '@/modules/viewport/stores/selection-context-menu-store';
@@ -14,6 +18,7 @@ import { $selection } from '@/modules/viewport/stores/selection-store';
 
 function buildMenuItems(): ActionMenuItem[] {
   const groupParts = getGroupPartsAvailability();
+  const ungroupParts = getUngroupPartsAvailability();
 
   return [
     {
@@ -28,9 +33,11 @@ function buildMenuItems(): ActionMenuItem[] {
     {
       id: 'ungroup',
       label: 'Ungroup',
-      disabled: true,
-      title: 'Ungroup coming next',
-      onSelect: () => {},
+      disabled: !ungroupParts.enabled,
+      title: ungroupParts.reason,
+      onSelect: () => {
+        ungroupSelectedParts();
+      },
     },
   ];
 }
@@ -38,7 +45,7 @@ function buildMenuItems(): ActionMenuItem[] {
 /** Portal host for the selection context menu (mount once — e.g. EditorToolbar). */
 export function SelectionContextMenu() {
   const menu = useStore($selectionContextMenu);
-  // Re-render when selection changes so Group enablement stays current while open.
+  // Re-render when selection changes so enablement stays current while open.
   useStore($selection, { keys: ['kind', 'object', 'objects', 'modelIds'] });
   const onClose = useCallback(() => {
     closeSelectionContextMenu();

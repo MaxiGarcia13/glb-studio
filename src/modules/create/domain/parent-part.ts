@@ -119,6 +119,26 @@ export function unparentPart(child: Mesh, partsRoot: Object3D): boolean {
   return parentPart(child, partsRoot, partsRoot);
 }
 
+/**
+ * Move each part under `partsRoot` (world-preserving). Skips parts already at root
+ * and invalid cases. Returns how many were actually reparented.
+ */
+export function ungroupPartsToRoot(
+  parts: readonly Mesh[],
+  partsRoot: Object3D,
+): number {
+  let moved = 0;
+  for (const part of parts) {
+    if (part.parent === partsRoot) {
+      continue;
+    }
+    if (unparentPart(part, partsRoot)) {
+      moved += 1;
+    }
+  }
+  return moved;
+}
+
 /** Parent uuid for a part, or `null` when parented to the parts root. */
 export function currentParentId(
   child: Object3D,
