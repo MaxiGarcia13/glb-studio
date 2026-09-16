@@ -34,13 +34,10 @@ export function listParentCandidates(child: Mesh, partsRoot: Object3D): Mesh[] {
 }
 
 /**
- * Reparent a stamped create part under another part or the parts root,
- * preserving world transform via `Object3D.attach`.
- *
- * Returns false when the child is not a create part, the parent is not the
- * parts root / a create part on the same model, or the move would create a cycle.
+ * Whether `child` may be parented under `parent` on this model (cycle-safe).
+ * Does not mutate the graph.
  */
-export function parentPart(
+export function canParentPart(
   child: Mesh,
   parent: Object3D,
   partsRoot: Object3D,
@@ -69,12 +66,52 @@ export function parentPart(
     return false;
   }
 
+  return true;
+}
+
+/**
+ * Reparent a stamped create part under another part or the parts root,
+ * preserving world transform via `Object3D.attach`.
+ *
+ * Returns false when the child is not a create part, the parent is not the
+ * parts root / a create part on the same model, or the move would create a cycle.
+ */
+export function parentPart(
+  child: Mesh,
+  parent: Object3D,
+  partsRoot: Object3D,
+): boolean {
+  if (!canParentPart(child, parent, partsRoot)) {
+    return false;
+  }
+
   if (child.parent === parent) {
     return true;
   }
 
   parent.attach(child);
   return true;
+}
+
+/**
+ * Parent each child under `active` (world-preserving). Skips self, already-parented,
+ * and cycle/invalid cases. Returns how many parts were actually reparented.
+ */
+export function groupPartsUnder(
+  active: Mesh,
+  children: readonly Mesh[],
+  partsRoot: Object3D,
+): number {
+  let moved = 0;
+  for (const child of children) {
+    if (child === active || child.parent === active) {
+      continue;
+    }
+    if (parentPart(child, active, partsRoot)) {
+      moved += 1;
+    }
+  }
+  return moved;
 }
 
 /** Move a stamped create part under the parts root, preserving world transform. */

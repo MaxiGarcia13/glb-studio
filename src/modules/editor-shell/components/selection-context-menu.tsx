@@ -1,43 +1,35 @@
 import type { ActionMenuItem } from '@/components/action-menu';
-import type { SelectionState } from '@/modules/viewport/types/selection';
 import { useStore } from '@nanostores/react';
 import { useCallback } from 'react';
 import { PointerActionMenu } from '@/components/action-menu';
+import {
+  getGroupPartsAvailability,
+  groupSelectedParts,
+} from '@/modules/create/actions/group-selected-parts';
 import {
   $selectionContextMenu,
   closeSelectionContextMenu,
 } from '@/modules/viewport/stores/selection-context-menu-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
 
-/**
- * Stub Group / Ungroup entries for the shell.
- * Wired in later US-26 tasks; disabled with a clear reason until then.
- */
-function buildStubItems(selection: SelectionState): ActionMenuItem[] {
-  const { kind, objects, modelIds } = selection;
-  const count = kind === 'parts'
-    ? objects.length
-    : kind === 'models'
-      ? modelIds.length
-      : 0;
-
-  const reason = count < 1
-    ? 'Select parts or models first'
-    : 'Grouping actions coming next';
+function buildMenuItems(): ActionMenuItem[] {
+  const groupParts = getGroupPartsAvailability();
 
   return [
     {
       id: 'group',
       label: 'Group',
-      disabled: true,
-      title: reason,
-      onSelect: () => {},
+      disabled: !groupParts.enabled,
+      title: groupParts.reason,
+      onSelect: () => {
+        groupSelectedParts();
+      },
     },
     {
       id: 'ungroup',
       label: 'Ungroup',
       disabled: true,
-      title: reason,
+      title: 'Ungroup coming next',
       onSelect: () => {},
     },
   ];
@@ -46,12 +38,13 @@ function buildStubItems(selection: SelectionState): ActionMenuItem[] {
 /** Portal host for the selection context menu (mount once — e.g. EditorToolbar). */
 export function SelectionContextMenu() {
   const menu = useStore($selectionContextMenu);
-  const selection = useStore($selection);
+  // Re-render when selection changes so Group enablement stays current while open.
+  useStore($selection, { keys: ['kind', 'object', 'objects', 'modelIds'] });
   const onClose = useCallback(() => {
     closeSelectionContextMenu();
   }, []);
 
-  const items = menu.open ? buildStubItems(selection) : [];
+  const items = menu.open ? buildMenuItems() : [];
 
   return (
     <PointerActionMenu
