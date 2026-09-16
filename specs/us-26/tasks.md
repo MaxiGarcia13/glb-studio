@@ -29,7 +29,7 @@ Tick only after acceptance.
 
 ## Context menu (Group / Ungroup)
 
-- [ ] **Right-click menu shell** — ActionMenu-style panel at pointer (library + preview); dismiss on outside click / Escape
+- [x] **Right-click menu shell** — ActionMenu-style panel at pointer (library + preview); dismiss on outside click / Escape
 - [ ] **Group parts** — Parent non-active selected parts under active part (same created model); cycle guard; world preserve
 - [ ] **Ungroup parts** — Unparent selection to parts root
 - [ ] **Group models** — Put selected models in one session group (library tree + export unit)
