@@ -10,7 +10,10 @@
 
 ### Multi-select + Group / Ungroup menu
 
-1. **Selection store:** extend beyond single `object` — e.g. primary/active + `Set` of selected Object3Ds and/or model ids; Shift+click toggles membership; plain click replaces selection.
+1. **Selection store** (`$selection`): `kind: 'none' | 'parts' | 'models'` — parts and models never mix in one selection.
+   - **Parts:** `object` = active (last-clicked) Object3D; `objects` = full set including active; `modelIds` empty.
+   - **Models:** `modelIds` = selected library ids (last = Group/Ungroup anchor); `object` / `objects` empty.
+   - **API:** `selectObject` / `selectModelIds` = plain click replace; `toggleObject` / `toggleModelId` = Shift+click; `clearSelection` clears all. Switching kind clears the other side (and discards unsaved pose when leaving a part).
 2. **Surfaces:** library model rows, part outliner rows, viewport raycast picks — same modifiers.
 3. **Context menu:** ActionMenu-style floating panel on **right-click** (reuse placement / portal patterns from `action-menu`). Items: **Group**, **Ungroup** (disabled with clear reason when invalid).
 4. **Group (parts):** non-active selected parts parent under the **active** (last-clicked) part on the same created model; skip / reject cycles.
