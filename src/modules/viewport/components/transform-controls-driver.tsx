@@ -92,5 +92,13 @@ export function TransformControlsDriver({ controlsRef }: TransformControlsDriver
     return null;
   }
 
-  return <TransformControls ref={gizmoRef} object={gizmoObject} mode={gizmoMode} space={gizmoSpace} />;
+  return (
+    <TransformControls
+      key={gizmoObject.uuid}
+      ref={gizmoRef}
+      object={gizmoObject}
+      mode={gizmoMode}
+      space={gizmoSpace}
+    />
+  );
 }

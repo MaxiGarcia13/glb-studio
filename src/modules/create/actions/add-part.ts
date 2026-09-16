@@ -1,12 +1,14 @@
 import type { Mesh } from 'three';
 import type { PartKindId } from '@/modules/create/types/part';
 
+import { setEditTool } from '@/modules/viewport/stores/edit-tool-store';
 import { $model } from '@/modules/viewport/stores/model-store';
+import { selectObject } from '@/modules/viewport/stores/selection-store';
 import { spawnPart } from '../domain/spawn-part';
 
 /**
  * Add a stamped part (kind defaults) under a created model's scene.
- * Returns the mesh for selection; no-ops when the model is missing or imported.
+ * Switches to Edit, selects the mesh, and returns it. No-ops when missing / imported.
  */
 export function addPart(modelId: string, kindId: PartKindId): Mesh | null {
   const model = $model.get().models.find((entry) => entry.id === modelId);
@@ -14,5 +16,9 @@ export function addPart(modelId: string, kindId: PartKindId): Mesh | null {
     return null;
   }
 
-  return spawnPart(model.scene, kindId);
+  const mesh = spawnPart(model.scene, kindId);
+  // Move tool gizmo is the model root — force Edit so only this part transforms.
+  setEditTool('edit');
+  selectObject(mesh);
+  return mesh;
 }

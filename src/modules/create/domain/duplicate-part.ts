@@ -3,9 +3,10 @@ import type { Mesh, MeshStandardMaterial, Object3D } from 'three';
 import { readCreatePart } from './part-data';
 import { getPartKind } from './part-kind';
 import { nextPartName } from './part-name';
+import { PART_SPAWN_OFFSET } from './spawn-part';
 
 /** Local-space offset (metres) so the clone is visible beside the source. */
-export const DUPLICATE_PART_OFFSET = 0.25;
+export const DUPLICATE_PART_OFFSET = PART_SPAWN_OFFSET;
 
 /**
  * Clone a stamped create part: fresh geometry + material, copied TRS / color,
@@ -30,11 +31,11 @@ export function duplicatePart(source: Mesh, sceneRoot: Object3D): Mesh | null {
   const sourceMaterial = source.material as MeshStandardMaterial | MeshStandardMaterial[];
   const cloneMaterial = clone.material as MeshStandardMaterial;
   if (
-    !Array.isArray(sourceMaterial) &&
-    sourceMaterial &&
-    'isMeshStandardMaterial' in sourceMaterial &&
-    cloneMaterial &&
-    'isMeshStandardMaterial' in cloneMaterial
+    !Array.isArray(sourceMaterial)
+    && sourceMaterial
+    && 'isMeshStandardMaterial' in sourceMaterial
+    && cloneMaterial
+    && 'isMeshStandardMaterial' in cloneMaterial
   ) {
     cloneMaterial.color.copy(sourceMaterial.color);
   }

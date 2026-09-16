@@ -4,7 +4,6 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { CubeIcon } from '@/components/icons/cube-icon';
 import { Text } from '@/components/text';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
-import { selectObject } from '@/modules/viewport/stores/selection-store';
 import { addPart } from '../actions/add-part';
 import { listPartKinds } from '../domain/part-kind';
 
@@ -53,10 +52,7 @@ export function AddPartPalette() {
 
   const handleAdd = (kindId: PartKindId) => {
     setOpen(false);
-    const mesh = addPart(activeModel.id, kindId);
-    if (mesh) {
-      selectObject(mesh);
-    }
+    addPart(activeModel.id, kindId);
   };
 
   return (
