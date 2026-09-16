@@ -1,5 +1,6 @@
 import type { Mesh, Object3D } from 'three';
 
+import { listCreatedParts } from './list-created-parts';
 import { readCreatePart } from './part-data';
 
 function isStrictDescendantOf(object: Object3D, ancestor: Object3D): boolean {
@@ -15,6 +16,21 @@ function isStrictDescendantOf(object: Object3D, ancestor: Object3D): boolean {
 
 function isUnderPartsRoot(object: Object3D, partsRoot: Object3D): boolean {
   return object === partsRoot || isStrictDescendantOf(object, partsRoot);
+}
+
+/**
+ * Stamped parts on the same model that may parent `child`
+ * (excludes `child` and its descendants to avoid cycles).
+ */
+export function listParentCandidates(child: Mesh, partsRoot: Object3D): Mesh[] {
+  if (!readCreatePart(child) || !isUnderPartsRoot(child, partsRoot)) {
+    return [];
+  }
+
+  return listCreatedParts(partsRoot).filter(
+    (candidate) =>
+      candidate !== child && !isStrictDescendantOf(candidate, child),
+  );
 }
 
 /**
@@ -64,4 +80,16 @@ export function parentPart(
 /** Move a stamped create part under the parts root, preserving world transform. */
 export function unparentPart(child: Mesh, partsRoot: Object3D): boolean {
   return parentPart(child, partsRoot, partsRoot);
+}
+
+/** Parent uuid for a part, or `null` when parented to the parts root. */
+export function currentParentId(
+  child: Object3D,
+  partsRoot: Object3D,
+): string | null {
+  const parent = child.parent;
+  if (!parent || parent === partsRoot) {
+    return null;
+  }
+  return parent.uuid;
 }
