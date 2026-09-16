@@ -13,7 +13,7 @@
 - [x] **File: New model** — Wire `createEmptyModel`; remove Models header `+`
 - [x] **File: New animation** — Shared draft via `startNewAnimation`; disable without focused scene; remove Shared header `+`
 - [ ] **File: Export** — Opens `ExportModal`; respect `canExport`; remove Settings aside Download
-- [ ] **Settings: axes** — Show world axes + Axes Length (m); remove aside Axes block
+- [x] **Settings: axes** — Show world axes + Axes Length (m); remove aside Axes block
 
 ## Smart Import
 
