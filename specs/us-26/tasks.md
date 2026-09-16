@@ -11,7 +11,7 @@ Tick only after acceptance.
 
 - [x] **`parentPart(child, parent)` helper** — Reparent with world-transform preservation; allow parent = parts root
 - [x] **Unparent control** — Move selected part back under the parts root without jumping in world space
-- [x] **Parent picker UI** — Choose target parent from other parts _(superseded by Group menu — remove Settings Parent select)_
+- [x] **Parent picker UI** — Choose target parent from other parts _(superseded — Settings Parent select removed)_
 
 ## Outliner
 
@@ -34,7 +34,7 @@ Tick only after acceptance.
 - [x] **Ungroup parts** — Dissolve selected empty groups (or lift nested parts to parts root)
 - [x] **Group models** — Put selected models in one session group (library tree + export unit)
 - [x] **Ungroup models** — Dissolve model group membership
-- [ ] **Remove Settings Parent select** — Grouping only via context menu (drop inspector Parent `<select>`)
+- [x] **Remove Settings Parent select** — Grouping only via context menu (drop inspector Parent `<select>`)
 - [ ] **Retire or fold toolbar Unparent** — Prefer Ungroup in the context menu; remove duplicate control if redundant
 
 ## Export (group replaces merge)

@@ -1,8 +1,6 @@
 import type { Mesh, Object3D } from 'three';
 
 import { isCreateGroup, isCreateHierarchyNode } from './group-data';
-import { listCreatedParts } from './list-created-parts';
-import { readCreatePart } from './part-data';
 
 export function isStrictDescendantOf(object: Object3D, ancestor: Object3D): boolean {
   let current: Object3D | null = object.parent;
@@ -27,21 +25,6 @@ function isValidParent(parent: Object3D, partsRoot: Object3D): boolean {
     return false;
   }
   return isCreateHierarchyNode(parent);
-}
-
-/**
- * Stamped parts on the same model that may parent `child`
- * (excludes `child` and its descendants to avoid cycles).
- */
-export function listParentCandidates(child: Mesh, partsRoot: Object3D): Mesh[] {
-  if (!readCreatePart(child) || !isUnderPartsRoot(child, partsRoot)) {
-    return [];
-  }
-
-  return listCreatedParts(partsRoot).filter(
-    (candidate) =>
-      candidate !== child && !isStrictDescendantOf(candidate, child),
-  );
 }
 
 /**
@@ -200,16 +183,4 @@ export function dissolveCreateGroups(
     dissolved += 1;
   }
   return dissolved;
-}
-
-/** Parent uuid for a part, or `null` when parented to the parts root. */
-export function currentParentId(
-  child: Object3D,
-  partsRoot: Object3D,
-): string | null {
-  const parent = child.parent;
-  if (!parent || parent === partsRoot) {
-    return null;
-  }
-  return parent.uuid;
 }

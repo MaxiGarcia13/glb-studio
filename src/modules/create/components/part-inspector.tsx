@@ -1,18 +1,7 @@
 import type { PartSizeParamKey } from '@/modules/create/types/part';
-import { useStore } from '@nanostores/react';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/input/input';
-import { Select } from '@/components/select';
 import { Text } from '@/components/text';
-import { $activeModel } from '@/modules/viewport/stores/model-store';
-import {
-  parentSelectedPart,
-  PARTS_ROOT_PARENT_VALUE,
-} from '../actions/parent-selected-part';
-import {
-  currentParentId,
-  listParentCandidates,
-} from '../domain/parent-part';
 import { readCreatePart } from '../domain/part-data';
 import { setPartSizeParam } from '../domain/part-kind';
 import { useSelectedCreatedPart } from '../hooks/use-selected-created-part';
@@ -42,16 +31,13 @@ function paramValue(
 }
 
 /**
- * Settings-side size + parent fields for a selected created part.
- * Color lives on the create toolbar.
+ * Settings-side size + TRS for a selected created part.
+ * Hierarchy is context-menu Group / Ungroup (and toolbar Unparent); color is on the create toolbar.
  */
 export function PartInspector() {
   const part = useSelectedCreatedPart();
-  const activeModel = useStore($activeModel);
   const meshId = part?.mesh.uuid ?? null;
   const [draft, setDraft] = useState<Partial<Record<PartSizeParamKey, string>>>({});
-  // Hierarchy mutates the Object3D tree; bump so parent select refreshes.
-  const [hierarchyEpoch, setHierarchyEpoch] = useState(0);
 
   useEffect(() => {
     if (!part || !meshId) {
@@ -75,26 +61,6 @@ export function PartInspector() {
   if (!part) {
     return null;
   }
-
-  const partsRoot
-    = activeModel?.source === 'created' ? activeModel.scene : null;
-  void hierarchyEpoch;
-
-  const parentOptions = partsRoot
-    ? [
-        { value: PARTS_ROOT_PARENT_VALUE, label: 'Model root' },
-        ...listParentCandidates(part.mesh, partsRoot)
-          .map((candidate) => ({
-            value: candidate.uuid,
-            label: candidate.name || candidate.uuid,
-          }))
-          .sort((a, b) => a.label.localeCompare(b.label)),
-      ]
-    : [];
-
-  const parentValue = partsRoot
-    ? (currentParentId(part.mesh, partsRoot) ?? PARTS_ROOT_PARENT_VALUE)
-    : PARTS_ROOT_PARENT_VALUE;
 
   const handleChange = (param: PartSizeParamKey, next: string, min: number) => {
     setDraft((current) => ({ ...current, [param]: next }));
@@ -150,19 +116,6 @@ export function PartInspector() {
           ))}
         </div>
       </div>
-
-      {partsRoot && (
-        <Select
-          label="Parent"
-          value={parentValue}
-          options={parentOptions}
-          onChange={(event) => {
-            if (parentSelectedPart(event.target.value)) {
-              setHierarchyEpoch((epoch) => epoch + 1);
-            }
-          }}
-        />
-      )}
     </div>
   );
 }

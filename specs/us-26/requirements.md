@@ -26,7 +26,7 @@ As an editor user, I can group parts (and models) with a familiar multi-select +
 - [ ] Part multi-select and model multi-select do **not** mix in one selection
 - [ ] **Right-click** opens an ActionMenu-style panel with **Group** / **Ungroup** when the selection allows it (library and preview)
 - [ ] Group target: Group creates a new empty **group** node; all selected items become its children (parts: `Object3D` empty in the scene; models: named session group in the library tree). Last-clicked is not used as the parent mesh/model.
-- [ ] Settings-sidebar **Parent** `<select>` is removed (grouping is context-menu only); create-toolbar Unparent may remain or move into the menu
+- [x] Settings-sidebar **Parent** `<select>` is removed (grouping is context-menu only); create-toolbar Unparent may remain or move into the menu
 
 ### Models + export
 

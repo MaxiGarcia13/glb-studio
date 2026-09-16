@@ -4,9 +4,9 @@
 
 ### Parts hierarchy (done / keep)
 
-1. **Domain:** `parentPart(child, parent, partsRoot)` via `Object3D.attach` (world transform preserved). `unparentPart` → parts root. Cycle guard: reject self / descendant parents. `listCreatedParts` / `listCreatedPartEntries` / `listParentCandidates`.
+1. **Domain:** `parentPart` / `attachUnder` via `Object3D.attach` (world transform preserved). `unparentPart` → parts root. Cycle guard: reject self / descendant parents. Empty create groups + `listCreatedPartEntries`.
 2. **Outliner:** `PartOutliner` under each created model in Models — names, depth indent, collapse chevron for parents; click → Edit + `selectObject`; `$createPartsRevision` on add / duplicate / delete / parent / unparent.
-3. **Legacy UI to remove:** Settings **Parent** `<select>` (and optionally toolbar Unparent once context menu covers it).
+3. **Hierarchy UI:** context-menu **Group / Ungroup** (no Settings Parent `<select>`). Toolbar Unparent may remain until folded into Ungroup.
 
 ### Multi-select + Group / Ungroup menu
 
