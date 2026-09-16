@@ -22,12 +22,12 @@ flowchart LR
 
 ## Assets
 
-| Asset              | Role                                                                                  |
-| ------------------ | ------------------------------------------------------------------------------------- |
+| Asset              | Role                                                                                                  |
+| ------------------ | ----------------------------------------------------------------------------------------------------- |
 | Model GLB/GLTF     | Skinned mesh + skeleton when **imported**; many in the session, **several** previewed at once (US-20) |
-| Created model      | Empty or primitive mesh scene (`source: 'created'`); no skeleton required (US-23)      |
-| Animation GLB/GLTF | Source of `AnimationClip`s only; mesh payload ignored or discarded after clip extract |
-| Model / clip FBX   | Converted to GLB via `POST /api/v1/fbx-to-glb`, then the same load path as above      |
+| Created model      | Empty or primitive mesh scene (`source: 'created'`); no skeleton required (US-23)                     |
+| Animation GLB/GLTF | Source of `AnimationClip`s only; mesh payload ignored or discarded after clip extract                 |
+| Model / clip FBX   | Converted to GLB via `POST /api/v1/fbx-to-glb`, then the same load path as above                      |
 
 Clips have **ownership** (`ownerModelId`: `null` = Shared Animations; otherwise listed only under that model). Owned clips validate against their owner skeleton; shared clips validate against the model in context (focused for Shared UI; a given model when checking that model’s conflicts / export). Mismatch → user-visible Needs retarget; explicit retarget flow (US-6 / US-19). Shared global status is not flipped when each mixer mounts; per-model fit is checked in the library UI.
 

@@ -22,13 +22,13 @@ See [`.cursor/rules/specs-workflow.md`](.cursor/rules/specs-workflow.md) and [`.
 
 Domains under `src/modules/<domain>/`. Pages stay thin. No flat `src/components/` for domain logic. Layer roles: [`.cursor/rules/module-layers.mdc`](.cursor/rules/module-layers.mdc) (see also [ddd-solid](.cursor/rules/ddd-solid.md)). Chrome colors/spacing: [`.cursor/rules/chrome-ui-tokens.mdc`](.cursor/rules/chrome-ui-tokens.mdc).
 
-| Domain         | Owns                                                              |
-| -------------- | ----------------------------------------------------------------- |
-| `editor-shell` | Layout, collapsible sidebar, chrome UI state                      |
-| `viewport`     | R3F canvas, camera controls, raycast selection, TransformControls |
-| `animation`    | Clip library, mixer/playback, trim, time scale, keyframe write    |
-| `export`       | GLTFExporter pack + download                                      |
-| `import`       | FBX convert API + client `ensureGltfFile` service                 |
+| Domain         | Owns                                                                       |
+| -------------- | -------------------------------------------------------------------------- |
+| `editor-shell` | Layout, collapsible sidebar, chrome UI state                               |
+| `viewport`     | R3F canvas, camera controls, raycast selection, TransformControls          |
+| `animation`    | Clip library, mixer/playback, trim, time scale, keyframe write             |
+| `export`       | GLTFExporter pack + download                                               |
+| `import`       | FBX convert API + client `ensureGltfFile` service                          |
 | `create`       | Empty model create, part kinds, spawn / duplicate / delete, create toolbar |
 
 ## Hard constraints (3D / animation)

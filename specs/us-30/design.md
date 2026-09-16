@@ -8,12 +8,12 @@
 
 ## File actions
 
-| Control | Wire to | Remove from |
-| --- | --- | --- |
-| New model | `createEmptyModel` | Models header (`NewModelButton`) |
-| New animation | `startNewAnimation(scene)` with default `ownerModelId: null` | Shared header (`ClipNewAnimation`) |
-| Import | new content-routing entry (below) | Models `ModelImport`, Shared `ClipImport` |
-| Export | open existing `ExportModal` (`canExport` gate) | Settings aside `DownloadExport` |
+| Control       | Wire to                                                      | Remove from                               |
+| ------------- | ------------------------------------------------------------ | ----------------------------------------- |
+| New model     | `createEmptyModel`                                           | Models header (`NewModelButton`)          |
+| New animation | `startNewAnimation(scene)` with default `ownerModelId: null` | Shared header (`ClipNewAnimation`)        |
+| Import        | new content-routing entry (below)                            | Models `ModelImport`, Shared `ClipImport` |
+| Export        | open existing `ExportModal` (`canExport` gate)               | Settings aside `DownloadExport`           |
 
 Keep model-row **Add animation** modal unchanged (owned create / import / clone).
 

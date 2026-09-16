@@ -1,6 +1,6 @@
 import type { OrbitControlsRef } from './model-framing';
-import { OrbitControls } from '@react-three/drei';
 import { useStore } from '@nanostores/react';
+import { OrbitControls } from '@react-three/drei';
 import { useEffect } from 'react';
 import { MOUSE, TOUCH } from 'three';
 import { DEFAULT_CAMERA_TARGET } from '../constants/camera';
