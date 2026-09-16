@@ -1,0 +1,30 @@
+# US-30 — Tasks
+
+**Do not start until explicitly kicked off.** Tick only after acceptance.
+
+## Spec / kickoff
+
+- [ ] **Confirm kickoff** — Explicit go-ahead before coding
+- [ ] **Fold prep note** — On ship: update `current/` (library header actions, Settings aside, floating chrome), changelog Shipped row, delete this folder
+
+## Toolbar shell
+
+- [ ] **File / Settings floating toolbar** — Mount in preview chrome; File + Settings sections; `FloatingToolbar` tokens; mobile clear of sibling toolbars
+- [ ] **File: New model** — Wire `createEmptyModel`; remove Models header `+`
+- [ ] **File: New animation** — Shared draft via `startNewAnimation`; disable without focused scene; remove Shared header `+`
+- [ ] **File: Export** — Opens `ExportModal`; respect `canExport`; remove Settings aside Download
+- [ ] **Settings: axes** — Show world axes + Axes Length (m); remove aside Axes block
+
+## Smart Import
+
+- [ ] **Content router** — Per file: skinned+skeleton → model; animations-only → shared; else error; batch continues
+- [ ] **Remove dual Import buttons** — Drop Models “Load models” and Shared “Import animations”
+- [ ] **Keep model Add animation** — Modal Create / Import / Add existing still owned-scoped
+
+## Verify
+
+- [ ] **Empty session** — New model works; New animation disabled; Import animation-only → Shared; Export disabled until something exists
+- [ ] **Model GLB with clips** — Lands in Models with owned embedded clips (not Shared)
+- [ ] **Export** — Modal opens; pack unchanged vs US-22
+- [ ] **Axes** — Toggle / length still drive viewport; gone from Settings aside
+- [ ] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md) checked
