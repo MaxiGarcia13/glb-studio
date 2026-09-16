@@ -10,7 +10,7 @@
 ## Kits
 
 - [x] **Author Simple building recipe** — Floors / walls / roof from box and plane; metres, grounded, named parts
-- [ ] **Author Block robot recipe** — Readable block humanoid/robot from existing kinds; named parts for overlay
+- [x] **Author Block robot recipe** — Readable block humanoid/robot from existing kinds; named parts for overlay
 - [ ] **Register kits + From kit UI** — Secondary entry (not Plus); labels + one-line help
 - [ ] **Optional clothed block variant** — If desired, add a kit with separate shirt/pants meshes and distinct colors (still no image textures)
 

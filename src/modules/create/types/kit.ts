@@ -1,7 +1,7 @@
 import type { PartKindId, PartSizeParams } from './part';
 
 /** Kit ids — New model stays `empty`; optional presets are US-27. */
-export type KitId = 'empty' | 'simple-building';
+export type KitId = 'empty' | 'simple-building' | 'block-robot';
 
 export type ColorHex = `#${string}`;
 
