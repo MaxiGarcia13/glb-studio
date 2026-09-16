@@ -4,26 +4,46 @@ import { Button } from '@/components/button';
 import { FloatingToolbar } from '@/components/floating-toolbar';
 import { RestoreIcon } from '@/components/icons/restore-icon';
 import { SaveIcon } from '@/components/icons/save-icon';
+import { resolveActiveClipIdForModel } from '@/modules/animation/domain/resolve-active-clip';
 import { useActiveModel } from '@/modules/viewport/hooks/use-active-model';
 import { $poseDirty, $poseEditKind } from '@/modules/viewport/stores/pose-edit-store';
-import { $clips, restorePose, saveKeyframe } from '../stores/clip-store';
+import { $clips, isReadyClip, restorePose, saveKeyframe } from '../stores/clip-store';
 
 interface SaveKeyframeButtonProps {
   className?: string;
 }
 
 export function SaveKeyframeButton({ className }: SaveKeyframeButtonProps) {
-  const { activeClipId } = useStore($clips, { keys: ['activeClipId'] });
+  const {
+    clips,
+    activeClipId,
+    activeClipByModelId,
+    activeSharedClipId,
+  } = useStore($clips, {
+    keys: ['clips', 'activeClipId', 'activeClipByModelId', 'activeSharedClipId'],
+  });
   const poseDirty = useStore($poseDirty);
   const poseEditKind = useStore($poseEditKind);
   const { scene, activeModel } = useActiveModel();
 
-  // Created parts always commit scene TRS (US-23) — never Hold Pose keyframes.
+  const drivingClipId = activeModel
+    ? resolveActiveClipIdForModel(
+        clips,
+        activeModel.id,
+        activeClipByModelId,
+        activeSharedClipId,
+      ) ?? activeClipId
+    : activeClipId;
+  const drivingClip = drivingClipId
+    ? clips.find((entry) => entry.id === drivingClipId)
+    : undefined;
+  const hasReadyDrivingClip = isReadyClip(drivingClip);
+
+  // Hold Pose when a ready clip drives the edit. Created models without a clip
+  // stay scene-TRS-only (US-23).
   const writeKeyframe
-    = poseEditKind === 'selection'
-      && activeClipId !== null
-      && activeModel?.source !== 'created';
-  const clipRootSave = poseEditKind === 'modelRoot' && activeClipId !== null;
+    = poseEditKind === 'selection' && hasReadyDrivingClip;
+  const clipRootSave = poseEditKind === 'modelRoot' && hasReadyDrivingClip;
 
   if (!poseDirty || scene === null) {
     return null;

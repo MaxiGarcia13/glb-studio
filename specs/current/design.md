@@ -59,8 +59,10 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 2. Domain `create/` owns `PartKind` registry (`box` / `sphere` / `cylinder` / `capsule` / `plane` / `cone` / `torus` / `triangle` / `polygon` / `circle` / `ring` / `tetrahedron` / `octahedron` / `icosahedron` / `dodecahedron`), `Kit` seam (unused by New model), `spawnPart` / `duplicatePart` / `deletePart`, ground-origin geometry, size rebuild from `userData.createPart`. Action `addPart(modelId, kindId)` spawns a default part under a **created** model, forces **Edit**, selects the mesh, and returns it
 3. Parts are named meshes (`nextPartName` → `box`, `box_2`, …); metres + Y-up; bottom-origin geometry so identity TRS sits on the ground; later `spawnPart` siblings get a small +X offset so they are not stacked
 4. When focused model is `source: 'created'`: vertical create **ToolBar** after Settings (Add part palette, color, duplicate, delete); Settings **PartInspector** for kind size fields; first-run hint when nothing is selected. Toolbar (and palette) hidden for imported focus. **Edit** gizmo targets the selected part; **Move** targets the model root (all parts)
-5. Edit Save / Restore for created-part selection: always commit local TRS on the mesh (scene graph + rest-pose refresh); never write keyframes or rebase library clips
-6. `packModelGlb`: created models export mesh scene only (no shared-clip attach). Animation-only zip fallback prefers an imported rig when one exists
+5. Edit Save / Restore for created-part selection:
+   - **No ready clip driving the model:** commit local TRS on the mesh (scene graph + rest-pose refresh); never write keyframes or rebase library clips
+   - **Ready owned/driving clip:** Hold Pose to End into that clip (same as imported selection edits)
+6. `packModelGlb`: created models pack mesh scene **plus owned ready clips**; shared clips are not attached. Animation-only zip fallback prefers an imported rig when one exists
 7. Growth seams: hierarchy (US-26), kits (US-27), textures (US-28)
 8. **Snap (US-25):** when focused model `source === 'created'`, TransformControls use built-in `translationSnap` / `rotationSnap` from `$viewportSettings` (Move = world, Edit = local; scale never). Imported models never quantize. Settings XYZ typing does not auto-snap
 
@@ -173,7 +175,8 @@ Bind-pose / Move / T-pose Save–Restore branching: see **Edit / Move tools & bi
 4. **Move** — attach TransformControls to the active model root in **world** space; mode from `$transformMode` (translate / rotate / scale); show W / E / R toolbar while Move is active; ignore raycast picks so the user stays on the root
 5. **Dirty + snapshot** — on first gizmo / Settings root change, mark `$poseDirty`, set `$poseEditKind` (`modelRoot` | `selection`), snapshot pre-edit local TRS
 6. **Save** (by `$poseEditKind`, not active tool)
-   - `selection` on a **created** model part → keep Object3D TRS; refresh rest-pose snapshot; **never** write keyframes or rebase library clips (even if a shared clip is selected)
+   - `selection` on a **created** model part **with no ready driving clip** → keep Object3D TRS; refresh rest-pose snapshot; **never** write keyframes or rebase library clips
+   - `selection` on a **created** model part **with a ready driving clip** → US-4 Hold Pose to End into that clip
    - `selection` + active ready clip → US-4 Hold Pose to End
    - `selection` + no ready clip → keep Object3D TRS; rebase that node’s tracks in every library `clip` / `sourceClip` by pre-edit → current delta; accumulate per `modelId` + node name for import / replace / post-retarget; refresh rest-pose snapshot; clear dirty
    - `modelRoot` + no ready/draft clip → keep `scene` TRS; refresh rest-pose snapshot; no keyframe write / no clip rebase

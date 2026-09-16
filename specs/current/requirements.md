@@ -66,7 +66,7 @@ As an editor user, I can download a zip of each model and of each animation as s
 **Acceptance**
 
 - [x] **File → Export** uses `GLTFExporter` and builds a zip in the browser — no server round-trip
-- [x] Zip contains one `{model}.glb` per loaded model: that model’s scene plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips). **Created** models (`source: 'created'`) pack mesh-only — no skeleton / clip attachment required
+- [x] Zip contains one `{model}.glb` per loaded model: that model’s scene plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips). **Created** models pack the mesh scene plus **owned** ready clips (no shared-clip attach)
 - [x] Zip contains one `{clip}.glb` per **shared** library clip that has a working `AnimationClip` — animation-only, no mesh (owned clips ship only inside their model GLB when not merging)
 - [x] Each clip’s stored `timeScale` is baked into that clip’s exported track times / duration per design
 - [x] Filename collisions inside the zip get a numeric suffix

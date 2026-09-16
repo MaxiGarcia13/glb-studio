@@ -33,12 +33,9 @@ export function restorePose(): void {
     restoreFromSnapshot(object);
   }
 
-  // Created part edits are scene-graph only — do not re-apply a shared clip mixer.
-  if (
-    kind === 'modelRoot'
-    || !activeClipId
-    || (kind === 'selection' && model?.source === 'created')
-  ) {
+  // Snapshot restore first. Re-apply mixer when a clip is driving (including
+  // created models with an owned animation). Model-root / no-clip stay snapshot-only.
+  if (kind === 'modelRoot' || !activeClipId) {
     clearPoseDirty();
     return;
   }

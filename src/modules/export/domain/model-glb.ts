@@ -48,9 +48,24 @@ function collectImportedModelAnimations(
   return animations;
 }
 
+/** Collect owned ready clips for a created model (mesh animation, no shared pack). */
+function collectCreatedModelAnimations(
+  model: ModelEntry,
+  clips: ClipEntry[],
+): AnimationClip[] {
+  const animations: AnimationClip[] = [];
+  for (const entry of clips) {
+    if (entry.ownerModelId !== model.id || !entry.clip || entry.status !== 'ready') {
+      continue;
+    }
+    animations.push(bakeTimeScale(entry.clip, entry.timeScale));
+  }
+  return animations;
+}
+
 /**
  * Serialize a library model scene as `{fileName}.glb`.
- * Created models pack the mesh scene only (no skeleton / animation tracks).
+ * Created models pack the mesh scene plus owned ready clips (when authored).
  */
 export async function packModelGlb(
   model: ModelEntry,
@@ -58,7 +73,7 @@ export async function packModelGlb(
 ): Promise<ModelGlbResult> {
   const animations
     = model.source === 'created'
-      ? []
+      ? collectCreatedModelAnimations(model, clips)
       : collectImportedModelAnimations(model, clips);
 
   const arrayBuffer = await exportGlbBinary(model.scene, animations);
