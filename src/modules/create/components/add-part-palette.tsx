@@ -2,7 +2,7 @@ import type { PartKindId } from '@/modules/create/types/part';
 import { useStore } from '@nanostores/react';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Button } from '@/components/button';
-import { CubeIcon } from '@/components/icons/cube-icon';
+import { BlocksIcon } from '@/components/icons/blocks-icon';
 import { Text } from '@/components/text';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import { addPart } from '../actions/add-part';
@@ -64,7 +64,7 @@ export function AddPartPalette() {
         aria-controls={open ? menuId : undefined}
         onClick={() => setOpen((current) => !current)}
       >
-        <CubeIcon aria-hidden />
+        <BlocksIcon aria-hidden />
       </Button>
 
       {open && (
