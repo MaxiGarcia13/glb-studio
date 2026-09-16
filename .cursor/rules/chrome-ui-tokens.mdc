@@ -66,7 +66,7 @@ Viewport overlay chrome (Edit/Move, transform modes, create tools, aside open ch
 </div>
 
 // ✅ GOOD
-<FloatingToolbar aria-label="Edit tool">
+<FloatingToolbar aria-label="Edit / Move">
   <Button variant="ghost" aria-label="Edit" title="Edit"><CursorIcon /></Button>
 </FloatingToolbar>
 ```

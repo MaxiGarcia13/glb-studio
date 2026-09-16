@@ -1,8 +1,8 @@
 import { cn } from '@maxigarcia/js-utils';
 import { SaveKeyframeButton } from '@/modules/animation';
-import { ModelToolBar } from '@/modules/create/components/model-tool-bar';
+import { CreateToolbar } from '@/modules/create/components/create-toolbar';
 import { useIsCreatedModelFocused } from '@/modules/create/hooks/use-selected-created-part';
-import { EditToolToolbar } from '@/modules/viewport/components/edit-tool-toolbar';
+import { EditMoveToolbar } from '@/modules/viewport/components/edit-move-toolbar';
 import { SelectionNameOverlay } from '@/modules/viewport/components/selection-name-overlay';
 import { TransformModeToolbar } from '@/modules/viewport/components/transform-mode-toolbar';
 import { ViewportCanvas } from '@/modules/viewport/components/viewport-canvas';
@@ -46,7 +46,7 @@ export function EditorPreview() {
             'bottom-4',
           )}
         >
-          <ModelToolBar />
+          <CreateToolbar />
         </div>
 
         <div
@@ -60,7 +60,7 @@ export function EditorPreview() {
               : 'left-4 bottom-4',
           )}
         >
-          <EditToolToolbar />
+          <EditMoveToolbar />
         </div>
 
         <div

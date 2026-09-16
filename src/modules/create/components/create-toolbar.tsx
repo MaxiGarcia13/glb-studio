@@ -6,11 +6,11 @@ import { PartColorTool } from './part-color-tool';
 import { PartDeleteTool } from './part-delete-tool';
 import { PartDuplicateTool } from './part-duplicate-tool';
 
-interface ModelToolBarProps {
+interface CreateToolbarProps {
   className?: string;
 }
 
-export function ModelToolBar({ className }: ModelToolBarProps) {
+export function CreateToolbar({ className }: CreateToolbarProps) {
   const isFocused = useIsCreatedModelFocused();
 
   if (!isFocused) {

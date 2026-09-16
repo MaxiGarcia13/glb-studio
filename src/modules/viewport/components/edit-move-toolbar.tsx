@@ -13,11 +13,11 @@ const TOOLS: { tool: EditTool; label: string; Icon: typeof CursorIcon }[] = [
   { tool: 'move', label: 'Move', Icon: MoveIcon },
 ];
 
-interface EditToolToolbarProps {
+interface EditMoveToolbarProps {
   className?: string;
 }
 
-export function EditToolToolbar({ className }: EditToolToolbarProps) {
+export function EditMoveToolbar({ className }: EditMoveToolbarProps) {
   const { phase } = useStore($model, { keys: ['phase'] });
   const tool = useStore($editTool);
 
@@ -26,7 +26,7 @@ export function EditToolToolbar({ className }: EditToolToolbarProps) {
   }
 
   return (
-    <FloatingToolbar aria-label="Edit tool" className={cn(className)}>
+    <FloatingToolbar aria-label="Edit / Move" className={cn(className)}>
       {TOOLS.map(({ tool: nextTool, label, Icon }) => {
         const active = tool === nextTool;
         return (
