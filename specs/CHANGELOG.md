@@ -15,7 +15,6 @@
 | **US-27** | Additional create kits via registry (building, robot, …) |
 | **US-26** | Part hierarchy + outliner for created models |
 | **US-25** | Grid / rotation snap for created-model edits |
-| **US-24** | Primitive palette + add part on created models |
 | **US-8** | Morph-target editing (post-MVP) |
 | **US-9** | Graph / curve keyframe UI (post-MVP) |
 | **US-10** | Full undo / redo stack (post-MVP) |
@@ -25,6 +24,7 @@
 | ID | Summary |
 |----|---------|
 | **US-29** | Rename selected bone / mesh from Settings (owned clip + bind-pose remap) |
+| **US-24** | Primitive palette + add part on created models |
 | **US-23** | Create empty model (no kit modal) + part edit/export |
 | **US-22** | Export modal + merge visible models into one mesh GLB |
 | **US-21** | Whole-model rotate / scale in Move + Settings root rotation XYZ |

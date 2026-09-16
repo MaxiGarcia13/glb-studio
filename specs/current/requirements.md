@@ -317,6 +317,19 @@ As an editor user with little or no 3D experience, I can create a new empty mode
 - [x] Zip export (US-5 / US-22 path) packs created model scenes as `{model}.glb` like any other model
 - [x] Empty / first-run hint when a created model has no selection: short copy that points users to add / pick a part and use Edit
 
+### US-24 — Primitive palette + add part
+
+As an editor user, I can add common primitive shapes to my created model so I can build props, vehicles, or figures beyond the starter kits.
+
+**Acceptance**
+
+- [x] When a **created** model is focused, Create UI offers an **Add part** palette: box, sphere, cylinder, capsule, plane
+- [x] Adding a part spawns it under that model’s scene at the origin (or a small default offset above ground), selects it, and uses kind default params + a default color
+- [x] New parts are named uniquely (`box`, `box_2`, …) so the selection overlay stays readable
+- [x] Added parts support the same inspector, Duplicate, Delete, and Edit Save / Restore behavior as kit parts (US-23)
+- [x] Palette is hidden or disabled for **imported** models (no accidental mesh editing of uploaded characters in this US)
+- [x] Export still packs the updated scene
+
 ## Post-MVP user stories
 
 Not started; do not implement until explicitly kicked off. Full requirements, design, and tasks live only in the delta folders (not duplicated here):
@@ -336,7 +349,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 ## Out of scope (still excluded)
 
 - Material / texture editing on **imported** characters (created-model color maps are US-28)
-- Kit picker / starter kits on New model (US-27); freeform add-part palette (US-24); snap (US-25); part outliner (US-26)
+- Kit picker / starter kits on New model (US-27); snap (US-25); part outliner (US-26)
 - Bones, skinning, Mixamo / retarget on created models
 - Server accounts (FBX convert via US-16 is the allowed server round-trip; no user accounts)
 - Collaborative editing / durable undo across reloads
