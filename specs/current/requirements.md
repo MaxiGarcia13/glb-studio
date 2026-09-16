@@ -323,7 +323,7 @@ As an editor user, I can add common primitive shapes to my created model so I ca
 
 **Acceptance**
 
-- [x] When a **created** model is focused, Create UI offers an **Add part** palette: box, sphere, cylinder, capsule, plane
+- [x] When a **created** model is focused, Create UI offers an **Add part** palette: box, sphere, cylinder, capsule, plane, cone, torus, triangle, polygon, circle, ring, tetrahedron, octahedron, icosahedron, dodecahedron
 - [x] Adding a part spawns it under that model’s scene at the origin (or a small default offset above ground), selects it, and uses kind default params + a default color
 - [x] New parts are named uniquely (`box`, `box_2`, …) so the selection overlay stays readable
 - [x] Added parts support the same inspector, Duplicate, Delete, and Edit Save / Restore behavior as kit parts (US-23)

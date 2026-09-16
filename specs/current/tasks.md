@@ -213,6 +213,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `plane` PartKind + `addPart(modelId, kindId)` (unique names, Edit + select)
 - [x] Add-part palette on created-model create toolbar; hidden for imported focus
 - [x] Added parts reuse US-23 inspector / duplicate / delete / Save–Restore; export packs scene
+- [x] Extra primitives: cone, torus, triangle, polygon (`sides`), circle, ring, tetrahedron, octahedron, icosahedron, dodecahedron
 
 ## US-25 — Grid and rotation snap
 
