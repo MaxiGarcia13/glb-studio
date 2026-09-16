@@ -1,11 +1,13 @@
-import type { Mesh, Object3D } from 'three';
+import type { Object3D } from 'three';
 import { findModelEntryForObject } from '@/modules/viewport/domain/model-scene';
 import { $model } from '@/modules/viewport/stores/model-store';
-import { $selection } from '@/modules/viewport/stores/selection-store';
-import { ungroupPartsToRoot } from '../domain/parent-part';
-import { readCreatePart } from '../domain/part-data';
+import { $selection, selectObject } from '@/modules/viewport/stores/selection-store';
+import { isCreateGroup, isCreateHierarchyNode } from '../domain/group-data';
+import {
+  dissolveCreateGroups,
+  ungroupPartsToRoot,
+} from '../domain/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
-import { asMesh } from '../utils/selected-part';
 
 export interface UngroupPartsAvailability {
   enabled: boolean;
@@ -13,45 +15,44 @@ export interface UngroupPartsAvailability {
 }
 
 interface UngroupPartsContext {
-  parts: Mesh[];
+  nodes: Object3D[];
+  groups: Object3D[];
   partsRoot: Object3D;
 }
 
 function resolveUngroupPartsContext(): UngroupPartsContext | null {
-  const { kind, object, objects } = $selection.get();
+  const { kind, objects } = $selection.get();
   if (kind !== 'parts' || objects.length === 0) {
     return null;
   }
 
   const models = $model.get().models;
-  const anchorObject = object ?? objects[0]!;
-  const anchor = asMesh(anchorObject);
-  if (!anchor || !readCreatePart(anchor)) {
-    return null;
-  }
-
+  const anchor = objects[0]!;
   const owner = findModelEntryForObject(anchor, models);
   if (!owner || owner.source !== 'created') {
     return null;
   }
 
-  const parts: Mesh[] = [];
+  const nodes: Object3D[] = [];
+  const groups: Object3D[] = [];
   for (const entry of objects) {
-    const mesh = asMesh(entry);
-    if (!mesh || !readCreatePart(mesh)) {
+    if (!isCreateHierarchyNode(entry)) {
       continue;
     }
-    if (findModelEntryForObject(mesh, models)?.id !== owner.id) {
+    if (findModelEntryForObject(entry, models)?.id !== owner.id) {
       continue;
     }
-    parts.push(mesh);
+    nodes.push(entry);
+    if (isCreateGroup(entry)) {
+      groups.push(entry);
+    }
   }
 
-  if (parts.length === 0) {
+  if (nodes.length === 0) {
     return null;
   }
 
-  return { parts, partsRoot: owner.scene };
+  return { nodes, groups, partsRoot: owner.scene };
 }
 
 /** Whether Ungroup is available for the current part selection. */
@@ -59,7 +60,7 @@ export function getUngroupPartsAvailability(): UngroupPartsAvailability {
   const { kind, objects } = $selection.get();
 
   if (kind === 'models') {
-    return { enabled: false, reason: 'Ungrouping models coming next' };
+    return { enabled: false, reason: 'Use Ungroup while models are selected' };
   }
 
   if (kind !== 'parts') {
@@ -78,8 +79,15 @@ export function getUngroupPartsAvailability(): UngroupPartsAvailability {
     };
   }
 
-  const nested = context.parts.some(
-    (part) => part.parent !== context.partsRoot,
+  if (context.groups.length > 0) {
+    return {
+      enabled: true,
+      reason: 'Dissolve selected group(s) and keep children',
+    };
+  }
+
+  const nested = context.nodes.some(
+    (node) => node.parent !== context.partsRoot,
   );
   if (!nested) {
     return { enabled: false, reason: 'Selected parts are already at the root' };
@@ -92,8 +100,8 @@ export function getUngroupPartsAvailability(): UngroupPartsAvailability {
 }
 
 /**
- * Unparent selected create parts to the model parts root.
- * World transform preserved. No-ops parts already at root.
+ * Dissolve selected empty groups, or lift nested parts to the parts root.
+ * World transform preserved.
  */
 export function ungroupSelectedParts(): boolean {
   const context = resolveUngroupPartsContext();
@@ -101,7 +109,23 @@ export function ungroupSelectedParts(): boolean {
     return false;
   }
 
-  const moved = ungroupPartsToRoot(context.parts, context.partsRoot);
+  if (context.groups.length > 0) {
+    const childrenBefore = context.groups.flatMap((group) => [...group.children]);
+    const dissolved = dissolveCreateGroups(context.groups, context.partsRoot);
+    if (dissolved === 0) {
+      return false;
+    }
+    const firstChild = childrenBefore.find((child) =>
+      isCreateHierarchyNode(child),
+    );
+    if (firstChild) {
+      selectObject(firstChild);
+    }
+    bumpCreatePartsRevision();
+    return true;
+  }
+
+  const moved = ungroupPartsToRoot(context.nodes, context.partsRoot);
   if (moved === 0) {
     return false;
   }

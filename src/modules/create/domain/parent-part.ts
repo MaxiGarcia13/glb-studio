@@ -1,9 +1,10 @@
 import type { Mesh, Object3D } from 'three';
 
+import { isCreateGroup, isCreateHierarchyNode } from './group-data';
 import { listCreatedParts } from './list-created-parts';
 import { readCreatePart } from './part-data';
 
-function isStrictDescendantOf(object: Object3D, ancestor: Object3D): boolean {
+export function isStrictDescendantOf(object: Object3D, ancestor: Object3D): boolean {
   let current: Object3D | null = object.parent;
   while (current) {
     if (current === ancestor) {
@@ -16,6 +17,16 @@ function isStrictDescendantOf(object: Object3D, ancestor: Object3D): boolean {
 
 function isUnderPartsRoot(object: Object3D, partsRoot: Object3D): boolean {
   return object === partsRoot || isStrictDescendantOf(object, partsRoot);
+}
+
+function isValidParent(parent: Object3D, partsRoot: Object3D): boolean {
+  if (parent === partsRoot) {
+    return true;
+  }
+  if (!isUnderPartsRoot(parent, partsRoot)) {
+    return false;
+  }
+  return isCreateHierarchyNode(parent);
 }
 
 /**
@@ -34,15 +45,15 @@ export function listParentCandidates(child: Mesh, partsRoot: Object3D): Mesh[] {
 }
 
 /**
- * Whether `child` may be parented under `parent` on this model (cycle-safe).
- * Does not mutate the graph.
+ * Whether `child` may be attached under `parent` on this model (cycle-safe).
+ * Child/parent may be create parts or empty create groups.
  */
-export function canParentPart(
-  child: Mesh,
+export function canAttachUnder(
+  child: Object3D,
   parent: Object3D,
   partsRoot: Object3D,
 ): boolean {
-  if (!readCreatePart(child)) {
+  if (!isCreateHierarchyNode(child)) {
     return false;
   }
 
@@ -50,18 +61,14 @@ export function canParentPart(
     return false;
   }
 
-  const parentIsRoot = parent === partsRoot;
-  if (!parentIsRoot) {
-    if (!readCreatePart(parent) || !isUnderPartsRoot(parent, partsRoot)) {
-      return false;
-    }
+  if (!isValidParent(parent, partsRoot)) {
+    return false;
   }
 
   if (child === parent) {
     return false;
   }
 
-  // Parenting under a descendant would cycle the graph.
   if (isStrictDescendantOf(parent, child)) {
     return false;
   }
@@ -69,19 +76,25 @@ export function canParentPart(
   return true;
 }
 
-/**
- * Reparent a stamped create part under another part or the parts root,
- * preserving world transform via `Object3D.attach`.
- *
- * Returns false when the child is not a create part, the parent is not the
- * parts root / a create part on the same model, or the move would create a cycle.
- */
-export function parentPart(
+/** @deprecated Prefer canAttachUnder — kept for mesh-only call sites. */
+export function canParentPart(
   child: Mesh,
   parent: Object3D,
   partsRoot: Object3D,
 ): boolean {
-  if (!canParentPart(child, parent, partsRoot)) {
+  return canAttachUnder(child, parent, partsRoot);
+}
+
+/**
+ * Reparent a create hierarchy node under another node or the parts root,
+ * preserving world transform via `Object3D.attach`.
+ */
+export function attachUnder(
+  child: Object3D,
+  parent: Object3D,
+  partsRoot: Object3D,
+): boolean {
+  if (!canAttachUnder(child, parent, partsRoot)) {
     return false;
   }
 
@@ -94,24 +107,45 @@ export function parentPart(
 }
 
 /**
- * Parent each child under `active` (world-preserving). Skips self, already-parented,
- * and cycle/invalid cases. Returns how many parts were actually reparented.
+ * Reparent a stamped create part under another part, group, or the parts root,
+ * preserving world transform via `Object3D.attach`.
  */
+export function parentPart(
+  child: Mesh,
+  parent: Object3D,
+  partsRoot: Object3D,
+): boolean {
+  return attachUnder(child, parent, partsRoot);
+}
+
+/**
+ * Attach each node under `parent` (world-preserving). Skips already-parented /
+ * invalid / cycle cases. Returns how many were actually reparented.
+ */
+export function attachAllUnder(
+  parent: Object3D,
+  children: readonly Object3D[],
+  partsRoot: Object3D,
+): number {
+  let moved = 0;
+  for (const child of children) {
+    if (child === parent || child.parent === parent) {
+      continue;
+    }
+    if (attachUnder(child, parent, partsRoot)) {
+      moved += 1;
+    }
+  }
+  return moved;
+}
+
+/** @deprecated Prefer attachAllUnder with an empty group parent. */
 export function groupPartsUnder(
   active: Mesh,
   children: readonly Mesh[],
   partsRoot: Object3D,
 ): number {
-  let moved = 0;
-  for (const child of children) {
-    if (child === active || child.parent === active) {
-      continue;
-    }
-    if (parentPart(child, active, partsRoot)) {
-      moved += 1;
-    }
-  }
-  return moved;
+  return attachAllUnder(active, children, partsRoot);
 }
 
 /** Move a stamped create part under the parts root, preserving world transform. */
@@ -120,23 +154,52 @@ export function unparentPart(child: Mesh, partsRoot: Object3D): boolean {
 }
 
 /**
- * Move each part under `partsRoot` (world-preserving). Skips parts already at root
- * and invalid cases. Returns how many were actually reparented.
+ * Move each hierarchy node under `partsRoot` (world-preserving).
+ * Skips nodes already at root. Returns how many were reparented.
  */
 export function ungroupPartsToRoot(
-  parts: readonly Mesh[],
+  nodes: readonly Object3D[],
   partsRoot: Object3D,
 ): number {
   let moved = 0;
-  for (const part of parts) {
-    if (part.parent === partsRoot) {
+  for (const node of nodes) {
+    if (node.parent === partsRoot) {
       continue;
     }
-    if (unparentPart(part, partsRoot)) {
+    if (attachUnder(node, partsRoot, partsRoot)) {
       moved += 1;
     }
   }
   return moved;
+}
+
+/**
+ * Dissolve empty create groups: children attach to the group's former parent
+ * (or parts root), then the group is removed. Returns dissolved count.
+ */
+export function dissolveCreateGroups(
+  groups: readonly Object3D[],
+  partsRoot: Object3D,
+): number {
+  let dissolved = 0;
+  for (const group of groups) {
+    if (!isCreateGroup(group) || !isUnderPartsRoot(group, partsRoot)) {
+      continue;
+    }
+
+    const destination = group.parent && group.parent !== group
+      ? group.parent
+      : partsRoot;
+    const children = [...group.children];
+    for (const child of children) {
+      if (isCreateHierarchyNode(child)) {
+        destination.attach(child);
+      }
+    }
+    group.removeFromParent();
+    dissolved += 1;
+  }
+  return dissolved;
 }
 
 /** Parent uuid for a part, or `null` when parented to the parts root. */

@@ -30,10 +30,10 @@ Tick only after acceptance.
 ## Context menu (Group / Ungroup)
 
 - [x] **Right-click menu shell** — ActionMenu-style panel at pointer (library + preview); dismiss on outside click / Escape
-- [x] **Group parts** — Parent non-active selected parts under active part (same created model); cycle guard; world preserve
-- [ ] **Ungroup parts** — Unparent selection to parts root
-- [ ] **Group models** — Put selected models in one session group (library tree + export unit)
-- [ ] **Ungroup models** — Dissolve model group membership
+- [x] **Group parts** — Create empty group node; parent all selected parts under it; cycle guard; world preserve
+- [x] **Ungroup parts** — Dissolve selected empty groups (or lift nested parts to parts root)
+- [x] **Group models** — Put selected models in one session group (library tree + export unit)
+- [x] **Ungroup models** — Dissolve model group membership
 - [ ] **Remove Settings Parent select** — Grouping only via context menu (drop inspector Parent `<select>`)
 - [ ] **Retire or fold toolbar Unparent** — Prefer Ungroup in the context menu; remove duplicate control if redundant
 
@@ -46,8 +46,8 @@ Tick only after acceptance.
 
 ## Verify
 
-- [ ] **Car body + wheels** — Group wheels under body; moving body moves wheels; export retains hierarchy
-- [ ] **Cycle guard** — Cannot group a part under its own descendant
+- [ ] **Car body + wheels** — Group body + wheels into an empty group; moving the group moves both; export retains hierarchy
+- [ ] **Cycle guard** — Cannot parent a node under its own descendant
 - [ ] **Shift+click + Group** — Library and viewport; parts-only and models-only selections
 - [ ] **Grouped models export** — Two grouped models → one GLB; ungrouped → separate; no Merge checkbox
 - [ ] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md) checked

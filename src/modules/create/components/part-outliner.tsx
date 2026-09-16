@@ -4,6 +4,7 @@ import { useStore } from '@nanostores/react';
 import { useState } from 'react';
 import { ChevronRight } from '@/components/icons/chevron-right-icon';
 import { Text } from '@/components/text';
+import { openContextMenuForPart } from '@/modules/viewport/actions/open-selection-context-menu';
 import { setEditTool } from '@/modules/viewport/stores/edit-tool-store';
 import { $model, selectModel } from '@/modules/viewport/stores/model-store';
 import {
@@ -11,7 +12,6 @@ import {
   selectObject,
   toggleObject,
 } from '@/modules/viewport/stores/selection-store';
-import { openContextMenuForPart } from '@/modules/viewport/actions/open-selection-context-menu';
 import { listCreatedPartEntries } from '../domain/list-created-parts';
 import { $createPartsRevision } from '../stores/create-parts-revision-store';
 
@@ -36,10 +36,9 @@ function isUnderCollapsedAncestor(
 }
 
 /**
- * Library outliner of stamped parts for a created model.
- * Click a row to focus the model (if needed), switch to Edit, and select the part.
- * Shift+click toggles the part in the multi-selection.
- * Parents with children can be collapsed via the row chevron.
+ * Library outliner of stamped parts and empty groups for a created model.
+ * Click a row to focus the model (if needed), switch to Edit, and select the node.
+ * Shift+click toggles membership. Parents can be collapsed via the row chevron.
  */
 export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
   useStore($createPartsRevision);
@@ -56,7 +55,7 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
   }
 
   const visible = entries.filter(
-    ({ mesh }) => !isUnderCollapsedAncestor(mesh, collapsedIds),
+    ({ object }) => !isUnderCollapsedAncestor(object, collapsedIds),
   );
 
   return (
@@ -65,15 +64,15 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
       role="tree"
       aria-label="Parts"
     >
-      {visible.map(({ mesh, depth, hasChildren }) => {
-        const isSelected = objects.includes(mesh);
-        const isActive = active === mesh;
-        const label = mesh.name || mesh.uuid;
-        const expanded = hasChildren && !collapsedIds.has(mesh.uuid);
+      {visible.map(({ object, depth, hasChildren, isGroup }) => {
+        const isSelected = objects.includes(object);
+        const isActive = active === object;
+        const label = object.name || object.uuid;
+        const expanded = hasChildren && !collapsedIds.has(object.uuid);
 
         return (
           <div
-            key={mesh.uuid}
+            key={object.uuid}
             role="treeitem"
             aria-selected={isSelected}
             aria-expanded={hasChildren ? expanded : undefined}
@@ -100,10 +99,10 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
                         event.stopPropagation();
                         setCollapsedIds((current) => {
                           const next = new Set(current);
-                          if (next.has(mesh.uuid)) {
-                            next.delete(mesh.uuid);
+                          if (next.has(object.uuid)) {
+                            next.delete(object.uuid);
                           } else {
-                            next.add(mesh.uuid);
+                            next.add(object.uuid);
                           }
                           return next;
                         });
@@ -126,22 +125,27 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
               title={label}
               className="min-w-0 flex-1 cursor-pointer truncate text-left"
               onClick={(event) => {
-                // selectModel toggles focus off when already active — only focus when needed.
                 if ($model.get().activeModelId !== modelId) {
                   selectModel(modelId);
                 }
                 setEditTool('edit');
                 if (event.shiftKey) {
-                  toggleObject(mesh);
+                  toggleObject(object);
                   return;
                 }
-                selectObject(mesh);
+                selectObject(object);
               }}
               onContextMenu={(event) => {
-                openContextMenuForPart(event, mesh, modelId);
+                openContextMenuForPart(event, object, modelId);
               }}
             >
-              <Text as="span" className="min-w-0 truncate text-current">
+              <Text
+                as="span"
+                className={cn(
+                  'min-w-0 truncate text-current',
+                  isGroup && 'italic',
+                )}
+              >
                 {label}
               </Text>
             </button>

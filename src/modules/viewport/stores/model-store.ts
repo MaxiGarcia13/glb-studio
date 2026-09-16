@@ -12,6 +12,7 @@ import {
 import { preserveGltfExtension } from '@/utils/glb-parse';
 import { loadModelFromFile } from '../adapters/model-loader';
 import { disposeScene } from '../utils/scene-dispose';
+import { removeModelsFromGroups } from './model-group-store';
 import { clearSelection } from './selection-store';
 
 export const $model = map<ModelLibraryState>({
@@ -195,6 +196,7 @@ export function removeModel(id: string): void {
   disposeEntry(removed);
   clearBindPoseOverrides(id);
   removeClipsByOwner(id);
+  removeModelsFromGroups([id]);
 
   const models = state.models.filter((model) => model.id !== id);
   const previewModelIds = state.previewModelIds.filter((previewId) => previewId !== id);

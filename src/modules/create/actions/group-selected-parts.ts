@@ -1,14 +1,11 @@
-import type { Mesh, Object3D } from 'three';
+import type { Object3D } from 'three';
 import { findModelEntryForObject } from '@/modules/viewport/domain/model-scene';
 import { $model } from '@/modules/viewport/stores/model-store';
-import { $selection } from '@/modules/viewport/stores/selection-store';
-import {
-  canParentPart,
-  groupPartsUnder,
-} from '../domain/parent-part';
-import { readCreatePart } from '../domain/part-data';
+import { $selection, selectObject } from '@/modules/viewport/stores/selection-store';
+import { createEmptyPartGroup } from '../domain/create-part-group';
+import { isCreateHierarchyNode } from '../domain/group-data';
+import { attachAllUnder } from '../domain/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
-import { asMesh } from '../utils/selected-part';
 
 export interface GroupPartsAvailability {
   enabled: boolean;
@@ -16,48 +13,59 @@ export interface GroupPartsAvailability {
 }
 
 interface GroupPartsContext {
-  active: Mesh;
-  children: Mesh[];
+  nodes: Object3D[];
   partsRoot: Object3D;
 }
 
 function resolveGroupPartsContext(): GroupPartsContext | null {
-  const { kind, object, objects } = $selection.get();
-  if (kind !== 'parts' || !object || objects.length < 2) {
-    return null;
-  }
-
-  const active = asMesh(object);
-  if (!active || !readCreatePart(active)) {
+  const { kind, objects } = $selection.get();
+  if (kind !== 'parts' || objects.length < 2) {
     return null;
   }
 
   const models = $model.get().models;
-  const owner = findModelEntryForObject(active, models);
+  const anchor = objects[0]!;
+  const owner = findModelEntryForObject(anchor, models);
   if (!owner || owner.source !== 'created') {
     return null;
   }
 
-  const children: Mesh[] = [];
+  const nodes: Object3D[] = [];
   for (const entry of objects) {
-    if (entry === active) {
+    if (!isCreateHierarchyNode(entry)) {
       continue;
     }
-    const mesh = asMesh(entry);
-    if (!mesh || !readCreatePart(mesh)) {
+    if (findModelEntryForObject(entry, models)?.id !== owner.id) {
       continue;
     }
-    if (findModelEntryForObject(mesh, models)?.id !== owner.id) {
+    // Skip nodes that are descendants of another selected node (would nest twice).
+    const nestedUnderSelection = objects.some(
+      (other) =>
+        other !== entry
+        && (entry.parent === other || isDescendant(entry, other)),
+    );
+    if (nestedUnderSelection) {
       continue;
     }
-    children.push(mesh);
+    nodes.push(entry);
   }
 
-  if (children.length === 0) {
+  if (nodes.length < 2) {
     return null;
   }
 
-  return { active, children, partsRoot: owner.scene };
+  return { nodes, partsRoot: owner.scene };
+}
+
+function isDescendant(object: Object3D, ancestor: Object3D): boolean {
+  let current: Object3D | null = object.parent;
+  while (current) {
+    if (current === ancestor) {
+      return true;
+    }
+    current = current.parent;
+  }
+  return false;
 }
 
 /** Whether Group is available for the current part multi-selection. */
@@ -65,7 +73,7 @@ export function getGroupPartsAvailability(): GroupPartsAvailability {
   const { kind, objects } = $selection.get();
 
   if (kind === 'models') {
-    return { enabled: false, reason: 'Grouping models coming next' };
+    return { enabled: false, reason: 'Use Group while models are selected' };
   }
 
   if (kind !== 'parts') {
@@ -80,29 +88,19 @@ export function getGroupPartsAvailability(): GroupPartsAvailability {
   if (!context) {
     return {
       enabled: false,
-      reason: 'Active selection must be a create part on a created model',
+      reason: 'Select two or more create parts on the same created model',
     };
   }
 
-  const { active, children, partsRoot } = context;
-  const canMove = children.some(
-    (child) =>
-      child.parent !== active && canParentPart(child, active, partsRoot),
-  );
-
-  if (!canMove) {
-    return {
-      enabled: false,
-      reason: 'Cannot group under the active part (already parented or would cycle)',
-    };
-  }
-
-  return { enabled: true, reason: 'Group selected parts under the active part' };
+  return {
+    enabled: true,
+    reason: 'Create a group and put the selection under it',
+  };
 }
 
 /**
- * Parent non-active selected parts under the active (last-clicked) part.
- * Same created model only; cycle-safe; world transform preserved.
+ * Create an empty group and parent all selected create nodes under it.
+ * World transforms preserved. Selects the new group.
  */
 export function groupSelectedParts(): boolean {
   const context = resolveGroupPartsContext();
@@ -110,15 +108,14 @@ export function groupSelectedParts(): boolean {
     return false;
   }
 
-  const moved = groupPartsUnder(
-    context.active,
-    context.children,
-    context.partsRoot,
-  );
+  const group = createEmptyPartGroup(context.partsRoot);
+  const moved = attachAllUnder(group, context.nodes, context.partsRoot);
   if (moved === 0) {
+    group.removeFromParent();
     return false;
   }
 
+  selectObject(group);
   bumpCreatePartsRevision();
   return true;
 }

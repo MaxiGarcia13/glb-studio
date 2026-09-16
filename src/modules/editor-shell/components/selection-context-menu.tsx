@@ -11,15 +11,50 @@ import {
   ungroupSelectedParts,
 } from '@/modules/create/actions/ungroup-selected-parts';
 import {
+  getGroupModelsAvailability,
+  groupSelectedModels,
+} from '@/modules/viewport/actions/group-selected-models';
+import {
+  getUngroupModelsAvailability,
+  ungroupSelectedModels,
+} from '@/modules/viewport/actions/ungroup-selected-models';
+import {
   $selectionContextMenu,
   closeSelectionContextMenu,
 } from '@/modules/viewport/stores/selection-context-menu-store';
+import { $modelGroups } from '@/modules/viewport/stores/model-group-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
 
 function buildMenuItems(): ActionMenuItem[] {
+  const { kind } = $selection.get();
+
+  if (kind === 'models') {
+    const groupModels = getGroupModelsAvailability();
+    const ungroupModels = getUngroupModelsAvailability();
+    return [
+      {
+        id: 'group',
+        label: 'Group',
+        disabled: !groupModels.enabled,
+        title: groupModels.reason,
+        onSelect: () => {
+          groupSelectedModels();
+        },
+      },
+      {
+        id: 'ungroup',
+        label: 'Ungroup',
+        disabled: !ungroupModels.enabled,
+        title: ungroupModels.reason,
+        onSelect: () => {
+          ungroupSelectedModels();
+        },
+      },
+    ];
+  }
+
   const groupParts = getGroupPartsAvailability();
   const ungroupParts = getUngroupPartsAvailability();
-
   return [
     {
       id: 'group',
@@ -45,8 +80,8 @@ function buildMenuItems(): ActionMenuItem[] {
 /** Portal host for the selection context menu (mount once — e.g. EditorToolbar). */
 export function SelectionContextMenu() {
   const menu = useStore($selectionContextMenu);
-  // Re-render when selection changes so enablement stays current while open.
   useStore($selection, { keys: ['kind', 'object', 'objects', 'modelIds'] });
+  useStore($modelGroups, { keys: ['groups'] });
   const onClose = useCallback(() => {
     closeSelectionContextMenu();
   }, []);

@@ -21,10 +21,10 @@
    - Row highlight: model rows use `$selection.modelIds` when `kind === 'models'` (anchor = last id, stronger fill); else focus. Part rows use `$selection.objects` (active = `$selection.object`, stronger fill).
    - Viewport: `SelectionHighlight` draws a wireframe marker per selected part/bone, or an AABB per selected model root; name overlay shows active name `(+N)` or model count.
 3. **Context menu:** `PointerActionMenu` (ActionMenu-style portal) at pointer via `$selectionContextMenu`. Hosted once in `EditorToolbar`. Opens from library model/part rows and viewport canvas right-click (click without drag — drag keeps orbit/pan). Dismiss on outside pointerdown / Escape. Group / Ungroup items stubbed disabled until following tasks.
-4. **Group (parts):** `groupSelectedParts` — non-active selected create parts parent under the **active** (last-clicked) part on the same created model via `groupPartsUnder` / `parentPart` (`Object3D.attach`); cycle guard; world preserve. Context menu **Group** enabled when ≥2 valid parts can move.
-5. **Ungroup (parts):** `ungroupSelectedParts` — selected create parts → parts root via `ungroupPartsToRoot` / `unparentPart`; world preserved. Context menu **Ungroup** enabled when any selected part is nested.
-6. **Group (models):** record a session **model group** (library tree + shared transform root or explicit group id). Do not mix models and parts in one Group action.
-7. **Ungroup (models):** dissolve group membership; models become independent again.
+4. **Group (parts):** create a stamped empty `Group` (`group`, `group_2`, …) under the parts root; **attach all** selected create parts/groups under it (world-preserving). Select the new group. Not “parent under active mesh.”
+5. **Ungroup (parts):** if selection includes empty group(s), dissolve them (children → former parent / parts root, remove group); else lift nested parts to parts root.
+6. **Group (models):** create a named session **model group** in `$modelGroups`; selected models become members (library tree shows `group` → models). Same empty-container pattern as parts. Do not mix models and parts in one Group action.
+7. **Ungroup (models):** dissolve group membership for the selection (empty groups removed).
 
 ### Export (replaces US-22 Merge toggle)
 

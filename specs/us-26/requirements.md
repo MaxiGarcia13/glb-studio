@@ -14,9 +14,9 @@ As an editor user, I can group parts (and models) with a familiar multi-select +
 
 ### Parts / outliner
 
-- [ ] Created-model parts can be **grouped** (parented) so moving the parent in Edit moves children (normal Object3D hierarchy)
-- [ ] **Unroup / unparent** is available so users can fix mistakes (world transform preserved)
-- [ ] A simple **part outliner** lists mesh part names for created models; clicking a row selects that part; parents can collapse/expand
+- [ ] Created-model parts can be **grouped** into an empty group node so moving the group in Edit moves children (normal Object3D hierarchy)
+- [ ] **Ungroup / unparent** is available so users can fix mistakes (world transform preserved; Ungroup dissolves empty groups)
+- [ ] A simple **part outliner** lists mesh part names and group nodes for created models; clicking a row selects that node; parents can collapse/expand
 - [ ] Outliner updates when parts are added, duplicated, deleted, renamed, or regrouped
 - [ ] Imported models are unchanged for **bone** outliners (no skeleton-bone outliner in this US)
 
@@ -25,7 +25,7 @@ As an editor user, I can group parts (and models) with a familiar multi-select +
 - [ ] **Shift+click** adds/removes from a multi-selection in the **library sidebar** (model rows and part outliner) and in the **viewport preview**
 - [ ] Part multi-select and model multi-select do **not** mix in one selection
 - [ ] **Right-click** opens an ActionMenu-style panel with **Group** / **Ungroup** when the selection allows it (library and preview)
-- [ ] Group target: last-clicked (active) item is the parent / group anchor (or equivalent explicit rule documented in design)
+- [ ] Group target: Group creates a new empty **group** node; all selected items become its children (parts: `Object3D` empty in the scene; models: named session group in the library tree). Last-clicked is not used as the parent mesh/model.
 - [ ] Settings-sidebar **Parent** `<select>` is removed (grouping is context-menu only); create-toolbar Unparent may remain or move into the menu
 
 ### Models + export
