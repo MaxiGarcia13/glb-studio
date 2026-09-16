@@ -19,7 +19,7 @@
 
 - [x] **Content router** — Per file: skinned+skeleton → model; animations-only → shared; else error; batch continues
 - [x] **Remove dual Import buttons** — Drop Models “Load models” and Shared “Import animations”
-- [ ] **Keep model Add animation** — Modal Create / Import / Add existing still owned-scoped
+- [x] **Keep model Add animation** — Modal Create / Import / Add existing still owned-scoped
 
 ## Verify
 
