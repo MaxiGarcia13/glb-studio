@@ -3,6 +3,7 @@ export {
   clearActiveClip,
   cloneClipAs,
   importClipFiles,
+  importClipResults,
   importClipsFromAnimations,
   MAX_BLEND_WEIGHT,
   MAX_TIME_SCALE,

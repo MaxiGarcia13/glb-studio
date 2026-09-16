@@ -1,4 +1,4 @@
-import type { ModelEntry, ModelLibraryPhase, ModelLibraryState } from '../types/model';
+import type { ModelEntry, ModelLibraryPhase, ModelLibraryState, ModelLoadResult } from '../types/model';
 
 import { computed, map } from 'nanostores';
 import {
@@ -41,30 +41,46 @@ export async function importModelFiles(files: File[]): Promise<void> {
   $model.setKey('phase', 'loading');
   $model.setKey('error', null);
 
-  const loadedEntries: ModelEntry[] = [];
+  const results: ModelLoadResult[] = [];
   const failures: string[] = [];
 
   for (const file of files) {
     try {
-      const result = await loadModelFromFile(file);
-      const entry: ModelEntry = {
-        id: createEntryId(),
-        fileName: result.fileName,
-        blobUrl: result.blobUrl,
-        scene: result.scene,
-        source: 'imported',
-      };
-      loadedEntries.push(entry);
-      importClipsFromAnimations(
-        result.animations,
-        result.scene,
-        result.fileName,
-        entry.id,
-      );
+      results.push(await loadModelFromFile(file));
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to load model';
       failures.push(`${file.name}: ${message}`);
     }
+  }
+
+  importModelResults(results, failures);
+}
+
+/** Commit already-parsed model results (used by the content router). */
+export function importModelResults(
+  results: ModelLoadResult[],
+  failures: string[] = [],
+): void {
+  $model.setKey('phase', 'loading');
+  $model.setKey('error', null);
+
+  const loadedEntries: ModelEntry[] = [];
+
+  for (const result of results) {
+    const entry: ModelEntry = {
+      id: createEntryId(),
+      fileName: result.fileName,
+      blobUrl: result.blobUrl,
+      scene: result.scene,
+      source: 'imported',
+    };
+    loadedEntries.push(entry);
+    importClipsFromAnimations(
+      result.animations,
+      result.scene,
+      result.fileName,
+      entry.id,
+    );
   }
 
   const current = $model.get();

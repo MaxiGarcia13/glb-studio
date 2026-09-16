@@ -17,7 +17,7 @@
 
 ## Smart Import
 
-- [ ] **Content router** — Per file: skinned+skeleton → model; animations-only → shared; else error; batch continues
+- [x] **Content router** — Per file: skinned+skeleton → model; animations-only → shared; else error; batch continues
 - [ ] **Remove dual Import buttons** — Drop Models “Load models” and Shared “Import animations”
 - [ ] **Keep model Add animation** — Modal Create / Import / Add existing still owned-scoped
 

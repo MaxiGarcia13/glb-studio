@@ -7,11 +7,12 @@ import { AnimationIcon } from '@/components/icons/animation-icon';
 import { DownloadIcon } from '@/components/icons/download-icon';
 import { ManIcon } from '@/components/icons/man-icon';
 import { UploadIcon } from '@/components/icons/upload-icon';
-import { startNewAnimation } from '@/modules/animation/stores/clip-store';
+import { importClipResults, startNewAnimation } from '@/modules/animation/stores/clip-store';
 import { createEmptyModel } from '@/modules/create/actions/create-empty-model';
 import { ExportModal, useExportZip } from '@/modules/export';
+import { routeContentImport } from '@/modules/import/adapters/content-router';
 import { useActiveModel } from '@/modules/viewport/hooks/use-active-model';
-import { $model, importModelFiles } from '@/modules/viewport/stores/model-store';
+import { $model, importModelResults } from '@/modules/viewport/stores/model-store';
 import { WorldAxesControls } from './world-axes-controls';
 
 type OpenMenu = 'file' | 'settings' | null;
@@ -27,7 +28,15 @@ export function EditorToolbar() {
   const { open: openImport, fileInput } = useGltfFilePicker({
     multiple: true,
     onFiles: (files) => {
-      void importModelFiles(files);
+      void (async () => {
+        const { models, sharedClips, errors } = await routeContentImport(files);
+        if (models.length > 0 || errors.length > 0) {
+          importModelResults(models, errors);
+        }
+        if (sharedClips.length > 0) {
+          importClipResults(sharedClips, null);
+        }
+      })();
     },
   });
 
