@@ -1,40 +1,35 @@
+import type { Mesh } from 'three';
 import type { TransformAxis } from '@/modules/viewport/stores/transform-readout-store';
 import { useStore } from '@nanostores/react';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/input/input';
 import { Text } from '@/components/text';
-import { getRestRootScale } from '@/modules/animation/domain/rest-pose';
-import { $activeModel } from '@/modules/viewport/stores/model-store';
 import {
-  $settingsFocus,
   $transformReadout,
-  applyTransformPositionAxis,
-  applyTransformRotationAxis,
-  applyTransformScalePercentAxis,
+  applySelectionPositionAxis,
+  applySelectionRotationAxis,
+  applySelectionScalePercentAxis,
 } from '@/modules/viewport/stores/transform-readout-store';
 
 type AxisDraft = Record<TransformAxis, string>;
 
 const EMPTY_DRAFT: AxisDraft = { x: '', y: '', z: '' };
 const AXES: TransformAxis[] = ['x', 'y', 'z'];
-const UNIT_REST = { x: 1, y: 1, z: 1 } as const;
 
 function formatFixed(value: number, digits: number): string {
   return value.toFixed(digits);
 }
 
-/** Current scale as percent of rest (`100` = rest scale on that axis). */
-function scaleToRestPercent(current: number, rest: number): number {
-  if (!(rest > 0)) {
-    return 100;
-  }
-  return (current / rest) * 100;
+function scaleToPercent(current: number): number {
+  return current * 100;
 }
 
-export function TransformReadout() {
+/**
+ * Live position / rotation / scale fields for a selected created part.
+ * Reads `$transformReadout` (driver-bound to the part) and writes via selection apply helpers.
+ */
+export function PartTransformFields({ mesh }: { mesh: Mesh }) {
   const value = useStore($transformReadout);
-  const activeModel = useStore($activeModel);
-  const focus = useStore($settingsFocus);
   const [positionDraft, setPositionDraft] = useState<AxisDraft>(EMPTY_DRAFT);
   const [rotationDraft, setRotationDraft] = useState<AxisDraft>(EMPTY_DRAFT);
   const [scaleDraft, setScaleDraft] = useState<AxisDraft>(EMPTY_DRAFT);
@@ -43,22 +38,9 @@ export function TransformReadout() {
   const [focusedScale, setFocusedScale] = useState<TransformAxis | null>(null);
 
   const enabled = value !== null;
-  const scene = activeModel?.scene ?? null;
-  // Groups use unit rest (100% = scale 1); model root uses bind / load rest.
-  const restScale = focus.kind === 'group'
-    ? UNIT_REST
-    : scene
-      ? getRestRootScale(scene)
-      : null;
-  const restScaleX = restScale?.x ?? null;
-  const restScaleY = restScale?.y ?? null;
-  const restScaleZ = restScale?.z ?? null;
-  const scaleHint = focus.kind === 'group'
-    ? 'Scale · 100% = unit size'
-    : 'Scale · 100% = rest size';
 
   useEffect(() => {
-    if (!value || restScaleX === null || restScaleY === null || restScaleZ === null) {
+    if (!value) {
       if (!focusedPosition) {
         setPositionDraft(EMPTY_DRAFT);
       }
@@ -81,25 +63,11 @@ export function TransformReadout() {
       z: focusedRotation === 'z' ? current.z : formatFixed(value.rotationZ, 1),
     }));
     setScaleDraft((current) => ({
-      x: focusedScale === 'x'
-        ? current.x
-        : formatFixed(scaleToRestPercent(value.scaleX, restScaleX), 1),
-      y: focusedScale === 'y'
-        ? current.y
-        : formatFixed(scaleToRestPercent(value.scaleY, restScaleY), 1),
-      z: focusedScale === 'z'
-        ? current.z
-        : formatFixed(scaleToRestPercent(value.scaleZ, restScaleZ), 1),
+      x: focusedScale === 'x' ? current.x : formatFixed(scaleToPercent(value.scaleX), 1),
+      y: focusedScale === 'y' ? current.y : formatFixed(scaleToPercent(value.scaleY), 1),
+      z: focusedScale === 'z' ? current.z : formatFixed(scaleToPercent(value.scaleZ), 1),
     }));
-  }, [
-    value,
-    restScaleX,
-    restScaleY,
-    restScaleZ,
-    focusedPosition,
-    focusedRotation,
-    focusedScale,
-  ]);
+  }, [value, focusedPosition, focusedRotation, focusedScale]);
 
   const handlePositionChange = (axis: TransformAxis, next: string) => {
     setPositionDraft((current) => ({ ...current, [axis]: next }));
@@ -108,7 +76,7 @@ export function TransformReadout() {
     }
     const parsed = Number(next);
     if (Number.isFinite(parsed)) {
-      applyTransformPositionAxis(axis, parsed);
+      applySelectionPositionAxis(mesh, axis, parsed);
     }
   };
 
@@ -129,7 +97,7 @@ export function TransformReadout() {
     }
     const parsed = Number(next);
     if (Number.isFinite(parsed)) {
-      applyTransformRotationAxis(axis, parsed);
+      applySelectionRotationAxis(mesh, axis, parsed);
     }
   };
 
@@ -151,7 +119,7 @@ export function TransformReadout() {
     }
     const parsed = Number(next);
     if (Number.isFinite(parsed)) {
-      applyTransformScalePercentAxis(axis, parsed);
+      applySelectionScalePercentAxis(mesh, axis, parsed);
     }
   };
 
@@ -162,16 +130,10 @@ export function TransformReadout() {
       setScaleDraft(EMPTY_DRAFT);
       return;
     }
-    const rest = focus.kind === 'group'
-      ? UNIT_REST
-      : (() => {
-          const root = $activeModel.get()?.scene ?? null;
-          return root ? getRestRootScale(root) : UNIT_REST;
-        })();
     const key = axis === 'x' ? 'scaleX' : axis === 'y' ? 'scaleY' : 'scaleZ';
     setScaleDraft((prev) => ({
       ...prev,
-      [axis]: formatFixed(scaleToRestPercent(current[key], rest[axis]), 1),
+      [axis]: formatFixed(scaleToPercent(current[key]), 1),
     }));
   };
 
@@ -179,11 +141,10 @@ export function TransformReadout() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Text variant="muted">Position</Text>
-
         <div className="flex gap-2">
           {AXES.map((axis) => (
             <Input
-              key={`pos-${axis}`}
+              key={`part-pos-${axis}`}
               label={`${axis.toUpperCase()} (m)`}
               type="number"
               step={0.01}
@@ -200,11 +161,10 @@ export function TransformReadout() {
 
       <div className="flex flex-col gap-2">
         <Text variant="muted">Rotation</Text>
-
         <div className="flex gap-2">
           {AXES.map((axis) => (
             <Input
-              key={`rot-${axis}`}
+              key={`part-rot-${axis}`}
               label={`${axis.toUpperCase()} (°)`}
               type="number"
               step={1}
@@ -222,12 +182,11 @@ export function TransformReadout() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Text variant="muted">{scaleHint}</Text>
-
+        <Text variant="muted">Scale · 100% = unit size</Text>
         <div className="flex gap-2">
           {AXES.map((axis) => (
             <Input
-              key={`scale-${axis}`}
+              key={`part-scale-${axis}`}
               label={`${axis.toUpperCase()} (%)`}
               type="number"
               step={1}

@@ -16,6 +16,7 @@ import {
 import { readCreatePart } from '../domain/part-data';
 import { setPartSizeParam } from '../domain/part-kind';
 import { useSelectedCreatedPart } from '../hooks/use-selected-created-part';
+import { PartTransformFields } from './part-transform-fields';
 
 function formatSize(value: number, integer?: boolean): string {
   if (!Number.isFinite(value)) {
@@ -127,6 +128,8 @@ export function PartInspector() {
         {' '}
         {part.kind.label}
       </Text>
+
+      <PartTransformFields mesh={part.mesh} />
 
       <div className="flex flex-col gap-2">
         <Text variant="muted">Size</Text>

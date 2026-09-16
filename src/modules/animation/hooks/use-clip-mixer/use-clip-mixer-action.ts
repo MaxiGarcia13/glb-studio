@@ -9,13 +9,21 @@ import { setActiveAction } from '@/modules/animation/utils/mixer-session';
 import { toTimelineTime } from '@/modules/animation/utils/to-timeline-time';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import { $poseDirty, $poseEditKind } from '@/modules/viewport/stores/pose-edit-store';
-import { syncTransformReadout } from '@/modules/viewport/stores/transform-readout-store';
+import {
+  $settingsFocus,
+  syncTransformReadout,
+} from '@/modules/viewport/stores/transform-readout-store';
 import { applyLoopMode } from './apply-loop-mode';
 
 function syncReadoutIfFocused(modelId: string, scene: Group): void {
-  if ($activeModel.get()?.id === modelId) {
-    syncTransformReadout(scene);
+  if ($activeModel.get()?.id !== modelId) {
+    return;
   }
+  // Only overwrite when Settings Model binds the scene root (not a group/part).
+  if ($settingsFocus.get().kind !== 'idle') {
+    return;
+  }
+  syncTransformReadout(scene);
 }
 
 export function useClipMixerAction(

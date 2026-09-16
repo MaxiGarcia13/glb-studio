@@ -28,11 +28,11 @@ export function SaveKeyframeButton({ className }: SaveKeyframeButtonProps) {
 
   const drivingClipId = activeModel
     ? resolveActiveClipIdForModel(
-        clips,
-        activeModel.id,
-        activeClipByModelId,
-        activeSharedClipId,
-      ) ?? activeClipId
+      clips,
+      activeModel.id,
+      activeClipByModelId,
+      activeSharedClipId,
+    ) ?? activeClipId
     : activeClipId;
   const drivingClip = drivingClipId
     ? clips.find((entry) => entry.id === drivingClipId)

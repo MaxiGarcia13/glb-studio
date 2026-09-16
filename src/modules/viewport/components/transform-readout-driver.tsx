@@ -1,18 +1,22 @@
+import { useStore } from '@nanostores/react';
 import { useFrame } from '@react-three/fiber';
 import { radiansToDegrees } from '../domain/euler-degrees';
-import { useActiveModel } from '../hooks/use-active-model';
-import { $transformReadout, syncTransformReadout } from '../stores/transform-readout-store';
+import {
+  $settingsTransformTarget,
+  $transformReadout,
+  syncTransformReadout,
+} from '../stores/transform-readout-store';
 
 const POSITION_PRECISION = 3;
 const ROTATION_PRECISION = 1;
 const SCALE_PRECISION = 3;
 
-/** Push active model root TRS into `$transformReadout` each frame. */
+/** Push Settings transform target TRS into `$transformReadout` each frame. */
 export function TransformReadoutDriver() {
-  const { scene } = useActiveModel();
+  const target = useStore($settingsTransformTarget);
 
   useFrame(() => {
-    if (!scene) {
+    if (!target) {
       if ($transformReadout.get() !== null) {
         syncTransformReadout(null);
       }
@@ -22,17 +26,17 @@ export function TransformReadoutDriver() {
     const posFactor = 10 ** POSITION_PRECISION;
     const rotFactor = 10 ** ROTATION_PRECISION;
     const scaleFactor = 10 ** SCALE_PRECISION;
-    scene.rotation.setFromQuaternion(scene.quaternion, 'XYZ');
+    target.rotation.setFromQuaternion(target.quaternion, 'XYZ');
     const next = {
-      x: Math.round(scene.position.x * posFactor) / posFactor,
-      y: Math.round(scene.position.y * posFactor) / posFactor,
-      z: Math.round(scene.position.z * posFactor) / posFactor,
-      rotationX: Math.round(radiansToDegrees(scene.rotation.x) * rotFactor) / rotFactor,
-      rotationY: Math.round(radiansToDegrees(scene.rotation.y) * rotFactor) / rotFactor,
-      rotationZ: Math.round(radiansToDegrees(scene.rotation.z) * rotFactor) / rotFactor,
-      scaleX: Math.round(scene.scale.x * scaleFactor) / scaleFactor,
-      scaleY: Math.round(scene.scale.y * scaleFactor) / scaleFactor,
-      scaleZ: Math.round(scene.scale.z * scaleFactor) / scaleFactor,
+      x: Math.round(target.position.x * posFactor) / posFactor,
+      y: Math.round(target.position.y * posFactor) / posFactor,
+      z: Math.round(target.position.z * posFactor) / posFactor,
+      rotationX: Math.round(radiansToDegrees(target.rotation.x) * rotFactor) / rotFactor,
+      rotationY: Math.round(radiansToDegrees(target.rotation.y) * rotFactor) / rotFactor,
+      rotationZ: Math.round(radiansToDegrees(target.rotation.z) * rotFactor) / rotFactor,
+      scaleX: Math.round(target.scale.x * scaleFactor) / scaleFactor,
+      scaleY: Math.round(target.scale.y * scaleFactor) / scaleFactor,
+      scaleZ: Math.round(target.scale.z * scaleFactor) / scaleFactor,
     };
     const current = $transformReadout.get();
     if (
