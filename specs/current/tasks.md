@@ -132,6 +132,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Auto-Restore on tool switch and selection change while dirty
 - [x] Settings General: editable model-root X / Y / Z (clip-scoped when a clip is active)
 - [x] Active Clip **T-pose** option restores rest / bind pose
+- [x] **Navigate** tool (`ArrowsHorizontalIcon`, first button): hand-tool pan travel; no gizmo / pick; default remains Edit
 
 ## US-7 — Multi-clip blending
 

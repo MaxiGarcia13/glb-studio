@@ -2,7 +2,7 @@ import { atom } from 'nanostores';
 import { restorePose } from '@/modules/animation/stores/clip-store';
 import { $poseDirty } from './pose-edit-store';
 
-export type EditTool = 'edit' | 'move';
+export type EditTool = 'navigate' | 'edit' | 'move';
 
 export const $editTool = atom<EditTool>('edit');
 

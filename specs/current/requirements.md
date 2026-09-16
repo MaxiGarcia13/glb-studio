@@ -204,11 +204,12 @@ As an editor user, when I retarget a Mixamo-style clip whose source GLB has an a
 
 ### US-15 — Edit / Move tools + bind-pose save
 
-As an editor user, I can choose Edit or Move in the preview, pose bones/meshes or place the whole model on world X/Y/Z with or without an animation, and Save or Restore to confirm or discard.
+As an editor user, I can choose Navigate, Edit, or Move in the preview — orbit freely, pose bones/meshes, or place the whole model on world X/Y/Z with or without an animation — and Save or Restore to confirm or discard.
 
 **Acceptance**
 
-- [x] When a model is loaded, preview chrome shows mutually exclusive **Edit** (`CursorIcon`) and **Move** (`MoveIcon`) tool toggles
+- [x] When a model is loaded, preview chrome shows mutually exclusive **Navigate** (`ArrowsHorizontalIcon`), **Edit** (`CursorIcon`), and **Move** (`MoveIcon`) tool toggles in that order; default tool is **Edit**
+- [x] **Navigate:** OrbitControls only with hand-tool mapping (primary drag **pans** through the world; secondary drag orbits; scroll zooms); no TransformControls; raycast does not select or focus; W / E / R toolbar is hidden
 - [x] **Edit:** raycast selects a bone or mesh; TransformControls support translate / rotate / scale (existing W / E / R toolbar when selected); works with **no** imported / active clip
 - [x] **Move:** TransformControls translate the active model root on **world X / Y / Z** only; W / E / R toolbar is hidden; raycast does not switch selection away from the root
 - [x] After a gizmo edit (either tool), **Save** and **Restore** appear in the preview until the user confirms or discards
@@ -219,7 +220,7 @@ As an editor user, I can choose Edit or Move in the preview, pose bones/meshes o
 - [x] **Selecting a clip** applies that clip’s stored root position **for the playing model** (or the rest root when unset) and shows the clip at **t=0**; clearing the clip restores the rest / bind root via T-pose
 - [x] **Settings / Move root edit with an active clip:** preview samples the clip at t=0 under the edited root (pending Save) so the animation start pose matches the root — only the focused model’s scene is moved
 - [x] **Restore:** discards the unsaved gizmo edit (with an active clip in Edit mode, re-applies the clip at the playhead; otherwise restores the pre-edit TRS snapshot)
-- [x] Switching Edit ↔ Move while dirty auto-Restores, then switches tools
+- [x] Switching Navigate ↔ Edit ↔ Move while dirty auto-Restores, then switches tools
 - [x] Changing selection (pick another bone/mesh or clear) while dirty auto-Restores the pending edit on the previous object, then updates selection — preview TRS matches the discarded edit
 - [x] Settings sidebar (`EditorSettingsSidebar` General) shows live **editable X / Y / Z** fields for the **model root position**, available whenever a model is loaded — **independent of Edit / Move tool**. Committing a number updates `scene.position`, marks dirty as a model-root edit, and uses the same Save / Restore path as Move-mode gizmo edits. With an active clip, Save scopes that position to the clip; without a clip, Save updates the model rest root. (Bone/mesh local position is edited via the Edit gizmo, not these fields.)
 - [x] Clicking the selected Animations list row (or otherwise clearing the active clip) restores the model’s current bind / rest pose in the preview so Edit-without-clip works without leaving an animation frozen on the last frame

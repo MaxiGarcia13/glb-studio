@@ -59,7 +59,12 @@ export function useRaycastSelection(): void {
       const picked = pickObjectAcrossRoots(previewScenes, camera, pointer, viewport);
       const owner = picked ? findModelEntryForObject(picked, models) : null;
 
-      if ($editTool.get() === 'move') {
+      const editTool = $editTool.get();
+      if (editTool === 'navigate') {
+        return;
+      }
+
+      if (editTool === 'move') {
         if (owner) {
           focusModel(owner.id);
         }

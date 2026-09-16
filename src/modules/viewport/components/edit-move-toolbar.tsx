@@ -1,14 +1,17 @@
 import type { EditTool } from '../stores/edit-tool-store';
+import type { IconProps } from '@/components/icons/type';
 import { cn } from '@maxigarcia/js-utils';
 import { useStore } from '@nanostores/react';
 import { Button } from '@/components/button';
 import { FloatingToolbar } from '@/components/floating-toolbar';
 import { CursorIcon } from '@/components/icons/cursor-icon';
+import { ArrowsHorizontalIcon } from '@/components/icons/arrows-horizontal-icon';
 import { MoveIcon } from '@/components/icons/move-icon';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { $editTool, setEditTool } from '../stores/edit-tool-store';
 
-const TOOLS: { tool: EditTool; label: string; Icon: typeof CursorIcon }[] = [
+const TOOLS: { tool: EditTool; label: string; Icon: (props: IconProps) => React.ReactNode }[] = [
+  { tool: 'navigate', label: 'Navigate', Icon: ArrowsHorizontalIcon },
   { tool: 'edit', label: 'Edit', Icon: CursorIcon },
   { tool: 'move', label: 'Move', Icon: MoveIcon },
 ];
@@ -26,7 +29,7 @@ export function EditMoveToolbar({ className }: EditMoveToolbarProps) {
   }
 
   return (
-    <FloatingToolbar aria-label="Edit / Move" className={cn(className)}>
+    <FloatingToolbar aria-label="Navigate / Edit / Move" className={cn(className)}>
       {TOOLS.map(({ tool: nextTool, label, Icon }) => {
         const active = tool === nextTool;
         return (

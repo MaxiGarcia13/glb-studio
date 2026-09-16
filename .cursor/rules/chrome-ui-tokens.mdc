@@ -53,7 +53,7 @@ Prefer defaults on shared primitives (`Button` `p-2`, aside/modal `p-4`) over on
 
 ## Floating toolbars
 
-Viewport overlay chrome (Edit/Move, transform modes, create tools, aside open chips, Save/Restore) uses `FloatingToolbar` from `src/components/floating-toolbar/`:
+Viewport overlay chrome (Navigate/Edit/Move, transform modes, create tools, aside open chips, Save/Restore) uses `FloatingToolbar` from `src/components/floating-toolbar/`:
 
 - Shell: opaque `bg-surface`, `p-2`, `gap-2` (via `floatingToolbarClassName`)
 - Controls: shared `Button` (`ghost` / `primary`) — icon-only; put the name in `aria-label` + `title`
@@ -66,8 +66,8 @@ Viewport overlay chrome (Edit/Move, transform modes, create tools, aside open ch
 </div>
 
 // ✅ GOOD
-<FloatingToolbar aria-label="Edit / Move">
-  <Button variant="ghost" aria-label="Edit" title="Edit"><CursorIcon /></Button>
+<FloatingToolbar aria-label="Navigate / Edit / Move">
+  <Button variant="ghost" aria-label="Navigate" title="Navigate"><ArrowsHorizontalIcon /></Button>
 </FloatingToolbar>
 ```
 

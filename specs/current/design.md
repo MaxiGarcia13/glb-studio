@@ -159,23 +159,24 @@ Bind-pose / Move / T-pose Save–Restore branching: see **Edit / Move tools & bi
 
 ## Edit / Move tools & bind pose (US-15)
 
-1. **`$editTool`** (`'edit' | 'move'`, default `'edit'`) — toggle in `EditorPreview` with `CursorIcon` / `MoveIcon` when a model is loaded
-2. **Edit** — raycast selection + TransformControls in local space; W / E / R when something is selected; works with **no** active clip (T-pose)
-3. **Move** — attach TransformControls to the active model root in **world** space; mode from `$transformMode` (translate / rotate / scale); show W / E / R toolbar while Move is active; ignore raycast picks so the user stays on the root
-4. **Dirty + snapshot** — on first gizmo / Settings root change, mark `$poseDirty`, set `$poseEditKind` (`modelRoot` | `selection`), snapshot pre-edit local TRS
-5. **Save** (by `$poseEditKind`, not active tool)
+1. **`$editTool`** (`'navigate' | 'edit' | 'move'`, default `'edit'`) — toolbar in `EditorPreview` when a model is loaded; button order **Navigate** (`ArrowsHorizontalIcon`) → **Edit** (`CursorIcon`) → **Move** (`MoveIcon`)
+2. **Navigate** — free camera travel via `OrbitControls` with **hand-tool** mapping (LMB / one-finger **pan**, RMB orbit, scroll / pinch zoom); no TransformControls; no raycast selection or model focus from picks; W / E / R toolbar hidden. Edit / Move keep orbit-first mapping (LMB rotate, RMB pan)
+3. **Edit** — raycast selection + TransformControls in local space; W / E / R when something is selected; works with **no** active clip (T-pose)
+4. **Move** — attach TransformControls to the active model root in **world** space; mode from `$transformMode` (translate / rotate / scale); show W / E / R toolbar while Move is active; ignore raycast picks so the user stays on the root
+5. **Dirty + snapshot** — on first gizmo / Settings root change, mark `$poseDirty`, set `$poseEditKind` (`modelRoot` | `selection`), snapshot pre-edit local TRS
+6. **Save** (by `$poseEditKind`, not active tool)
    - `selection` on a **created** model part → keep Object3D TRS; refresh rest-pose snapshot; **never** write keyframes or rebase library clips (even if a shared clip is selected)
    - `selection` + active ready clip → US-4 Hold Pose to End
    - `selection` + no ready clip → keep Object3D TRS; rebase that node’s tracks in every library `clip` / `sourceClip` by pre-edit → current delta; accumulate per `modelId` + node name for import / replace / post-retarget; refresh rest-pose snapshot; clear dirty
    - `modelRoot` + no ready/draft clip → keep `scene` TRS; refresh rest-pose snapshot; no keyframe write / no clip rebase
    - `modelRoot` + active ready/draft clip **on the focused model** → keep `scene` TRS; store position, Euler degrees, and scale on `rootPositionByModelId` / `rootRotationByModelId` / `rootScaleByModelId`; do **not** refresh the model rest-pose root; seek playhead to **t=0** so the clip starts under the saved root; no keyframe write / no clip rebase; other models are untouched
-6. **Restore** — `selection` + active clip → `restoreMixerPose`; otherwise write snapshot TRS back onto the object
-7. Tool switch or Settings/gizmo kind change while dirty → auto-Restore first. Selection change / clear while dirty → `restorePose()` before updating `$selection`
-8. **Settings General** — **Axes** (world axes toggle/size) and **Model** sections. Model hosts live editable root **position** (m), **rotation** (degrees, 0–360, Euler `XYZ`), and **scale** as **percent of rest / bind root size** (`100` = rest scale on that axis); independent of tool; same dirty / Save / Restore path as Move (clip-scoped when a clip is active on the focused model). With an active clip, edits sample the clip at t=0 so the start pose sits under the new root. Readout reflects the loaded scene root on import / focus (after load-time `hoistRootTransform` promotes single-child wrapper TRS onto `gltf.scene`)
-9. **Clip root transform** — `ClipEntry.rootPositionByModelId`, `rootRotationByModelId` (degrees), and `rootScaleByModelId` (session library metadata). Each model’s mixer applies only its own entries when that clip is playing; missing key restores that channel from the model’s rest-pose root. Selecting or saving a clip root always begins playback preview at t=0 on the focused model
-10. **T-pose** — `activeClipId: null` via clicking the selected Animations row again (or clear); applies captured rest / bind pose (snapshot at mixer mount; refreshed on bind-pose or model-root Save **without** an active clip). Skeleton sync does not auto-select a ready clip when already on T-pose
-11. **Bind-pose deltas** — per `modelId` + node name; cleared on model remove/replace. Position `p' = p + Δp`; quaternion `q' = Δq * q`; scale `s' = s * Δs`. Import / Replace / retarget apply accumulated overrides for the active model
-12. **Load hoist (US-21)** — `hoistRootTransform` after parse: while the scene has one child, compose non-identity child TRS into the scene (clear child) or peel identity-only wrappers via `attach`; stops at multi-child or geometry/bone nodes
+7. **Restore** — `selection` + active clip → `restoreMixerPose`; otherwise write snapshot TRS back onto the object
+8. Tool switch (including Navigate) or Settings/gizmo kind change while dirty → auto-Restore first. Selection change / clear while dirty → `restorePose()` before updating `$selection`
+9. **Settings General** — **Axes** (world axes toggle/size) and **Model** sections. Model hosts live editable root **position** (m), **rotation** (degrees, 0–360, Euler `XYZ`), and **scale** as **percent of rest / bind root size** (`100` = rest scale on that axis); independent of tool; same dirty / Save / Restore path as Move (clip-scoped when a clip is active on the focused model). With an active clip, edits sample the clip at t=0 so the start pose sits under the new root. Readout reflects the loaded scene root on import / focus (after load-time `hoistRootTransform` promotes single-child wrapper TRS onto `gltf.scene`)
+10. **Clip root transform** — `ClipEntry.rootPositionByModelId`, `rootRotationByModelId` (degrees), and `rootScaleByModelId` (session library metadata). Each model’s mixer applies only its own entries when that clip is playing; missing key restores that channel from the model’s rest-pose root. Selecting or saving a clip root always begins playback preview at t=0 on the focused model
+11. **T-pose** — `activeClipId: null` via clicking the selected Animations row again (or clear); applies captured rest / bind pose (snapshot at mixer mount; refreshed on bind-pose or model-root Save **without** an active clip). Skeleton sync does not auto-select a ready clip when already on T-pose
+12. **Bind-pose deltas** — per `modelId` + node name; cleared on model remove/replace. Position `p' = p + Δp`; quaternion `q' = Δq * q`; scale `s' = s * Δs`. Import / Replace / retarget apply accumulated overrides for the active model
+13. **Load hoist (US-21)** — `hoistRootTransform` after parse: while the scene has one child, compose non-identity child TRS into the scene (clear child) or peel identity-only wrappers via `attach`; stops at multi-child or geometry/bone nodes
 
 Out of scope: multi-model simultaneous transform; full undo stack (US-10).
 
@@ -207,9 +208,9 @@ Out of scope: multi-model simultaneous transform; full undo stack (US-10).
 - Full-bleed R3F `Canvas` with lights; orbit / pan / zoom via `OrbitControls`
 - World XYZ axes at the origin with metre rulers on +X/+Y (major `Nm`, minor `0.1` ticks; length from `$viewportSettings.axesSize`; toggle via Settings → General)
 - Dark infinite ground grid at `y = 0` (1 m cells, stronger section lines; `viewport/constants/ground-grid`) plus soft contact shadow under the model (`ContactShadows`)
-- Edit / Move tool toggle when a model is loaded; TransformControls for selection (Edit) or model root (Move); translate / rotate / scale via preview toolbar + W / E / R (default translate); Edit uses local space, Move uses world space; dragging pauses playback and suspends mixer bindings so tracks cannot overwrite the pose
+- Navigate / Edit / Move tool toggle when a model is loaded (Navigate first; default Edit); TransformControls for selection (Edit) or model root (Move); none in Navigate; translate / rotate / scale via preview toolbar + W / E / R (default translate); Edit uses local space, Move uses world space; dragging pauses playback and suspends mixer bindings so tracks cannot overwrite the pose
 - Collapsible sidebar docks beside the canvas (`editor-shell`); collapse/expand with labelled chevron controls
-- Preview chrome hosts playback + Edit/Move tools + transform mode toolbar (Edit + selection, or Move with a loaded model) + selection name overlay + dirty-only Save / Restore (not the settings sidebar)
+- Preview chrome hosts playback + Navigate/Edit/Move tools + transform mode toolbar (Edit + selection, or Move with a loaded model) + selection name overlay + dirty-only Save / Restore (not the settings sidebar)
 
 ## Chrome tokens (UI)
 

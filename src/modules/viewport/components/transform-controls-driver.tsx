@@ -42,7 +42,12 @@ export function TransformControlsDriver({ controlsRef }: TransformControlsDriver
   const gizmoRef = useRef<TransformControlsRef>(null);
 
   const isMove = editTool === 'move';
-  const gizmoObject = isMove ? scene : selected;
+  const gizmoObject
+    = editTool === 'navigate'
+      ? null
+      : isMove
+        ? scene
+        : selected;
   const gizmoMode = mode;
   const gizmoSpace = isMove ? 'world' : 'local';
 

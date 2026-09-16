@@ -32,7 +32,7 @@ export function Button({
       className={
         cn(
           'text-xs transition-colors rounded-sm p-2',
-          disabled ? 'opacity-50 cursor-not-allowed' : `cursor-pointer ${variants[variant]}`,
+          disabled ? 'text-fg-disabled cursor-not-allowed' : `cursor-pointer ${variants[variant]}`,
           className,
         )
       }
