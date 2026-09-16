@@ -2,6 +2,7 @@ import type { ExportZipOptions } from '../domain/zip-download';
 import { useStore } from '@nanostores/react';
 import { useState } from 'react';
 import { $clips } from '@/modules/animation/stores/clip-store';
+import { $createPartsRevision } from '@/modules/create/stores/create-parts-revision-store';
 import { $modelGroups } from '@/modules/viewport/stores/model-group-store';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { resolveExportUnits, downloadExportZip } from '../domain/zip-download';
@@ -14,13 +15,15 @@ export function useExportZip() {
   const { clips, activeClipByModelId, activeSharedClipId } = useStore($clips, {
     keys: ['clips', 'activeClipByModelId', 'activeSharedClipId'],
   });
+  useStore($createPartsRevision);
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const canExport = models.length > 0 || clips.some((entry) => entry.clip !== null);
   const exportUnits = resolveExportUnits(models, groups);
   const multiModelGroups = exportUnits.filter((unit) => unit.kind === 'group');
+  const canExport
+    = exportUnits.length > 0 || clips.some((entry) => entry.clip !== null);
 
   async function download(options: ExportZipOptions = {}): Promise<void> {
     setBusy(true);

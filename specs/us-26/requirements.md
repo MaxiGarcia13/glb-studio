@@ -33,6 +33,7 @@ As an editor user, I can group parts (and models) with a familiar multi-select +
 - [x] Users can **group / ungroup models** with the same Shift+click + right-click pattern
 - [x] **Export** (File → Export only) packs each **model group** as **one GLB** (same pack outcome as today’s merge: shared root, bone prefixes as needed, Scene bake path preserved or adapted)
 - [x] Ungrouped models still export as separate GLBs (US-5 default)
+- [x] **Created** models with **no stamped mesh parts** are omitted from the zip (not packed as empty GLBs)
 - [x] Export modal **Merge visible models** checkbox is **removed** — grouping in the editor is the opt-in for one-file export
 
 ## Out of scope

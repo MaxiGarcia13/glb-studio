@@ -50,7 +50,7 @@ export function importModelResults(
       fileName: result.fileName,
       blobUrl: result.blobUrl,
       scene: result.scene,
-      source: 'imported',
+      source: result.source,
     };
     loadedEntries.push(entry);
     importClipsFromAnimations(
@@ -245,6 +245,7 @@ export async function replaceModel(id: string, file: File): Promise<void> {
       fileName: result.fileName,
       blobUrl: result.blobUrl,
       scene: result.scene,
+      source: result.source,
     };
 
     $model.set({

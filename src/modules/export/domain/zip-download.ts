@@ -16,6 +16,7 @@ import {
   uniqueFileName,
 } from '../utils/file-name';
 import { packClipGlb } from './clip-glb';
+import { isExportableModel } from './exportable-model';
 import { packMergedModelsGlb } from './merged-glb';
 import { packModelGlb } from './model-glb';
 
@@ -41,14 +42,16 @@ interface ExportUnit {
 }
 
 /**
- * Each editor model group with ≥2 existing members → one merged unit;
- * leftover / ungrouped models → one unit each.
+ * Each editor model group with ≥2 exportable members → one merged unit;
+ * leftover / ungrouped exportable models → one unit each.
+ * Created models with no stamped mesh parts are omitted.
  */
 export function resolveExportUnits(
   models: readonly ModelEntry[],
   groups: readonly ModelGroup[],
 ): ExportUnit[] {
-  const byId = new Map(models.map((model) => [model.id, model]));
+  const exportable = models.filter(isExportableModel);
+  const byId = new Map(exportable.map((model) => [model.id, model]));
   const units: ExportUnit[] = [];
   const consumed = new Set<string>();
 
@@ -70,7 +73,7 @@ export function resolveExportUnits(
     }
   }
 
-  for (const model of models) {
+  for (const model of exportable) {
     if (!consumed.has(model.id)) {
       units.push({ kind: 'single', group: null, models: [model] });
     }
@@ -108,14 +111,16 @@ export async function downloadExportZip(
 
   const models = modelState.models;
 
-  if (models.length === 0 && clipState.clips.every((entry) => entry.clip === null)) {
-    throw new Error('Nothing to pack');
-  }
-
   const modelFileNames = options.modelFileNames ?? {};
   const groupFileNames = options.groupFileNames ?? {};
   const skeletonFallback = resolveSkeletonFallback(models, $activeModel.get());
   const units = resolveExportUnits(models, groups);
+  const hasSharedClips = sharedAnimationOnlyClips(clipState.clips).length > 0;
+
+  if (units.length === 0 && !hasSharedClips) {
+    throw new Error('Nothing to pack');
+  }
+
   const takenNames = new Set<string>();
   const entries: ZipEntry[] = [];
 

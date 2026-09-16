@@ -4,6 +4,10 @@ import { captureBindFrames } from '@/modules/animation/domain/bind-frame';
 import { captureBindLengths } from '@/modules/animation/domain/bone-registry';
 import { hoistRootTransform } from '@/modules/viewport/domain/hoist-root-transform';
 import { parseGltfFile } from '@/utils/glb-parse';
+import {
+  isUsableCreatedModelScene,
+  isUsableSkinnedModelScene,
+} from '../domain/model-scene-kind';
 import { ensureGltfFile } from '../services/ensure-gltf-file';
 
 export interface ContentRouterResult {
@@ -18,27 +22,12 @@ function stripExtension(name: string): string {
   return name.replace(NAME_EXTENSION_PATTERN, '');
 }
 
-function isUsableModelScene(scene: ModelLoadResult['scene']): boolean {
-  let hasSkinnedMesh = false;
-  let hasSkeleton = false;
-
-  scene.traverse((child) => {
-    const skinned = child as { isSkinnedMesh?: boolean; skeleton?: unknown };
-    if (skinned.isSkinnedMesh) {
-      hasSkinnedMesh = true;
-      if (skinned.skeleton) {
-        hasSkeleton = true;
-      }
-    }
-  });
-
-  return hasSkinnedMesh && hasSkeleton;
-}
-
 /**
- * Parse each file once and route by content: usable skinned model → model
- * library; animations only → shared clip library; otherwise a per-file error.
- * Batch continues past failed files.
+ * Parse each file once and route by content:
+ * skinned mesh + skeleton → imported model;
+ * mesh-only → created model (re-import of exported New models);
+ * animations only → shared clip library;
+ * otherwise a per-file error. Batch continues past failed files.
  */
 export async function routeContentImport(files: File[]): Promise<ContentRouterResult> {
   const models: ModelLoadResult[] = [];
@@ -52,13 +41,23 @@ export async function routeContentImport(files: File[]): Promise<ContentRouterRe
       const { gltf, blobUrl: parsedBlobUrl } = await parseGltfFile(gltfFile);
       blobUrl = parsedBlobUrl;
 
-      if (isUsableModelScene(gltf.scene)) {
+      if (isUsableSkinnedModelScene(gltf.scene)) {
         hoistRootTransform(gltf.scene);
         models.push({
           fileName: gltfFile.name,
           scene: gltf.scene,
           blobUrl,
           animations: gltf.animations ?? [],
+          source: 'imported',
+        });
+      } else if (isUsableCreatedModelScene(gltf.scene)) {
+        hoistRootTransform(gltf.scene);
+        models.push({
+          fileName: gltfFile.name,
+          scene: gltf.scene,
+          blobUrl,
+          animations: gltf.animations ?? [],
+          source: 'created',
         });
       } else if (gltf.animations && gltf.animations.length > 0) {
         sharedClips.push({

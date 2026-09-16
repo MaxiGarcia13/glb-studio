@@ -28,4 +28,6 @@ export interface ModelLoadResult {
   scene: THREE.Group;
   blobUrl: string;
   animations: THREE.AnimationClip[];
+  /** How the library should treat this load (skinned = imported, mesh-only = created). */
+  source: ModelSource;
 }

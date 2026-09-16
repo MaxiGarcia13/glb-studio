@@ -47,5 +47,6 @@ export async function loadModelFromFile(file: File): Promise<ModelLoadResult> {
     scene: gltf.scene,
     blobUrl,
     animations: gltf.animations ?? [],
+    source: 'imported',
   };
 }

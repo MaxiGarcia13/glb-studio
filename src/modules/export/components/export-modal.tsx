@@ -73,8 +73,6 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
     busy,
     error,
     setError,
-    models,
-    groups,
     exportUnits,
     multiModelGroups,
     clips,
@@ -100,14 +98,21 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
   useEffect(() => {
     if (open && !wasOpenRef.current) {
       const bakeModels = multiModelGroups.flatMap((unit) => unit.models);
+      const singleModels = exportUnits
+        .filter((unit) => unit.kind === 'single')
+        .flatMap((unit) => unit.models);
       setError(null);
       setZipBaseName('glb-export');
       setSceneClipName(DEFAULT_SCENE_CLIP_NAME);
-      setModelBaseNames(defaultModelNames(models));
-      setGroupBaseNames(defaultGroupNames(groups));
+      setModelBaseNames(defaultModelNames(singleModels));
+      setGroupBaseNames(
+        defaultGroupNames(
+          multiModelGroups.flatMap((unit) => (unit.group ? [unit.group] : [])),
+        ),
+      );
       setClipIdByModelId(
         defaultClipPicks(
-          bakeModels.length > 0 ? bakeModels : models,
+          bakeModels,
           clips,
           activeClipByModelId,
           activeSharedClipId,
@@ -117,8 +122,7 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
     wasOpenRef.current = open;
   }, [
     open,
-    models,
-    groups,
+    exportUnits,
     multiModelGroups,
     clips,
     activeClipByModelId,

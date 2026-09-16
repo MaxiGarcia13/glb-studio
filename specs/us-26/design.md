@@ -29,7 +29,7 @@
 ### Export (replaces US-22 Merge toggle)
 
 1. Export still opens **only** from File → Export / export button.
-2. When packing: each **model group** (≥2 members) → one GLB via `packMergedModelsGlb` (bone prefixes + optional Scene bake). Ungrouped models → one GLB each (`packModelGlb`).
+2. When packing: each **model group** (≥2 **exportable** members) → one GLB via `packMergedModelsGlb` (bone prefixes + optional Scene bake). Ungrouped models → one GLB each (`packModelGlb`). **Created** models with no stamped mesh parts are not exportable and are omitted from units (and from group membership for pack).
 3. **Merge visible models** checkbox and `mergeModels` removed — editor model groups are the opt-in for one-file export.
 4. Export modal shows Scene clip picks when any multi-model group exists; file-name fields cover zip, each group GLB, and each ungrouped model.
 
