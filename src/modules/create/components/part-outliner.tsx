@@ -11,6 +11,7 @@ import {
   selectObject,
   toggleObject,
 } from '@/modules/viewport/stores/selection-store';
+import { openContextMenuForPart } from '@/modules/viewport/actions/open-selection-context-menu';
 import { listCreatedPartEntries } from '../domain/list-created-parts';
 import { $createPartsRevision } from '../stores/create-parts-revision-store';
 
@@ -135,6 +136,9 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
                   return;
                 }
                 selectObject(mesh);
+              }}
+              onContextMenu={(event) => {
+                openContextMenuForPart(event, mesh, modelId);
               }}
             >
               <Text as="span" className="min-w-0 truncate text-current">

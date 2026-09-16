@@ -13,6 +13,7 @@ import { ExportModal, useExportZip } from '@/modules/export';
 import { routeContentImport } from '@/modules/import/adapters/content-router';
 import { useActiveModel } from '@/modules/viewport/hooks/use-active-model';
 import { $model, importModelResults } from '@/modules/viewport/stores/model-store';
+import { SelectionContextMenu } from './selection-context-menu';
 import { SnapControls } from './snap-controls';
 import { WorldAxesControls } from './world-axes-controls';
 
@@ -99,6 +100,7 @@ export function EditorToolbar() {
       </header>
 
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} />
+      <SelectionContextMenu />
     </div>
   );
 }

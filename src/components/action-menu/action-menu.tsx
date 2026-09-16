@@ -133,6 +133,7 @@ export function ActionMenu({
                 type="button"
                 role="menuitem"
                 disabled={item.disabled}
+                title={item.title ?? item.label}
                 className={cn(
                   'flex w-full items-center gap-2 px-2 py-2 text-left text-xs transition-colors',
                   item.disabled

@@ -12,6 +12,7 @@ interface LibraryModelTitleProps {
   /** Last-clicked anchor in a model multi-selection. */
   active?: boolean;
   onSelect?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onContextMenu?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export function LibraryModelTitle({
@@ -21,6 +22,7 @@ export function LibraryModelTitle({
   selected = false,
   active = false,
   onSelect,
+  onContextMenu,
 }: LibraryModelTitleProps) {
   if (!rename.editing) {
     return (
@@ -30,6 +32,10 @@ export function LibraryModelTitle({
           onClick={(event) => {
             event.stopPropagation();
             onSelect?.(event);
+          }}
+          onContextMenu={(event) => {
+            event.stopPropagation();
+            onContextMenu?.(event);
           }}
           className="flex-1 min-w-0 text-left cursor-pointer"
           aria-pressed={selected}

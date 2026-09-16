@@ -27,6 +27,7 @@ import {
   selectModelIds,
   toggleModelId,
 } from '@/modules/viewport/stores/selection-store';
+import { openContextMenuForModel } from '@/modules/viewport/actions/open-selection-context-menu';
 import { LibraryModelActions } from './library-model-actions';
 import { LibraryModelAddAnimationModal } from './library-model-add-animation-modal';
 import { LibraryModelTitle } from './library-model-title';
@@ -103,6 +104,9 @@ export function LibraryModel({ model }: LibraryModelProps) {
               if ($model.get().activeModelId === model.id) {
                 selectModelIds([model.id]);
               }
+            }}
+            onContextMenu={(event) => {
+              openContextMenuForModel(event, model.id);
             }}
           />
         )}

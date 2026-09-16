@@ -1,6 +1,11 @@
 import { useStore } from '@nanostores/react';
 import { useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
+import {
+  openContextMenuAtPointer,
+  openContextMenuForModel,
+  openContextMenuForPart,
+} from '../actions/open-selection-context-menu';
 import { PICK_DRAG_THRESHOLD_PX } from '../constants/selection';
 import { findModelEntryForObject } from '../domain/model-scene';
 import { pickObjectAcrossRoots } from '../domain/object-pick';
@@ -31,6 +36,11 @@ export function useRaycastSelection(): void {
     };
 
     const onPointerUp = (event: PointerEvent) => {
+      // Right button is reserved for orbit/pan + context menu (handled below).
+      if (event.button === 2) {
+        return;
+      }
+
       const distance = Math.hypot(event.clientX - dragOrigin.x, event.clientY - dragOrigin.y);
       if (distance > PICK_DRAG_THRESHOLD_PX) {
         return;
@@ -95,11 +105,60 @@ export function useRaycastSelection(): void {
       selectObject(picked);
     };
 
+    const onContextMenu = (event: MouseEvent) => {
+      // Always suppress the browser menu on the canvas.
+      event.preventDefault();
+
+      const distance = Math.hypot(event.clientX - dragOrigin.x, event.clientY - dragOrigin.y);
+      // Dragged RMB = orbit/pan; don't open the editor menu.
+      if (distance > PICK_DRAG_THRESHOLD_PX) {
+        return;
+      }
+
+      const rect = canvas.getBoundingClientRect();
+      const pointer = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      if (
+        pointer.x < 0
+        || pointer.y < 0
+        || pointer.x > viewport.width
+        || pointer.y > viewport.height
+      ) {
+        return;
+      }
+
+      const previewSet = new Set(previewModelIds);
+      const previewScenes = models
+        .filter((model) => previewSet.has(model.id))
+        .map((model) => model.scene);
+
+      if (previewScenes.length === 0) {
+        openContextMenuAtPointer(event);
+        return;
+      }
+
+      const picked = pickObjectAcrossRoots(previewScenes, camera, pointer, viewport);
+      const owner = picked ? findModelEntryForObject(picked, models) : null;
+      const editTool = $editTool.get();
+
+      if (picked && owner) {
+        if (editTool === 'move') {
+          openContextMenuForModel(event, owner.id);
+          return;
+        }
+        openContextMenuForPart(event, picked, owner.id);
+        return;
+      }
+
+      openContextMenuAtPointer(event);
+    };
+
     canvas.addEventListener('pointerdown', onPointerDown);
     canvas.addEventListener('pointerup', onPointerUp);
+    canvas.addEventListener('contextmenu', onContextMenu);
     return () => {
       canvas.removeEventListener('pointerdown', onPointerDown);
       canvas.removeEventListener('pointerup', onPointerUp);
+      canvas.removeEventListener('contextmenu', onContextMenu);
     };
   }, [gl, camera, viewport, models, previewModelIds]);
 }

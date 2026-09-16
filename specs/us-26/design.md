@@ -20,7 +20,7 @@
    - Viewport (Move): plain click focuses model root; **Shift+click** owner → `toggleModelId` (model multi-select).
    - Row highlight: model rows use `$selection.modelIds` when `kind === 'models'` (anchor = last id, stronger fill); else focus. Part rows use `$selection.objects` (active = `$selection.object`, stronger fill).
    - Viewport: `SelectionHighlight` draws a wireframe marker per selected part/bone, or an AABB per selected model root; name overlay shows active name `(+N)` or model count.
-3. **Context menu:** ActionMenu-style floating panel on **right-click** (reuse placement / portal patterns from `action-menu`). Items: **Group**, **Ungroup** (disabled with clear reason when invalid).
+3. **Context menu:** `PointerActionMenu` (ActionMenu-style portal) at pointer via `$selectionContextMenu`. Hosted once in `EditorToolbar`. Opens from library model/part rows and viewport canvas right-click (click without drag — drag keeps orbit/pan). Dismiss on outside pointerdown / Escape. Group / Ungroup items stubbed disabled until following tasks.
 4. **Group (parts):** non-active selected parts parent under the **active** (last-clicked) part on the same created model; skip / reject cycles.
 5. **Ungroup (parts):** selected parts → parts root (`unparentPart`), world preserved.
 6. **Group (models):** record a session **model group** (library tree + shared transform root or explicit group id). Do not mix models and parts in one Group action.
