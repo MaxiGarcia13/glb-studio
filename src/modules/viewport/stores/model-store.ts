@@ -33,29 +33,6 @@ function createEntryId(): string {
   return `model-${nextModelId++}`;
 }
 
-export async function importModelFiles(files: File[]): Promise<void> {
-  if (files.length === 0) {
-    return;
-  }
-
-  $model.setKey('phase', 'loading');
-  $model.setKey('error', null);
-
-  const results: ModelLoadResult[] = [];
-  const failures: string[] = [];
-
-  for (const file of files) {
-    try {
-      results.push(await loadModelFromFile(file));
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to load model';
-      failures.push(`${file.name}: ${message}`);
-    }
-  }
-
-  importModelResults(results, failures);
-}
-
 /** Commit already-parsed model results (used by the content router). */
 export function importModelResults(
   results: ModelLoadResult[],
