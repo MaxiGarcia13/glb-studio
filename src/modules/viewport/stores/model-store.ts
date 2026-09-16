@@ -85,7 +85,10 @@ export function importModelResults(
   });
 }
 
-export function focusModel(modelId: string): void {
+export function focusModel(
+  modelId: string,
+  options?: { preserveSelection?: boolean },
+): void {
   const state = $model.get();
   if (!state.previewModelIds.includes(modelId)) {
     return;
@@ -94,7 +97,10 @@ export function focusModel(modelId: string): void {
     return;
   }
   // Clear here (not in a React effect) so callers can re-select synchronously after.
-  clearSelection();
+  // Shift+click multi-select passes preserveSelection to avoid wiping the set.
+  if (!options?.preserveSelection) {
+    clearSelection();
+  }
   $model.setKey('activeModelId', modelId);
 }
 

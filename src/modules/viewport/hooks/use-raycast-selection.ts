@@ -6,7 +6,12 @@ import { findModelEntryForObject } from '../domain/model-scene';
 import { pickObjectAcrossRoots } from '../domain/object-pick';
 import { $editTool } from '../stores/edit-tool-store';
 import { $model, focusModel } from '../stores/model-store';
-import { clearSelection, selectObject } from '../stores/selection-store';
+import {
+  clearSelection,
+  selectObject,
+  toggleModelId,
+  toggleObject,
+} from '../stores/selection-store';
 
 export function useRaycastSelection(): void {
   const { models, previewModelIds } = useStore($model, {
@@ -61,9 +66,26 @@ export function useRaycastSelection(): void {
       }
 
       if (editTool === 'move') {
-        if (owner) {
-          focusModel(owner.id);
+        if (!owner) {
+          return;
         }
+        if (event.shiftKey) {
+          toggleModelId(owner.id);
+          return;
+        }
+        focusModel(owner.id);
+        return;
+      }
+
+      // Edit tool
+      if (event.shiftKey) {
+        if (!picked) {
+          return;
+        }
+        if (owner) {
+          focusModel(owner.id, { preserveSelection: true });
+        }
+        toggleObject(picked);
         return;
       }
 
