@@ -22,6 +22,8 @@ export interface CreatedPartEntry {
   mesh: Mesh;
   /** Nesting depth under the parts root (0 = direct child). */
   depth: number;
+  /** True when this part has at least one stamped create-part child. */
+  hasChildren: boolean;
 }
 
 /**
@@ -34,7 +36,10 @@ export function listCreatedPartEntries(partsRoot: Object3D): CreatedPartEntry[] 
     for (const child of node.children) {
       const mesh = asCreatePartMesh(child);
       if (mesh) {
-        entries.push({ mesh, depth });
+        const hasChildren = mesh.children.some(
+          (grandChild) => asCreatePartMesh(grandChild) !== null,
+        );
+        entries.push({ mesh, depth, hasChildren });
         walk(mesh, depth + 1);
         continue;
       }
