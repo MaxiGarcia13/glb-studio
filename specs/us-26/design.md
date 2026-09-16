@@ -4,9 +4,9 @@
 
 ### Parts hierarchy (done / keep)
 
-1. **Domain:** `parentPart` / `attachUnder` via `Object3D.attach` (world transform preserved). `unparentPart` → parts root. Cycle guard: reject self / descendant parents. Empty create groups + `listCreatedPartEntries`.
+1. **Domain:** `parentPart` / `attachUnder` via `Object3D.attach` (world transform preserved). Cycle guard: reject self / descendant parents. Empty create groups + `listCreatedPartEntries`. Ungroup dissolves groups or lifts nested nodes to the parts root.
 2. **Outliner:** `PartOutliner` under each created model in Models — names, depth indent, collapse chevron for parents; click → Edit + `selectObject`; `$createPartsRevision` on add / duplicate / delete / parent / unparent.
-3. **Hierarchy UI:** context-menu **Group / Ungroup** (no Settings Parent `<select>`). Toolbar Unparent may remain until folded into Ungroup.
+3. **Hierarchy UI:** context-menu **Group / Ungroup** only (Settings Parent and toolbar Unparent removed).
 
 ### Multi-select + Group / Ungroup menu
 

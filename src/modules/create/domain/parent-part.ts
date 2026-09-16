@@ -131,11 +131,6 @@ export function groupPartsUnder(
   return attachAllUnder(active, children, partsRoot);
 }
 
-/** Move a stamped create part under the parts root, preserving world transform. */
-export function unparentPart(child: Mesh, partsRoot: Object3D): boolean {
-  return parentPart(child, partsRoot, partsRoot);
-}
-
 /**
  * Move each hierarchy node under `partsRoot` (world-preserving).
  * Skips nodes already at root. Returns how many were reparented.
