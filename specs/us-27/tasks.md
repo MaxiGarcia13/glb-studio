@@ -4,12 +4,12 @@
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Content-only US; still wait for explicit start
+- [x] **Confirm kickoff** — Content-only US; still wait for explicit start
 - [ ] **Fold prep note** — On ship: fold kit list into `current/` design if needed, changelog, delete this folder
 
 ## Kits
 
-- [ ] **Author Simple building recipe** — Floors / walls / roof from box and plane; metres, grounded, named parts
+- [x] **Author Simple building recipe** — Floors / walls / roof from box and plane; metres, grounded, named parts
 - [ ] **Author Block robot recipe** — Readable block humanoid/robot from existing kinds; named parts for overlay
 - [ ] **Register kits + From kit UI** — Secondary entry (not Plus); labels + one-line help
 - [ ] **Optional clothed block variant** — If desired, add a kit with separate shirt/pants meshes and distinct colors (still no image textures)

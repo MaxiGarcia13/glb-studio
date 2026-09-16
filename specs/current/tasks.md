@@ -237,7 +237,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 | US                                                        | Status                    | Tasks                                       |
 | --------------------------------------------------------- | ------------------------- | ------------------------------------------- |
-| **US-27** — Additional kits                               | not started (after US-23) | [`specs/us-27/tasks.md`](../us-27/tasks.md) |
+| **US-27** — Additional kits                               | in progress               | [`specs/us-27/tasks.md`](../us-27/tasks.md) |
 | **US-28** — Part color maps (textures)                    | not started (after US-23) | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
 | **US-8** — Morph-target editing                           | post-MVP, not started     | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 | **US-9** — Graph / curve keyframe UI                      | post-MVP, not started     | [`specs/us-9/tasks.md`](../us-9/tasks.md)   |
