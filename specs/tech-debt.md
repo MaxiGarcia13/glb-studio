@@ -36,4 +36,4 @@ Not copy-pasted files. Extract only if the helper stays small.
 - `LibraryModelActions` / `AssetEntryActions` both build `ActionMenu` item lists — shared primitive, intentional specialization
 - `SpeedControl` native range vs `Input` is intentional (slider + `1.0x` readout)
 - Camera, grid, axes, selection, GLTF, and timeline constants each have a single owner
-- Kit registry (`create/domain/kit.ts`, `types/kit.ts`) — unused by New model until US-27; leave as seam
+- Kit registry is live (US-27); optional clothed kit variant remains open in [`us-27/tasks.md`](us-27/tasks.md)

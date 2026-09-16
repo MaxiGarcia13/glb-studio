@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { ActionMenu, ActionMenuPanel } from '@/components/action-menu';
 import { useGltfFilePicker } from '@/components/gltf-file-picker/use-gltf-file-picker';
 import { AnimationIcon } from '@/components/icons/animation-icon';
+import { BlocksIcon } from '@/components/icons/blocks-icon';
 import { DownloadIcon } from '@/components/icons/download-icon';
 import { ManIcon } from '@/components/icons/man-icon';
 import { UploadIcon } from '@/components/icons/upload-icon';
 import { importClipResults, startNewAnimation } from '@/modules/animation/stores/clip-store';
 import { createEmptyModel } from '@/modules/create/actions/create-empty-model';
+import { FromKitModal } from '@/modules/create/components/from-kit-modal';
 import { ExportModal, useExportZip } from '@/modules/export';
 import { routeContentImport } from '@/modules/import/adapters/content-router';
 import { useActiveModel } from '@/modules/viewport/hooks/use-active-model';
@@ -25,6 +27,7 @@ export function EditorToolbar() {
   const { phase } = useStore($model, { keys: ['phase'] });
   const { scene } = useActiveModel();
   const [exportOpen, setExportOpen] = useState(false);
+  const [fromKitOpen, setFromKitOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
 
   const { open: openImport, fileInput } = useGltfFilePicker({
@@ -48,6 +51,13 @@ export function EditorToolbar() {
       label: 'New model',
       icon: <ManIcon />,
       onSelect: () => createEmptyModel(),
+    },
+    {
+      id: 'from-kit',
+      label: 'From kit…',
+      icon: <BlocksIcon />,
+      title: 'Start from a starter kit (building, robot, …)',
+      onSelect: () => setFromKitOpen(true),
     },
     {
       id: 'new-animation',
@@ -100,6 +110,7 @@ export function EditorToolbar() {
       </header>
 
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} />
+      <FromKitModal open={fromKitOpen} onClose={() => setFromKitOpen(false)} />
       <SelectionContextMenu />
     </div>
   );

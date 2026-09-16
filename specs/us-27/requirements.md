@@ -4,7 +4,7 @@ Delta for growing starter content without new engine work. Parent contract: [`sp
 
 **Depends on:** US-23 (create flow + kit registry seam). New model remains empty-only; this US adds optional presets to a separate picker or create submenu — not the Plus button default.
 
-**Status:** In progress — Simple building + Block robot recipes authored (From kit UI still open).
+**Status:** In progress — recipes + From kit UI shipped; optional clothed variant + verify still open.
 
 ## Story
 
@@ -12,12 +12,12 @@ As an editor user, I can optionally start from a starter kit (for example a simp
 
 ## Acceptance
 
-- [ ] At least **two** kits are registered (suggested: **Simple building**, **Block robot**) using the kit recipe format
-- [ ] A secondary **From kit…** entry (not the Plus button) lists them with beginner-friendly labels and one-line descriptions
-- [ ] Creating from a kit follows the same library / preview / Edit / export path as `createEmptyModel`
-- [ ] Plus / New model still creates an **empty** model with no modal
-- [ ] No new PartKind is required unless a kit truly needs one; prefer existing kinds
-- [ ] Kits remain editable (parts are normal meshes — not locked prefabs)
+- [x] At least **two** kits are registered (suggested: **Simple building**, **Block robot**) using the kit recipe format
+- [x] A secondary **From kit…** entry (not the Plus button) lists them with beginner-friendly labels and one-line descriptions
+- [x] Creating from a kit follows the same library / preview / Edit / export path as `createEmptyModel`
+- [x] Plus / New model still creates an **empty** model with no modal
+- [x] No new PartKind is required unless a kit truly needs one; prefer existing kinds
+- [x] Kits remain editable (parts are normal meshes — not locked prefabs)
 
 ## Out of scope
 

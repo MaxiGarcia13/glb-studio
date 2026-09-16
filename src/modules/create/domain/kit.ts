@@ -21,3 +21,10 @@ export function getKit<K extends KitId>(id: K): Kit<K> {
 export function listKits(): Kit[] {
   return Object.values(KITS);
 }
+
+/** Starter presets for From kit — excludes the empty New model kit. */
+export function listStarterKits(): Array<Kit<Exclude<KitId, 'empty'>>> {
+  return listKits().filter(
+    (kit): kit is Kit<Exclude<KitId, 'empty'>> => kit.id !== 'empty',
+  );
+}

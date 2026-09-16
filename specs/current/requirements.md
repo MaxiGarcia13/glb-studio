@@ -348,8 +348,9 @@ As an editor user, I can create models / shared animations, import files, and ex
 
 **Acceptance**
 
-- [x] Full-width `EditorToolbar` exposes a **File** text menu with: **New model**, **New animation**, **Import**, **Export**
+- [x] Full-width `EditorToolbar` exposes a **File** text menu with: **New model**, **From kit…**, **New animation**, **Import**, **Export**
 - [x] **New model** creates an empty `source: 'created'` model; removed from the Models library header
+- [x] **From kit…** opens a secondary modal of starter kits (label + one-line description); choosing one creates a `source: 'created'` model with recipe parts on the same preview / focus path as New model
 - [x] **New animation** creates a **shared** draft (`ownerModelId: null`); disabled when no focused model scene; removed from the Shared Animations header
 - [x] **Import** opens a multi-file picker (`.glb` / `.gltf` / `.fbx`); removed from Models and Shared headers
 - [x] Per file, Import routes by content: usable skinned mesh + skeleton → model library (`imported`, embedded clips **owned**); mesh-only scenes → model library (`created`, embedded clips **owned**); animations but no usable model → Shared Animations; neither → user-visible error for that file; other files in the batch still process
@@ -392,7 +393,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 ## Out of scope (still excluded)
 
 - Material / texture editing on **imported** characters (created-model color maps are US-28)
-- Kit picker / starter kits on New model (US-27)
+- Kit marketplace / remote download; user-authored kit save/share; auto-rig for kits (US-27 delta still open for optional clothed variant + verify)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
 - Bones, skinning, Mixamo / retarget on created models
