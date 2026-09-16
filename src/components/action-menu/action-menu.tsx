@@ -7,18 +7,36 @@ import { Text } from '@/components/text';
 
 interface ActionMenuProps {
   'items': ActionMenuItem[];
+  /** Visible trigger text (menu-bar style). Defaults to ⋮ icon. */
+  'label'?: string;
   'aria-label'?: string;
+  'align'?: 'start' | 'end';
+  'open'?: boolean;
+  'onOpenChange'?: (open: boolean) => void;
   'className'?: string;
 }
 
 export function ActionMenu({
   items,
-  'aria-label': ariaLabel = 'More actions',
+  label,
+  'aria-label': ariaLabel,
+  align = 'end',
+  open: openControlled,
+  onOpenChange,
   className,
 }: ActionMenuProps) {
-  const [open, setOpen] = useState(false);
+  const [openUncontrolled, setOpenUncontrolled] = useState(false);
+  const open = openControlled ?? openUncontrolled;
+  const setOpen = (next: boolean) => {
+    onOpenChange?.(next);
+    if (openControlled === undefined) {
+      setOpenUncontrolled(next);
+    }
+  };
+
   const rootRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
+  const resolvedAriaLabel = ariaLabel ?? label ?? 'More actions';
 
   useEffect(() => {
     if (!open) {
@@ -53,23 +71,32 @@ export function ActionMenu({
     <div ref={rootRef} className={cn('relative', className)}>
       <Button
         variant="ghost"
-        aria-label={ariaLabel}
+        aria-label={resolvedAriaLabel}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
-        title={ariaLabel}
-        className="p-2"
-        onClick={() => setOpen((current) => !current)}
+        title={resolvedAriaLabel}
+        className={label ? 'px-2 py-1' : 'p-2'}
+        onClick={() => setOpen(!open)}
       >
-        <DotsVerticalIcon />
+        {label
+          ? (
+              <Text as="span" className="text-current">
+                {label}
+              </Text>
+            )
+          : <DotsVerticalIcon />}
       </Button>
 
       {open && (
         <div
           id={menuId}
           role="menu"
-          aria-label={ariaLabel}
-          className="absolute right-0 top-full z-50 mt-2 min-w-40 rounded-sm border border-border-strong bg-surface py-2 shadow-lg"
+          aria-label={resolvedAriaLabel}
+          className={cn(
+            'absolute top-full z-50 mt-1 min-w-40 rounded-sm border border-border-strong bg-surface py-2 shadow-lg',
+            align === 'start' ? 'left-0' : 'right-0',
+          )}
         >
           {items.map((item) => (
             <button

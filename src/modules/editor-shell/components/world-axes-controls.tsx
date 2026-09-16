@@ -32,6 +32,9 @@ export function WorldAxesControls() {
 
   return (
     <div className="flex flex-col gap-2">
+      <Text as="h2" variant="section">
+        Axes
+      </Text>
       <label className="flex items-center gap-2 cursor-pointer shrink-0">
         <input
           type="checkbox"

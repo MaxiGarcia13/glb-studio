@@ -41,7 +41,7 @@ export function TransformModeToolbar({ className }: TransformModeToolbarProps) {
 
   const visible
     = editTool !== 'navigate'
-    && (editTool === 'move' ? scene !== null : selected !== null);
+      && (editTool === 'move' ? scene !== null : selected !== null);
 
   if (!visible) {
     return null;

@@ -1,18 +1,21 @@
-# US-30 — File / Settings floating toolbar (design)
+# US-30 — EditorToolbar (design)
 
 ## Placement
 
-1. New floating chrome on the viewport (likely top-left, owned by `editor-preview` positioning — same inset / mobile stack rules as other floating toolbars).
-2. One `FloatingToolbar` (or a thin wrapper with two labeled groups) with sections **File** and **Settings**.
-3. Reuse `Button` (`ghost` / `primary`), icon-only where it matches existing chrome; axes controls need checkbox + number `Input` (may expand the Settings group or open a compact popover — prefer inline if it stays readable).
+1. Full-width **Blender-style** app menu bar at the top of the window (above Library / Preview / Settings columns) — **not** inside `EditorPreview`, not a floating viewport overlay.
+2. `EditorToolbar` is a `menubar` with text triggers:
+   - **File** — `ActionMenu` dropdown (New model, New animation, Import, Export)
+   - **Settings** — `ActionMenuPanel` dropdown with world-axes controls
+3. Mount from [`src/pages/index.astro`](../../src/pages/index.astro) as its own island above the flex row of asides + preview.
+4. Reuse chrome tokens (`bg-surface`, `border-border`, `Button` ghost, `ActionMenu`); one open menu at a time.
 
-## File actions
+## File actions (`ActionMenu`)
 
 | Control       | Wire to                                                      | Remove from                               |
 | ------------- | ------------------------------------------------------------ | ----------------------------------------- |
 | New model     | `createEmptyModel`                                           | Models header (`NewModelButton`)          |
 | New animation | `startNewAnimation(scene)` with default `ownerModelId: null` | Shared header (`ClipNewAnimation`)        |
-| Import        | new content-routing entry (below)                            | Models `ModelImport`, Shared `ClipImport` |
+| Import        | new content-routing entry (below); open via `useGltfFilePicker` | Models `ModelImport`, Shared `ClipImport` |
 | Export        | open existing `ExportModal` (`canExport` gate)               | Settings aside `DownloadExport`           |
 
 Keep model-row **Add animation** modal unchanged (owned create / import / clone).
@@ -29,9 +32,9 @@ Do not ask the user which destination. Files with **both** mesh and clips follow
 
 ## Settings (axes)
 
-1. Move `WorldAxesControls` (or equivalent) into the toolbar Settings section; keep `$viewportSettings` (`axesVisible` / `axesSize`) and `WorldAxes` mount behavior.
+1. Host `WorldAxesControls` in the **Settings** menu panel; keep `$viewportSettings` (`axesVisible` / `axesSize`) and `WorldAxes` mount behavior.
 2. Remove the Axes block from `EditorSettingsSidebar`; leave Model / Animation / Part inspector as they are.
 
 ## Non-goals
 
-No change to zip / merge / ownership export contracts. No Blender top-menu recreation.
+No change to zip / merge / ownership export contracts. No full Blender workspace tabs / secondary tool row — File + Settings only for this story.

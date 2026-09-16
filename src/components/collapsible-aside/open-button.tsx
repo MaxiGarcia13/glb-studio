@@ -17,7 +17,7 @@ export function OpenButton({ direction, onToggle, title }: OpenButtonProps) {
     return (
       <FloatingToolbar
         aria-label={ariaLabel}
-        className="absolute top-4 z-10 left-4"
+        className="absolute top-12 z-10 left-4"
       >
         <Button
           onClick={onToggle}
@@ -35,7 +35,7 @@ export function OpenButton({ direction, onToggle, title }: OpenButtonProps) {
   return (
     <FloatingToolbar
       aria-label={ariaLabel}
-      className="absolute top-4 z-10 right-4"
+      className="absolute top-12 z-10 right-4"
     >
       <Button
         onClick={onToggle}

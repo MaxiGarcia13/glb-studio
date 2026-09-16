@@ -75,4 +75,4 @@ Viewport overlay chrome (Navigate/Edit/Move, transform modes, create tools, asid
 
 1. Reuse `Button`, `Input`, `Select`, `Text`, `Modal`, `CollapsibleAside`, `FloatingToolbar` before new class strings.
 2. New colors → add a `@theme` token in `global.css`, then use the utility — do not hardcode `zinc-*` / `sky-*` in chrome.
-3. Keep overlay insets at `*-4` on desktop. On mobile (`max-width: 640px`), stack floating chrome so it clears aside open chips and sibling toolbars — transform at `top-20`, edit above create (`bottom-18` / `bottom-4`), selection / save further up (`bottom-28` / `bottom-32`). Own positions in `editor-preview`, not inside each toolbar.
+3. Keep overlay insets at `*-4` on desktop. On mobile (`max-width: 640px`), stack floating chrome so it clears aside open chips and sibling toolbars — transform at `top-20`, edit above create (`bottom-18` / `bottom-4`), selection / save further up (`bottom-28` / `bottom-32`). Own viewport-overlay positions in `editor-preview`. App menu bar (`EditorToolbar`) is full-width document-flow chrome above the aside/preview row in `index.astro` — not a floating overlay and not inside each toolbar.

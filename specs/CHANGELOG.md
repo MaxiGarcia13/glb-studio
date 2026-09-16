@@ -11,7 +11,7 @@
 
 | ID | Summary |
 |----|---------|
-| **US-30** | File / Settings floating toolbar (IO + world axes) |
+| **US-30** | EditorToolbar (Blender-style File / Settings menu bar) |
 | **US-28** | Part color maps (textures) on created models only |
 | **US-27** | Additional create kits via registry (building, robot, …) |
 | **US-26** | Part hierarchy + outliner for created models |
