@@ -1,7 +1,8 @@
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
-import { unparentPart } from '../domain/parent-part';
 import { readCreatePart } from '../domain/part-data';
+import { unparentPart } from '../domain/parent-part';
+import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { asMesh, isInActiveModelScene } from '../utils/selected-part';
 
 /**
@@ -25,5 +26,9 @@ export function unparentSelectedPart(): boolean {
     return false;
   }
 
-  return unparentPart(mesh, activeModel.scene);
+  const ok = unparentPart(mesh, activeModel.scene);
+  if (ok) {
+    bumpCreatePartsRevision();
+  }
+  return ok;
 }

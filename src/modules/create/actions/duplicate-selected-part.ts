@@ -5,6 +5,7 @@ import {
 } from '@/modules/viewport/stores/selection-store';
 import { duplicatePart } from '../domain/duplicate-part';
 import { readCreatePart } from '../domain/part-data';
+import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { asMesh, isInActiveModelScene } from '../utils/selected-part';
 
 /** Duplicate the selected stamped part on the focused created model and select the clone. */
@@ -28,5 +29,6 @@ export function duplicateSelectedPart(): void {
   const clone = duplicatePart(mesh, activeModel.scene);
   if (clone) {
     selectObject(clone);
+    bumpCreatePartsRevision();
   }
 }

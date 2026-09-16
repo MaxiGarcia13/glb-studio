@@ -6,6 +6,7 @@ import {
   unparentPart,
 } from '../domain/parent-part';
 import { readCreatePart } from '../domain/part-data';
+import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { asMesh, isInActiveModelScene } from '../utils/selected-part';
 
 /** Select value for parenting under the created model’s parts root. */
@@ -33,16 +34,22 @@ export function parentSelectedPart(parentValue: string): boolean {
   }
 
   const partsRoot = activeModel.scene;
+  let ok = false;
   if (parentValue === PARTS_ROOT_PARENT_VALUE) {
-    return unparentPart(mesh, partsRoot);
+    ok = unparentPart(mesh, partsRoot);
+  }
+  else {
+    const parent = listParentCandidates(mesh, partsRoot).find(
+      (candidate) => candidate.uuid === parentValue,
+    );
+    if (!parent) {
+      return false;
+    }
+    ok = parentPart(mesh, parent, partsRoot);
   }
 
-  const parent = listParentCandidates(mesh, partsRoot).find(
-    (candidate) => candidate.uuid === parentValue,
-  );
-  if (!parent) {
-    return false;
+  if (ok) {
+    bumpCreatePartsRevision();
   }
-
-  return parentPart(mesh, parent, partsRoot);
+  return ok;
 }

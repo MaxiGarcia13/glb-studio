@@ -5,6 +5,7 @@ import {
 } from '@/modules/viewport/stores/selection-store';
 import { deletePart } from '../domain/delete-part';
 import { readCreatePart } from '../domain/part-data';
+import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { asMesh, isInActiveModelScene } from '../utils/selected-part';
 
 /**
@@ -30,4 +31,5 @@ export function deleteSelectedPart(): void {
 
   clearSelection();
   deletePart(mesh);
+  bumpCreatePartsRevision();
 }

@@ -15,9 +15,9 @@
 
 ## Outliner
 
-- [ ] **Part list for focused created model** — Show mesh names; indent optional if hierarchy depth > 1
-- [ ] **Click to select** — Integrates with existing selection + TransformControls + inspector
-- [ ] **Keep list in sync** — Refresh on add / duplicate / delete / parent changes
+- [x] **Part list for focused created model** — Show mesh names; indent optional if hierarchy depth > 1
+- [x] **Click to select** — Integrates with existing selection + TransformControls + inspector
+- [x] **Keep list in sync** — Refresh on add / duplicate / delete / parent changes
 
 ## Verify
 

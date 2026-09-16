@@ -11,6 +11,9 @@ import {
   validateClipAgainstSkeleton,
 } from '@/modules/animation/domain/clip-validate';
 import { $clips } from '@/modules/animation/stores/clip-store';
+import { PartOutliner } from '@/modules/create/components/part-outliner';
+import { listCreatedParts } from '@/modules/create/domain/list-created-parts';
+import { $createPartsRevision } from '@/modules/create/stores/create-parts-revision-store';
 import { LibrarySectionCollapsible } from '@/modules/editor-shell/components/library-section-collapsible';
 import {
   $model,
@@ -32,9 +35,13 @@ export function LibraryModel({ model }: LibraryModelProps) {
     keys: ['clips'],
   });
   const { activeModelId } = useStore($model, { keys: ['activeModelId'] });
+  useStore($createPartsRevision);
   const focused = model.id === activeModelId;
   const [addAnimationOpen, setAddAnimationOpen] = useState(false);
   const ownedClips = clips.filter((entry) => entry.ownerModelId === model.id);
+  const isCreated = model.source === 'created';
+  const partCount = isCreated ? listCreatedParts(model.scene).length : 0;
+  const hasNested = isCreated ? partCount > 0 : ownedClips.length > 0;
   const nodeNames = buildSkeletonNodeSet(model.scene);
   const conflictedClipIds = clips.flatMap((entry) => {
     if (!entry.clip) {
@@ -79,8 +86,8 @@ export function LibraryModel({ model }: LibraryModelProps) {
           />
         )}
         selected={focused}
-        showChevron={ownedClips.length > 0}
-        showTreeGuide={ownedClips.length > 0}
+        showChevron={hasNested}
+        showTreeGuide={hasNested}
         actions={(
           <LibraryModelActions
             modelId={model.id}
@@ -92,7 +99,9 @@ export function LibraryModel({ model }: LibraryModelProps) {
           />
         )}
       >
-        <ClipRows clips={ownedClips} ownerModelId={model.id} />
+        {isCreated
+          ? <PartOutliner modelId={model.id} scene={model.scene} />
+          : <ClipRows clips={ownedClips} ownerModelId={model.id} />}
       </LibrarySectionCollapsible>
 
       {replaceInput}
