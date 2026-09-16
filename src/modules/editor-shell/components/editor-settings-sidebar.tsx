@@ -3,7 +3,6 @@ import { CollapsibleAside } from '@/components/collapsible-aside/collapsible-asi
 import { Text } from '@/components/text';
 import { BlendControls, ClipTrimInputs, SpeedControl } from '@/modules/animation';
 import { PartInspector } from '@/modules/create/components/part-inspector';
-import { DownloadExport } from './download-export';
 import { SelectionNameField } from './selection-name-field';
 import { TransformReadout } from './transform-readout';
 
@@ -44,8 +43,6 @@ export function EditorSettingsSidebar() {
 
         </div>
       </div>
-
-      <DownloadExport />
     </CollapsibleAside>
   );
 }
