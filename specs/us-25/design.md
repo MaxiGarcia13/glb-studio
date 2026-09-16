@@ -5,7 +5,7 @@
 1. Store snap flags + steps on `$viewportSettings` — session-only like axes (same `map`, not a separate `$createSettings`)
 2. On TransformControls `objectChange` / Save commit path for created-model edits, round position (world or local — pick **world XZ + Y** for position snap) and Euler degrees for rotation
 3. Scale snap is optional and **out of MVP** for this US unless trivial
-4. UI: checkbox + numeric step next to General axes controls, or under a Create section
+4. UI: `SnapControls` in top **Settings** menu under Axes — checkboxes + step inputs (labelled; step fields disabled when their snap flag is off)
 
 ## `$viewportSettings` snap fields
 

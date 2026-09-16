@@ -13,6 +13,7 @@ import { ExportModal, useExportZip } from '@/modules/export';
 import { routeContentImport } from '@/modules/import/adapters/content-router';
 import { useActiveModel } from '@/modules/viewport/hooks/use-active-model';
 import { $model, importModelResults } from '@/modules/viewport/stores/model-store';
+import { SnapControls } from './snap-controls';
 import { WorldAxesControls } from './world-axes-controls';
 
 type OpenMenu = 'file' | 'settings' | null;
@@ -90,8 +91,10 @@ export function EditorToolbar() {
           align="start"
           open={openMenu === 'settings'}
           onOpenChange={(open) => setOpenMenu(open ? 'settings' : null)}
+          panelClassName="flex flex-col gap-6"
         >
           <WorldAxesControls />
+          <SnapControls />
         </ActionMenuPanel>
       </header>
 

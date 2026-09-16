@@ -10,7 +10,7 @@
 ## Settings
 
 - [x] **Snap state on settings store** — `snapToGrid`, `gridStepMetres`, `snapRotation`, `rotationStepDegrees` with documented defaults; session-only
-- [ ] **Settings UI** — Controls in General or Create section; labelled for keyboard / a11y (NFR-4)
+- [x] **Settings UI** — Controls in General or Create section; labelled for keyboard / a11y (NFR-4)
 
 ## Transform integration
 

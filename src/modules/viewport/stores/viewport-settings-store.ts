@@ -6,13 +6,13 @@ const AXES_SIZE_MAX = 50;
 
 /** Default position snap step (m); matches axes minor tick. */
 export const GRID_STEP_METRES_DEFAULT = 0.1;
-const GRID_STEP_METRES_MIN = 0.01;
-const GRID_STEP_METRES_MAX = 10;
+export const GRID_STEP_METRES_MIN = 0.01;
+export const GRID_STEP_METRES_MAX = 10;
 
 /** Default rotation snap step (degrees). */
 export const ROTATION_STEP_DEGREES_DEFAULT = 15;
-const ROTATION_STEP_DEGREES_MIN = 1;
-const ROTATION_STEP_DEGREES_MAX = 180;
+export const ROTATION_STEP_DEGREES_MIN = 1;
+export const ROTATION_STEP_DEGREES_MAX = 180;
 
 export interface ViewportSettingsState {
   axesVisible: boolean;
