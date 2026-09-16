@@ -10,7 +10,7 @@
 ## Toolbar shell
 
 - [x] **EditorToolbar shell** — Full-width Blender-style menu bar above asides; File `ActionMenu` + Settings `ActionMenuPanel`; outside preview
-- [ ] **File: New model** — Wire `createEmptyModel`; remove Models header `+`
+- [x] **File: New model** — Wire `createEmptyModel`; remove Models header `+`
 - [ ] **File: New animation** — Shared draft via `startNewAnimation`; disable without focused scene; remove Shared header `+`
 - [ ] **File: Export** — Opens `ExportModal`; respect `canExport`; remove Settings aside Download
 - [ ] **Settings: axes** — Show world axes + Axes Length (m); remove aside Axes block
