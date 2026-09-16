@@ -33,6 +33,30 @@ export function clearBindPoseOverrides(modelId: string): void {
   $bindPoseOverrides.set(next);
 }
 
+/** Move a node’s bind-pose delta key when the Object3D is renamed. */
+export function renameBindPoseNode(
+  modelId: string,
+  fromName: string,
+  toName: string,
+): void {
+  if (!fromName || fromName === toName) {
+    return;
+  }
+  const all = $bindPoseOverrides.get();
+  const forModel = all[modelId];
+  if (!forModel || !(fromName in forModel)) {
+    return;
+  }
+  const nextForModel = { ...forModel };
+  const delta = nextForModel[fromName];
+  delete nextForModel[fromName];
+  // Prefer keeping an existing target key if somehow both exist.
+  if (!(toName in nextForModel)) {
+    nextForModel[toName] = delta;
+  }
+  $bindPoseOverrides.set({ ...all, [modelId]: nextForModel });
+}
+
 export function clearAllBindPoseOverrides(): void {
   if (Object.keys($bindPoseOverrides.get()).length === 0) {
     return;

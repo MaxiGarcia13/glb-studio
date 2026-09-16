@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import { renameSelectionEnd } from './rename-selection';
 
@@ -26,6 +26,8 @@ export function useAssetEntryRename({
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(label);
   const inputRef = useRef<HTMLInputElement>(null);
+  const draftRef = useRef(draft);
+  draftRef.current = draft;
 
   useLayoutEffect(() => {
     if (!editing) {
@@ -41,26 +43,26 @@ export function useAssetEntryRename({
     // Intentionally omit `label` from deps: only select when entering edit mode.
   }, [editing]);
 
-  function startEditing(): void {
+  const startEditing = useCallback((): void => {
     setDraft(label);
     setEditing(true);
-  }
+  }, [label]);
 
-  function commit(): void {
+  const commit = useCallback((): void => {
     if (!canRename || !onRename) {
       return;
     }
-    const trimmed = draft.trim();
+    const trimmed = draftRef.current.trim();
     if (trimmed && trimmed !== label) {
       onRename(trimmed);
     }
     setEditing(false);
-  }
+  }, [canRename, onRename, label]);
 
-  function cancel(): void {
+  const cancel = useCallback((): void => {
     setDraft(label);
     setEditing(false);
-  }
+  }, [label]);
 
   return {
     canRename,

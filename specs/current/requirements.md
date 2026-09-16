@@ -109,6 +109,22 @@ As an editor user, when I click a bone or part of the model, I can see its name 
 - [x] The label updates when the selection changes and is hidden when there is no selection
 - [x] The overlay is non-interactive (`pointer-events-none`) and does not block orbit, picking, or the transform-mode toolbar
 
+### US-29 — Rename selected bone or mesh
+
+As an editor user, I can rename the selected bone or mesh from Settings so the overlay and exported node names match what I intend, without breaking owned animations on that model.
+
+**Acceptance**
+
+- [x] When a bone or mesh is selected, Settings shows a **Name** field for that object’s `Object3D.name`
+- [x] Commit on Enter / blur; Escape restores the previous name (same interaction as library rename)
+- [x] Empty or whitespace-only names are rejected; the previous name is kept
+- [x] Names must be unique within the owning model scene; duplicates are rejected
+- [x] On commit, the selection overlay updates to the new name
+- [x] For the owning model, **owned** clip tracks (`clip` / `sourceClip`) that target the old node name are rewritten to the new name; other tracks are preserved
+- [x] Bind-pose override keys for that model move from the old name to the new name
+- [x] **Shared** clips are not mutated (they may show a skeleton conflict on that model until retarget)
+- [x] Rename is keyboard-operable and labelled (NFR-4)
+
 ### US-14 — Viewport general settings (axes)
 
 As an editor user, I can show or hide the world axes and change how far the metre rulers extend from the Settings sidebar.

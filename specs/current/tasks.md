@@ -89,6 +89,14 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `SelectionNameOverlay` reads `$selection` and shows `Object3D.name`
 - [x] Mounted in `EditorPreview` as a non-interactive floating label; hidden when nothing selected
 
+## US-29 — Rename selected bone or mesh
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] Domain `renameNodeInClipTracks` + bind-pose key move; viewport `renameSelectedObject` (unique in scene; owned clips only)
+- [x] Settings **Name** field wired with `useAssetEntryRename` / `AssetEntryRenameInput`
+- [x] Overlay updates on commit; shared clips untouched
+
 ## US-14 — Viewport general settings (axes)
 
 **Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).

@@ -185,6 +185,15 @@ Out of scope: multi-model simultaneous transform; full undo stack (US-10).
 2. `SelectionNameOverlay` in `viewport` subscribes to `$selection` and renders the selected `Object3D.name` (tooltip `title` is the same string)
 3. Mounted in `EditorPreview` as a floating HTML label (`pointer-events-none`) so it does not block orbit, pick, or the transform toolbar; hidden when selection is null
 
+## Rename selected node (US-29)
+
+1. Settings hosts a **Name** control when `$selection.object` is set (any mesh or bone under a library model) — not limited to created-part `PartInspector`
+2. Reuse library rename UX: `useAssetEntryRename` + `AssetEntryRenameInput` (Enter / blur commit, Escape cancel). No Finder `.glb` basename selection
+3. `renameSelectedObject(name)` (viewport action): resolve owning `ModelEntry` by scene ancestry; trim; no-op if empty, unchanged, unknown owner, or another named node in that scene already uses the name
+4. On success: set `object.name`; rewrite **owned** clips for that `modelId` via `renameNodeInClipTracks` (rename matching track node prefixes only — never `remapClipTracks` with a one-entry map, which drops unmapped tracks); move `$bindPoseOverrides[modelId][old]` → `[new]`; `syncClipsToSkeleton(scene)`; re-notify `$selection` so the overlay re-reads `name`
+5. Shared clips (`ownerModelId === null`) are left unchanged; skeleton conflict UI may appear for that model until retarget
+6. Do not rewrite `sourceBindLengths` / `sourceBindFrames` (source-side keys)
+
 ## Viewport general settings (US-14)
 
 1. `$viewportSettings` (`nanostores` `map`) in `viewport/stores/viewport-settings-store.ts`: `{ axesVisible, axesSize }` with setters; defaults `true` / `AXES_SIZE` (`10`); clamp size to `1`–`50`

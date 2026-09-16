@@ -24,6 +24,7 @@
 
 | ID | Summary |
 |----|---------|
+| **US-29** | Rename selected bone / mesh from Settings (owned clip + bind-pose remap) |
 | **US-23** | Create empty model (no kit modal) + part edit/export |
 | **US-22** | Export modal + merge visible models into one mesh GLB |
 | **US-21** | Whole-model rotate / scale in Move + Settings root rotation XYZ |
