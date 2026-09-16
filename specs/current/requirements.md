@@ -378,7 +378,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 ## Out of scope (still excluded)
 
 - Material / texture editing on **imported** characters (created-model color maps are US-28)
-- Kit picker / starter kits on New model (US-27); part outliner (US-26)
+- Kit picker / starter kits on New model (US-27); part/model group + outliner + export-via-group (US-26)
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
 - Bones, skinning, Mixamo / retarget on created models
 - Server accounts (FBX convert via US-16 is the allowed server round-trip; no user accounts)

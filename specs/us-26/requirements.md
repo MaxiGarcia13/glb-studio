@@ -1,27 +1,44 @@
-# US-26 — Part hierarchy and outliner
+# US-26 — Part hierarchy, outliner, and group
 
-Delta for parenting parts and navigating them by name. Parent contract: [`specs/current/requirements.md`](../current/requirements.md).
+Delta for parenting / grouping parts (and models), navigating parts by name, and exporting grouped models as one GLB. Parent contract: [`specs/current/requirements.md`](../current/requirements.md).
 
-**Depends on:** US-23 (named parts on created models).
+**Depends on:** US-23 (named parts on created models). **Touches:** US-22 export merge (replace Merge toggle with editor groups).
 
 **Status:** In progress (kicked off).
 
 ## Story
 
-As an editor user, I can parent parts to each other and pick them from a list so a car body moves with its wheels attached, and I can find parts by name without hunting in the viewport.
+As an editor user, I can group parts (and models) with a familiar multi-select + context menu so a car body moves with its wheels attached, find parts by name in an outliner, and export models that share a group as one GLB without a separate Merge checkbox.
 
 ## Acceptance
 
-- [ ] Created-model UI can **parent** the selected part to another part on the same model (or to the model root / parts root)
-- [ ] After parenting, moving the parent in Edit moves children with it (normal Object3D hierarchy)
-- [ ] A simple **part outliner** lists mesh part names for the focused created model; clicking a row selects that part
-- [ ] Outliner updates when parts are added, duplicated, deleted, or renamed (if rename exists; otherwise names from US-23/24)
-- [ ] Unparent / parent-to-root is available so users can fix mistakes
-- [ ] Imported models are unchanged (no outliner required for skeleton bones in this US)
+### Parts / outliner
+
+- [ ] Created-model parts can be **grouped** (parented) so moving the parent in Edit moves children (normal Object3D hierarchy)
+- [ ] **Unroup / unparent** is available so users can fix mistakes (world transform preserved)
+- [ ] A simple **part outliner** lists mesh part names for created models; clicking a row selects that part; parents can collapse/expand
+- [ ] Outliner updates when parts are added, duplicated, deleted, renamed, or regrouped
+- [ ] Imported models are unchanged for **bone** outliners (no skeleton-bone outliner in this US)
+
+### Multi-select + context menu
+
+- [ ] **Shift+click** adds/removes from a multi-selection in the **library sidebar** (model rows and part outliner) and in the **viewport preview**
+- [ ] Part multi-select and model multi-select do **not** mix in one selection
+- [ ] **Right-click** opens an ActionMenu-style panel with **Group** / **Ungroup** when the selection allows it (library and preview)
+- [ ] Group target: last-clicked (active) item is the parent / group anchor (or equivalent explicit rule documented in design)
+- [ ] Settings-sidebar **Parent** `<select>` is removed (grouping is context-menu only); create-toolbar Unparent may remain or move into the menu
+
+### Models + export
+
+- [ ] Users can **group / ungroup models** with the same Shift+click + right-click pattern
+- [ ] **Export** (File → Export only) packs each **model group** as **one GLB** (same pack outcome as today’s merge: shared root, bone prefixes as needed, Scene bake path preserved or adapted)
+- [ ] Ungrouped models still export as separate GLBs (US-5 default)
+- [ ] Export modal **Merge visible models** checkbox is **removed** — grouping in the editor is the opt-in for one-file export
 
 ## Out of scope
 
-- Full Blender-style collections / multi-select group operators
+- Full Blender-style collections / drag-and-drop reparent in the outliner
 - Reordering draw calls / material batches
 - Bone hierarchy editing on imported rigs
-- Drag-and-drop reparent in the outliner (list + explicit Parent control is enough)
+- Opening the Export modal from the library or preview (Export stays on the Export control only)
+- Boolean mesh “merge” (fuse geometries) — Group means hierarchy / export pack only
