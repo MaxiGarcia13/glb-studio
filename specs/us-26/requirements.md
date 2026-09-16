@@ -4,7 +4,7 @@ Delta for parenting parts and navigating them by name. Parent contract: [`specs/
 
 **Depends on:** US-23 (named parts on created models).
 
-**Status:** Not started — do not implement until explicitly kicked off.
+**Status:** In progress (kicked off).
 
 ## Story
 

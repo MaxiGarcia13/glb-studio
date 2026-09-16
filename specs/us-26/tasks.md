@@ -4,12 +4,12 @@
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Do not implement until asked
+- [x] **Confirm kickoff** — Do not implement until asked
 - [ ] **Fold prep note** — On ship: fold into `current/`, changelog, delete this folder
 
 ## Hierarchy
 
-- [ ] **`parentPart(child, parent)` helper** — Reparent with world-transform preservation; allow parent = parts root
+- [x] **`parentPart(child, parent)` helper** — Reparent with world-transform preservation; allow parent = parts root
 - [ ] **Unparent control** — Move selected part back under the parts root without jumping in world space
 - [ ] **Parent picker UI** — Choose target parent from other parts on the same created model (exclude self / descendants to avoid cycles)
 
