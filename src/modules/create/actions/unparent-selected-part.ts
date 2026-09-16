@@ -1,7 +1,7 @@
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
-import { readCreatePart } from '../domain/part-data';
 import { unparentPart } from '../domain/parent-part';
+import { readCreatePart } from '../domain/part-data';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { asMesh, isInActiveModelScene } from '../utils/selected-part';
 

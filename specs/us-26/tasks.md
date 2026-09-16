@@ -11,7 +11,7 @@ Tick only after acceptance.
 
 - [x] **`parentPart(child, parent)` helper** — Reparent with world-transform preservation; allow parent = parts root
 - [x] **Unparent control** — Move selected part back under the parts root without jumping in world space
-- [x] **Parent picker UI** — Choose target parent from other parts *(superseded by Group menu — remove Settings Parent select)*
+- [x] **Parent picker UI** — Choose target parent from other parts _(superseded by Group menu — remove Settings Parent select)_
 
 ## Outliner
 

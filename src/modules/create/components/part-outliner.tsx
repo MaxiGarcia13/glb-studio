@@ -91,8 +91,7 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
                           const next = new Set(current);
                           if (next.has(mesh.uuid)) {
                             next.delete(mesh.uuid);
-                          }
-                          else {
+                          } else {
                             next.add(mesh.uuid);
                           }
                           return next;

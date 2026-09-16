@@ -37,8 +37,7 @@ export function parentSelectedPart(parentValue: string): boolean {
   let ok = false;
   if (parentValue === PARTS_ROOT_PARENT_VALUE) {
     ok = unparentPart(mesh, partsRoot);
-  }
-  else {
+  } else {
     const parent = listParentCandidates(mesh, partsRoot).find(
       (candidate) => candidate.uuid === parentValue,
     );
