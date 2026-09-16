@@ -41,7 +41,7 @@ export function computeScenesFraming(
     position,
     distance,
     minDistance: maxDimension * 0.05,
-    maxDistance: maxDimension * 10,
+    maxDistance: maxDimension * 10 * 2, // 10x the size of the model, 5x the distance
   };
 }
 
