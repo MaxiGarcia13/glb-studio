@@ -20,16 +20,16 @@ export type PartKindId = keyof PartSizeParamsById;
 
 export type PartSizeParams<K extends PartKindId = PartKindId> = PartSizeParamsById[K];
 
-export type PartSizeParamKey =
-  | 'width'
-  | 'height'
-  | 'depth'
-  | 'radius'
-  | 'length'
-  | 'tube'
-  | 'sides'
-  | 'innerRadius'
-  | 'outerRadius';
+export type PartSizeParamKey
+  = | 'width'
+    | 'height'
+    | 'depth'
+    | 'radius'
+    | 'length'
+    | 'tube'
+    | 'sides'
+    | 'innerRadius'
+    | 'outerRadius';
 
 export interface PartSizeField {
   param: PartSizeParamKey;
