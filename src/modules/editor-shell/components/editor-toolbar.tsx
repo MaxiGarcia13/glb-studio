@@ -5,7 +5,7 @@ import { ActionMenu, ActionMenuPanel } from '@/components/action-menu';
 import { useGltfFilePicker } from '@/components/gltf-file-picker/use-gltf-file-picker';
 import { AnimationIcon } from '@/components/icons/animation-icon';
 import { DownloadIcon } from '@/components/icons/download-icon';
-import { ModelIcon } from '@/components/icons/model-icon';
+import { ManIcon } from '@/components/icons/man-icon';
 import { UploadIcon } from '@/components/icons/upload-icon';
 import { startNewAnimation } from '@/modules/animation/stores/clip-store';
 import { createEmptyModel } from '@/modules/create/actions/create-empty-model';
@@ -35,7 +35,7 @@ export function EditorToolbar() {
     {
       id: 'new-model',
       label: 'New model',
-      icon: <ModelIcon />,
+      icon: <ManIcon />,
       onSelect: () => createEmptyModel(),
     },
     {

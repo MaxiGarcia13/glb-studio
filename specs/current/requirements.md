@@ -259,7 +259,7 @@ As an editor user, I manage models and animations in a nested library: each mode
 **Acceptance**
 
 - [x] Library sidebar is nested: **Models** collapsible (upload) → each **model** collapsible + sibling **Shared Animations** collapsible
-- [x] Model header shows **ModelIcon** next to the name; actions are icons: Retarget (when conflicted), **Animation** (add), Edit (rename), Replace, Remove
+- [x] Model header shows **ManIcon** next to the name; actions are icons: Retarget (when conflicted), **Animation** (add), Edit (rename), Replace, Remove
 - [x] Shared Animations header shows **AnimationIcon**; actions: Upload, New animation
 - [x] Shared **Upload** is always available — does not require a loaded or selected model
 - [x] Each clip row shows **AnimationIcon** next to the name; Remove (and Retarget when conflicted) as icons

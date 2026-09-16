@@ -10,7 +10,7 @@ Do not start post-MVP stories (US-8…US-10) from this file.
 - [x] Remove unused `resetModel` (clears the whole library; no caller) and drop it from the viewport barrel
 - [x] Remove unused `getActiveMixer` in `src/modules/animation/utils/mixer-session.ts` (`setActiveMixer` stays)
 - [ ] Delete `src/components/collapsible/collapsible-hook.tsx` — duplicate of `useCollapsible` in `collapsible-context.tsx`; barrel already exports the context version only
-- [ ] Wire `ModelIcon` into `LibraryModelTitle` (requirements: model header shows `ModelIcon` next to the name), or delete `src/components/icons/model-icon.tsx` and amend `current/` if the icon is no longer wanted
+- [ ] Wire `ManIcon` into `LibraryModelTitle` (requirements: model header shows `ManIcon` next to the name)
 - [ ] Drop unused `AssetEntry` `variant="card"` — no caller passes it; keep `row` only (types + branch in `asset-entry.tsx`)
 
 ## Unused public barrels
