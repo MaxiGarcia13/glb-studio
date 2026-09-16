@@ -32,14 +32,24 @@ function defaultModelNames(
   return next;
 }
 
+function defaultGroupNames(
+  groups: { id: string; name: string }[],
+): Record<string, string> {
+  const next: Record<string, string> = {};
+  for (const group of groups) {
+    next[group.id] = group.name;
+  }
+  return next;
+}
+
 function defaultClipPicks(
-  previewed: ModelEntry[],
+  models: ModelEntry[],
   clips: ClipEntry[],
   activeClipByModelId: Record<string, string | null>,
   activeSharedClipId: string | null,
 ): Record<string, string> {
   const next: Record<string, string> = {};
-  for (const model of previewed) {
+  for (const model of models) {
     const choices = listMergeClipChoices(model, clips);
     const choiceIds = new Set(choices.map((entry) => entry.id));
     const resolved = resolveActiveClipIdForModel(
@@ -63,73 +73,94 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
     busy,
     error,
     setError,
-    canMerge,
     models,
-    previewModelIds,
+    groups,
+    exportUnits,
+    multiModelGroups,
     clips,
     activeClipByModelId,
     activeSharedClipId,
   } = useExportZip();
-  const [mergeModels, setMergeModels] = useState(false);
   const [zipBaseName, setZipBaseName] = useState('glb-export');
-  const [mergedBaseName, setMergedBaseName] = useState('merged');
   const [sceneClipName, setSceneClipName] = useState(DEFAULT_SCENE_CLIP_NAME);
   const [modelBaseNames, setModelBaseNames] = useState<Record<string, string>>({});
+  const [groupBaseNames, setGroupBaseNames] = useState<Record<string, string>>({});
   const [clipIdByModelId, setClipIdByModelId] = useState<Record<string, string>>({});
   const wasOpenRef = useRef(false);
 
-  const previewed = models.filter((model) => previewModelIds.includes(model.id));
   const sharedCount = countSharedWorkingClips(clips);
-  const mergeActive = mergeModels && canMerge;
-  const pickedCount = previewed.filter((model) => Boolean(clipIdByModelId[model.id])).length;
+  const groupCount = multiModelGroups.length;
+  const singleCount = exportUnits.filter((unit) => unit.kind === 'single').length;
+  const sceneBakeModels = multiModelGroups.flatMap((unit) => unit.models);
+  const needsSceneBake = sceneBakeModels.length > 0;
+  const pickedCount = sceneBakeModels.filter((model) =>
+    Boolean(clipIdByModelId[model.id]),
+  ).length;
 
   useEffect(() => {
     if (open && !wasOpenRef.current) {
-      const visible = models.filter((model) => previewModelIds.includes(model.id));
+      const bakeModels = multiModelGroups.flatMap((unit) => unit.models);
       setError(null);
-      setMergeModels(false);
       setZipBaseName('glb-export');
-      setMergedBaseName('merged');
       setSceneClipName(DEFAULT_SCENE_CLIP_NAME);
       setModelBaseNames(defaultModelNames(models));
+      setGroupBaseNames(defaultGroupNames(groups));
       setClipIdByModelId(
-        defaultClipPicks(visible, clips, activeClipByModelId, activeSharedClipId),
+        defaultClipPicks(
+          bakeModels.length > 0 ? bakeModels : models,
+          clips,
+          activeClipByModelId,
+          activeSharedClipId,
+        ),
       );
-    }
-    if (!open) {
-      setMergeModels(false);
     }
     wasOpenRef.current = open;
   }, [
     open,
     models,
-    previewModelIds,
+    groups,
+    multiModelGroups,
     clips,
     activeClipByModelId,
     activeSharedClipId,
     setError,
   ]);
 
-  useEffect(() => {
-    if (!canMerge && mergeModels) {
-      setMergeModels(false);
-    }
-  }, [canMerge, mergeModels]);
-
   async function handleExport(): Promise<void> {
     try {
       await download({
-        mergeModels: mergeActive,
         zipFileName: zipBaseName,
-        mergedFileName: mergedBaseName,
+        groupFileNames: groupBaseNames,
         modelFileNames: modelBaseNames,
-        clipIdByModelId: mergeActive ? clipIdByModelId : undefined,
-        sceneClipName: mergeActive ? sceneClipName : undefined,
+        clipIdByModelId: needsSceneBake ? clipIdByModelId : undefined,
+        sceneClipName: needsSceneBake ? sceneClipName : undefined,
       });
       onClose();
     } catch {
       // Error surfaced via hook state; keep modal open.
     }
+  }
+
+  const summaryParts: string[] = [];
+  if (groupCount > 0) {
+    summaryParts.push(
+      `${groupCount} grouped ${groupCount === 1 ? 'GLB' : 'GLBs'}`,
+    );
+  }
+  if (singleCount > 0) {
+    summaryParts.push(
+      `${singleCount} ${singleCount === 1 ? 'model' : 'models'}`,
+    );
+  }
+  if (sharedCount > 0) {
+    summaryParts.push(
+      `${sharedCount} shared animation ${sharedCount === 1 ? 'file' : 'files'}`,
+    );
+  }
+  if (needsSceneBake && pickedCount > 0) {
+    summaryParts.push(
+      `Scene bake from ${pickedCount} ${pickedCount === 1 ? 'clip' : 'clips'}`,
+    );
   }
 
   return (
@@ -144,57 +175,19 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
           <Text as="h2" variant="section">
             Zip contents
           </Text>
-          {mergeActive
-            ? (
-                <Text variant="muted">
-                  1 merged GLB from
-                  {' '}
-                  {previewed.length}
-                  {' '}
-                  visible
-                  {' '}
-                  {previewed.length === 1 ? 'model' : 'models'}
-                  {pickedCount > 0
-                    ? ` · Scene bake from ${pickedCount} ${pickedCount === 1 ? 'clip' : 'clips'}`
-                    : ''}
-                  {sharedCount > 0
-                    ? ` · ${sharedCount} shared animation ${sharedCount === 1 ? 'file' : 'files'}`
-                    : ''}
-                </Text>
-              )
-            : (
-                <Text variant="muted">
-                  {models.length}
-                  {' '}
-                  {models.length === 1 ? 'model' : 'models'}
-                  {sharedCount > 0
-                    ? ` · ${sharedCount} shared animation ${sharedCount === 1 ? 'file' : 'files'}`
-                    : ''}
-                </Text>
-              )}
+          <Text variant="muted">
+            {summaryParts.length > 0
+              ? summaryParts.join(' · ')
+              : 'Nothing to pack yet'}
+          </Text>
+          {groupCount > 0 && (
+            <Text size="sm" variant="muted">
+              Model groups pack as one GLB each (namespaced bones). Ungrouped models stay separate.
+            </Text>
+          )}
         </div>
 
-        <label
-          className={`flex items-start gap-2 shrink-0 ${canMerge ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
-        >
-          <input
-            type="checkbox"
-            checked={mergeActive}
-            disabled={!canMerge || busy}
-            onChange={(event) => setMergeModels(event.target.checked)}
-            className="size-4 shrink-0 mt-1 rounded-sm border-border-strong accent-accent"
-          />
-          <span className="flex flex-col gap-2">
-            <Text variant="muted">Merge visible models</Text>
-            <Text size="sm" variant="muted">
-              {canMerge
-                ? 'One GLB with namespaced bones. Pick a clip per character to bake a Scene take (e.g. a fight). Shared clips also stay as separate files.'
-                : 'Show at least two models in the viewport to enable merge.'}
-            </Text>
-          </span>
-        </label>
-
-        {mergeActive && (
+        {needsSceneBake && (
           <div className="flex flex-col gap-4 border-t border-border pt-4">
             <Text as="h2" variant="section">
               Scene animations
@@ -206,37 +199,44 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
               disabled={busy}
               spellCheck={false}
             />
-            {previewed.map((model) => {
-              const choices = listMergeClipChoices(model, clips);
-              const options = [
-                { value: '', label: 'None (bind pose)' },
-                ...choices.map((entry) => ({
-                  value: entry.id,
-                  label:
-                    entry.ownerModelId === null
-                      ? `${entry.name} (shared)`
-                      : entry.name,
-                })),
-              ];
-              return (
-                <Select
-                  key={model.id}
-                  label={stripGlbExtension(model.fileName)}
-                  value={clipIdByModelId[model.id] ?? ''}
-                  options={options}
-                  disabled={busy || choices.length === 0}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    setClipIdByModelId((previous) => ({
-                      ...previous,
-                      [model.id]: value,
-                    }));
-                  }}
-                />
-              );
-            })}
+            {multiModelGroups.map((unit) => (
+              <div key={unit.group?.id ?? unit.models[0]?.id} className="flex flex-col gap-3">
+                <Text variant="muted">
+                  {unit.group?.name ?? 'Group'}
+                </Text>
+                {unit.models.map((model) => {
+                  const choices = listMergeClipChoices(model, clips);
+                  const options = [
+                    { value: '', label: 'None (bind pose)' },
+                    ...choices.map((entry) => ({
+                      value: entry.id,
+                      label:
+                        entry.ownerModelId === null
+                          ? `${entry.name} (shared)`
+                          : entry.name,
+                    })),
+                  ];
+                  return (
+                    <Select
+                      key={model.id}
+                      label={stripGlbExtension(model.fileName)}
+                      value={clipIdByModelId[model.id] ?? ''}
+                      options={options}
+                      disabled={busy || choices.length === 0}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setClipIdByModelId((previous) => ({
+                          ...previous,
+                          [model.id]: value,
+                        }));
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            ))}
             <Text size="sm" variant="muted">
-              Different clips per model bake into one Scene animation (both characters act together).
+              Different clips per model bake into one Scene animation inside that group GLB.
             </Text>
           </div>
         )}
@@ -253,34 +253,52 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
             spellCheck={false}
             aria-description=".zip is added automatically"
           />
-          {mergeActive
-            ? (
+          {multiModelGroups.map((unit) => {
+            const group = unit.group;
+            if (!group) {
+              return null;
+            }
+            return (
+              <Input
+                key={group.id}
+                label={`Group · ${group.name}`}
+                value={groupBaseNames[group.id] ?? group.name}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setGroupBaseNames((previous) => ({
+                    ...previous,
+                    [group.id]: value,
+                  }));
+                }}
+                disabled={busy}
+                spellCheck={false}
+              />
+            );
+          })}
+          {exportUnits
+            .filter((unit) => unit.kind === 'single')
+            .map((unit) => {
+              const model = unit.models[0];
+              if (!model) {
+                return null;
+              }
+              return (
                 <Input
-                  label="Merged model"
-                  value={mergedBaseName}
-                  onChange={(event) => setMergedBaseName(event.target.value)}
+                  key={model.id}
+                  label={stripGlbExtension(model.fileName)}
+                  value={modelBaseNames[model.id] ?? stripGlbExtension(model.fileName)}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setModelBaseNames((previous) => ({
+                      ...previous,
+                      [model.id]: value,
+                    }));
+                  }}
                   disabled={busy}
                   spellCheck={false}
                 />
-              )
-            : (
-                models.map((model) => (
-                  <Input
-                    key={model.id}
-                    label={stripGlbExtension(model.fileName)}
-                    value={modelBaseNames[model.id] ?? stripGlbExtension(model.fileName)}
-                    onChange={(event) => {
-                      const value = event.target.value;
-                      setModelBaseNames((previous) => ({
-                        ...previous,
-                        [model.id]: value,
-                      }));
-                    }}
-                    disabled={busy}
-                    spellCheck={false}
-                  />
-                ))
-              )}
+              );
+            })}
           <Text size="sm" variant="muted">
             Shared animation files keep their library names. Extensions are added automatically.
           </Text>

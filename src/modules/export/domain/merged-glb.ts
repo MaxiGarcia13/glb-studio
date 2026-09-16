@@ -21,16 +21,18 @@ export interface MergedGlbResult {
 }
 
 export interface PackMergedModelsOptions {
-  /** Per previewed model id → library clip id to bake (omit / empty = bind pose only). */
+  /** Per model id → library clip id to bake (omit / empty = bind pose only). */
   clipIdByModelId?: Readonly<Record<string, string>>;
   /** Name of the combined multi-character clip (default `Scene`). */
   sceneClipName?: string;
+  /** Root group name in the packed GLB (default `merged`). */
+  rootName?: string;
 }
 
 export const MERGED_GLB_FILE_NAME = 'merged.glb';
 
 /**
- * Pack previewed models into one GLB with unique bone prefixes.
+ * Pack models into one GLB with unique bone prefixes.
  * Bakes a single Scene clip from per-model picks (e.g. fight take).
  */
 export async function packMergedModelsGlb(
@@ -43,7 +45,7 @@ export async function packMergedModelsGlb(
   }
 
   const root = new ThreeGroup();
-  root.name = 'merged';
+  root.name = options.rootName?.trim() || 'merged';
 
   const prefixTaken = new Set<string>();
   const namespaces: ModelNamespace[] = [];

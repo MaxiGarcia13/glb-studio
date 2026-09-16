@@ -1,9 +1,11 @@
 import type { ZipEntry } from '../adapters/zip';
 import type { ClipEntry } from '@/modules/animation/types/clip';
 import type { ModelEntry } from '@/modules/viewport/types/model';
+import type { ModelGroup } from '@/modules/viewport/types/model-group';
 
 import { Group } from 'three';
 import { $clips } from '@/modules/animation/stores/clip-store';
+import { $modelGroups } from '@/modules/viewport/stores/model-group-store';
 import { $activeModel, $model } from '@/modules/viewport/stores/model-store';
 import { downloadBlob } from '../adapters/download';
 import { buildZipArchive } from '../adapters/zip';
@@ -11,37 +13,70 @@ import {
   resolveGlbFileName,
   resolveZipFileName,
   stripGlbExtension,
+  uniqueFileName,
 } from '../utils/file-name';
 import { packClipGlb } from './clip-glb';
-import { MERGED_GLB_FILE_NAME, packMergedModelsGlb } from './merged-glb';
+import { packMergedModelsGlb } from './merged-glb';
 import { packModelGlb } from './model-glb';
 
 export const EXPORT_ZIP_FILE_NAME = 'glb-export.zip';
 
 export interface ExportZipOptions {
-  /** When true, pack previewed models into one GLB (scene bake from per-model picks). */
-  mergeModels?: boolean;
   /** Download name for the zip archive (`.zip` appended if missing). */
   zipFileName?: string;
-  /** Basename for the merged GLB when merge is on. */
-  mergedFileName?: string;
-  /** Per-model id → basename override when merge is off. */
+  /** Per model-group id → basename for that group's packed GLB. */
+  groupFileNames?: Record<string, string>;
+  /** Per model id → basename when the model is not in a multi-model group. */
   modelFileNames?: Record<string, string>;
-  /** Per previewed model id → clip id to include in the merge scene bake. */
+  /** Per model id → clip id for Scene bake inside multi-model group GLBs. */
   clipIdByModelId?: Record<string, string>;
-  /** Combined multi-character clip name inside the merged GLB. */
+  /** Combined multi-character clip name inside grouped GLBs. */
   sceneClipName?: string;
 }
 
-function resolvePreviewedModels(
+interface ExportUnit {
+  kind: 'group' | 'single';
+  group: ModelGroup | null;
+  models: ModelEntry[];
+}
+
+/**
+ * Each editor model group with ≥2 existing members → one merged unit;
+ * leftover / ungrouped models → one unit each.
+ */
+export function resolveExportUnits(
   models: readonly ModelEntry[],
-  previewModelIds: readonly string[],
-): ModelEntry[] {
+  groups: readonly ModelGroup[],
+): ExportUnit[] {
   const byId = new Map(models.map((model) => [model.id, model]));
-  return previewModelIds.flatMap((id) => {
-    const model = byId.get(id);
-    return model ? [model] : [];
-  });
+  const units: ExportUnit[] = [];
+  const consumed = new Set<string>();
+
+  for (const group of groups) {
+    const members = group.modelIds.flatMap((id) => {
+      const model = byId.get(id);
+      return model ? [model] : [];
+    });
+    if (members.length === 0) {
+      continue;
+    }
+    for (const member of members) {
+      consumed.add(member.id);
+    }
+    if (members.length >= 2) {
+      units.push({ kind: 'group', group, models: members });
+    } else {
+      units.push({ kind: 'single', group: null, models: members });
+    }
+  }
+
+  for (const model of models) {
+    if (!consumed.has(model.id)) {
+      units.push({ kind: 'single', group: null, models: [model] });
+    }
+  }
+
+  return units;
 }
 
 /** Shared clips that ship as animation-only GLBs (owned never leave their model file). */
@@ -52,14 +87,13 @@ function sharedAnimationOnlyClips(clips: readonly ClipEntry[]): ClipEntry[] {
 /** Prefer an imported rig; created scenes have no skeleton for animation-only GLBs. */
 function resolveSkeletonFallback(
   models: readonly ModelEntry[],
-  previewed: readonly ModelEntry[],
   active: ModelEntry | null,
 ): Group {
   const preferred
     = (active?.source === 'imported' ? active : null)
       ?? models.find((model) => model.source === 'imported')
       ?? active
-      ?? previewed[0]
+      ?? models[0]
       ?? null;
 
   return preferred?.scene ?? new Group();
@@ -68,50 +102,60 @@ function resolveSkeletonFallback(
 export async function downloadExportZip(
   options: ExportZipOptions = {},
 ): Promise<void> {
-  const mergeRequested = options.mergeModels === true;
   const modelState = $model.get();
   const clipState = $clips.get();
+  const groups = $modelGroups.get().groups;
 
   const models = modelState.models;
-  const workingClips = clipState.clips.filter((entry) => entry.clip !== null);
 
-  if (models.length === 0 && workingClips.length === 0) {
+  if (models.length === 0 && clipState.clips.every((entry) => entry.clip === null)) {
     throw new Error('Nothing to pack');
   }
 
-  const previewed = resolvePreviewedModels(models, modelState.previewModelIds);
-  const mergeModels = mergeRequested && previewed.length >= 2;
   const modelFileNames = options.modelFileNames ?? {};
-  const skeletonFallback = resolveSkeletonFallback(
-    models,
-    previewed,
-    $activeModel.get(),
-  );
-
+  const groupFileNames = options.groupFileNames ?? {};
+  const skeletonFallback = resolveSkeletonFallback(models, $activeModel.get());
+  const units = resolveExportUnits(models, groups);
+  const takenNames = new Set<string>();
   const entries: ZipEntry[] = [];
 
-  if (mergeModels) {
-    const packed = await packMergedModelsGlb(previewed, clipState.clips, {
-      clipIdByModelId: options.clipIdByModelId,
-      sceneClipName: options.sceneClipName,
-    });
-    entries.push({
-      arrayBuffer: packed.arrayBuffer,
-      fileName: resolveGlbFileName(options.mergedFileName, MERGED_GLB_FILE_NAME),
-    });
-  } else {
-    for (const model of models) {
-      const packed = await packModelGlb(model, clipState.clips);
-      const fallback = `${stripGlbExtension(model.fileName)}.glb`;
-      entries.push({
-        arrayBuffer: packed.arrayBuffer,
-        fileName: resolveGlbFileName(modelFileNames[model.id], fallback),
+  for (const unit of units) {
+    if (unit.kind === 'group' && unit.group) {
+      const packed = await packMergedModelsGlb(unit.models, clipState.clips, {
+        clipIdByModelId: options.clipIdByModelId,
+        sceneClipName: options.sceneClipName,
+        rootName: unit.group.name,
       });
+      const fallback = `${unit.group.name}.glb`;
+      const fileName = uniqueFileName(
+        resolveGlbFileName(groupFileNames[unit.group.id], fallback),
+        takenNames,
+      );
+      takenNames.add(fileName);
+      entries.push({ arrayBuffer: packed.arrayBuffer, fileName });
+      continue;
     }
+
+    const model = unit.models[0];
+    if (!model) {
+      continue;
+    }
+    const packed = await packModelGlb(model, clipState.clips);
+    const fallback = `${stripGlbExtension(model.fileName)}.glb`;
+    const fileName = uniqueFileName(
+      resolveGlbFileName(modelFileNames[model.id], fallback),
+      takenNames,
+    );
+    takenNames.add(fileName);
+    entries.push({ arrayBuffer: packed.arrayBuffer, fileName });
   }
 
   for (const entry of sharedAnimationOnlyClips(clipState.clips)) {
     entries.push(await packClipGlb(entry, skeletonFallback));
+  }
+
+  if (entries.length === 0) {
+    throw new Error('Nothing to pack');
   }
 
   const blob = await buildZipArchive(entries);

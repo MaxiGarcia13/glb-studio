@@ -39,10 +39,10 @@ Tick only after acceptance.
 
 ## Export (group replaces merge)
 
-- [ ] **Pack model groups as one GLB** — Each editor model group → one file (reuse merge pack / bone prefix / Scene bake as needed)
-- [ ] **Ungrouped models stay separate** — US-5 per-model GLBs when not in a group
-- [ ] **Remove Merge checkbox** — Drop Export modal Merge toggle and `mergeModels` opt-in; grouping is the opt-in
-- [ ] **Export entry point unchanged** — Modal only from File → Export / export button
+- [x] **Pack model groups as one GLB** — Each editor model group → one file (reuse merge pack / bone prefix / Scene bake as needed)
+- [x] **Ungrouped models stay separate** — US-5 per-model GLBs when not in a group
+- [x] **Remove Merge checkbox** — Drop Export modal Merge toggle and `mergeModels` opt-in; grouping is the opt-in
+- [x] **Export entry point unchanged** — Modal only from File → Export / export button
 
 ## Verify
 

@@ -29,9 +29,9 @@
 ### Export (replaces US-22 Merge toggle)
 
 1. Export still opens **only** from File → Export / export button.
-2. When packing: each **model group** → one GLB (reuse `packMergedModelsGlb` / namespace + Scene bake ideas for members of that group). Ungrouped models → one GLB each (US-5).
-3. Remove **Merge visible models** checkbox and `mergeModels` modal state; preview eye still controls visibility / inclusion as today where applicable.
-4. Scene clip / per-model clip picks: keep when a group has ≥2 skeletons that need a multi-character bake; otherwise simplify per design when implementing.
+2. When packing: each **model group** (≥2 members) → one GLB via `packMergedModelsGlb` (bone prefixes + optional Scene bake). Ungrouped models → one GLB each (`packModelGlb`).
+3. **Merge visible models** checkbox and `mergeModels` removed — editor model groups are the opt-in for one-file export.
+4. Export modal shows Scene clip picks when any multi-model group exists; file-name fields cover zip, each group GLB, and each ungrouped model.
 
 ## Non-goals
 

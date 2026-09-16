@@ -2,13 +2,15 @@ import type { ExportZipOptions } from '../domain/zip-download';
 import { useStore } from '@nanostores/react';
 import { useState } from 'react';
 import { $clips } from '@/modules/animation/stores/clip-store';
+import { $modelGroups } from '@/modules/viewport/stores/model-group-store';
 import { $model } from '@/modules/viewport/stores/model-store';
-import { downloadExportZip } from '../domain/zip-download';
+import { resolveExportUnits, downloadExportZip } from '../domain/zip-download';
 
 export function useExportZip() {
   const { models, previewModelIds } = useStore($model, {
     keys: ['models', 'previewModelIds'],
   });
+  const { groups } = useStore($modelGroups, { keys: ['groups'] });
   const { clips, activeClipByModelId, activeSharedClipId } = useStore($clips, {
     keys: ['clips', 'activeClipByModelId', 'activeSharedClipId'],
   });
@@ -17,7 +19,8 @@ export function useExportZip() {
   const [error, setError] = useState<string | null>(null);
 
   const canExport = models.length > 0 || clips.some((entry) => entry.clip !== null);
-  const canMerge = previewModelIds.length >= 2;
+  const exportUnits = resolveExportUnits(models, groups);
+  const multiModelGroups = exportUnits.filter((unit) => unit.kind === 'group');
 
   async function download(options: ExportZipOptions = {}): Promise<void> {
     setBusy(true);
@@ -38,9 +41,11 @@ export function useExportZip() {
     error,
     setError,
     canExport,
-    canMerge,
     previewModelIds,
     models,
+    groups,
+    exportUnits,
+    multiModelGroups,
     clips,
     activeClipByModelId,
     activeSharedClipId,
