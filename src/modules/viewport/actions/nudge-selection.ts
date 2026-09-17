@@ -3,11 +3,7 @@ import { Vector3 } from 'three';
 import { commitPendingPose } from '@/modules/animation/stores/clip-store/actions/commit-pending-pose';
 import { pause } from '@/modules/animation/stores/clip-store/actions/playback';
 import { restorePose } from '@/modules/animation/stores/clip-store/actions/restore-pose';
-import { $clips } from '@/modules/animation/stores/clip-store/store';
-import {
-  sampleMixerAt,
-  suspendMixerBindings,
-} from '@/modules/animation/utils/mixer-session';
+import { suspendMixerBindings } from '@/modules/animation/utils/mixer-session';
 import { $editTool } from '../stores/edit-tool-store';
 import { $activeModel } from '../stores/model-store';
 import {
@@ -79,11 +75,6 @@ export function nudgeSelection(axis: NudgeAxis, sign: 1 | -1): void {
   }
 
   object.updateMatrixWorld(true);
-
-  if (poseKind === 'modelRoot' && $clips.get().activeClipId) {
-    sampleMixerAt(0);
-  }
-
   markPoseDirty();
   syncTransformReadout(object);
   commitPendingPose();

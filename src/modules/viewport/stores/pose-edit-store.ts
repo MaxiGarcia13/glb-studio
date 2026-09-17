@@ -10,7 +10,7 @@ export interface PreEditTransform {
   scale: { x: number; y: number; z: number };
 }
 
-/** True when a gizmo or Settings edit is pending Save / Restore. */
+/** True while a gizmo or Settings pose edit is in progress (Restore / auto-commit). */
 export const $poseDirty = atom(false);
 
 /** Which object the current dirty edit applies to (independent of active tool). */

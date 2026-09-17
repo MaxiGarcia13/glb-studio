@@ -14,14 +14,14 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 
 - [x] Pure command catalog in `commands` (id, chords, label, category) — single source of truth for bindings + docs
 - [x] Shared `isTypingTarget` (or equivalent); ignore shortcuts when focus is in text fields that own them
-- [x] `run-editor-command` dispatcher → existing actions (`play` / `pause`, `saveKeyframe`, `setAxesVisible`, create part duplicate/delete, …)
+- [x] `run-editor-command` dispatcher → existing actions (`play` / `pause`, `commitPendingPose`, `setAxesVisible`, create part duplicate/delete, …)
 - [x] Single `use-editor-command-hotkeys` window listener in `commands` (replace / absorb `use-transform-mode-hotkeys`)
 - [x] Remap transform modes: **Q / W / E** = Move / Rotate / Scale; update toolbar labels from catalog
 - [x] Wire **R** → toggle world axes (`axesVisible`)
 - [x] Wire **B** → toggle bones (`bonesVisible`)
 - [x] Wire **Space** → play / pause
 - [x] Wire arrow keys (+ Shift for Z) → nudge selected object on X / Y / Z
-- [x] Wire **Cmd/Ctrl+S** → save pending change (`saveKeyframe` when pose dirty)
+- [x] Wire **Cmd/Ctrl+S** → `commitPendingPose` when pose dirty
 - [x] Auto-commit pose on gizmo drag-end, nudge, and Settings field blur (`commitPendingPose`)
 - [x] Wire **Cmd/Ctrl+C / V** → create-part copy / paste (in-session buffer or duplicate path)
 - [x] Wire **Delete** → `deleteSelectedPart` when a create part is selected

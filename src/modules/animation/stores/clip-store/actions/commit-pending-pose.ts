@@ -10,8 +10,8 @@ import { saveKeyframe } from './save-keyframe';
 
 /**
  * Commit a dirty gizmo / Settings / nudge pose into the clip or bind-pose path.
- * Same hold-to-end policy as the former Save control: hold when a selection edit
- * can write into a ready driving clip (owned clip on created models).
+ * Hold-to-end when a selection edit can write into a ready driving clip
+ * (owned clip on created models).
  */
 export function commitPendingPose(): void {
   if (!$poseDirty.get()) {

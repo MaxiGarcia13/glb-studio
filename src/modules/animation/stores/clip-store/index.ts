@@ -22,7 +22,6 @@ export {
   resetBlend,
   restorePose,
   retargetClip,
-  saveKeyframe,
   selectClip,
   setBlendClip,
   setBlendWeight,

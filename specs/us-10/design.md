@@ -131,7 +131,7 @@ Optimize to patches later only if snapshot memory or clone cost becomes a measur
 - Wrap: `trimClip`, `saveKeyframe`, and `setTimeScale` push a snapshot command on each user commit (`recordUndo` default true). Speed slider and trim fields pass `{ recordUndo: false }` while dragging/typing and commit with `undoFrom` on pointer-up / blur.
 - Apply: `animation/stores/clip-store/actions/apply-undoable-command.ts` — replace library fields (and bind-pose map / mixer `timeScale`), then `rebindMixersForClips` (rest-pose → force stop/play/`setTime`) so a post-Save bone pose cannot stick when PropertyMixer would skip at the same playhead. Bind-pose Saves also snapshot scene-node TRS and restore it (plus the rest-pose map entry) because there is often no driving clip for rebind. `useClipMixerAction` uses the same force-write when the working clip reference changes.
 - Dirty pose: catalog Undo calls `restorePose` only while a gesture is still open (`$poseDirty`); finished gizmo / nudge / Settings edits auto-commit via `commitPendingPose` and land on the stack. Cmd/Ctrl+S still commits if anything is dirty. Floating Restore discards an in-progress edit; no Save button required for pose.
-- Auto-commit: `TransformControls` drag-end, each `nudgeSelection`, and Settings / part TRS field **blur** call `commitPendingPose` (same hold-to-end policy as the former Save control).
+- Auto-commit: `TransformControls` drag-end, each `nudgeSelection`, and Settings / part TRS field **blur** call `commitPendingPose` (hold-to-end policy lives there).
 
 ### Approach
 

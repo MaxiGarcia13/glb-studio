@@ -1,5 +1,5 @@
 import { cn } from '@maxigarcia/js-utils';
-import { SaveKeyframeButton } from '@/modules/animation';
+import { RestorePoseButton } from '@/modules/animation';
 import { CreateToolbar } from '@/modules/create/components/create-toolbar';
 import { useIsCreatedModelFocused } from '@/modules/create/hooks/use-selected-created-part';
 import { EditMoveToolbar } from '@/modules/viewport/components/edit-move-toolbar';
@@ -69,7 +69,7 @@ export function EditorPreview() {
             isMobile ? 'bottom-32' : 'bottom-18',
           )}
         >
-          <SaveKeyframeButton />
+          <RestorePoseButton />
         </div>
       </div>
 

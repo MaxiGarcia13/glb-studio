@@ -23,7 +23,6 @@ export { replaceClip } from './replace-clip';
 export { restorePose } from './restore-pose';
 export { retargetClip } from './retarget-clip';
 export type { RetargetClipOptions, RetargetClipResult, RetargetScope } from './retarget-clip';
-export { saveKeyframe } from './save-keyframe';
 export { selectClip } from './select-clip';
 export { syncClipsToSkeleton } from './sync-clips-to-skeleton';
 export { captureTrimClipSnapshot, trimClip } from './trim-clip';

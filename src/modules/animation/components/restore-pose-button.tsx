@@ -7,15 +7,15 @@ import { useActiveModel } from '@/modules/viewport/hooks/use-active-model';
 import { $poseDirty } from '@/modules/viewport/stores/pose-edit-store';
 import { restorePose } from '../stores/clip-store';
 
-interface SaveKeyframeButtonProps {
+interface RestorePoseButtonProps {
   className?: string;
 }
 
 /**
- * In-progress pose discard. Finished gestures auto-commit; this only shows
- * while a gizmo drag or Settings field edit is still open.
+ * Discard an in-progress gizmo / Settings pose. Finished gestures auto-commit;
+ * this only shows while a gesture is still open.
  */
-export function SaveKeyframeButton({ className }: SaveKeyframeButtonProps) {
+export function RestorePoseButton({ className }: RestorePoseButtonProps) {
   const poseDirty = useStore($poseDirty);
   const { scene } = useActiveModel();
 
