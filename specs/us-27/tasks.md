@@ -9,7 +9,7 @@
 
 ## Kits
 
-- [x] **Author Simple building recipe** — Floors / walls / roof from box and plane; metres, grounded, named parts
+- [x] **Author Simple building recipe** — Modern two-storey gable house (`simple-building` id, label Modern house): foundation, main + wing masses, pitched roofs, windows, porch, balconies; metres, grounded, named parts + groups
 - [x] **Author Block robot recipe** — Readable block humanoid/robot from existing kinds; named parts for overlay
 - [x] **Register kits + From kit UI** — Secondary entry (not Plus); labels + one-line help
 - [ ] **Optional clothed block variant** — If desired, add a kit with separate shirt/pants meshes and distinct colors (still no image textures)

@@ -8,11 +8,11 @@ Delta for growing starter content without new engine work. Parent contract: [`sp
 
 ## Story
 
-As an editor user, I can optionally start from a starter kit (for example a simple building or robot) so I get a head start — without changing the primary Plus → empty flow.
+As an editor user, I can optionally start from a starter kit (for example a modern house or block robot) so I get a head start — without changing the primary Plus → empty flow.
 
 ## Acceptance
 
-- [x] At least **two** kits are registered (suggested: **Simple building**, **Block robot**) using the kit recipe format
+- [x] At least **two** kits are registered (**Modern house** / `simple-building`, **Block robot**) using the kit recipe format
 - [x] A secondary **From kit…** entry (not the Plus button) lists them with beginner-friendly labels and one-line descriptions
 - [x] Creating from a kit follows the same library / preview / Edit / export path as `createEmptyModel`
 - [x] Plus / New model still creates an **empty** model with no modal
