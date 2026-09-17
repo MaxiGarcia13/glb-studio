@@ -25,19 +25,19 @@ export const EDITOR_COMMANDS: readonly EditorCommand[] = [
   },
   {
     id: 'transformMove',
-    chords: [{ key: 'w' }],
+    chords: [{ key: 'q' }],
     label: 'Move',
     category: 'Transform',
   },
   {
     id: 'transformRotate',
-    chords: [{ key: 'e' }],
+    chords: [{ key: 'w' }],
     label: 'Rotate',
     category: 'Transform',
   },
   {
     id: 'transformScale',
-    chords: [{ key: 't' }],
+    chords: [{ key: 'e' }],
     label: 'Scale',
     category: 'Transform',
   },

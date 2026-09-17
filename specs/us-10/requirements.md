@@ -20,7 +20,7 @@ As an editor user, I can undo and redo animation edits within the session, and I
 
 - [ ] A pure command catalog is the single source of truth for chords, labels, and categories (hotkeys + docs share it — no second hardcoded list)
 - [ ] Shortcuts do not fire when focus is in an input, textarea, select, or contenteditable that owns typing
-- [ ] Transform modes: **W** Move, **E** Rotate, **T** Scale (replaces previous W / E / R scale binding); toolbar labels match the catalog
+- [ ] Transform modes: **Q** Move, **W** Rotate, **E** Scale (replaces previous W / E / R); toolbar labels match the catalog
 - [ ] **R** toggles world axes visibility
 - [ ] **Space** toggles play / pause when a clip can play
 - [ ] Arrow keys nudge the current selection on **X** (left/right) and **Y** (down/up); **Shift+↑ / Shift+↓** nudge on **Z** — step and space documented in design

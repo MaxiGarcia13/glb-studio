@@ -17,15 +17,15 @@
 
 ### Keymap (locked)
 
-Single source of truth for the catalog. **Cmd** = meta on macOS; **Ctrl** elsewhere. Letter keys are case-insensitive. Remap from today’s **W / E / R** (scale): **T** = Scale, **R** = axes.
+Single source of truth for the catalog. **Cmd** = meta on macOS; **Ctrl** elsewhere. Letter keys are case-insensitive. Remap from today’s **W / E / R** (scale): transform modes **Q / W / E** = Move / Rotate / Scale; **R** = axes.
 
 | Command id         | Chord(s)                     | Label               | Category  |
 | ------------------ | ---------------------------- | ------------------- | --------- |
 | `playPause`        | Space                        | Play / Pause        | Playback  |
 | `toggleAxes`       | R                            | Toggle world axes   | Viewport  |
-| `transformMove`    | W                            | Move                | Transform |
-| `transformRotate`  | E                            | Rotate              | Transform |
-| `transformScale`   | T                            | Scale               | Transform |
+| `transformMove`    | Q                            | Move                | Transform |
+| `transformRotate`  | W                            | Rotate              | Transform |
+| `transformScale`   | E                            | Scale               | Transform |
 | `nudgeNegX`        | ←                            | Nudge −X            | Transform |
 | `nudgePosX`        | →                            | Nudge +X            | Transform |
 | `nudgePosY`        | ↑                            | Nudge +Y            | Transform |
@@ -136,4 +136,4 @@ No durable undo log across reloads in this story.
 
 ## Current contract touchpoints
 
-On ship into `current/`: replace documented **W / E / R** transform hotkeys with **W / E / T**, note **R** = axes, and fold Commands modal + keymap into editor chrome / design sections.
+On ship into `current/`: replace documented **W / E / R** transform hotkeys with **Q / W / E** (Move / Rotate / Scale), note **R** = axes, and fold Commands modal + keymap into editor chrome / design sections.
