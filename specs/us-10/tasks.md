@@ -12,10 +12,10 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 
 ## Implement — command catalog & hotkeys
 
-- [ ] Pure command catalog in `editor-shell` (id, chords, label, category) — single source of truth for bindings + docs
+- [x] Pure command catalog in `commands` (id, chords, label, category) — single source of truth for bindings + docs
 - [ ] Shared `isTypingTarget` (or equivalent); ignore shortcuts when focus is in text fields that own them
 - [ ] `run-editor-command` dispatcher → existing actions (`play` / `pause`, `saveKeyframe`, `setAxesVisible`, create part duplicate/delete, …)
-- [ ] Single `use-editor-command-hotkeys` window listener (replace / absorb `use-transform-mode-hotkeys`)
+- [ ] Single `use-editor-command-hotkeys` window listener in `commands` (replace / absorb `use-transform-mode-hotkeys`)
 - [ ] Remap transform modes: **W / E / T** = Move / Rotate / Scale; update toolbar labels from catalog
 - [ ] Wire **R** → toggle world axes (`axesVisible`)
 - [ ] Wire **Space** → play / pause
@@ -27,7 +27,7 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 
 ## Implement — undo / redo stack
 
-- [ ] Command stack service in `animation` (or `editor-shell`) domain
+- [ ] Command stack service in `animation` (or `commands`) domain
 - [ ] Wrap trim + keyframe mutations as undoable commands
 - [ ] Undo / Redo UI + shortcuts via catalog (**Cmd/Ctrl+Z**, **Cmd/Ctrl+Shift+Z** or **Y**)
 - [ ] Mixer rebind after stack ops; integrate or replace US-3 pre-trim restore

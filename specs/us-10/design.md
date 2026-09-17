@@ -9,10 +9,11 @@
 
 ### Placement
 
-- Pure catalog: `editor-shell` (e.g. `domain/editor-commands.ts`) — `{ id, chords, label, category }` only; no store writes.
+- Module: `commands` — owns the cross-cutting catalog, dispatcher, and hotkey listener (not chrome layout).
+- Pure catalog: `commands/domain/editor-commands.ts` — `{ id, chords, label, category }` only; no store writes.
 - Dispatcher: `run-editor-command(id)` maps ids to existing module actions (`animation` playback / `saveKeyframe`, `viewport` transform mode / axes, `create` part duplicate/delete, undo stack ops).
 - Listener: one `use-editor-command-hotkeys` hook (absorbs / replaces `use-transform-mode-hotkeys`).
-- Docs UI: `CommandsModal` opened from a **Commands** control on `EditorToolbar`; body rendered from the catalog.
+- Docs UI: `CommandsModal` opened from a **Commands** control on `EditorToolbar` (`editor-shell`); body rendered from the `commands` catalog.
 
 ### Keymap (locked)
 

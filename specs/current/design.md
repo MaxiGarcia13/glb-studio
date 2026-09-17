@@ -18,7 +18,7 @@ flowchart LR
 ```
 
 - [`src/pages/index.astro`](../../src/pages/index.astro) mounts `EditorToolbar` above a flex row of `EditorLibrarySidebar`, `EditorPreview`, and `EditorSettingsSidebar` as `client:only="react"` islands
-- Domains: `editor-shell`, `viewport`, `animation`, `export`, `import`, `create` under `src/modules/`
+- Domains: `editor-shell`, `commands`, `viewport`, `animation`, `export`, `import`, `create` under `src/modules/`
 
 ## Assets
 
