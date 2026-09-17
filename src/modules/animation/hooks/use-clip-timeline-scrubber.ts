@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/react';
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
 import { $clips } from '../stores/clip-store';
 import { setMixerTime } from '../utils/mixer-session';
@@ -13,7 +13,8 @@ export function useClipTimelineScrubber() {
 
   const [time, setTime] = useState(0);
 
-  useEffect(() => {
+  // Sync paused time before paint so the scrubber never applies a stale 0 after pause.
+  useLayoutEffect(() => {
     if (playing) {
       return;
     }

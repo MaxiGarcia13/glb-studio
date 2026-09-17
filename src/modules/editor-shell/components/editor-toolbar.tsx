@@ -19,6 +19,9 @@ export function EditorToolbar() {
       aria-label="Editor menu"
       className="flex items-center gap-1 border-b border-border bg-surface px-2 py-1"
     >
+
+      <img src="/favicon-32x32.png" alt="Logo" className="h-6 w-6" />
+
       <EditorFileMenu
         open={openMenu === 'file'}
         onOpenChange={(open) => setOpenMenu(open ? 'file' : null)}

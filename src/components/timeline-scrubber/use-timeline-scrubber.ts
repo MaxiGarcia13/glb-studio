@@ -1,6 +1,6 @@
 import type { TimelineScrubberProps } from './types';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   DEFAULT_MAJOR_FRAME_STEP,
   DEFAULT_MIN_PX_PER_FRAME,
@@ -110,18 +110,16 @@ export function useTimelineScrubber({
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
+  // Layout: position before paint so pause/re-render never flashes the playhead to 0.
+  // Prefer getTime() via readTime() — React `time` is not updated while playing.
+  useLayoutEffect(() => {
     if (draggingRef.current) {
       return;
     }
-    applyPlayhead(0);
-  }, [duration, fps]);
-
-  useEffect(() => {
-    if (playing || draggingRef.current) {
+    if (playing) {
       return;
     }
-    applyPlayhead(time);
+    applyPlayhead(readTime());
   }, [playing, time, duration, fps]);
 
   useEffect(() => {

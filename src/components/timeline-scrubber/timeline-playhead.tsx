@@ -11,8 +11,7 @@ export function TimelinePlayhead({ playheadRef, frameLabelRef }: TimelinePlayhea
   return (
     <div
       ref={playheadRef}
-      className="pointer-events-none absolute top-0 bottom-0 z-1 w-0"
-      style={{ left: '0%' }}
+      className="pointer-events-none absolute top-0 bottom-0 left-0 z-1 w-0"
     >
       <div className="absolute top-0 left-1/2 flex -translate-x-1/2 flex-col items-center">
         <Text variant="numeric" className="rounded-sm bg-accent px-2 py-0.5 font-medium text-fg">
