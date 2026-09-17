@@ -16,20 +16,33 @@
 
 ### Keymap (locked)
 
-| Chord                   | Command                                              |
-| ----------------------- | ---------------------------------------------------- |
-| Space                   | Play / pause                                         |
-| R                       | Toggle world axes                                    |
-| W / E / T               | Transform mode: Move / Rotate / Scale                |
-| ← / →                   | Nudge −X / +X                                        |
-| ↑ / ↓                   | Nudge +Y / −Y                                        |
-| Shift+↑ / Shift+↓       | Nudge +Z / −Z                                        |
-| Cmd/Ctrl+S              | Save pending change (`saveKeyframe` when pose dirty) |
-| Cmd/Ctrl+C              | Copy create part (in-session buffer)                 |
-| Cmd/Ctrl+V              | Paste create part from buffer                        |
-| Delete                  | Delete selected create part                          |
-| Cmd/Ctrl+Z              | Undo                                                 |
-| Cmd/Ctrl+Shift+Z (or Y) | Redo                                                 |
+Single source of truth for the catalog. **Cmd** = meta on macOS; **Ctrl** elsewhere. Letter keys are case-insensitive. Remap from today’s **W / E / R** (scale): **T** = Scale, **R** = axes.
+
+| Command id         | Chord(s)                     | Label               | Category  |
+| ------------------ | ---------------------------- | ------------------- | --------- |
+| `playPause`        | Space                        | Play / Pause        | Playback  |
+| `toggleAxes`       | R                            | Toggle world axes   | Viewport  |
+| `transformMove`    | W                            | Move                | Transform |
+| `transformRotate`  | E                            | Rotate              | Transform |
+| `transformScale`   | T                            | Scale               | Transform |
+| `nudgeNegX`        | ←                            | Nudge −X            | Transform |
+| `nudgePosX`        | →                            | Nudge +X            | Transform |
+| `nudgePosY`        | ↑                            | Nudge +Y            | Transform |
+| `nudgeNegY`        | ↓                            | Nudge −Y            | Transform |
+| `nudgePosZ`        | Shift+↑                      | Nudge +Z            | Transform |
+| `nudgeNegZ`        | Shift+↓                      | Nudge −Z            | Transform |
+| `savePending`      | Cmd/Ctrl+S                   | Save pending change | Animation |
+| `copyCreatePart`   | Cmd/Ctrl+C                   | Copy create part    | Create    |
+| `pasteCreatePart`  | Cmd/Ctrl+V                   | Paste create part   | Create    |
+| `deleteCreatePart` | Delete                       | Delete create part  | Create    |
+| `undo`             | Cmd/Ctrl+Z                   | Undo                | History   |
+| `redo`             | Cmd/Ctrl+Shift+Z, Cmd/Ctrl+Y | Redo                | History   |
+
+**Redo:** both chords are first-class (mac-style Shift+Z and Windows-style Y). Catalog lists both; listener accepts either.
+
+**Not bound in v1:** bare C / V without modifiers; Backspace as Delete alias; browser Cut (Cmd/Ctrl+X).
+
+**Modifier rule:** letter chords without Cmd/Ctrl/Alt ignore the event when any of those modifiers is held (except the explicit Cmd/Ctrl rows above). Nudge Shift only applies to ↑ / ↓ for Z.
 
 ### Nudge (prep decision)
 
