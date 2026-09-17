@@ -5,7 +5,7 @@ import { $clips } from '@/modules/animation/stores/clip-store';
 import { $createPartsRevision } from '@/modules/create/stores/create-parts-revision-store';
 import { $modelGroups } from '@/modules/viewport/stores/model-group-store';
 import { $model } from '@/modules/viewport/stores/model-store';
-import { resolveExportUnits, downloadExportZip } from '../domain/zip-download';
+import { downloadExportZip, resolveExportUnits } from '../domain/zip-download';
 
 export function useExportZip() {
   const { models, previewModelIds } = useStore($model, {
