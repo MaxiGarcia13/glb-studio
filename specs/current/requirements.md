@@ -86,7 +86,6 @@ As an editor user, when I choose **File → Export** I can confirm the zip conte
 - [x] Filename collisions and no-partial-zip rules from US-5 still apply
 - [x] Modal edits zip basename + per-group / per-model basenames; empty/invalid → defaults; extensions auto-applied; animation files keep library names
 
-
 ### US-11 — Model library
 
 As an editor user, I can keep several character GLBs in the session and choose which ones the viewport shows.
@@ -377,7 +376,6 @@ As an editor user, I can group parts (and models) with multi-select + context me
 - [x] Settings **Parent** `<select>` and create-toolbar Unparent are removed (context menu only)
 - [x] Models can be **grouped / ungrouped** the same way; each model group with ≥2 exportable members packs as one GLB (meshes + each member’s owned ready clips, bone-prefixed; shared stay sidecars); ungrouped models stay separate; empty created models omitted; Export modal Merge checkbox removed
 
-
 ### US-27 — Additional kits via registry
 
 As an editor user, I can optionally start from a starter kit (for example a modern house or block robot) so I get a head start — without changing the primary Plus → empty flow.
@@ -423,6 +421,8 @@ As an editor user, when I export a model group as one GLB and import that file a
 
 Not started; do not implement until explicitly kicked off. Full requirements, design, and tasks live only in the delta folders (not duplicated here):
 
+- **US-33** — Skinned starter kit (Block robot GLB) → [`specs/us-33/`](../us-33/) (prefer before US-34)
+- **US-34** — In-editor skinning for created models (MVP) → [`specs/us-34/`](../us-34/)
 - **US-8** — Morph-target editing → [`specs/us-8/`](../us-8/)
 - **US-9** — Graph / curve keyframe UI → [`specs/us-9/`](../us-9/)
 - **US-10** — Full undo / redo → [`specs/us-10/`](../us-10/)
@@ -441,7 +441,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 - Kit marketplace / remote download; user-authored kit save/share; auto-rig / skinned kits; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
-- Bones, skinning, Mixamo / retarget on created models
+- Bones, skinning, Mixamo / retarget on **empty / mesh-kit created** models — planned as [`US-33`](../us-33/) (skinned kit asset) + [`US-34`](../us-34/) (in-editor skin MVP); not started
 - Server accounts (FBX convert via US-16 is the allowed server round-trip; no user accounts)
 - Collaborative editing / durable undo across reloads
 - Full NLA strip editorial beyond US-7 blend/cross-fade

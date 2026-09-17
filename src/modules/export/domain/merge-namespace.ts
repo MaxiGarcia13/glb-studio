@@ -1,9 +1,7 @@
-import type { Object3D } from 'three';
+import type { AnimationClip, Object3D } from 'three';
+import type { ModelGroupClipRecord } from './model-group-manifest';
 import type { ClipEntry } from '@/modules/animation/types/clip';
 import type { ModelEntry } from '@/modules/viewport/types/model';
-import type { ModelGroupClipRecord } from './model-group-manifest';
-
-import { AnimationClip } from 'three';
 
 import { bakeTimeScale } from '@/modules/animation/domain/clip-bake';
 import { remapClipTracks } from '@/modules/animation/domain/clip-remap';

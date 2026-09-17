@@ -35,7 +35,7 @@ Clips have **ownership** (`ownerModelId`: `null` = Shared Animations; otherwise 
 
 1. User picks one or more `.glb` / `.gltf` / `.fbx` files via **File → Import** (File API); `.fbx` converts first — see **FBX import** below. Content router (`import/adapters/content-router`) parses once per file
 2. Usable skinned mesh + skeleton → model path with `source: 'imported'` (embedded clips register as owned). Else if the scene has at least one mesh (non-skinned / create-style) → model path with `source: 'created'` (embedded clips owned; `userData.createPart` / `createGroup` extras restored from GLB when present). Else animations only → Shared clip import. Neither → per-file error; batch continues
-2b. **Group round-trip (US-32):** if `userData.threeEditorModelGroup` is present with ≥2 members, `splitModelGroupScene` detaches each stamped member, strips bone prefixes, remaps owned clips, and returns multiple `ModelLoadResult`s plus `groupsToCreate`; toolbar calls `createModelGroup(ids, { name })`. No manifest → unchanged single-model path
+   2b. **Group round-trip (US-32):** if `userData.threeEditorModelGroup` is present with ≥2 members, `splitModelGroupScene` detaches each stamped member, strips bone prefixes, remaps owned clips, and returns multiple `ModelLoadResult`s plus `groupsToCreate`; toolbar calls `createModelGroup(ids, { name })`. No manifest → unchanged single-model path
 3. New model loads join `previewModelIds` (visible by default). The last successful load in that batch becomes `activeModelId` (focused)
 4. Viewport mounts every previewed model’s scene graph (`ModelViewer` primitives with `dispose={null}` so eye-toggle unmount does not destroy geometries). Hidden library graphs stay in memory until Remove. Eye toggle on a model row adds/removes that id from `previewModelIds`
 5. Replace updates that entry only (keep id). If it is previewed, swap that graph and re-frame the union of visible models. Remove disposes that graph / blob URL (skip revoke when `blobUrl` is absent on created models); if it was focused, focus another previewed model or idle empty state
@@ -258,7 +258,6 @@ Semantic colors live in `src/styles/global.css` `@theme` (`canvas`, `surface`, `
 6. Trigger a single download of the zip blob. Any exporter or zip failure → user-visible error; no partial archive
 
 A model with no matching clips still ships as a mesh-only `.glb` when packed as a single unit (or as a mesh-only member inside a group GLB). There are no per-row download buttons.
-
 
 **Blend vs zip (locked):** live blend is viewport playback only (`blendClipId` / `blendWeight` / `blendBaseClip` never enter the exporter). `packModelGlb` / `packMergedModelsGlb` / `packClipGlb` / `downloadExportZip` read each entry’s working `clip` (+ `timeScale` bake) — the same discrete library data as US-5. After **Bake**, the flattened mix replaces the active entry’s `clip` and therefore exports with that clip; without Bake, the zip is unchanged by the overlay.
 

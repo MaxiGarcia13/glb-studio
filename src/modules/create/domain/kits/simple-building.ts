@@ -118,8 +118,7 @@ function gableColumns(
           WALL,
         ),
       );
-    }
-    else {
+    } else {
       parts.push(
         box(
           `${namePrefix}_${i}`,
@@ -181,8 +180,8 @@ function windowPane(
   const proud = T / 2 + 0.12;
   const sideFacing = facing === 'left' || facing === 'right';
 
-  const outward =
-    facing === 'front'
+  const outward
+    = facing === 'front'
       ? ([0, 0, proud] as const)
       : facing === 'back'
         ? ([0, 0, -proud] as const)

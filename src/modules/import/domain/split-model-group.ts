@@ -1,9 +1,9 @@
 import type { AnimationClip, Object3D } from 'three';
-import type { ModelLoadResult } from '@/modules/viewport/types/model';
 import type {
   ModelGroupManifest,
   ModelGroupMemberRecord,
 } from '@/modules/export/domain/model-group-manifest';
+import type { ModelLoadResult } from '@/modules/viewport/types/model';
 
 import { Group } from 'three';
 
@@ -197,7 +197,7 @@ export function splitModelGroupScene(
   }
 
   const models = manifest.members.map((member) => byPrefix.get(member.prefix));
-  if (models.some((model) => model === undefined) || models.length < 2) {
+  if (models.includes(undefined) || models.length < 2) {
     return null;
   }
 
