@@ -12,7 +12,6 @@
 | ID | Summary |
 |----|---------|
 | **US-28** | Part color maps (textures) on created models only |
-| **US-27** | Additional create kits via registry (building, robot, …) |
 | **US-8** | Morph-target editing (post-MVP) |
 | **US-9** | Graph / curve keyframe UI (post-MVP) |
 | **US-10** | Full undo / redo stack (post-MVP) |
@@ -21,6 +20,7 @@
 
 | ID | Summary |
 |----|---------|
+| **US-27** | Additional create kits via registry (Modern house, Block robot) + Edit joint pick on create groups |
 | **US-26** | Part hierarchy + outliner + Group / Ungroup; export via model groups (replaces Merge checkbox) |
 | **US-25** | Grid / rotation snap for created-model edits |
 | **US-30** | EditorToolbar (Blender-style File / Settings menu bar) |

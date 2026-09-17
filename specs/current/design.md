@@ -56,7 +56,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 ## Create empty model + parts (US-23 / US-24)
 
 1. **File → New model** calls `createEmptyModel()` immediately — empty `Group` scene, `source: 'created'`, name like `New model N.glb`, joins preview + focus. No kit picker on New model
-2. **File → From kit…** opens a secondary modal listing registered starter kits (`listStarterKits` — not `empty`) with label + one-line description; choosing one calls `createFromKit` which instantiates recipe parts (`instantiateKitParts`) into a new created model on the same library / preview / focus path. Current starters: **Modern house** (`simple-building` — two-storey gable + windows/porch/balconies) and **Block robot**
+2. **File → From kit…** opens a secondary modal listing registered starter kits (`listStarterKits` — not `empty`) with label + one-line description; choosing one calls `createFromKit` which instantiates recipe parts (`instantiateKitParts`) into a new created model on the same library / preview / focus path. Starters (US-27): **Modern house** (`simple-building` — single body + front dormer bay; pitched roof slabs; column gable fills; lit windows/door, porch, balconies) and **Block robot** (`block-robot` — Armature create-group tree + segment meshes). Recipes are data-only under `create/domain/kits/`; Plus / New model stays empty
 3. Domain `create/` owns `PartKind` registry (`box` / `sphere` / `cylinder` / `capsule` / `plane` / `cone` / `torus` / `triangle` / `polygon` / `circle` / `ring` / `tetrahedron` / `octahedron` / `icosahedron` / `dodecahedron`), `Kit` registry (`empty` + starter recipes under `create/domain/kits/`, optional `groups` tree of stamped create groups for armature-style parenting), `spawnPart` / `duplicatePart` / `deletePart`, ground-origin geometry, size rebuild from `userData.createPart`. Action `addPart(modelId, kindId)` spawns a default part under a **created** model, forces **Edit**, selects the mesh, and returns it
 4. Parts are named meshes (`nextPartName` → `box`, `box_2`, …); metres + Y-up; bottom-origin geometry so identity TRS sits on the ground; later `spawnPart` siblings get a small +X offset so they are not stacked
 5. When focused model is `source: 'created'`: vertical create **ToolBar** after Settings (Add part palette, color, duplicate, delete); Settings **PartInspector** for kind size fields; first-run hint when nothing is selected. Toolbar (and palette) hidden for imported focus. **Edit** gizmo targets the selected part; **Move** targets the model root (all parts)
@@ -70,8 +70,9 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
    - `$selection.kind`: `'none' | 'parts' | 'models'` — never mix; plain click replaces (`selectObject` / `selectModelIds`); Shift+click toggles (`toggleObject` / `toggleModelId`) in library + viewport
    - Right-click `PointerActionMenu` (Group / Ungroup) from library rows and viewport; parts Group = empty group under parts root + attach selection; parts Ungroup = dissolve groups or lift to parts root; models Group / Ungroup via `$modelGroups` session store (library tree + export units)
    - No Settings Parent `<select>`; no toolbar Unparent
+   - **Joint select on pick (US-27):** Edit raycast on a stamped create part under a `createGroup` ancestor selects the nearest parent group (`resolveJointPickTarget`) so TransformControls pose the limb; Shift+click keeps the mesh (bypass + multi-select); outliner clicks stay exact. No skinned bones — reuse create groups
 9. **Snap (US-25):** when focused model `source === 'created'`, TransformControls use built-in `translationSnap` / `rotationSnap` from `$viewportSettings` (Move = world, Edit = local; scale never). Imported models never quantize. Settings XYZ typing does not auto-snap
-10. Growth seams: textures (US-28); optional extra kits remain content-only under `create/domain/kits/`
+10. Growth seams: textures (US-28); further starter kits stay content-only under `create/domain/kits/` (no engine fork)
 
 ## Nested library + clip ownership (US-19)
 
@@ -178,7 +179,7 @@ Bind-pose / Move / T-pose Save–Restore branching: see **Edit / Move tools & bi
 
 1. **`$editTool`** (`'navigate' | 'edit' | 'move'`, default `'edit'`) — toolbar in `EditorPreview` when a model is loaded; button order **Navigate** (`ArrowsHorizontalIcon`) → **Edit** (`CursorIcon`) → **Move** (`MoveIcon`)
 2. **Navigate** — free camera travel via `OrbitControls` with **hand-tool** mapping (LMB / one-finger **pan**, RMB orbit, scroll / pinch zoom); no TransformControls; no raycast selection or model focus from picks; W / E / R toolbar hidden. Edit / Move keep orbit-first mapping (LMB rotate, RMB pan)
-3. **Edit** — raycast selection + TransformControls in local space; W / E / R when something is selected; works with **no** active clip (T-pose)
+3. **Edit** — raycast selection + TransformControls in local space; W / E / R when something is selected; works with **no** active clip (T-pose). On created models, plain pick remaps stamped parts to the nearest create-group when present (US-27 joint select); Shift+click keeps the mesh
 4. **Move** — attach TransformControls to the active model root in **world** space; mode from `$transformMode` (translate / rotate / scale); show W / E / R toolbar while Move is active; ignore raycast picks so the user stays on the root
 5. **Dirty + snapshot** — on first gizmo / Settings root change, mark `$poseDirty`, set `$poseEditKind` (`modelRoot` | `selection`), snapshot pre-edit local TRS
 6. **Save** (by `$poseEditKind`, not active tool)

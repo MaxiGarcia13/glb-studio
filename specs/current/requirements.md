@@ -374,6 +374,21 @@ As an editor user, I can group parts (and models) with multi-select + context me
 - [x] Settings **Parent** `<select>` and create-toolbar Unparent are removed (context menu only)
 - [x] Models can be **grouped / ungrouped** the same way; each model group with ≥2 exportable members packs as one GLB; ungrouped models stay separate; empty created models omitted; Export modal Merge checkbox removed
 
+### US-27 — Additional kits via registry
+
+As an editor user, I can optionally start from a starter kit (for example a modern house or block robot) so I get a head start — without changing the primary Plus → empty flow.
+
+**Acceptance**
+
+- [x] At least **two** kits are registered (**Modern house** / `simple-building`, **Block robot**) using the kit recipe format
+- [x] A secondary **From kit…** entry (not the Plus button) lists them with beginner-friendly labels and one-line descriptions
+- [x] Creating from a kit follows the same library / preview / Edit / export path as `createEmptyModel`
+- [x] Plus / New model still creates an **empty** model with no modal
+- [x] No new PartKind is required unless a kit truly needs one; prefer existing kinds
+- [x] Kits remain editable (parts are normal meshes — not locked prefabs)
+- [x] On a created model with stamped create-group hierarchy (e.g. Block robot Armature), **Edit** viewport pick prefers the **nearest parent create-group** so transforming that joint moves its child parts together (limb feels connected)
+- [x] User can still target the **mesh** when needed (e.g. Shift+click on pick) for color / size / single-part edits; outliner clicks stay exact
+
 ## Post-MVP user stories
 
 Not started; do not implement until explicitly kicked off. Full requirements, design, and tasks live only in the delta folders (not duplicated here):
@@ -393,7 +408,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 ## Out of scope (still excluded)
 
 - Material / texture editing on **imported** characters (created-model color maps are US-28)
-- Kit marketplace / remote download; user-authored kit save/share; auto-rig for kits (US-27 delta still open for optional clothed variant + verify)
+- Kit marketplace / remote download; user-authored kit save/share; auto-rig / skinned kits; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
 - Bones, skinning, Mixamo / retarget on created models
