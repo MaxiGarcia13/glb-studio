@@ -26,7 +26,8 @@ export interface ModelLibraryState {
 export interface ModelLoadResult {
   fileName: string;
   scene: THREE.Group;
-  blobUrl: string;
+  /** Object URL when the scene came from a file blob; omit for in-memory splits. */
+  blobUrl?: string;
   animations: THREE.AnimationClip[];
   /** How the library should treat this load (skinned = imported, mesh-only = created). */
   source: ModelSource;

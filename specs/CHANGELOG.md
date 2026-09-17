@@ -20,6 +20,8 @@
 
 | ID | Summary |
 |----|---------|
+| **US-32** | Group GLB round-trip — split on import (group → models → clips) |
+| **US-31** | Bone outliner + SkeletonHelper for imported models |
 | **US-27** | Additional create kits via registry (Modern house, Block robot) + Edit joint pick on create groups |
 | **US-26** | Part hierarchy + outliner + Group / Ungroup; export via model groups (replaces Merge checkbox) |
 | **US-25** | Grid / rotation snap for created-model edits |

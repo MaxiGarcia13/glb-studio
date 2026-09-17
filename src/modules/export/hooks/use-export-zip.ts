@@ -12,9 +12,7 @@ export function useExportZip() {
     keys: ['models', 'previewModelIds'],
   });
   const { groups } = useStore($modelGroups, { keys: ['groups'] });
-  const { clips, activeClipByModelId, activeSharedClipId } = useStore($clips, {
-    keys: ['clips', 'activeClipByModelId', 'activeSharedClipId'],
-  });
+  const { clips } = useStore($clips, { keys: ['clips'] });
   useStore($createPartsRevision);
 
   const [busy, setBusy] = useState(false);
@@ -50,7 +48,5 @@ export function useExportZip() {
     exportUnits,
     multiModelGroups,
     clips,
-    activeClipByModelId,
-    activeSharedClipId,
   };
 }

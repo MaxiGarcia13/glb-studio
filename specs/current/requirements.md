@@ -81,9 +81,11 @@ As an editor user, when I choose **File → Export** I can confirm the zip conte
 - [x] **File → Export** opens an **Export** modal (does not pack immediately)
 - [x] Modal shows a short summary of what will be packed; confirm builds the zip
 - [x] Ungrouped **exportable** models pack as separate GLBs (US-5); empty created models (no stamped mesh parts) are omitted
-- [x] Each editor **model group** with ≥2 exportable members packs as **one** GLB via bone-prefixed merge + optional **Scene** bake (US-26); shared clips still ship as animation-only sidecars
+- [x] Each editor **model group** with ≥2 exportable members packs as **one** GLB via bone-prefixed merge (US-26); that GLB includes **each member’s owned ready clips** (tracks remapped to that model’s bone prefix) — no multi-character Scene bake / clip merge; shared clips still ship only as animation-only sidecars
+- [x] Group GLBs stamp an editor manifest so re-import restores **group → models → per-model clips** (US-32)
 - [x] Filename collisions and no-partial-zip rules from US-5 still apply
-- [x] Modal edits zip basename + per-group / per-model basenames + Scene clip name when a multi-model group exists; empty/invalid → defaults; extensions auto-applied; animation files keep library names
+- [x] Modal edits zip basename + per-group / per-model basenames; empty/invalid → defaults; extensions auto-applied; animation files keep library names
+
 
 ### US-11 — Model library
 
@@ -92,6 +94,7 @@ As an editor user, I can keep several character GLBs in the session and choose w
 **Acceptance**
 
 - [x] User can import multiple `.glb` / `.gltf` / `.fbx` files via **File → Import** (US-30 content routing); usable skinned mesh + skeleton files populate the model library as `imported`; mesh-only (non-skinned) GLBs populate as `created` (re-import of exported New models)
+- [x] A GLB stamped as an editor **model group** (US-32) splits into member models + recreates the library group with owned clips nested under each model
 - [x] Sidebar library lists each model nested under **Models** with iconized Replace / Remove / Rename (and Animation / Retarget when applicable — US-19)
 - [x] Multiple models can be **previewed** at once (US-20); one model is **focused** (`activeModelId`) for gizmo and Settings XYZ (transport works with a selected clip even when no model is focused)
 - [x] Removing a model deletes its owned clips; if it was focused, focus moves to another previewed model, or empty state if none remain
@@ -368,11 +371,12 @@ As an editor user, I can group parts (and models) with multi-select + context me
 - [x] Created-model parts can be **grouped** into an empty group node so moving the group in Edit moves children (`Object3D` hierarchy; world transform preserved; cycle guard)
 - [x] **Ungroup** dissolves empty groups or lifts nested parts to the parts root (world preserved)
 - [x] **Part outliner** lists mesh parts and group nodes under created models; click selects; parents collapse/expand; list stays in sync on add / duplicate / delete / rename / regroup
-- [x] No skeleton-bone outliner for imported models in this story
+- [x] Skeleton-bone outliner for imported models is **US-31** (deferred from this story)
 - [x] **Shift+click** multi-selects in the library (model rows + part outliner) and viewport; parts and models never mix in one selection
 - [x] **Right-click** opens Group / Ungroup when the selection allows it (library + preview); Group creates a new empty container (not “parent under last-clicked mesh/model”)
 - [x] Settings **Parent** `<select>` and create-toolbar Unparent are removed (context menu only)
-- [x] Models can be **grouped / ungrouped** the same way; each model group with ≥2 exportable members packs as one GLB; ungrouped models stay separate; empty created models omitted; Export modal Merge checkbox removed
+- [x] Models can be **grouped / ungrouped** the same way; each model group with ≥2 exportable members packs as one GLB (meshes + each member’s owned ready clips, bone-prefixed; shared stay sidecars); ungrouped models stay separate; empty created models omitted; Export modal Merge checkbox removed
+
 
 ### US-27 — Additional kits via registry
 
@@ -388,6 +392,32 @@ As an editor user, I can optionally start from a starter kit (for example a mode
 - [x] Kits remain editable (parts are normal meshes — not locked prefabs)
 - [x] On a created model with stamped create-group hierarchy (e.g. Block robot Armature), **Edit** viewport pick prefers the **nearest parent create-group** so transforming that joint moves its child parts together (limb feels connected)
 - [x] User can still target the **mesh** when needed (e.g. Shift+click on pick) for color / size / single-part edits; outliner clicks stay exact
+
+### US-31 — Bone outliner + skeleton helper (imported)
+
+As an editor user, when I preview an imported character I can see its skeleton in the viewport and browse its bones under that model in the library so I can find and select joints without hunting by raycast alone.
+
+**Acceptance**
+
+- [x] Under each **imported** model in the library, a **bone outliner** lists the skeleton hierarchy (depth indent, collapse chevron); order under the model is **bones, then owned clips**
+- [x] Clicking a bone row focuses that model if needed, switches to **Edit**, and selects the bone (Shift+click toggles multi-select like parts)
+- [x] Created models keep the part outliner only — no bone outliner
+- [x] Every **previewed** imported model shows a Three.js **SkeletonHelper** in the viewport (always on while previewed; no Settings toggle)
+- [x] Helpers are not pick targets (do not steal raycasts from meshes/bones)
+- [x] Hiding a model (eye off) or removing it removes its helper
+
+### US-32 — Group GLB round-trip (split on import)
+
+As an editor user, when I export a model group as one GLB and import that file again, I see the same library shape: a group containing each member model, with each model’s animations nested under that model.
+
+**Acceptance**
+
+- [x] Group export writes an editor manifest on the packed root (`userData`) listing group name, each member’s file name / source / bone prefix, and which embedded clips belong to which member (export name + library name)
+- [x] Each member root is stamped so import can find it after GLTF round-trip
+- [x] Importing a GLB with that manifest (≥2 members) creates **separate** library models (prefix stripped; tracks remapped), then recreates the **model group** with the saved name
+- [x] Owned clips nest under their owning model (library names restored); shared sidecars unchanged
+- [x] GLBs **without** the manifest keep the single-model import path
+- [x] Created vs imported `source` per member is restored from the manifest
 
 ## Post-MVP user stories
 

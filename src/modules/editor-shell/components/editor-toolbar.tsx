@@ -14,6 +14,7 @@ import { FromKitModal } from '@/modules/create/components/from-kit-modal';
 import { ExportModal, useExportZip } from '@/modules/export';
 import { routeContentImport } from '@/modules/import/adapters/content-router';
 import { useActiveModel } from '@/modules/viewport/hooks/use-active-model';
+import { createModelGroup } from '@/modules/viewport/stores/model-group-store';
 import { $model, importModelResults } from '@/modules/viewport/stores/model-store';
 import { SelectionContextMenu } from './selection-context-menu';
 import { SnapControls } from './snap-controls';
@@ -34,9 +35,16 @@ export function EditorToolbar() {
     multiple: true,
     onFiles: (files) => {
       void (async () => {
-        const { models, sharedClips, errors } = await routeContentImport(files);
-        if (models.length > 0 || errors.length > 0) {
-          importModelResults(models, errors);
+        const { models, sharedClips, errors, groupsToCreate } = await routeContentImport(files);
+        const loaded
+          = models.length > 0 || errors.length > 0
+            ? importModelResults(models, errors)
+            : [];
+        for (const group of groupsToCreate) {
+          const ids = group.modelIndexes
+            .map((index) => loaded[index]?.id)
+            .filter((id): id is string => Boolean(id));
+          createModelGroup(ids, { name: group.name });
         }
         if (sharedClips.length > 0) {
           importClipResults(sharedClips, null);

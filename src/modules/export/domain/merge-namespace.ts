@@ -1,28 +1,33 @@
 import type { Object3D } from 'three';
 import type { ClipEntry } from '@/modules/animation/types/clip';
 import type { ModelEntry } from '@/modules/viewport/types/model';
+import type { ModelGroupClipRecord } from './model-group-manifest';
 
 import { AnimationClip } from 'three';
 
 import { bakeTimeScale } from '@/modules/animation/domain/clip-bake';
 import { remapClipTracks } from '@/modules/animation/domain/clip-remap';
-import {
-  buildSkeletonNodeSet,
-  validateClipAgainstSkeleton,
-} from '@/modules/animation/domain/clip-validate';
 import { sanitizeBaseName, stripGlbExtension } from '../utils/file-name';
 
 export interface ModelNamespace {
   modelId: string;
+  fileName: string;
+  source: ModelEntry['source'];
   /** Prefix including trailing `_` (e.g. `Hero_`). */
   prefix: string;
   /** Original node name → prefixed name on the cloned graph. */
   nameMap: Map<string, string>;
-  /** Original skeleton/node names (pre-prefix) for clip validation. */
-  nodeSet: Set<string>;
 }
 
-export const DEFAULT_SCENE_CLIP_NAME = 'Scene';
+export interface MergeExportClipRecord {
+  modelId: string;
+  prefix: string;
+  /** Library display name. */
+  name: string;
+  /** Unique name written into the GLB. */
+  exportName: string;
+  clip: AnimationClip;
+}
 
 /** Unique prefix like `Hero_` / `Hero_2_` for bone namespacing. */
 export function buildUniqueModelPrefix(
@@ -76,26 +81,6 @@ function uniqueClipName(name: string, taken: Set<string>): string {
   return candidate;
 }
 
-/** Owned ready for this model + shared clips that validate against its skeleton. */
-export function listMergeClipChoices(
-  model: ModelEntry,
-  clips: readonly ClipEntry[],
-): ClipEntry[] {
-  const nodeSet = buildSkeletonNodeSet(model.scene);
-  return clips.filter((entry) => {
-    if (!entry.clip) {
-      return false;
-    }
-    if (entry.ownerModelId === model.id) {
-      return entry.status === 'ready';
-    }
-    if (entry.ownerModelId !== null) {
-      return false;
-    }
-    return validateClipAgainstSkeleton(entry.clip, nodeSet).valid;
-  });
-}
-
 function rewriteClipForNamespace(
   entry: ClipEntry,
   nameMap: Map<string, string>,
@@ -109,47 +94,50 @@ function rewriteClipForNamespace(
 }
 
 /**
- * Build merge animations from per-model picks:
- * one **Scene** clip = all chosen clips’ tracks (fight / multi-character take).
+ * Pack every owned ready clip for each merged model (tracks remapped to that
+ * model’s bone prefix). Shared clips are not included — they ship as sidecars.
  */
 export function buildMergeExportClips(
   namespaces: readonly ModelNamespace[],
   clips: readonly ClipEntry[],
-  clipIdByModelId: Readonly<Record<string, string>>,
-  sceneClipName: string = DEFAULT_SCENE_CLIP_NAME,
-): AnimationClip[] {
-  const clipsById = new Map(clips.map((entry) => [entry.id, entry]));
+): MergeExportClipRecord[] {
   const takenNames = new Set<string>();
-
-  const sceneTracks: AnimationClip['tracks'] = [];
-  let sceneDuration = 0;
+  const records: MergeExportClipRecord[] = [];
 
   for (const ns of namespaces) {
-    const clipId = clipIdByModelId[ns.modelId];
-    if (!clipId) {
-      continue;
+    for (const entry of clips) {
+      if (entry.ownerModelId !== ns.modelId || !entry.clip || entry.status !== 'ready') {
+        continue;
+      }
+      const rewritten = rewriteClipForNamespace(entry, ns.nameMap);
+      if (!rewritten) {
+        continue;
+      }
+      const exportName = uniqueClipName(entry.name, takenNames);
+      rewritten.name = exportName;
+      records.push({
+        modelId: ns.modelId,
+        prefix: ns.prefix,
+        name: entry.name,
+        exportName,
+        clip: rewritten,
+      });
     }
-    const entry = clipsById.get(clipId);
-    if (!entry) {
-      continue;
-    }
-    const rewritten = rewriteClipForNamespace(entry, ns.nameMap);
-    if (!rewritten) {
-      continue;
-    }
-
-    sceneTracks.push(...rewritten.tracks);
-    sceneDuration = Math.max(sceneDuration, rewritten.duration);
   }
 
-  if (sceneTracks.length === 0) {
-    return [];
-  }
+  return records;
+}
 
-  const base = sanitizeBaseName(sceneClipName) ?? DEFAULT_SCENE_CLIP_NAME;
-  return [
-    new AnimationClip(uniqueClipName(base, takenNames), sceneDuration, sceneTracks),
-  ];
+export function clipRecordsForMember(
+  records: readonly MergeExportClipRecord[],
+  modelId: string,
+): ModelGroupClipRecord[] {
+  return records
+    .filter((record) => record.modelId === modelId)
+    .map((record) => ({
+      exportName: record.exportName,
+      name: record.name,
+    }));
 }
 
 export function createModelNamespace(
@@ -157,7 +145,12 @@ export function createModelNamespace(
   clonedScene: Object3D,
   prefix: string,
 ): ModelNamespace {
-  const nodeSet = buildSkeletonNodeSet(model.scene);
   const nameMap = namespaceSceneGraph(clonedScene, prefix);
-  return { modelId: model.id, prefix, nameMap, nodeSet };
+  return {
+    modelId: model.id,
+    fileName: model.fileName,
+    source: model.source,
+    prefix,
+    nameMap,
+  };
 }

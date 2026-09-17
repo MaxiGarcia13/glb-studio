@@ -38,7 +38,10 @@ export function removeModelsFromGroups(modelIds: readonly string[]): void {
  * Create a session model group containing `modelIds` (order preserved).
  * Members are removed from any previous group. Returns the new group or null.
  */
-export function createModelGroup(modelIds: readonly string[]): ModelGroup | null {
+export function createModelGroup(
+  modelIds: readonly string[],
+  options: { name?: string } = {},
+): ModelGroup | null {
   const unique: string[] = [];
   for (const id of modelIds) {
     if (!unique.includes(id)) {
@@ -51,9 +54,12 @@ export function createModelGroup(modelIds: readonly string[]): ModelGroup | null
 
   removeModelsFromGroups(unique);
 
+  const requested = options.name?.trim();
   const group: ModelGroup = {
     id: createGroupId(),
-    name: nextGroupName($modelGroups.get().groups),
+    name: requested && requested.length > 0
+      ? requested
+      : nextGroupName($modelGroups.get().groups),
     modelIds: unique,
   };
   $modelGroups.setKey('groups', [...$modelGroups.get().groups, group]);

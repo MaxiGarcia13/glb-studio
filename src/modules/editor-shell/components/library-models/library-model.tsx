@@ -4,12 +4,14 @@ import { useStore } from '@nanostores/react';
 import { useState } from 'react';
 import { useAssetEntryRename } from '@/components/asset-entry/use-asset-entry-rename';
 import { useGltfFilePicker } from '@/components/gltf-file-picker/use-gltf-file-picker';
+import { BoneOutliner } from '@/modules/animation/components/bone-outliner';
 import { ClipRows } from '@/modules/animation/components/clip-rows';
 import { modelHasReadyOwnedClipNamed } from '@/modules/animation/domain/clip-conflict';
 import {
   buildSkeletonNodeSet,
   validateClipAgainstSkeleton,
 } from '@/modules/animation/domain/clip-validate';
+import { listBoneEntries } from '@/modules/animation/domain/list-bones';
 import { $clips } from '@/modules/animation/stores/clip-store';
 import { PartOutliner } from '@/modules/create/components/part-outliner';
 import { listCreatedParts } from '@/modules/create/domain/list-created-parts';
@@ -53,7 +55,9 @@ export function LibraryModel({ model }: LibraryModelProps) {
   const ownedClips = clips.filter((entry) => entry.ownerModelId === model.id);
   const isCreated = model.source === 'created';
   const partCount = isCreated ? listCreatedParts(model.scene).length : 0;
-  const hasNested = (isCreated && partCount > 0) || ownedClips.length > 0;
+  const boneCount = isCreated ? 0 : listBoneEntries(model.scene).length;
+  const hasNested
+    = (isCreated && partCount > 0) || boneCount > 0 || ownedClips.length > 0;
   const nodeNames = buildSkeletonNodeSet(model.scene);
   const conflictedClipIds = clips.flatMap((entry) => {
     if (!entry.clip) {
@@ -127,7 +131,7 @@ export function LibraryModel({ model }: LibraryModelProps) {
       >
         {isCreated
           ? <PartOutliner modelId={model.id} scene={model.scene} />
-          : null}
+          : <BoneOutliner modelId={model.id} scene={model.scene} />}
         {ownedClips.length > 0
           ? <ClipRows clips={ownedClips} ownerModelId={model.id} />
           : null}

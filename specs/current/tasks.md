@@ -77,10 +77,10 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 **Shipped** — folded into `current/` (multi-model opt-in superseded by US-26 groups). See [`CHANGELOG.md`](../CHANGELOG.md).
 
 - [x] `packMergedModelsGlb` + `downloadExportZip` (group / single units)
-- [x] On multi-model group: per-model clip picks → Scene bake only; shared also as unprefixed sidecars
+- [x] On multi-model group: pack each member’s owned ready clips (bone-prefixed tracks); shared only as unprefixed sidecars — no Scene bake
 - [x] `ExportModal` + File → Export opens modal (no Merge checkbox — US-26)
-- [x] Filename inputs: zip + group / per-model basenames; Scene clip + per-model Selects when groups exist
-- [x] Manual verify separate vs grouped / fight Scene bake
+- [x] Filename inputs: zip + group / per-model basenames when groups exist
+- [x] Manual verify separate vs grouped (owned clips retained in group GLB)
 
 ## US-13 — Selection name overlay
 
@@ -231,7 +231,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `PartOutliner` (indent, collapse, click + Shift+click select); `$createPartsRevision`
 - [x] Multi-selection store (`kind: parts | models`); Shift+click library + viewport; selection highlight
 - [x] Context-menu Group / Ungroup for parts and models; remove Settings Parent + toolbar Unparent
-- [x] Export packs model groups as one GLB; ungrouped separate; Merge checkbox removed
+- [x] Export packs model groups as one GLB (owned clips remapped; no Scene bake); ungrouped separate; Merge checkbox removed
 
 ## US-27 — Additional kits via registry
 
@@ -240,6 +240,22 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Modern house (`simple-building`) + Block robot kit recipes + From kit UI
 - [x] Joint select on pick (`resolveJointPickTarget`) — nearest create-group; Shift+click mesh bypass
 - [x] Optional clothed block variant deferred (content-only if ever added; not required)
+
+## US-31 — Bone outliner + skeleton helper
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] `listBoneEntries` (skeleton hierarchy for outliner)
+- [x] `BoneOutliner` under imported models (bones then clips); click → Edit + select
+- [x] `ModelSkeletonHelper` for each previewed imported model (not pickable)
+
+## US-32 — Group GLB round-trip
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] Manifest + member stamps on `packMergedModelsGlb`
+- [x] `splitModelGroupScene` + content-router detect; `createModelGroup({ name })` on import
+- [x] Owned clips nested under each restored model
 
 ## Open deltas
 

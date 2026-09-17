@@ -1,5 +1,6 @@
 import type { Group } from 'three';
 import type { ModelNamespace } from './merge-namespace';
+import type { ModelGroupManifest } from './model-group-manifest';
 import type { ClipEntry } from '@/modules/animation/types/clip';
 
 import type { ModelEntry } from '@/modules/viewport/types/model';
@@ -10,10 +11,14 @@ import { exportGlbBinary } from '../adapters/gltf-exporter';
 import {
   buildMergeExportClips,
   buildUniqueModelPrefix,
+  clipRecordsForMember,
   createModelNamespace,
-  DEFAULT_SCENE_CLIP_NAME,
-
 } from './merge-namespace';
+import {
+  MODEL_GROUP_MANIFEST_KEY,
+  MODEL_GROUP_MANIFEST_VERSION,
+  MODEL_GROUP_MEMBER_KEY,
+} from './model-group-manifest';
 
 export interface MergedGlbResult {
   arrayBuffer: ArrayBuffer;
@@ -21,10 +26,6 @@ export interface MergedGlbResult {
 }
 
 export interface PackMergedModelsOptions {
-  /** Per model id → library clip id to bake (omit / empty = bind pose only). */
-  clipIdByModelId?: Readonly<Record<string, string>>;
-  /** Name of the combined multi-character clip (default `Scene`). */
-  sceneClipName?: string;
   /** Root group name in the packed GLB (default `merged`). */
   rootName?: string;
 }
@@ -33,7 +34,8 @@ export const MERGED_GLB_FILE_NAME = 'merged.glb';
 
 /**
  * Pack models into one GLB with unique bone prefixes.
- * Bakes a single Scene clip from per-model picks (e.g. fight take).
+ * Embeds each member’s owned ready clips (remapped); shared clips stay sidecars.
+ * Stamps an editor manifest so import can restore group → models → clips.
  */
 export async function packMergedModelsGlb(
   models: readonly ModelEntry[],
@@ -44,8 +46,9 @@ export async function packMergedModelsGlb(
     throw new Error('Nothing to merge');
   }
 
+  const rootName = options.rootName?.trim() || 'merged';
   const root = new ThreeGroup();
-  root.name = options.rootName?.trim() || 'merged';
+  root.name = rootName;
 
   const prefixTaken = new Set<string>();
   const namespaces: ModelNamespace[] = [];
@@ -54,16 +57,30 @@ export async function packMergedModelsGlb(
     const clone = SkeletonUtils.clone(model.scene) as Group;
     clone.name = clone.name || model.fileName;
     const prefix = buildUniqueModelPrefix(model, prefixTaken);
-    namespaces.push(createModelNamespace(model, clone, prefix));
+    const ns = createModelNamespace(model, clone, prefix);
+    namespaces.push(ns);
+    clone.userData[MODEL_GROUP_MEMBER_KEY] = {
+      prefix,
+      fileName: model.fileName,
+      source: model.source,
+    };
     root.add(clone);
   }
 
-  const animations = buildMergeExportClips(
-    namespaces,
-    clips,
-    options.clipIdByModelId ?? {},
-    options.sceneClipName ?? DEFAULT_SCENE_CLIP_NAME,
-  );
+  const clipRecords = buildMergeExportClips(namespaces, clips);
+  const manifest: ModelGroupManifest = {
+    version: MODEL_GROUP_MANIFEST_VERSION,
+    name: rootName,
+    members: namespaces.map((ns) => ({
+      fileName: ns.fileName,
+      prefix: ns.prefix,
+      source: ns.source,
+      clips: clipRecordsForMember(clipRecords, ns.modelId),
+    })),
+  };
+  root.userData[MODEL_GROUP_MANIFEST_KEY] = manifest;
+
+  const animations = clipRecords.map((record) => record.clip);
   const arrayBuffer = await exportGlbBinary(root, animations);
   return { arrayBuffer, fileName: MERGED_GLB_FILE_NAME };
 }

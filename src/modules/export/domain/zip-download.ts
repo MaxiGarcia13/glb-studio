@@ -29,10 +29,6 @@ export interface ExportZipOptions {
   groupFileNames?: Record<string, string>;
   /** Per model id → basename when the model is not in a multi-model group. */
   modelFileNames?: Record<string, string>;
-  /** Per model id → clip id for Scene bake inside multi-model group GLBs. */
-  clipIdByModelId?: Record<string, string>;
-  /** Combined multi-character clip name inside grouped GLBs. */
-  sceneClipName?: string;
 }
 
 interface ExportUnit {
@@ -127,8 +123,6 @@ export async function downloadExportZip(
   for (const unit of units) {
     if (unit.kind === 'group' && unit.group) {
       const packed = await packMergedModelsGlb(unit.models, clipState.clips, {
-        clipIdByModelId: options.clipIdByModelId,
-        sceneClipName: options.sceneClipName,
         rootName: unit.group.name,
       });
       const fallback = `${unit.group.name}.glb`;

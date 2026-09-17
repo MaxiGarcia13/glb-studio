@@ -34,11 +34,14 @@ function createEntryId(): string {
   return `model-${nextModelId++}`;
 }
 
-/** Commit already-parsed model results (used by the content router). */
+/**
+ * Commit already-parsed model results (used by the content router).
+ * Returns the newly added library entries (empty when nothing loaded).
+ */
 export function importModelResults(
   results: ModelLoadResult[],
   failures: string[] = [],
-): void {
+): ModelEntry[] {
   $model.setKey('phase', 'loading');
   $model.setKey('error', null);
 
@@ -48,9 +51,9 @@ export function importModelResults(
     const entry: ModelEntry = {
       id: createEntryId(),
       fileName: result.fileName,
-      blobUrl: result.blobUrl,
       scene: result.scene,
       source: result.source,
+      ...(result.blobUrl ? { blobUrl: result.blobUrl } : {}),
     };
     loadedEntries.push(entry);
     importClipsFromAnimations(
@@ -71,7 +74,7 @@ export function importModelResults(
       phase,
       error: failureText,
     });
-    return;
+    return [];
   }
 
   $model.set({
@@ -84,6 +87,8 @@ export function importModelResults(
     phase: 'loaded',
     error: failureText,
   });
+
+  return loadedEntries;
 }
 
 export function focusModel(
@@ -230,7 +235,9 @@ export async function replaceModel(id: string, file: File): Promise<void> {
     const state = $model.get();
     const currentIndex = state.models.findIndex((model) => model.id === id);
     if (currentIndex < 0) {
-      URL.revokeObjectURL(result.blobUrl);
+      if (result.blobUrl) {
+        URL.revokeObjectURL(result.blobUrl);
+      }
       disposeScene(result.scene);
       return;
     }
