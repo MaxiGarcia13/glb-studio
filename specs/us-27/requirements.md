@@ -4,7 +4,7 @@ Delta for growing starter content without new engine work. Parent contract: [`sp
 
 **Depends on:** US-23 (create flow + kit registry seam). New model remains empty-only; this US adds optional presets to a separate picker or create submenu — not the Plus button default.
 
-**Status:** In progress — recipes + From kit UI shipped; joint select on pick + optional clothed variant + verify still open.
+**Status:** In progress — recipes + From kit UI + joint select on pick implemented; optional clothed variant + verify still open.
 
 ## Story
 

@@ -1,6 +1,7 @@
 import { useStore } from '@nanostores/react';
 import { useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
+import { resolveJointPickTarget } from '@/modules/create/domain/resolve-joint-pick';
 import {
   openContextMenuAtPointer,
   openContextMenuForModel,
@@ -87,7 +88,7 @@ export function useRaycastSelection(): void {
         return;
       }
 
-      // Edit tool
+      // Edit tool — Shift+click keeps the mesh (joint-pick bypass + multi-select).
       if (event.shiftKey) {
         if (!picked) {
           return;
@@ -99,10 +100,11 @@ export function useRaycastSelection(): void {
         return;
       }
 
+      const target = picked ? resolveJointPickTarget(picked) : null;
       if (owner) {
         focusModel(owner.id);
       }
-      selectObject(picked);
+      selectObject(target);
     };
 
     const onContextMenu = (event: MouseEvent) => {
@@ -145,7 +147,8 @@ export function useRaycastSelection(): void {
           openContextMenuForModel(event, owner.id);
           return;
         }
-        openContextMenuForPart(event, picked, owner.id);
+        const target = event.shiftKey ? picked : resolveJointPickTarget(picked);
+        openContextMenuForPart(event, target, owner.id);
         return;
       }
 

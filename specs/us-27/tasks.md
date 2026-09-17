@@ -13,7 +13,7 @@
 - [x] **Author Block robot recipe** — Readable block humanoid/robot from existing kinds; named parts for overlay
 - [x] **Register kits + From kit UI** — Secondary entry (not Plus); labels + one-line help
 - [ ] **Optional clothed block variant** — If desired, add a kit with separate shirt/pants meshes and distinct colors (still no image textures)
-- [ ] **Joint select on pick** — On created models with armature groups, Edit raycast prefers the nearest parent create-group (joint) so rotating the knee area poses the whole limb; Shift+click or an explicit bypass can still target the mesh
+- [x] **Joint select on pick** — On created models with armature groups, Edit raycast prefers the nearest parent create-group (joint) so rotating the knee area poses the whole limb; Shift+click or an explicit bypass can still target the mesh
 
 ## Verify
 
