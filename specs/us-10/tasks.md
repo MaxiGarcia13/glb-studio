@@ -8,7 +8,7 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 - [x] Decide snapshot vs patch for undo v1 (default: clip snapshot)
 - [x] Lock keymap table (Space; R axes; W / E / T transform; arrows / Shift+arrows nudge; Cmd/Ctrl+S save; C / V / Delete create-part; Cmd/Ctrl+Z / Shift+Z undo/redo)
 - [x] Define nudge step size and local vs world space for arrow nudges
-- [ ] Document MVP limits: Copy / Paste / Delete apply to **create parts only** (no bone removal, no imported-mesh clipboard, no full-model cut/paste)
+- [x] Document MVP limits: Copy / Paste / Delete apply to **create parts only** (no bone removal, no imported-mesh clipboard, no full-model cut/paste)
 
 ## Implement — command catalog & hotkeys
 

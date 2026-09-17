@@ -56,11 +56,25 @@ Single source of truth for the catalog. **Cmd** = meta on macOS; **Ctrl** elsewh
 | Side effects | Same as a gizmo translate tick: pause playback, suspend mixer bindings, capture pre-edit if needed, mark pose dirty (Save / Restore still apply). Nudge is **not** an undo-stack command in v1. |
 | Out of scope | Rotation / scale nudge; camera nudge; multi-selection.                                                                                                                                          |
 
-### Create-part clipboard (MVP)
+### Create-part clipboard (locked — MVP limits)
 
-- Copy / Paste / Delete target **stamped create parts** only.
-- In-session buffer (not system clipboard required for v1); paste no-ops if empty; Delete no-ops if no create part selected.
-- No bone removal; no imported-mesh clipboard; no full-model cut/paste.
+| Rule                        | Decision                                                                                                                                                                                                                                                       |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Eligible target             | Mesh with valid `userData.createPart` (`readCreatePart` non-null) on the **focused** model with `source === 'created'`, and in that model’s scene                                                                                                              |
+| Copy (`copyCreatePart`)     | Snapshot into an **in-session** buffer: `{ kind, params, color, local TRS }`. Does not use the OS clipboard. No-op if selection is not an eligible part                                                                                                        |
+| Paste (`pasteCreatePart`)   | Spawn a new stamped part from the buffer into the focused created model (same path spirit as `duplicatePart` / `spawnPart`: fresh geometry + material, unique name, slight offset). Select the new mesh. No-op if buffer empty or focused model is not created |
+| Delete (`deleteCreatePart`) | Call existing `deleteSelectedPart` / `deletePart`. No-op if selection is not an eligible part                                                                                                                                                                  |
+| Buffer lifetime             | Session-only; cleared on full page reload. Overwritten on each successful Copy. Survives model focus changes within the session so paste can target another created model                                                                                      |
+| Groups                      | Empty create groups are **not** copy/paste/delete targets in v1 (parts only). Group delete stays whatever the create UI already allows outside these hotkeys                                                                                                   |
+
+**Explicitly out of scope (must no-op)**
+
+- Bones / skinned joints on imported or created rigs (no bone removal)
+- Imported meshes / GLB submeshes without `createPart` stamp
+- Full model cut / copy / paste
+- Multi-selection clipboard
+- System clipboard interop; Cut (Cmd/Ctrl+X)
+- Undo/redo of create-part copy/paste/delete (deferred; hotkeys ship without stack entries)
 
 ### Focus rules
 
