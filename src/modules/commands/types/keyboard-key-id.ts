@@ -1,0 +1,21 @@
+/** Display ids for keyboard key icons / per-key labels in chord UI. */
+export type KeyboardKeyId
+  = | 'command'
+    | 'ctrl'
+    | 'shift'
+    | 'space'
+    | 'q'
+    | 'w'
+    | 'e'
+    | 'r'
+    | 'b'
+    | 's'
+    | 'c'
+    | 'v'
+    | 'z'
+    | 'y'
+    | 'arrow_left'
+    | 'arrow_right'
+    | 'arrow_up'
+    | 'arrow_down'
+    | 'delete';

@@ -3,7 +3,7 @@ import { Text } from '@/components/text';
 import { EDITOR_COMMANDS } from '../domain/editor-commands';
 import { groupEditorCommandsByCategory } from '../domain/group-editor-commands';
 import { isMacPlatform } from '../utils/is-mac-platform';
-import { EditorCommandChordsDisplay } from './editor-command-chord-display';
+import { EditorCommandChordsDisplay } from './editor-command-chords-display';
 
 interface CommandsModalProps {
   open: boolean;
