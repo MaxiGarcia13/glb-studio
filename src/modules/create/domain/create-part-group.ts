@@ -15,6 +15,18 @@ export function createEmptyPartGroup(partsRoot: Object3D): Group {
   return group;
 }
 
+/**
+ * Create a stamped empty group with an exact name (kit armature nodes).
+ * Caller owns uniqueness within the kit recipe.
+ */
+export function createNamedCreateGroup(parent: Object3D, name: string): Group {
+  const group = new Group();
+  group.name = name;
+  writeCreateGroup(group);
+  parent.add(group);
+  return group;
+}
+
 /** Remove an empty create group from the graph (does not dispose children). */
 export function removeEmptyPartGroup(group: Object3D): void {
   if (!isCreateGroup(group)) {
