@@ -80,7 +80,7 @@ export function Modal({ open, title, onClose, children, className }: ModalProps)
             <CloseIcon />
           </Button>
         </header>
-        <div className="flex-1 min-h-0 overflow-hidden p-4 flex flex-col">
+        <div className="flex-1 min-h-0 overflow-hidden p-4 flex flex-col overflow-y-auto">
           {children}
         </div>
       </div>
