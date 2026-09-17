@@ -115,7 +115,7 @@ export function LibraryModel({ model }: LibraryModelProps) {
           />
         )}
         selected={selected}
-        headerClassName={isActiveModelAnchor ? 'bg-accent/25' : undefined}
+        headerClassName={isActiveModelAnchor ? 'bg-surface-hover' : undefined}
         showChevron={hasNested}
         showTreeGuide={hasNested}
         actions={(

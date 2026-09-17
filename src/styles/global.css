@@ -13,8 +13,9 @@
   --color-fg-muted: #a1a1aa;
   --color-fg-subtle: #71717a;
   --color-fg-disabled: #52525b;
-  --color-accent: #0ea5e9;
-  --color-accent-hover: #0284c8;
+  --color-accent: #e4e4e7;
+  --color-accent-hover: #d4d4d8;
+  --color-accent-fg: #18181b;
   --color-danger: #f87171;
   --color-warning: #fbbf24;
   --color-success: #34d399;

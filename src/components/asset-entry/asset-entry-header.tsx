@@ -16,7 +16,6 @@ interface AssetEntryHeaderProps {
   onStartRename?: () => void;
   /** Tighter typography for outliner rows. */
   compact?: boolean;
-  selected?: boolean;
 }
 
 export function AssetEntryHeader({
@@ -31,7 +30,6 @@ export function AssetEntryHeader({
   onSelect,
   onStartRename,
   compact = false,
-  selected = false,
 }: AssetEntryHeaderProps) {
   const hasError = status === 'error';
   const badgeText = statusLabel ?? (status ? defaultStatusLabel[status] : null);
@@ -59,7 +57,7 @@ export function AssetEntryHeader({
           <Text
             className={cn(
               'min-w-0 truncate',
-              labelClass({ hasError, selected }),
+              labelClass({ hasError }),
               canRename && 'group-hover:underline',
             )}
             title={title ?? label}
@@ -97,18 +95,9 @@ export function AssetEntryHeader({
   );
 }
 
-function labelClass({
-  hasError,
-  selected,
-}: {
-  hasError: boolean;
-  selected: boolean;
-}): string {
+function labelClass({ hasError }: { hasError: boolean }): string {
   if (hasError) {
     return 'text-warning';
-  }
-  if (selected) {
-    return 'text-accent';
   }
   return 'text-fg';
 }

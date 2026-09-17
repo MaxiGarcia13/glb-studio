@@ -67,7 +67,7 @@ export function LibraryModelGroup({ group, models }: LibraryModelGroupProps) {
             variant="section"
             className={cn(
               'truncate italic',
-              allSelected && 'text-accent',
+              allSelected && 'text-fg',
               isAnchor && allSelected && 'font-semibold',
             )}
           >
@@ -76,7 +76,7 @@ export function LibraryModelGroup({ group, models }: LibraryModelGroupProps) {
         </button>
       )}
       selected={allSelected}
-      headerClassName={isAnchor && allSelected ? 'bg-accent/25' : undefined}
+      headerClassName={isAnchor && allSelected ? 'bg-surface-hover' : undefined}
       showChevron
       showTreeGuide
       defaultOpen

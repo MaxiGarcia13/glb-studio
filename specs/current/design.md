@@ -290,7 +290,7 @@ No durable undo across reloads; no collaborative OT/CRDT.
 
 ## Chrome tokens (UI)
 
-Semantic colors live in `src/styles/global.css` `@theme` (`canvas`, `surface`, `control`, `border`, `fg*`, `accent`, `danger`, `warning`, `success`, `overlay`) as solid hex values. Prefer `bg-surface` / `border-border` / `text-fg-muted` over raw `zinc-*` / `sky-*` in editor chrome. Do not define theme colors as `var(--color-zinc-*)` aliases — overlays (menus, floating toolbars) can render translucent.
+Semantic colors live in `src/styles/global.css` `@theme` (`canvas`, `surface`, `control`, `border`, `fg*`, `accent`, `accent-fg`, `danger`, `warning`, `success`, `overlay`) as solid hex values. Accent is **monochrome** (light grey + dark `accent-fg` on filled accent) — used for primary buttons, playhead, and on-state icons — not sky/blue. **Selection** uses solid surface steps (`bg-surface-hover` / `bg-control`) and `text-fg`, not translucent `bg-accent/*` washes (those go muddy on dark chrome). `danger` / `warning` / `success` stay chromatic. Viewport selection highlight matches accent; TransformControls keep RGB axis colors. Prefer `bg-surface` / `border-border` / `text-fg-muted` over raw `zinc-*` / `sky-*` in editor chrome. Do not define theme colors as `var(--color-zinc-*)` aliases — overlays (menus, floating toolbars) can render translucent.
 
 **Surfaces:** page + viewport = `bg-canvas`; asides, modals, playback bar, app menu bar, and floating toolbars = opaque `bg-surface` (no `/90` / `/95` variants).
 

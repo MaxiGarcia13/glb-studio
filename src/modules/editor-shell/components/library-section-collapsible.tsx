@@ -44,7 +44,7 @@ export function LibrarySectionCollapsible({
         collapsible={canCollapse}
         className={cn(
           'rounded-sm px-2 hover:bg-surface-hover/40 hover:text-fg',
-          selected && 'bg-accent/15 text-fg',
+          selected && 'bg-surface-hover text-fg',
           headerClassName,
         )}
       >

@@ -22,7 +22,9 @@ Theme colors must be **solid hex** (or explicit `rgb(...)`) in `@theme`. Do not 
 | `bg-control-strong` | Default filled buttons |
 | `border-border` / `border-border-strong` | Dividers and chrome borders |
 | `text-fg` / `text-fg-muted` / `text-fg-subtle` | Body, secondary, section labels |
-| `bg-accent` / `text-accent` / `accent-accent` | Primary, selected, playhead, range accents |
+| `bg-accent` / `text-accent` / `accent-accent` | Filled primary, playhead, on-state icons (monochrome grey) |
+| `text-accent-fg` | Text on filled accent (`bg-accent` buttons, playhead label) |
+| Selection fills | Prefer `bg-surface-hover` / `bg-control` + `text-fg` — not `bg-accent/15` |
 | `text-danger` / `text-warning` / `text-success` | Error / conflict / ready |
 
 ```tsx

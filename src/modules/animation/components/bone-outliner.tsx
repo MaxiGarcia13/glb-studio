@@ -76,9 +76,9 @@ export function BoneOutliner({ modelId, scene, className }: BoneOutlinerProps) {
             className={cn(
               'flex w-full min-h-8 items-center gap-2 rounded-sm py-2 pr-2 transition-colors',
               isActive
-                ? 'bg-accent/25 text-accent'
+                ? 'bg-surface-hover text-fg'
                 : isSelected
-                  ? 'bg-accent/15 text-accent'
+                  ? 'bg-control text-fg'
                   : 'text-fg hover:bg-surface-hover/40',
             )}
             style={{ paddingLeft: `${8 + depth * 16}px` }}

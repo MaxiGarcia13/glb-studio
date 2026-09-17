@@ -70,7 +70,6 @@ export function AssetEntry({
           onSelect={onSelect}
           onStartRename={startEditing}
           compact={isRow}
-          selected={selected}
         />
       );
 
@@ -81,7 +80,7 @@ export function AssetEntry({
           ? cn(
               'flex items-start gap-2 rounded-sm px-2 py-2',
               selected
-                ? 'bg-accent/15'
+                ? 'bg-surface-hover'
                 : hasError
                   ? 'bg-warning/10'
                   : 'hover:bg-surface-hover/40',
@@ -89,7 +88,7 @@ export function AssetEntry({
           : cn(
               'flex flex-col gap-2 rounded-sm p-2 ring-1',
               selected
-                ? 'bg-accent/15 ring-accent/30'
+                ? 'bg-surface-hover ring-border-strong'
                 : hasError
                   ? 'bg-surface/40 ring-warning/25'
                   : 'bg-surface/40 ring-border/80',

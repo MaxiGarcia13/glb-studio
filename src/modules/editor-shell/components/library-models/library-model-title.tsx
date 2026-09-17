@@ -43,11 +43,9 @@ export function LibraryModelTitle({
         >
           <Text
             as="h2"
-            variant="section"
             className={cn(
-              'truncate',
-              selected && 'text-accent',
-              active && 'font-semibold',
+              'truncate font-semibold',
+              selected || active ? 'text-fg' : 'text-fg-muted',
             )}
           >
             {fileName}
