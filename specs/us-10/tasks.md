@@ -17,12 +17,12 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 - [x] `run-editor-command` dispatcher → existing actions (`play` / `pause`, `saveKeyframe`, `setAxesVisible`, create part duplicate/delete, …)
 - [x] Single `use-editor-command-hotkeys` window listener in `commands` (replace / absorb `use-transform-mode-hotkeys`)
 - [x] Remap transform modes: **Q / W / E** = Move / Rotate / Scale; update toolbar labels from catalog
-- [ ] Wire **R** → toggle world axes (`axesVisible`)
-- [ ] Wire **Space** → play / pause
-- [ ] Wire arrow keys (+ Shift for Z) → nudge selected object on X / Y / Z
-- [ ] Wire **Cmd/Ctrl+S** → save pending change (`saveKeyframe` when pose dirty)
+- [x] Wire **R** → toggle world axes (`axesVisible`)
+- [x] Wire **Space** → play / pause
+- [x] Wire arrow keys (+ Shift for Z) → nudge selected object on X / Y / Z
+- [x] Wire **Cmd/Ctrl+S** → save pending change (`saveKeyframe` when pose dirty)
 - [ ] Wire **Cmd/Ctrl+C / V** → create-part copy / paste (in-session buffer or duplicate path)
-- [ ] Wire **Delete** → `deleteSelectedPart` when a create part is selected
+- [x] Wire **Delete** → `deleteSelectedPart` when a create part is selected
 - [ ] **Commands** control on `EditorToolbar` opens a modal listing all catalog entries (no second hardcoded list)
 
 ## Implement — undo / redo stack

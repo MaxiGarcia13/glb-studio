@@ -1,4 +1,5 @@
 import type { EditorCommandId } from '../types/editor-command';
+
 import { resolveActiveClipIdForModel } from '@/modules/animation/domain/resolve-active-clip';
 import {
   pause,
@@ -8,6 +9,7 @@ import { saveKeyframe } from '@/modules/animation/stores/clip-store/actions/save
 import { $clips } from '@/modules/animation/stores/clip-store/store';
 import { isReadyClip } from '@/modules/animation/stores/clip-store/utils';
 import { deleteSelectedPart } from '@/modules/create/actions/delete-selected-part';
+import { nudgeSelection } from '@/modules/viewport/actions/nudge-selection';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import {
   $poseDirty,
@@ -19,7 +21,7 @@ import {
   setAxesVisible,
 } from '@/modules/viewport/stores/viewport-settings-store';
 
-/** Filled by later US-10 wire tasks (nudge, clipboard, undo stack). */
+/** Filled by later US-10 wire tasks (clipboard, undo stack). */
 function notImplementedYet(): void {}
 
 function togglePlayPause(): void {
@@ -74,12 +76,12 @@ const HANDLERS: Record<EditorCommandId, () => void> = {
   transformMove: () => setTransformMode('translate'),
   transformRotate: () => setTransformMode('rotate'),
   transformScale: () => setTransformMode('scale'),
-  nudgeNegX: notImplementedYet,
-  nudgePosX: notImplementedYet,
-  nudgePosY: notImplementedYet,
-  nudgeNegY: notImplementedYet,
-  nudgePosZ: notImplementedYet,
-  nudgeNegZ: notImplementedYet,
+  nudgeNegX: () => nudgeSelection('x', -1),
+  nudgePosX: () => nudgeSelection('x', 1),
+  nudgePosY: () => nudgeSelection('y', 1),
+  nudgeNegY: () => nudgeSelection('y', -1),
+  nudgePosZ: () => nudgeSelection('z', 1),
+  nudgeNegZ: () => nudgeSelection('z', -1),
   savePending: savePendingChange,
   copyCreatePart: notImplementedYet,
   pasteCreatePart: notImplementedYet,
