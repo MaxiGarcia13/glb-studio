@@ -1,6 +1,5 @@
 import type { EditorCommand, EditorCommandChord } from '../types/editor-command';
 import type { IconProps } from '@/components/icons/type';
-
 import { cn } from '@maxigarcia/js-utils';
 import {
   KeyboardArrowDownIcon,
@@ -14,8 +13,8 @@ import {
   KeyboardEIcon,
   KeyboardQIcon,
   KeyboardRIcon,
-  KeyboardSIcon,
   KeyboardShiftIcon,
+  KeyboardSIcon,
   KeyboardSpaceIcon,
   KeyboardVIcon,
   KeyboardWIcon,
@@ -202,7 +201,7 @@ export function EditorCommandChordsDisplay({
   return (
     <span className={cn('inline-flex flex-wrap items-center justify-end gap-2', className)}>
       {command.chords.map((chord, index) => (
-        <span key={index} className="inline-flex items-center gap-2">
+        <span key={chord.key.toString()} className="inline-flex items-center gap-2">
           {index > 0 && (
             <Text variant="muted" aria-hidden>
               ,

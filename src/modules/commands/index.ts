@@ -20,8 +20,8 @@ export type {
   EditorCommandId,
   EditorCommandMod,
 } from './types/editor-command';
-export { isTypingTarget } from './utils/is-typing-target';
 export { isMacPlatform } from './utils/is-mac-platform';
+export { isTypingTarget } from './utils/is-typing-target';
 export {
   matchesEditorCommandChord,
   normalizeEventKey,
