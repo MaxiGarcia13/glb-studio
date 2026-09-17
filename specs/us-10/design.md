@@ -51,36 +51,36 @@ Ignore chords when `isTypingTarget` (input / textarea / select / contenteditable
 
 Acceptance requires at least trim, keyframe write, and speed/bake intent. Exact set for US-10 v1:
 
-| Command id (stack) | User action | Mutates | Notes |
-| --- | --- | --- | --- |
-| `trimClip` | Apply trim start/end (`trimClip`) | Working `clip`, `trimStart` / `trimEnd`, `duration` | Always derived from `sourceClip`; undo restores prior working clip + trim window. Replaces one-shot “restore pre-trim” as the recoverability path once the stack exists (US-3 still satisfied via undo or re-trim from `sourceClip`). |
-| `saveKeyframe` | Save pending pose (`saveKeyframe`, including hold-to-end) | Working `clip` (and `sourceClip` / bind-pose overrides when that path rebases) | One discrete stack entry per Save click / Cmd+S that actually commits. Covers upsert and hold-window key removal inside the write. **No standalone “delete keyframe” UI today** — when one lands, it joins this set as its own command. |
-| `setTimeScale` | Change clip speed (`setTimeScale`) | `ClipEntry.timeScale` | Stored bake intent: export runs `bakeTimeScale(clip, timeScale)`. Undo restores prior scale + mixer `timeScale`. |
+| Command id (stack) | User action                                               | Mutates                                                                        | Notes                                                                                                                                                                                                                                   |
+| ------------------ | --------------------------------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `trimClip`         | Apply trim start/end (`trimClip`)                         | Working `clip`, `trimStart` / `trimEnd`, `duration`                            | Always derived from `sourceClip`; undo restores prior working clip + trim window. Replaces one-shot “restore pre-trim” as the recoverability path once the stack exists (US-3 still satisfied via undo or re-trim from `sourceClip`).   |
+| `saveKeyframe`     | Save pending pose (`saveKeyframe`, including hold-to-end) | Working `clip` (and `sourceClip` / bind-pose overrides when that path rebases) | One discrete stack entry per Save click / Cmd+S that actually commits. Covers upsert and hold-window key removal inside the write. **No standalone “delete keyframe” UI today** — when one lands, it joins this set as its own command. |
+| `setTimeScale`     | Change clip speed (`setTimeScale`)                        | `ClipEntry.timeScale`                                                          | Stored bake intent: export runs `bakeTimeScale(clip, timeScale)`. Undo restores prior scale + mixer `timeScale`.                                                                                                                        |
 
 **One stack entry = one user commit** (not every intermediate slider tick while dragging — coalesce pointer-up / blur / explicit Apply if the control is continuous).
 
 ### Explicitly not undoable in US-10 v1
 
-| Operation | Why |
-| --- | --- |
-| Play / pause / stop / loop / scrub | Transport / view state; no clip mutation |
-| Unsaved gizmo / Settings pose (`restorePose`) | Ephemeral until Save; discard is not an undo step |
-| Transform mode, axes, selection, nudge | Viewport chrome / live TRS; nudge does not commit a clip |
-| Create-part spawn / duplicate / delete / clipboard | Scene graph edits; hotkeys ship in this US, undo deferred |
+| Operation                                                        | Why                                                                                               |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Play / pause / stop / loop / scrub                               | Transport / view state; no clip mutation                                                          |
+| Unsaved gizmo / Settings pose (`restorePose`)                    | Ephemeral until Save; discard is not an undo step                                                 |
+| Transform mode, axes, selection, nudge                           | Viewport chrome / live TRS; nudge does not commit a clip                                          |
+| Create-part spawn / duplicate / delete / clipboard               | Scene graph edits; hotkeys ship in this US, undo deferred                                         |
 | `bakeBlend`, retarget, rename, replace/import clip, draft create | Out of scope or larger library ops; blend/retarget only get undo when those features opt in later |
 
 ### Snapshot vs patch (locked — v1 = snapshot)
 
 **Decision:** undo v1 uses **before/after snapshots**, not track-level patches.
 
-| Rule | Detail |
-| --- | --- |
-| Why snapshot | Correctness first: `saveKeyframe` can rewrite many tracks + optionally rebase `sourceClip` / bind-pose overrides; inverse patches would be fragile and easy to desync from the mixer |
-| Unit of snapshot | Per stack entry: deep-clone every `AnimationClip` the command mutates (`clip.clone()`, and `sourceClip.clone()` when that reference changes), plus plain copies of scalar/library fields the command touches |
+| Rule                | Detail                                                                                                                                                                                                                                                                                                      |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Why snapshot        | Correctness first: `saveKeyframe` can rewrite many tracks + optionally rebase `sourceClip` / bind-pose overrides; inverse patches would be fragile and easy to desync from the mixer                                                                                                                        |
+| Unit of snapshot    | Per stack entry: deep-clone every `AnimationClip` the command mutates (`clip.clone()`, and `sourceClip.clone()` when that reference changes), plus plain copies of scalar/library fields the command touches                                                                                                |
 | Per-command payload | `trimClip` → prior/next `{ clip, trimStart, trimEnd, duration }`; `saveKeyframe` → prior/next affected entry fields (`clip`, `sourceClip` if changed, root TRS maps if changed) + any bind-pose override map slice written in that commit; `setTimeScale` → prior/next `{ timeScale }` only (no clip clone) |
-| Apply | Undo/redo **replace** those fields on the library entry (new object references for clips), then rebind the mixer to the restored working clip and sync mixer `timeScale` |
-| Stack depth | Unbounded in-session for v1; no persistence. Memory is acceptable for MVP clip sizes; revisit only if profiling shows pressure |
-| Not in v1 | Diff/patch undo (per-track sample deltas), structural share-with-COW, or compressing consecutive identical command types beyond the “one commit / coalesce drag” rule above |
+| Apply               | Undo/redo **replace** those fields on the library entry (new object references for clips), then rebind the mixer to the restored working clip and sync mixer `timeScale`                                                                                                                                    |
+| Stack depth         | Unbounded in-session for v1; no persistence. Memory is acceptable for MVP clip sizes; revisit only if profiling shows pressure                                                                                                                                                                              |
+| Not in v1           | Diff/patch undo (per-track sample deltas), structural share-with-COW, or compressing consecutive identical command types beyond the “one commit / coalesce drag” rule above                                                                                                                                 |
 
 Optimize to patches later only if snapshot memory or clone cost becomes a measured problem — out of scope for this delta.
 
