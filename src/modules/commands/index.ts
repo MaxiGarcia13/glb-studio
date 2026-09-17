@@ -11,3 +11,4 @@ export type {
   EditorCommandId,
   EditorCommandMod,
 } from './types/editor-command';
+export { isTypingTarget } from './utils/is-typing-target';

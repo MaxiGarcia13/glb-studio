@@ -79,7 +79,7 @@ Single source of truth for the catalog. **Cmd** = meta on macOS; **Ctrl** elsewh
 
 ### Focus rules
 
-Ignore chords when `isTypingTarget` (input / textarea / select / contenteditable), except where a control explicitly handles its own keys. Prevent default for app-owned chords (e.g. Cmd+S) so the browser does not intercept.
+Ignore chords when `isTypingTarget` (`commands/utils/is-typing-target.ts`: input / textarea / select / contenteditable, including nested editables), except where a control explicitly handles its own keys. Prevent default for app-owned chords (e.g. Cmd+S) so the browser does not intercept.
 
 ## Undo / redo stack
 

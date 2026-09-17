@@ -13,7 +13,7 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 ## Implement — command catalog & hotkeys
 
 - [x] Pure command catalog in `commands` (id, chords, label, category) — single source of truth for bindings + docs
-- [ ] Shared `isTypingTarget` (or equivalent); ignore shortcuts when focus is in text fields that own them
+- [x] Shared `isTypingTarget` (or equivalent); ignore shortcuts when focus is in text fields that own them
 - [ ] `run-editor-command` dispatcher → existing actions (`play` / `pause`, `saveKeyframe`, `setAxesVisible`, create part duplicate/delete, …)
 - [ ] Single `use-editor-command-hotkeys` window listener in `commands` (replace / absorb `use-transform-mode-hotkeys`)
 - [ ] Remap transform modes: **W / E / T** = Move / Rotate / Scale; update toolbar labels from catalog
