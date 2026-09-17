@@ -121,6 +121,13 @@ Acceptance requires at least trim, keyframe write, and speed/bake intent. Exact 
 
 Optimize to patches later only if snapshot memory or clone cost becomes a measured problem — out of scope for this delta.
 
+### Placement
+
+- Module: `animation` — clip snapshots live next to the clip library. Catalog `undo` / `redo` stay in `commands` and call this stack later.
+- Pure stack: `animation/domain/command-stack.ts` — push / undo / redo of `{ before, after }` snapshot commands; no store writes, no mixer.
+- Session store: `animation/stores/undo-stack-store.ts` — unbounded in-memory stack; `$canUndo` / `$canRedo` for later UI. Cleared on reload.
+- Types: `animation/types/undo-stack.ts` — `trimClip` / `saveKeyframe` / `setTimeScale` payloads.
+
 ### Approach
 
 - Command pattern: each edit pushes a snapshot pair `{ before, after }` (or equivalent `undo` / `redo` closures that close over those snapshots)
