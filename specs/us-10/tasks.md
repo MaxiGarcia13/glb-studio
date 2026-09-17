@@ -21,7 +21,7 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 - [x] Wire **Space** → play / pause
 - [x] Wire arrow keys (+ Shift for Z) → nudge selected object on X / Y / Z
 - [x] Wire **Cmd/Ctrl+S** → save pending change (`saveKeyframe` when pose dirty)
-- [ ] Wire **Cmd/Ctrl+C / V** → create-part copy / paste (in-session buffer or duplicate path)
+- [x] Wire **Cmd/Ctrl+C / V** → create-part copy / paste (in-session buffer or duplicate path)
 - [x] Wire **Delete** → `deleteSelectedPart` when a create part is selected
 - [ ] **Commands** control on `EditorToolbar` opens a modal listing all catalog entries (no second hardcoded list)
 

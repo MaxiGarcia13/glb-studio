@@ -8,7 +8,9 @@ import {
 import { saveKeyframe } from '@/modules/animation/stores/clip-store/actions/save-keyframe';
 import { $clips } from '@/modules/animation/stores/clip-store/store';
 import { isReadyClip } from '@/modules/animation/stores/clip-store/utils';
+import { copySelectedCreatePart } from '@/modules/create/actions/copy-selected-create-part';
 import { deleteSelectedPart } from '@/modules/create/actions/delete-selected-part';
+import { pasteCreatePartFromClipboard } from '@/modules/create/actions/paste-create-part-from-clipboard';
 import { nudgeSelection } from '@/modules/viewport/actions/nudge-selection';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import {
@@ -21,7 +23,7 @@ import {
   setAxesVisible,
 } from '@/modules/viewport/stores/viewport-settings-store';
 
-/** Filled by later US-10 wire tasks (clipboard, undo stack). */
+/** Filled by later US-10 wire tasks (undo stack). */
 function notImplementedYet(): void {}
 
 function togglePlayPause(): void {
@@ -83,8 +85,8 @@ const HANDLERS: Record<EditorCommandId, () => void> = {
   nudgePosZ: () => nudgeSelection('z', 1),
   nudgeNegZ: () => nudgeSelection('z', -1),
   savePending: savePendingChange,
-  copyCreatePart: notImplementedYet,
-  pasteCreatePart: notImplementedYet,
+  copyCreatePart: copySelectedCreatePart,
+  pasteCreatePart: pasteCreatePartFromClipboard,
   deleteCreatePart: deleteSelectedPart,
   undo: notImplementedYet,
   redo: notImplementedYet,
