@@ -5,12 +5,11 @@ import type {
   TrimClipSnapshot,
   UndoableCommand,
 } from '@/modules/animation/types/undo-stack';
-
+import { refreshRestPoseNode } from '@/modules/animation/domain/rest-pose';
 import {
   cloneBindPoseOverrides,
   cloneVec3Map,
 } from '@/modules/animation/domain/undo-snapshots';
-import { refreshRestPoseNode } from '@/modules/animation/domain/rest-pose';
 import { replaceBindPoseOverrides } from '@/modules/animation/stores/bind-pose-store';
 import {
   setMixerTime,

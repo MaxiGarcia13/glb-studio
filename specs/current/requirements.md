@@ -55,9 +55,9 @@ As an editor user, I can pause on the timeline, move a selected bone/mesh, and s
 
 - [x] User can pause at an arbitrary timestamp (scrub or pause during play)
 - [x] Raycast selects a bone or mesh; TransformControls move the selection
-- [x] “Hold Pose to End” and “Restore Pose” appear in the preview only after the selection’s local pose has been edited (TransformControls); hold captures local position / rotation / scale
+- [x] Pose edits (TransformControls) mark dirty and **auto-commit** on gesture end (US-10); Hold Pose to End captures local position / rotation / scale — no Save / Restore pose chrome
 - [x] Hold finds or creates the matching `VectorKeyframeTrack` / `QuaternionKeyframeTrack` on the **active** clip and writes a plateau from the clip-local playhead through clip duration so the pose holds for the rest of the animation; timestamp is timeline playhead (`[0, duration]`), not raw accumulated `mixer.time`. Re-edit later by scrubbing and holding again
-- [x] Restore discards the unsaved gizmo edit and re-applies the active clip at the current playhead
+- [x] Cancelling an in-progress dirty gesture uses Undo (flush then pop) — no Restore Pose control (US-10)
 
 ### US-5 — Zip export
 
@@ -205,25 +205,25 @@ As an editor user, when I retarget a Mixamo-style clip whose source GLB has an a
 
 ### US-15 — Edit / Move tools + bind-pose save
 
-As an editor user, I can choose Navigate, Edit, or Move in the preview — orbit freely, pose bones/meshes, or place the whole model on world X/Y/Z with or without an animation — and Save or Restore to confirm or discard.
+As an editor user, I can choose Navigate, Edit, or Move in the preview — orbit freely, pose bones/meshes, or place the whole model on world X/Y/Z with or without an animation — and pose commits auto-apply (US-10).
 
 **Acceptance**
 
 - [x] When a model is loaded, preview chrome shows mutually exclusive **Navigate** (`ArrowsHorizontalIcon`), **Edit** (`CursorIcon`), and **Move** (`MoveIcon`) tool toggles in that order; default tool is **Edit**
-- [x] **Navigate:** OrbitControls only with hand-tool mapping (primary drag **pans** through the world; secondary drag orbits; scroll zooms); no TransformControls; raycast does not select or focus; W / E / R toolbar is hidden
-- [x] **Edit:** raycast selects a bone or mesh; TransformControls support translate / rotate / scale (existing W / E / R toolbar when selected); works with **no** imported / active clip
-- [x] **Move:** TransformControls translate the active model root on **world X / Y / Z** only; W / E / R toolbar is hidden; raycast does not switch selection away from the root
-- [x] After a gizmo edit (either tool), **Save** and **Restore** appear in the preview until the user confirms or discards
-- [x] **Edit + no active clip — Save:** commits the selection’s local TRS as the model bind pose (persists on the scene graph and in exported `{model}.glb`) **and** rebases that node’s tracks in **every** library clip by the pre-edit → current TRS delta (so later / existing animations keep the structural edit; the user does not re-hold per clip). The same accumulated delta is applied when importing or replacing clips while that model is active, and again after US-6 retarget remaps tracks onto the character bones
-- [x] **Edit + active ready clip — Save:** keeps US-4 Hold Pose to End (plateau on the working clip from playhead to clip end)
-- [x] **Move — Save (no active clip):** commits the model root translation as the model rest / bind root (persists on the scene graph and in exported `{model}.glb`); never writes animation keyframes
-- [x] **Move — Save (active ready/draft clip on that model):** stores the model root translation on **that clip for that model only** (`ClipEntry.rootPositionByModelId[modelId]`); seeks the playhead to **t=0** so the animation starts under that root; other models, other clips, and the T-pose rest root are unchanged; never writes animation keyframes
+- [x] **Navigate:** OrbitControls only with hand-tool mapping (primary drag **pans** through the world; secondary drag orbits; scroll zooms); no TransformControls; raycast does not select or focus; Q / W / E toolbar is hidden
+- [x] **Edit:** raycast selects a bone or mesh; TransformControls support translate / rotate / scale (**Q / W / E** toolbar when selected — US-10); works with **no** imported / active clip
+- [x] **Move:** TransformControls translate the active model root on **world X / Y / Z** only; transform-mode toolbar hidden here (US-21 adds rotate / scale + **Q / W / E**); raycast does not switch selection away from the root
+- [x] After a gizmo edit (either tool), pose marks dirty and **auto-commits** on gesture end (US-10) — no Save / Restore chrome
+- [x] **Edit + no active clip — commit:** commits the selection’s local TRS as the model bind pose (persists on the scene graph and in exported `{model}.glb`) **and** rebases that node’s tracks in **every** library clip by the pre-edit → current TRS delta (so later / existing animations keep the structural edit; the user does not re-hold per clip). The same accumulated delta is applied when importing or replacing clips while that model is active, and again after US-6 retarget remaps tracks onto the character bones
+- [x] **Edit + active ready clip — commit:** keeps US-4 Hold Pose to End (plateau on the working clip from playhead to clip end)
+- [x] **Move — commit (no active clip):** commits the model root translation as the model rest / bind root (persists on the scene graph and in exported `{model}.glb`); never writes animation keyframes
+- [x] **Move — commit (active ready/draft clip on that model):** stores the model root translation on **that clip for that model only** (`ClipEntry.rootPositionByModelId[modelId]`); seeks the playhead to **t=0** so the animation starts under that root; other models, other clips, and the T-pose rest root are unchanged; never writes animation keyframes
 - [x] **Selecting a clip** applies that clip’s stored root position **for the playing model** (or the rest root when unset) and shows the clip at **t=0**; clearing the clip restores the rest / bind root via T-pose
-- [x] **Settings / Move root edit with an active clip:** preview samples the clip at t=0 under the edited root (pending Save) so the animation start pose matches the root — only the focused model’s scene is moved
-- [x] **Restore:** discards the unsaved gizmo edit (with an active clip in Edit mode, re-applies the clip at the playhead; otherwise restores the pre-edit TRS snapshot)
-- [x] Switching Navigate ↔ Edit ↔ Move while dirty auto-Restores, then switches tools
-- [x] Changing selection (pick another bone/mesh or clear) while dirty auto-Restores the pending edit on the previous object, then updates selection — preview TRS matches the discarded edit
-- [x] Settings sidebar (`EditorSettingsSidebar` General) shows live **editable X / Y / Z** fields for the **model root position**, available whenever a model is loaded — **independent of Edit / Move tool**. Committing a number updates `scene.position`, marks dirty as a model-root edit, and uses the same Save / Restore path as Move-mode gizmo edits. With an active clip, Save scopes that position to the clip; without a clip, Save updates the model rest root. (Bone/mesh local position is edited via the Edit gizmo, not these fields.)
+- [x] **Settings / Move root edit with an active clip:** preview samples the clip at t=0 under the edited root (pending auto-commit) so the animation start pose matches the root — only the focused model’s scene is moved
+- [x] Cancelling a dirty gesture uses Undo (US-10); no Restore Pose control
+- [x] Switching Navigate ↔ Edit ↔ Move while dirty auto-commits, then switches tools
+- [x] Changing selection (pick another bone/mesh or clear) while dirty auto-commits the pending edit on the previous object, then updates selection
+- [x] Settings sidebar (`EditorSettingsSidebar` General) shows live **editable X / Y / Z** fields for the **model root position**, available whenever a model is loaded — **independent of Edit / Move tool**. Committing a number updates `scene.position`, marks dirty as a model-root edit, and uses the same auto-commit path as Move-mode gizmo edits. With an active clip, commit scopes that position to the clip; without a clip, commit updates the model rest root. (Bone/mesh local position is edited via the Edit gizmo, not these fields.)
 - [x] Clicking the selected Animations list row (or otherwise clearing the active clip) restores the model’s current bind / rest pose in the preview so Edit-without-clip works without leaving an animation frozen on the last frame
 
 ### US-21 — Whole-model rotate / scale + Settings root rotation
@@ -232,10 +232,10 @@ As an editor user, when Move is selected I can rotate and scale the whole model,
 
 **Acceptance**
 
-- [x] **Move** supports translate / rotate / scale on the model root (world); W / E / R toolbar visible while Move is active
+- [x] **Move** supports translate / rotate / scale on the model root (world); **Q / W / E** toolbar visible while Move is active
 - [x] Settings shows live editable **rotation X / Y / Z** (degrees, 0–360) and **scale X / Y / Z** for the model root when a model is loaded; values reflect the scene root on load / focus (after hoist of single-child wrapper TRS onto `gltf.scene`)
-- [x] Rotation / scale edits mark dirty as model-root and share Save / Restore with Move / position XYZ
-- [x] Save with no clip commits root TRS to rest pose; Save with an active clip stores position + rotation + scale on that clip per model; selecting the clip reapplies them
+- [x] Rotation / scale edits mark dirty as model-root and share auto-commit with Move / position XYZ (US-10)
+- [x] Commit with no clip stores root TRS as rest pose; commit with an active clip stores position + rotation + scale on that clip per model; selecting the clip reapplies them
 - [x] On load / replace, `hoistRootTransform` promotes authored wrapper TRS onto the editable scene root
 
 ### US-7 — Multi-clip blending
@@ -250,7 +250,7 @@ As an editor user, I can create a new animation from scratch or use an uploaded 
 - [x] Draft and uploaded clips support Start/End, playback speed, playback, and keyframe edits on the active clip
 - [x] Settings **Blend** is a collapsible; expanded form has partner select, weight, **Bake**, and **Reset**
 - [x] Blend is viewport-only until Bake; Bake writes into the active clip and resets the form; Reset clears without writing
-- [x] Unsaved pose edits discard on reselect; Hold Pose to End commits into the active clip
+- [x] Unsaved pose edits auto-commit on gesture end / selection change (US-10); Hold Pose to End commits into the active clip
 - [x] Export: discrete library clips only — live `blendClipId` / `blendWeight` are not packed; Bake must run first for a mix to appear in the zip (US-5)
 
 ### US-19 — Nested library + clip ownership
@@ -312,7 +312,7 @@ As an editor user with little or no 3D experience, I can create a new empty mode
 - [x] Created models do **not** require a skinned mesh or skeleton; imported models still do
 - [x] Created models use metres, Y-up; parts sit on the ground when added (`y = 0` as appropriate)
 - [x] Parts are named meshes; selection name overlay shows those names
-- [x] **Edit** tool + TransformControls move / rotate / scale parts; dirty **Save** / **Restore** follows US-15 (bind-pose style commit on the scene graph — no animation keyframes required)
+- [x] **Edit** tool + TransformControls move / rotate / scale parts; dirty pose **auto-commits** (US-10 / US-15 bind-pose style on the scene graph — no animation keyframes required)
 - [x] When a part is selected on a created model, the create toolbar offers **color** and the Settings inspector shows **size** fields for that part kind; changes update the viewport live
 - [x] User can **Duplicate** and **Delete** the selected part from the create toolbar (delete removes the mesh only, not the library model)
 - [x] Zip export (US-5 / US-22 path) packs created model scenes as `{model}.glb` like any other model when they have at least one stamped mesh part; empty created models (no parts) are skipped
@@ -328,7 +328,7 @@ As an editor user, I can add common primitive shapes to my created model so I ca
 - [x] When a **created** model is focused, Create UI offers an **Add part** palette: box, sphere, cylinder, capsule, plane, cone, torus, triangle, polygon, circle, ring, tetrahedron, octahedron, icosahedron, dodecahedron
 - [x] Adding a part spawns it under that model’s scene at the origin (or a small default offset above ground), selects it, and uses kind default params + a default color
 - [x] New parts are named uniquely (`box`, `box_2`, …) so the selection overlay stays readable
-- [x] Added parts support the same inspector, Duplicate, Delete, and Edit Save / Restore behavior as kit parts (US-23)
+- [x] Added parts support the same inspector, Duplicate, Delete, and Edit auto-commit behavior as kit parts (US-23 / US-10)
 - [x] Palette is hidden or disabled for **imported** models (no accidental mesh editing of uploaded characters in this US)
 - [x] Export still packs the updated scene
 
@@ -418,6 +418,31 @@ As an editor user, when I export a model group as one GLB and import that file a
 - [x] GLBs **without** the manifest keep the single-model import path
 - [x] Created vs imported `source` per member is restored from the manifest
 
+### US-10 — Undo / redo + editor commands
+
+As an editor user, I can undo and redo animation edits within the session, and I can use documented keyboard commands (playback, transform modes, axes, bones, nudge, commit pose, create-part clipboard, undo/redo) without hunting through the UI.
+
+**Acceptance — undo / redo**
+
+- [x] Undo / Redo controls (Edit menu) and standard shortcuts reverse and reapply discrete edit commands
+- [x] Covered operations: trim apply, keyframe save/update (auto-commit pose), and speed changes that mutate exported bake intent (`timeScale`) — exact command set in design
+- [x] Stack is per-session (not persisted to disk)
+- [x] Pre-trim recoverability is via undo of `trimClip` (and re-trim from `sourceClip`); one-shot Restore pre-trim chrome superseded
+- [x] Undoing does not leave the mixer bound to a disposed/stale clip
+
+**Acceptance — hotkeys & Commands UI**
+
+- [x] A pure command catalog is the single source of truth for chords, labels, and categories (hotkeys + Commands modal share it)
+- [x] Shortcuts do not fire when focus is in an input, textarea, select, or contenteditable that owns typing
+- [x] Transform modes: **Q** Move, **W** Rotate, **E** Scale; toolbar labels match the catalog
+- [x] **R** toggles world axes visibility; **B** toggles skeleton bone lines (`bonesVisible`)
+- [x] **Space** toggles play / pause when a clip can play
+- [x] Arrow keys nudge the current selection on **X** (left/right) and **Y** (down/up); **Shift+↑ / Shift+↓** nudge on **Z**
+- [x] Pose edits **auto-commit** on gesture end (gizmo drag-end, nudge, Settings blur, tool/selection change, play); **Cmd/Ctrl+S** commits if still dirty; no Save / Restore pose chrome
+- [x] **Cmd/Ctrl+C / V** and **Delete** operate on **create parts only** (in-session buffer; `deleteSelectedPart` when eligible)
+- [x] `EditorToolbar` exposes a **Commands** control that opens a modal listing all catalog entries with their chords; **Edit** menu exposes Undo / Redo from the catalog
+- [x] Undo / redo shortcuts are catalog entries: **Cmd/Ctrl+Z**, **Cmd/Ctrl+Shift+Z** (or **Y**)
+
 ## Post-MVP user stories
 
 Not started; do not implement until explicitly kicked off. Full requirements, design, and tasks live only in the delta folders (not duplicated here):
@@ -426,7 +451,6 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 - **US-34** — In-editor skinning for created models (MVP) → [`specs/us-34/`](../us-34/)
 - **US-8** — Morph-target editing → [`specs/us-8/`](../us-8/)
 - **US-9** — Graph / curve keyframe UI → [`specs/us-9/`](../us-9/)
-- **US-10** — Full undo / redo → [`specs/us-10/`](../us-10/)
 
 ## Non-functional requirements
 

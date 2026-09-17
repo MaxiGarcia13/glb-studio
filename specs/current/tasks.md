@@ -259,6 +259,15 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `splitModelGroupScene` + content-router detect; `createModelGroup({ name })` on import
 - [x] Owned clips nested under each restored model
 
+## US-10 — Undo / redo + editor commands
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] Command catalog + hotkey dispatcher + Commands modal + Edit menu Undo / Redo
+- [x] Keymap: Q/W/E transform, R axes, B bones, Space play, arrows nudge, Cmd+S commit, create-part C/V/Delete
+- [x] Pose auto-commit (no Save / Restore chrome); session undo stack for trim / keyframe / timeScale
+- [x] Mixer rebind after undo/redo; pre-trim restore superseded by `trimClip` undo
+
 ## Open deltas
 
 | US                                                | Status                              | Tasks                                       |
@@ -268,7 +277,6 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 | **US-28** — Part color maps (textures)            | not started (after US-23)           | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
 | **US-8** — Morph-target editing                   | post-MVP, not started               | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 | **US-9** — Graph / curve keyframe UI              | post-MVP, not started               | [`specs/us-9/tasks.md`](../us-9/tasks.md)   |
-| **US-10** — Full undo / redo                      | post-MVP, not started               | [`specs/us-10/tasks.md`](../us-10/tasks.md) |
 
 ## Tech debt
 

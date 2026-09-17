@@ -46,13 +46,15 @@ Sidebar **Library** is nested (US-19): **Models** (list only — no header Load 
 
 Do not add a second debug canvas, FPS overlay render path, or smoke-test scene that bypasses the editor viewport lifecycle.
 
-## EditorToolbar (US-30)
+## EditorToolbar (US-30 + US-10)
 
 1. Full-width Blender-style app menu bar at the top of the window (above Library / Preview / Settings columns) — **not** inside `EditorPreview`, not a floating viewport overlay
-2. `EditorToolbar` is a `menubar` with text triggers: **File** (`ActionMenu`: New model, New animation, Import, Export) and **Settings** (`ActionMenuPanel`: `WorldAxesControls`, `BonesVisibilityControls`, `SnapControls`)
-3. **New model** → `createEmptyModel`; **From kit…** → `FromKitModal` → `createFromKit` (starter recipes only; New model stays empty); **New animation** → `startNewAnimation(scene)` with default `ownerModelId: null` (disabled without focused scene); **Import** → `routeContentImport` + `importModelResults` / `importClipResults` (+ `createModelGroup` when `groupsToCreate` is set — US-32); **Export** → open `ExportModal` (`canExport` gate)
-4. Keep model-row **Add animation** modal unchanged (owned create / import / clone)
-5. Reuse chrome tokens (`bg-surface`, `border-border`, `Button` ghost, `ActionMenu`); one open menu at a time
+2. `EditorToolbar` is a `menubar` with text triggers: **File** (`ActionMenu`: New model, From kit…, New animation, Import, Export), **Edit** (`EditorEditMenu`: Undo / Redo from the commands catalog; disabled via `$canUndo` / `$canRedo`), and **Settings** (`ActionMenuPanel`: `WorldAxesControls`, `BonesVisibilityControls`, `SnapControls`)
+3. **Commands** control opens `CommandsModal` — body rendered from the same `commands` catalog (no second hardcoded list)
+4. **New model** → `createEmptyModel`; **From kit…** → `FromKitModal` → `createFromKit` (starter recipes only; New model stays empty); **New animation** → `startNewAnimation(scene)` with default `ownerModelId: null` (disabled without focused scene); **Import** → `routeContentImport` + `importModelResults` / `importClipResults` (+ `createModelGroup` when `groupsToCreate` is set — US-32); **Export** → open `ExportModal` (`canExport` gate)
+5. Keep model-row **Add animation** modal unchanged (owned create / import / clone)
+6. Reuse chrome tokens (`bg-surface`, `border-border`, `Button` ghost, `ActionMenu`); one open menu at a time
+7. Hotkeys: single `use-editor-command-hotkeys` window listener (mounted from toolbar) — see **Editor commands + undo stack (US-10)**
 
 ## Create empty model + parts (US-23 / US-24)
 
@@ -61,7 +63,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 3. Domain `create/` owns `PartKind` registry (`box` / `sphere` / `cylinder` / `capsule` / `plane` / `cone` / `torus` / `triangle` / `polygon` / `circle` / `ring` / `tetrahedron` / `octahedron` / `icosahedron` / `dodecahedron`), `Kit` registry (`empty` + starter recipes under `create/domain/kits/`, optional `groups` tree of stamped create groups for armature-style parenting), `spawnPart` / `duplicatePart` / `deletePart`, ground-origin geometry, size rebuild from `userData.createPart`. Action `addPart(modelId, kindId)` spawns a default part under a **created** model, forces **Edit**, selects the mesh, and returns it
 4. Parts are named meshes (`nextPartName` → `box`, `box_2`, …); metres + Y-up; bottom-origin geometry so identity TRS sits on the ground; later `spawnPart` siblings get a small +X offset so they are not stacked
 5. When focused model is `source: 'created'`: vertical create **ToolBar** after Settings (Add part palette, color, duplicate, delete); Settings **PartInspector** for kind size fields; first-run hint when nothing is selected. Toolbar (and palette) hidden for imported focus. **Edit** gizmo targets the selected part; **Move** targets the model root (all parts)
-6. Edit Save / Restore for created-part selection:
+6. Edit auto-commit for created-part selection (US-10 — no Save / Restore chrome):
    - **No ready clip owned by this model** (including when only a **shared** clip is driving playback): commit local TRS on the mesh (scene graph + rest-pose refresh); never write keyframes into shared/other-owned clips or rebase library clips — avoids part names (e.g. `capsule`) contaminating character animations
    - **Ready clip owned by this model:** Hold Pose to End into that owned clip (same as imported selection edits)
 7. `packModelGlb`: created models pack mesh scene **plus owned ready clips**; shared clips are not attached. Created models with **zero stamped mesh parts** (`listCreatedParts`) are omitted from `resolveExportUnits` / the zip. Content import accepts mesh-only GLBs back as `source: 'created'`. Animation-only zip fallback prefers an imported rig when one exists
@@ -105,7 +107,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 - Settings: Start/End and Speed always visible; **Blend** is a reusable `Collapsible` (`src/components/collapsible/`) with partner select, weight, **Bake**, and **Reset**
 - `$clips` holds `blendClipId`, `blendWeight`, `blendBaseClip` (primary snapshot when a partner is chosen)
 - Blend overlay is **viewport-only** until **Bake** flattens primary + secondary at weight into the active library clip and resets the form; **Reset** clears the form without writing
-- Unsaved bone/gizmo edits discard on reselect; **Hold Pose to End** commits into the active clip
+- Unsaved bone/gizmo edits auto-commit on gesture end (US-10); **Hold Pose to End** commits into the active clip
 - Playback bar: controls + scrubber only
 
 ## Animation import
@@ -154,17 +156,17 @@ Suggestions autofill the mapping UI only; Apply is still required (no silent ret
 1. Clone the active clip's **working** reference — actually trim from the retained **source** clip so the window can always be re-derived against the full original duration
 2. `trimClipWindow(source, start, end)` in `animation/domain`: per track, `KeyframeTrack.trim(start, end)` keeps in-window keys (plus the first key before `start` for interpolation), then re-baselines track times by `−start` and sets `clip.duration = end − start`. (`AnimationClip.trim()` in three 0.185 is a no-arg helper that only crops to the clip's own duration — it does not take a window)
 3. Replace the library entry’s working `clip` with the result (the source clip is never mutated)
-4. The pre-trim clip stays recoverable for the session via the entry's `sourceClip` reference (restore control or re-trim from source)
+4. The pre-trim clip stays recoverable for the session via the entry's `sourceClip` reference (re-trim from source) and via undo of `trimClip` (US-10)
 
 ## Time scale on export (US-5 contract)
 
 Each library entry stores its own `timeScale` (default `1` on import / new draft). The Speed slider edits only the active entry; live playback sets `mixer.timeScale` from that entry. On export, **bake** each clip’s own scale into track times / clip duration so the downloaded GLB plays at the edited speed in other viewers (no reliance on runtime `timeScale`).
 
-## Keyframe write (US-4)
+## Keyframe write (US-4 + US-10 auto-commit)
 
 1. Pause (or scrub) so the timeline playhead is the target timestamp
 2. Raycast → select bone or mesh; attach TransformControls (Edit tool)
-3. Editing the selection with TransformControls marks pose dirty; Save / Restore appear in the preview overlay only while dirty (Hold Pose to End copy when an active ready clip drives the save)
+3. Editing the selection with TransformControls marks pose dirty; **auto-commit** on drag-end / nudge / Settings blur / tool or selection change / play (or **Cmd/Ctrl+S** if still dirty). No Save / Restore pose chrome
 4. On hold (active ready clip on the focused model):
    - Read selection local position, quaternion, scale
    - Resolve the clip **driving that model** (`resolveActiveClipIdForModel`), not only `activeClipId`
@@ -172,34 +174,86 @@ Each library entry stores its own `timeScale` (default `1` on import / new draft
    - Write a hold plateau from clip-local playhead `t` through `duration` (sample at `t` and at `duration`; remove keys strictly inside); do not extend clip duration. Scrub + edit + hold again later overwrites from the new playhead forward
    - Clear any blend partner / base snapshot so preview uses the updated working clip
    - Clear pose dirty
-5. Restore with an active clip: resume mixer bindings and re-apply the clip at the current playhead (discard unsaved gizmo edit)
+5. Catalog Undo while dirty flushes `commitPendingPose` then pops that stack entry (cancels the open edit)
 6. After hold, clear pose dirty but **leave the previous action suspended**; `useClipMixerAction` rebinds the updated clip at the same playhead (uncache previous action). Do not call `restoreMixerPose` / `resumeMixerBindings` in `saveKeyframe` — those resample the old action and desync the scrubber playhead
 
-Bind-pose / Move / T-pose Save–Restore branching: see **Edit / Move tools & bind pose (US-15)** below.
+Bind-pose / Move / T-pose commit branching: see **Edit / Move tools & bind pose (US-15)** below.
 
-## Edit / Move tools & bind pose (US-15)
+## Edit / Move tools & bind pose (US-15 + US-10)
 
 1. **`$editTool`** (`'navigate' | 'edit' | 'move'`, default `'edit'`) — toolbar in `EditorPreview` when a model is loaded; button order **Navigate** (`ArrowsHorizontalIcon`) → **Edit** (`CursorIcon`) → **Move** (`MoveIcon`)
-2. **Navigate** — free camera travel via `OrbitControls` with **hand-tool** mapping (LMB / one-finger **pan**, RMB orbit, scroll / pinch zoom); no TransformControls; no raycast selection or model focus from picks; W / E / R toolbar hidden. Edit / Move keep orbit-first mapping (LMB rotate, RMB pan)
-3. **Edit** — raycast selection + TransformControls in local space; W / E / R when something is selected; works with **no** active clip (T-pose). On created models, plain pick remaps stamped parts to the nearest create-group when present (US-27 joint select); Shift+click keeps the mesh
-4. **Move** — attach TransformControls to the active model root in **world** space; mode from `$transformMode` (translate / rotate / scale); show W / E / R toolbar while Move is active; ignore raycast picks so the user stays on the root
+2. **Navigate** — free camera travel via `OrbitControls` with **hand-tool** mapping (LMB / one-finger **pan**, RMB orbit, scroll / pinch zoom); no TransformControls; no raycast selection or model focus from picks; **Q / W / E** toolbar hidden. Edit / Move keep orbit-first mapping (LMB rotate, RMB pan)
+3. **Edit** — raycast selection + TransformControls in local space; **Q / W / E** when something is selected; works with **no** active clip (T-pose). On created models, plain pick remaps stamped parts to the nearest create-group when present (US-27 joint select); Shift+click keeps the mesh
+4. **Move** — attach TransformControls to the active model root in **world** space; mode from `$transformMode` (translate / rotate / scale); show **Q / W / E** toolbar while Move is active; ignore raycast picks so the user stays on the root
 5. **Dirty + snapshot** — on first gizmo / Settings root change, mark `$poseDirty`, set `$poseEditKind` (`modelRoot` | `selection`), snapshot pre-edit local TRS
-6. **Save** (by `$poseEditKind`, not active tool)
+6. **Commit** (`commitPendingPose` / `saveKeyframe` — by `$poseEditKind`, not active tool)
    - `selection` on a **created** model part **without a ready owned clip** (shared-only drive counts as none) → keep Object3D TRS; refresh rest-pose snapshot; **never** write keyframes or rebase library clips
    - `selection` on a **created** model part **with a ready owned clip** → US-4 Hold Pose to End into that owned clip only
    - `selection` + active ready clip (imported) → US-4 Hold Pose to End
    - `selection` + no ready clip → keep Object3D TRS; rebase that node’s tracks in every library `clip` / `sourceClip` by pre-edit → current delta; accumulate per `modelId` + node name for import / replace / post-retarget; refresh rest-pose snapshot; clear dirty
    - `modelRoot` + no ready/draft clip → keep `scene` TRS; refresh rest-pose snapshot; no keyframe write / no clip rebase
    - `modelRoot` + active ready/draft clip **on the focused model** → keep `scene` TRS; store position, Euler degrees, and scale on `rootPositionByModelId` / `rootRotationByModelId` / `rootScaleByModelId`; do **not** refresh the model rest-pose root; seek playhead to **t=0** so the clip starts under the saved root; no keyframe write / no clip rebase; other models are untouched
-7. **Restore** — `selection` + active clip → `restoreMixerPose`; otherwise write snapshot TRS back onto the object
-8. Tool switch (including Navigate) or Settings/gizmo kind change while dirty → auto-Restore first. Selection change / clear while dirty → `restorePose()` before updating `$selection`
-9. **Settings Model** — live editable root **position** (m), **rotation** (degrees, 0–360, Euler `XYZ`), and **scale** as **percent of rest / bind root size** (`100` = rest scale on that axis); independent of tool; same dirty / Save / Restore path as Move (clip-scoped when a clip is active on the focused model). With an active clip, edits sample the clip at t=0 so the start pose sits under the new root. Readout reflects the loaded scene root on import / focus (after load-time `hoistRootTransform` promotes single-child wrapper TRS onto `gltf.scene`). World axes live on the top **Settings** menu (US-30), not this aside
+7. **Auto-commit triggers** — TransformControls drag-end, each nudge, Settings / part TRS field blur, tool switch, selection change, play, or Cmd/Ctrl+S when dirty. No Restore / Save pose chrome
+8. Catalog Undo while dirty → flush commit then undo that entry (cancel open edit)
+9. **Settings Model** — live editable root **position** (m), **rotation** (degrees, 0–360, Euler `XYZ`), and **scale** as **percent of rest / bind root size** (`100` = rest scale on that axis); independent of tool; same dirty / auto-commit path as Move (clip-scoped when a clip is active on the focused model). With an active clip, edits sample the clip at t=0 so the start pose sits under the new root. Readout reflects the loaded scene root on import / focus (after load-time `hoistRootTransform` promotes single-child wrapper TRS onto `gltf.scene`). World axes live on the top **Settings** menu (US-30), not this aside
 10. **Clip root transform** — `ClipEntry.rootPositionByModelId`, `rootRotationByModelId` (degrees), and `rootScaleByModelId` (session library metadata). Each model’s mixer applies only its own entries when that clip is playing; missing key restores that channel from the model’s rest-pose root. Selecting or saving a clip root always begins playback preview at t=0 on the focused model
-11. **T-pose** — `activeClipId: null` via clicking the selected Animations row again (or clear); applies captured rest / bind pose (snapshot at mixer mount; refreshed on bind-pose or model-root Save **without** an active clip). Skeleton sync does not auto-select a ready clip when already on T-pose
+11. **T-pose** — `activeClipId: null` via clicking the selected Animations row again (or clear); applies captured rest / bind pose (snapshot at mixer mount; refreshed on bind-pose or model-root commit **without** an active clip). Skeleton sync does not auto-select a ready clip when already on T-pose
 12. **Bind-pose deltas** — per `modelId` + node name; cleared on model remove/replace. Position `p' = p + Δp`; quaternion `q' = Δq * q`; scale `s' = s * Δs`. Import / Replace / retarget apply accumulated overrides for the active model
 13. **Load hoist (US-21)** — `hoistRootTransform` after parse: while the scene has one child, compose non-identity child TRS into the scene (clear child) or peel identity-only wrappers via `attach`; stops at multi-child or geometry/bone nodes
 
-Out of scope: multi-model simultaneous transform; full undo stack (US-10).
+Out of scope: multi-model simultaneous transform.
+
+## Editor commands + undo stack (US-10)
+
+### Placement
+
+- Module `commands` — pure catalog `commands/domain/editor-commands.ts` (`{ id, chords, label, category }`); dispatcher `commands/actions/run-editor-command.ts`; hotkeys `commands/hooks/use-editor-command-hotkeys` (replaces `use-transform-mode-hotkeys`); `CommandsModal` + `EditorEditMenu` on `EditorToolbar`
+- Module `animation` — undo stack next to the clip library: pure `animation/domain/command-stack.ts`; session `animation/stores/undo-stack-store.ts` (`$canUndo` / `$canRedo`); apply via `apply-undoable-command` + mixer rebind
+
+### Keymap (locked)
+
+**Cmd** = meta on macOS; **Ctrl** elsewhere. Letter keys case-insensitive. Transform modes **Q / W / E** = Move / Rotate / Scale; **R** = axes; **B** = bones.
+
+| Command id                           | Chord(s)                     | Label                    | Category  |
+| ------------------------------------ | ---------------------------- | ------------------------ | --------- |
+| `playPause`                          | Space                        | Play / Pause             | Playback  |
+| `toggleAxes`                         | R                            | Toggle world axes        | Viewport  |
+| `toggleBones`                        | B                            | Toggle bones             | Viewport  |
+| `transformMove`                      | Q                            | Move                     | Transform |
+| `transformRotate`                    | W                            | Rotate                   | Transform |
+| `transformScale`                     | E                            | Scale                    | Transform |
+| `nudgeNegX` / `nudgePosX`            | ← / →                        | Nudge −X / +X            | Transform |
+| `nudgePosY` / `nudgeNegY`            | ↑ / ↓                        | Nudge +Y / −Y            | Transform |
+| `nudgePosZ` / `nudgeNegZ`            | Shift+↑ / Shift+↓            | Nudge +Z / −Z            | Transform |
+| `savePending`                        | Cmd/Ctrl+S                   | Commit pending pose      | Animation |
+| `copyCreatePart` / `pasteCreatePart` | Cmd/Ctrl+C / V               | Copy / Paste create part | Create    |
+| `deleteCreatePart`                   | Delete                       | Delete create part       | Create    |
+| `undo`                               | Cmd/Ctrl+Z                   | Undo                     | History   |
+| `redo`                               | Cmd/Ctrl+Shift+Z, Cmd/Ctrl+Y | Redo                     | History   |
+
+**Not bound:** bare C/V; Backspace as Delete; Cut (Cmd/Ctrl+X). Ignore letter chords when Cmd/Ctrl/Alt held (except explicit Cmd/Ctrl rows). Ignore all chords when `isTypingTarget`.
+
+### Nudge
+
+Step = `$viewportSettings.gridStepMetres` (default 0.1 m). Space matches TransformControls (**Edit = local**, **Move = world**). Target = gizmo target (Edit → `$selection.object`; Move → model root). Side effects: pause, suspend mixer, capture pre-edit, apply step, **auto-commit** (`saveKeyframe` stack entry). No rotation/scale/camera/multi-select nudge.
+
+### Create-part clipboard (MVP limits)
+
+Eligible: mesh with `userData.createPart` on focused `source === 'created'` model. Copy → in-session buffer `{ kind, params, color, local TRS }` (not OS clipboard). Paste → spawn like duplicate into focused created model. Delete → `deleteSelectedPart`. Session-only buffer; groups not targets. **No-op:** bones, imported meshes, full-model clipboard, multi-select, Cut. Create-part clipboard ops are **not** on the undo stack in v1.
+
+### Undoable command set (v1 snapshots)
+
+| Stack id       | User action                 | Notes                                                                                     |
+| -------------- | --------------------------- | ----------------------------------------------------------------------------------------- |
+| `trimClip`     | Apply trim                  | Before/after `{ clip, trimStart, trimEnd, duration }`; replaces one-shot pre-trim restore |
+| `saveKeyframe` | Auto-commit pose / keyframe | One entry per finished gesture; includes bind-pose scene TRS when no driving clip         |
+| `setTimeScale` | Speed slider commit         | Before/after `{ timeScale }`; bake intent for export                                      |
+
+One stack entry = one user commit (coalesce drag/typing with `recordUndo: false` until pointer-up / blur). Snapshot (not patch) clones mutated `AnimationClip`s. Unbounded in-session; cleared on reload. After undo/redo: replace library fields, rebind mixer (`rebindMixersForClips`). Not undoable: transport, viewport chrome, create-part graph edits, blend/retarget/rename/import.
+
+### Non-goals
+
+No durable undo across reloads; no collaborative OT/CRDT.
 
 ## Selection name overlay (US-13)
 
@@ -220,7 +274,7 @@ Out of scope: multi-model simultaneous transform; full undo stack (US-10).
 
 1. `$viewportSettings` (`nanostores` `map`) in `viewport/stores/viewport-settings-store.ts`: `{ axesVisible, axesSize, bonesVisible, snapToGrid, gridStepMetres, snapRotation, rotationStepDegrees }` with setters. Axes defaults `true` / `AXES_SIZE` (`10`); clamp size `1`–`50`. Bones default `true`. Snap defaults `false` / `0.1` m / `false` / `15°`; clamp grid `0.01`–`10`, rotation `1`–`180`
 2. Top **Settings** menu hosts axes (`WorldAxesControls`), bones (`BonesVisibilityControls`), and snap (`SnapControls`: checkboxes + step inputs; step fields disabled when their flag is off) — not library sidebar, Settings aside, or preview chrome
-3. Settings aside hosts **Model** (and Animation / Part / Name) — not Axes / Bones / Snap. Model has live editable **model root** position (m), rotation (degrees), and scale as **percent of rest size** (`100` = rest / bind root) via `TransformReadout` whenever a model is loaded — independent of Edit / Move (US-15 / US-21); with an active clip on the focused model, Save stores values on that clip’s `rootPositionByModelId` / `rootRotationByModelId` / `rootScaleByModelId` (scale stored as Three.js factor)
+3. Settings aside hosts **Model** (and Animation / Part / Name) — not Axes / Bones / Snap. Model has live editable **model root** position (m), rotation (degrees), and scale as **percent of rest size** (`100` = rest / bind root) via `TransformReadout` whenever a model is loaded — independent of Edit / Move (US-15 / US-21); with an active clip on the focused model, auto-commit stores values on that clip’s `rootPositionByModelId` / `rootRotationByModelId` / `rootScaleByModelId` (scale stored as Three.js factor)
 4. `ViewportCanvas` mounts `<WorldAxes axesSize={…} />` only when `axesVisible`; `WorldAxes` rebuilds tick geometry from `axesSize` at runtime (major/minor steps stay in `viewport/constants/world-axes`). `ModelViewer` mounts `ModelSkeletonHelper` per previewed imported model only when `bonesVisible`. Hotkeys: **R** → `toggleAxes`; **B** → `toggleBones` (commands catalog)
 5. `TransformControlsDriver` passes `translationSnap` / `rotationSnap` (degrees→radians) only when focused model is created and the matching snap flag is on — prefer built-in TC snaps over post-`objectChange` re-quantize
 6. Session-only — no persistence. Out of scope: ground-grid toggle, unit system changes, scale snap, vertex/edge/magnet snap
@@ -230,9 +284,9 @@ Out of scope: multi-model simultaneous transform; full undo stack (US-10).
 - Full-bleed R3F `Canvas` with lights; orbit / pan / zoom via `OrbitControls`
 - World XYZ axes at the origin with metre rulers on +X/+Y (major `Nm`, minor `0.1` ticks; length from `$viewportSettings.axesSize`; toggle via top **Settings** menu)
 - Dark infinite ground grid at `y = 0` (1 m cells, stronger section lines; `viewport/constants/ground-grid`) plus soft contact shadow under the model (`ContactShadows`)
-- Navigate / Edit / Move tool toggle when a model is loaded (Navigate first; default Edit); TransformControls for selection (Edit) or model root (Move); none in Navigate; translate / rotate / scale via preview toolbar + W / E / R (default translate); Edit uses local space, Move uses world space; dragging pauses playback and suspends mixer bindings so tracks cannot overwrite the pose
+- Navigate / Edit / Move tool toggle when a model is loaded (Navigate first; default Edit); TransformControls for selection (Edit) or model root (Move); none in Navigate; translate / rotate / scale via preview toolbar + **Q / W / E** (default translate); Edit uses local space, Move uses world space; dragging pauses playback and suspends mixer bindings so tracks cannot overwrite the pose; drag-end **auto-commits** (US-10)
 - Collapsible sidebar docks beside the canvas (`editor-shell`); collapse/expand with labelled chevron controls
-- Preview chrome hosts playback + Navigate/Edit/Move tools + transform mode toolbar (Edit + selection, or Move with a loaded model) + selection name overlay + dirty-only Save / Restore (not the settings sidebar)
+- Preview chrome hosts playback + Navigate/Edit/Move tools + transform mode toolbar (Edit + selection, or Move with a loaded model) + selection name overlay — **no** dirty Save / Restore chrome (US-10)
 
 ## Chrome tokens (UI)
 
@@ -240,9 +294,9 @@ Semantic colors live in `src/styles/global.css` `@theme` (`canvas`, `surface`, `
 
 **Surfaces:** page + viewport = `bg-canvas`; asides, modals, playback bar, app menu bar, and floating toolbars = opaque `bg-surface` (no `/90` / `/95` variants).
 
-**App menu bar:** `EditorToolbar` is full-width document-flow chrome above the aside/preview row — File / Settings text menus; not a floating overlay.
+**App menu bar:** `EditorToolbar` is full-width document-flow chrome above the aside/preview row — File / Edit / Settings text menus + Commands control; not a floating overlay.
 
-**Floating chrome:** `FloatingToolbar` (`src/components/floating-toolbar/`) wraps Edit/Move, transform modes, create tools, aside open chips, and Save/Restore. Controls are shared `Button` (`ghost` / `primary`), **icon-only** (name in `aria-label` + `title`).
+**Floating chrome:** `FloatingToolbar` (`src/components/floating-toolbar/`) wraps Edit/Move, transform modes, create tools, and aside open chips. Controls are shared `Button` (`ghost` / `primary`), **icon-only** (name in `aria-label` + `title`). No Save / Restore pose buttons (US-10 auto-commit).
 
 **Spacing:** padding, gap, and margin use even Tailwind units (`2`, `4`, `6`, `8`, and larger even steps). Avoid odd and half units (`1`, `3`, `1.5`, …) except hairlines (`w-px`, `w-0.5`). Shared primitives (`Button`, `Input`, `Modal`, `CollapsibleAside`, `FloatingToolbar`) encode the defaults — prefer not overriding with ad-hoc padding.
 

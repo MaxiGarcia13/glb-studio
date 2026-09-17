@@ -16,12 +16,12 @@
 | **US-28** | Part color maps (textures) on created models only |
 | **US-8** | Morph-target editing (post-MVP) |
 | **US-9** | Graph / curve keyframe UI (post-MVP) |
-| **US-10** | Full undo / redo stack (post-MVP) |
 
 ## Shipped
 
 | ID | Summary |
 |----|---------|
+| **US-10** | Undo / redo stack (trim, keyframe, timeScale) + editor command catalog (hotkeys, Commands modal, Edit menu); pose auto-commit; Q/W/E transform |
 | **US-32** | Group GLB round-trip — split on import (group → models → clips) |
 | **US-31** | Bone outliner + SkeletonHelper for imported models |
 | **US-27** | Additional create kits via registry (Modern house, Block robot) + Edit joint pick on create groups |
