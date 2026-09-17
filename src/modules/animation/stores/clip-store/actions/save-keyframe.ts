@@ -10,8 +10,15 @@ import {
   refreshRestPoseNode,
 } from '@/modules/animation/domain/rest-pose';
 import {
+  snapshotSaveKeyframeBindPoseCommit,
+  snapshotSaveKeyframeClip,
+  snapshotSaveKeyframeRoots,
+} from '@/modules/animation/domain/undo-snapshots';
+import {
+  $bindPoseOverrides,
   accumulateBindPoseDelta,
 } from '@/modules/animation/stores/bind-pose-store';
+import { pushUndoableCommand } from '@/modules/animation/stores/undo-stack-store';
 import {
   resumeMixerBindings,
   setMixerTime,
@@ -29,12 +36,12 @@ import { $selection } from '@/modules/viewport/stores/selection-store';
 import { $clips } from '../store';
 import { isReadyClip } from '../utils';
 
-function commitBindPoseToClips(nodeName: string): void {
+function commitBindPoseToClips(nodeName: string): boolean {
   const snapshot = $preEditTransform.get();
   const object = $selection.get().object;
   const model = $activeModel.get();
   if (!snapshot || !object || !model) {
-    return;
+    return false;
   }
 
   const delta = computeBindPoseDelta(snapshot, object);
@@ -56,6 +63,7 @@ function commitBindPoseToClips(nodeName: string): void {
   });
 
   $clips.set({ ...state, clips });
+  return true;
 }
 
 /** Clip currently driving this model (owned selection, else shared / same-name override). */
@@ -118,6 +126,21 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
           object.scale.y,
           object.scale.z,
         ];
+        const before = {
+          clips: [snapshotSaveKeyframeRoots(modelClip)],
+        };
+        const afterRoots = {
+          ...modelClip.rootPositionByModelId,
+          [model.id]: rootPosition,
+        };
+        const afterRotations = {
+          ...modelClip.rootRotationByModelId,
+          [model.id]: rootRotation,
+        };
+        const afterScales = {
+          ...modelClip.rootScaleByModelId,
+          [model.id]: rootScale,
+        };
         // Clear dirty before publishing so the mixer effect does not skip apply.
         clearPoseDirty();
         $clips.set({
@@ -126,23 +149,26 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
             entry.id === modelClip.id
               ? {
                   ...entry,
-                  rootPositionByModelId: {
-                    ...entry.rootPositionByModelId,
-                    [model.id]: rootPosition,
-                  },
-                  rootRotationByModelId: {
-                    ...entry.rootRotationByModelId,
-                    [model.id]: rootRotation,
-                  },
-                  rootScaleByModelId: {
-                    ...entry.rootScaleByModelId,
-                    [model.id]: rootScale,
-                  },
+                  rootPositionByModelId: afterRoots,
+                  rootRotationByModelId: afterRotations,
+                  rootScaleByModelId: afterScales,
                 }
               : entry,
           ),
         });
+        const afterEntry = {
+          ...modelClip,
+          rootPositionByModelId: afterRoots,
+          rootRotationByModelId: afterRotations,
+          rootScaleByModelId: afterScales,
+        };
         applySceneRootTransform(model.scene, rootPosition, rootRotation, rootScale);
+        pushUndoableCommand({
+          id: 'saveKeyframe',
+          clipId: modelClip.id,
+          before,
+          after: { clips: [snapshotSaveKeyframeRoots(afterEntry)] },
+        });
         // Clip begins at t=0 under the saved root on this model only.
         setMixerTime(0);
         return;
@@ -180,7 +206,31 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
   // Created models never reach here without an owned ready clip (handled above).
   if (!isReadyClip(active)) {
     const nodeName = object.name || object.uuid;
-    commitBindPoseToClips(nodeName);
+    const before = snapshotSaveKeyframeBindPoseCommit(
+      state.clips,
+      $bindPoseOverrides.get(),
+    );
+    if (!commitBindPoseToClips(nodeName)) {
+      resumeMixerBindings();
+      clearPoseDirty();
+      return;
+    }
+    const after = snapshotSaveKeyframeBindPoseCommit(
+      $clips.get().clips,
+      $bindPoseOverrides.get(),
+    );
+    const clipId
+      = targetClipId
+        ?? state.activeClipId
+        ?? before.clips[0]?.clipId
+        ?? model?.id
+        ?? 'bind-pose';
+    pushUndoableCommand({
+      id: 'saveKeyframe',
+      clipId,
+      before,
+      after,
+    });
     resumeMixerBindings();
     clearPoseDirty();
     return;
@@ -188,6 +238,7 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
 
   const nodeName = object.name || object.uuid;
   const timelineTime = readClipTimelineTime();
+  const beforeClip = snapshotSaveKeyframeClip(active);
   const working = writeNodeKeyframe(
     active.clip,
     nodeName,
@@ -216,6 +267,14 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
     blendClipId: null,
     blendWeight: 0,
   });
+  if (beforeClip) {
+    pushUndoableCommand({
+      id: 'saveKeyframe',
+      clipId: active.id,
+      before: { clips: [beforeClip] },
+      after: { clips: [{ clipId: active.id, clip: working.clone() }] },
+    });
+  }
   // Keep the old action suspended. Do not restoreMixerPose / resume / rebind here —
   // those race the React actionRef and leave playback/scrubber on a dead mixer action.
   // useClipMixerAction rebinds `working` and enables the new action.

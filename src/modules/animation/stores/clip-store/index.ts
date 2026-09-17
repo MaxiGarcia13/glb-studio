@@ -1,5 +1,7 @@
 export {
+  applyUndoableCommand,
   bakeBlend,
+  captureTrimClipSnapshot,
   clearActiveClip,
   cloneClipAs,
   importClipFiles,
@@ -29,6 +31,6 @@ export {
   toggleLoop,
   trimClip,
 } from './actions';
-export type { RetargetClipOptions, RetargetClipResult, RetargetScope } from './actions';
+export type { RetargetClipOptions, RetargetClipResult, RetargetScope, SetTimeScaleOptions, TrimClipOptions } from './actions';
 export { $clips } from './store';
 export { isReadyClip } from './utils';

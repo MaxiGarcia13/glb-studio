@@ -1,22 +1,47 @@
 import { useStore } from '@nanostores/react';
+import { useRef } from 'react';
 import { Input } from '@/components/input/input';
-import { $clips, isReadyClip, trimClip } from '../stores/clip-store';
+import {
+  $clips,
+  captureTrimClipSnapshot,
+  isReadyClip,
+  trimClip,
+} from '../stores/clip-store';
 
 export function ClipTrimInputs() {
   const { activeClipId, trimStart, trimEnd, clips } = useStore($clips, {
     keys: ['activeClipId', 'trimStart', 'trimEnd', 'clips'],
   });
+  const undoFromRef = useRef<ReturnType<typeof captureTrimClipSnapshot>>(null);
 
   const active = clips.find((entry) => entry.id === activeClipId);
   const enabled = isReadyClip(active);
   const maxEnd = active?.sourceClip?.duration ?? trimEnd;
 
+  const captureUndoFrom = () => {
+    if (undoFromRef.current === null) {
+      undoFromRef.current = captureTrimClipSnapshot();
+    }
+  };
+
+  const commitUndo = () => {
+    const undoFrom = undoFromRef.current;
+    undoFromRef.current = null;
+    if (!undoFrom) {
+      return;
+    }
+    const state = $clips.get();
+    trimClip(state.trimStart, state.trimEnd, { undoFrom });
+  };
+
   const handleStart = (event: React.ChangeEvent<HTMLInputElement>) => {
-    trimClip(Number(event.currentTarget.value), trimEnd);
+    captureUndoFrom();
+    trimClip(Number(event.currentTarget.value), trimEnd, { recordUndo: false });
   };
 
   const handleEnd = (event: React.ChangeEvent<HTMLInputElement>) => {
-    trimClip(trimStart, Number(event.currentTarget.value));
+    captureUndoFrom();
+    trimClip(trimStart, Number(event.currentTarget.value), { recordUndo: false });
   };
 
   return (
@@ -29,6 +54,8 @@ export function ClipTrimInputs() {
         max={trimEnd}
         step={0.01}
         onChange={handleStart}
+        onFocus={captureUndoFrom}
+        onBlur={commitUndo}
         disabled={!enabled}
         className="flex-1 w-full"
       />
@@ -40,6 +67,8 @@ export function ClipTrimInputs() {
         max={maxEnd}
         step={0.01}
         onChange={handleEnd}
+        onFocus={captureUndoFrom}
+        onBlur={commitUndo}
         disabled={!enabled}
         className="flex-1 w-full"
       />

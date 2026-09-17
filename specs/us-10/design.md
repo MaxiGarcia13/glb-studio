@@ -127,6 +127,8 @@ Optimize to patches later only if snapshot memory or clone cost becomes a measur
 - Pure stack: `animation/domain/command-stack.ts` — push / undo / redo of `{ before, after }` snapshot commands; no store writes, no mixer.
 - Session store: `animation/stores/undo-stack-store.ts` — unbounded in-memory stack; `$canUndo` / `$canRedo` for later UI. Cleared on reload.
 - Types: `animation/types/undo-stack.ts` — `trimClip` / `saveKeyframe` / `setTimeScale` payloads.
+- Wrap: `trimClip`, `saveKeyframe`, and `setTimeScale` push a snapshot command on each user commit (`recordUndo` default true). Speed slider and trim fields pass `{ recordUndo: false }` while dragging/typing and commit with `undoFrom` on pointer-up / blur.
+- Apply: `animation/stores/clip-store/actions/apply-undoable-command.ts` — replace library fields (and bind-pose map / mixer `timeScale`). Mixer clip rebind is a follow-up task.
 
 ### Approach
 

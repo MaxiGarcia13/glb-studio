@@ -29,7 +29,7 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 ## Implement — undo / redo stack
 
 - [x] Command stack service in `animation` (or `commands`) domain
-- [ ] Wrap trim + keyframe mutations as undoable commands
+- [x] Wrap trim + keyframe mutations as undoable commands
 - [ ] Undo / Redo UI + shortcuts via catalog (**Cmd/Ctrl+Z**, **Cmd/Ctrl+Shift+Z** or **Y**)
 - [ ] Mixer rebind after stack ops; integrate or replace US-3 pre-trim restore
 

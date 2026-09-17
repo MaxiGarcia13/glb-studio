@@ -63,3 +63,8 @@ export function clearAllBindPoseOverrides(): void {
   }
   $bindPoseOverrides.set({});
 }
+
+/** Replace the whole map (undo/redo of a bind-pose save). */
+export function replaceBindPoseOverrides(next: BindPoseOverridesByModel): void {
+  $bindPoseOverrides.set(next);
+}
