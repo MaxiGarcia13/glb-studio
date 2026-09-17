@@ -16,7 +16,7 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 - [x] Shared `isTypingTarget` (or equivalent); ignore shortcuts when focus is in text fields that own them
 - [x] `run-editor-command` dispatcher → existing actions (`play` / `pause`, `saveKeyframe`, `setAxesVisible`, create part duplicate/delete, …)
 - [x] Single `use-editor-command-hotkeys` window listener in `commands` (replace / absorb `use-transform-mode-hotkeys`)
-- [ ] Remap transform modes: **W / E / T** = Move / Rotate / Scale; update toolbar labels from catalog
+- [x] Remap transform modes: **W / E / T** = Move / Rotate / Scale; update toolbar labels from catalog
 - [ ] Wire **R** → toggle world axes (`axesVisible`)
 - [ ] Wire **Space** → play / pause
 - [ ] Wire arrow keys (+ Shift for Z) → nudge selected object on X / Y / Z
