@@ -102,7 +102,7 @@ Acceptance requires at least trim, keyframe write, and speed/bake intent. Exact 
 | Operation                                                        | Why                                                                                               |
 | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | Play / pause / stop / loop / scrub                               | Transport / view state; no clip mutation                                                          |
-| Unsaved in-progress pose (`restorePose`)                         | Only while a gesture is open (gizmo drag / Settings focus); discard is not a stack entry. Finished gestures auto-commit. |
+| Unsaved in-progress pose                                         | Open gestures auto-commit on end / blur / interruption; not a separate discard path.              |
 | Transform mode, axes, selection                                  | Viewport chrome; no clip mutation by themselves                                                   |
 | Create-part spawn / duplicate / delete / clipboard               | Scene graph edits; hotkeys ship in this US, undo deferred                                         |
 | `bakeBlend`, retarget, rename, replace/import clip, draft create | Out of scope or larger library ops; blend/retarget only get undo when those features opt in later |
@@ -130,14 +130,14 @@ Optimize to patches later only if snapshot memory or clone cost becomes a measur
 - Types: `animation/types/undo-stack.ts` — `trimClip` / `saveKeyframe` / `setTimeScale` payloads.
 - Wrap: `trimClip`, `saveKeyframe`, and `setTimeScale` push a snapshot command on each user commit (`recordUndo` default true). Speed slider and trim fields pass `{ recordUndo: false }` while dragging/typing and commit with `undoFrom` on pointer-up / blur.
 - Apply: `animation/stores/clip-store/actions/apply-undoable-command.ts` — replace library fields (and bind-pose map / mixer `timeScale`), then `rebindMixersForClips` (rest-pose → force stop/play/`setTime`) so a post-Save bone pose cannot stick when PropertyMixer would skip at the same playhead. Bind-pose Saves also snapshot scene-node TRS and restore it (plus the rest-pose map entry) because there is often no driving clip for rebind. `useClipMixerAction` uses the same force-write when the working clip reference changes.
-- Dirty pose: catalog Undo calls `restorePose` only while a gesture is still open (`$poseDirty`); finished gizmo / nudge / Settings edits auto-commit via `commitPendingPose` and land on the stack. Cmd/Ctrl+S still commits if anything is dirty. Floating Restore discards an in-progress edit; no Save button required for pose.
+- Dirty pose: open gestures (`$poseDirty`) auto-commit via `commitPendingPose` on drag-end, nudge, Settings blur, tool/selection change, play, or Cmd/Ctrl+S. Catalog Undo flushes a dirty gesture onto the stack then pops it (cancels the in-progress edit). No Restore / Save pose chrome.
 - Auto-commit: `TransformControls` drag-end, each `nudgeSelection`, and Settings / part TRS field **blur** call `commitPendingPose` (hold-to-end policy lives there).
 
 ### Approach
 
 - Command pattern: each edit pushes a snapshot pair `{ before, after }` (or equivalent `undo` / `redo` closures that close over those snapshots)
 - After undo/redo: replace library working clip reference and rebind mixer action; clear selection if node missing
-- Catalog Undo while a gizmo / Settings pose is dirty discards that pose (`restorePose`) without consuming a stack entry
+- Catalog Undo while a gesture is dirty flushes then undoes that commit (cancels the open edit without a Restore control)
 - Keyboard undo/redo go through the catalog (same focus rules as other shortcuts)
 
 ### Relation to US-3

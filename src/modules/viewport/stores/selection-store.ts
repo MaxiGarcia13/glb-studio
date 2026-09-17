@@ -2,18 +2,15 @@ import type { Object3D } from 'three';
 
 import type { SelectionState } from '../types/selection';
 import { map } from 'nanostores';
-import { restorePose } from '@/modules/animation/stores/clip-store/actions/restore-pose';
+import { commitPendingPose } from '@/modules/animation/stores/clip-store/actions/commit-pending-pose';
 import { resumeMixerBindings } from '@/modules/animation/utils/mixer-session';
 import { EMPTY_SELECTION } from '../types/selection';
 import { $poseDirty, clearPoseDirty } from './pose-edit-store';
 
 export const $selection = map<SelectionState>({ ...EMPTY_SELECTION });
 
-function discardUnsavedPoseEdit(): void {
-  if ($poseDirty.get()) {
-    restorePose();
-    return;
-  }
+function flushOpenPoseEdit(): void {
+  commitPendingPose();
   resumeMixerBindings();
   clearPoseDirty();
 }
@@ -50,7 +47,7 @@ export function selectObject(object: Object3D | null): void {
   }
 
   if (prev.object !== object) {
-    discardUnsavedPoseEdit();
+    flushOpenPoseEdit();
   }
 
   $selection.set({
@@ -79,7 +76,7 @@ export function selectModelIds(modelIds: readonly string[]): void {
   }
 
   if (prev.object !== null || $poseDirty.get()) {
-    discardUnsavedPoseEdit();
+    flushOpenPoseEdit();
   }
 
   if (unique.length === 0) {
@@ -121,7 +118,7 @@ export function toggleObject(object: Object3D): void {
         : prev.object!;
 
     if (nextActive !== prev.object) {
-      discardUnsavedPoseEdit();
+      flushOpenPoseEdit();
     }
 
     $selection.set({
@@ -134,7 +131,7 @@ export function toggleObject(object: Object3D): void {
   }
 
   if (object !== prev.object) {
-    discardUnsavedPoseEdit();
+    flushOpenPoseEdit();
   }
 
   $selection.set({
@@ -154,7 +151,7 @@ export function toggleModelId(modelId: string): void {
 
   if (prev.kind !== 'models') {
     if (prev.object !== null || $poseDirty.get()) {
-      discardUnsavedPoseEdit();
+      flushOpenPoseEdit();
     }
     $selection.set({
       object: null,
@@ -195,7 +192,7 @@ export function clearSelection(): void {
   }
 
   if (prev.object !== null || $poseDirty.get()) {
-    discardUnsavedPoseEdit();
+    flushOpenPoseEdit();
   }
 
   $selection.set({ ...EMPTY_SELECTION });

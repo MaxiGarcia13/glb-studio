@@ -20,7 +20,6 @@ export { removeClip } from './remove-clip';
 export { removeClipsByOwner } from './remove-clips-by-owner';
 export { renameClip } from './rename-clip';
 export { replaceClip } from './replace-clip';
-export { restorePose } from './restore-pose';
 export { retargetClip } from './retarget-clip';
 export type { RetargetClipOptions, RetargetClipResult, RetargetScope } from './retarget-clip';
 export { selectClip } from './select-clip';

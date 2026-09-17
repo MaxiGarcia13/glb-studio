@@ -53,7 +53,7 @@ Prefer defaults on shared primitives (`Button` `p-2`, aside/modal `p-4`) over on
 
 ## Floating toolbars
 
-Viewport overlay chrome (Navigate/Edit/Move, transform modes, create tools, aside open chips, Restore) uses `FloatingToolbar` from `src/components/floating-toolbar/`:
+Viewport overlay chrome (Navigate/Edit/Move, transform modes, create tools, aside open chips) uses `FloatingToolbar` from `src/components/floating-toolbar/`:
 
 - Shell: opaque `bg-surface`, `p-2`, `gap-2` (via `floatingToolbarClassName`)
 - Controls: shared `Button` (`ghost` / `primary`) — icon-only; put the name in `aria-label` + `title`
@@ -75,4 +75,4 @@ Viewport overlay chrome (Navigate/Edit/Move, transform modes, create tools, asid
 
 1. Reuse `Button`, `Input`, `Select`, `Text`, `Modal`, `CollapsibleAside`, `FloatingToolbar` before new class strings.
 2. New colors → add a `@theme` token in `global.css`, then use the utility — do not hardcode `zinc-*` / `sky-*` in chrome.
-3. Keep overlay insets at `*-4` on desktop. On mobile (`max-width: 640px`), stack floating chrome so it clears aside open chips and sibling toolbars — transform at `top-20`, edit above create (`bottom-18` / `bottom-4`), selection / restore further up (`bottom-28` / `bottom-32`). Own viewport-overlay positions in `editor-preview`. App menu bar (`EditorToolbar`) is full-width document-flow chrome above the aside/preview row in `index.astro` — not a floating overlay and not inside each toolbar.
+3. Keep overlay insets at `*-4` on desktop. On mobile (`max-width: 640px`), stack floating chrome so it clears aside open chips and sibling toolbars — transform at `top-20`, edit above create (`bottom-18` / `bottom-4`), selection further up (`bottom-28`). Own viewport-overlay positions in `editor-preview`. App menu bar (`EditorToolbar`) is full-width document-flow chrome above the aside/preview row in `index.astro` — not a floating overlay and not inside each toolbar.

@@ -1,5 +1,5 @@
 import { atom } from 'nanostores';
-import { restorePose } from '@/modules/animation/stores/clip-store';
+import { commitPendingPose } from '@/modules/animation/stores/clip-store/actions/commit-pending-pose';
 import { $poseDirty } from './pose-edit-store';
 
 export type EditTool = 'navigate' | 'edit' | 'move';
@@ -12,7 +12,7 @@ export function setEditTool(tool: EditTool): void {
     return;
   }
   if ($poseDirty.get()) {
-    restorePose();
+    commitPendingPose();
   }
   $editTool.set(tool);
 }

@@ -10,13 +10,13 @@ export interface PreEditTransform {
   scale: { x: number; y: number; z: number };
 }
 
-/** True while a gizmo or Settings pose edit is in progress (Restore / auto-commit). */
+/** True while a gizmo or Settings pose edit is open (commits on gesture end). */
 export const $poseDirty = atom(false);
 
 /** Which object the current dirty edit applies to (independent of active tool). */
 export const $poseEditKind = atom<PoseEditKind | null>(null);
 
-/** TRS snapshot captured on first edit, cleared on save / restore / seek / reselect. */
+/** TRS snapshot captured on first edit; used for bind-pose deltas; cleared on commit. */
 export const $preEditTransform = atom<PreEditTransform | null>(null);
 
 export function markPoseDirty(): void {
@@ -40,22 +40,6 @@ export function capturePreEditTransform(object: Object3D, kind: PoseEditKind): v
     },
     scale: { x: object.scale.x, y: object.scale.y, z: object.scale.z },
   });
-}
-
-export function restoreFromSnapshot(object: Object3D): void {
-  const snapshot = $preEditTransform.get();
-  if (!snapshot) {
-    return;
-  }
-  object.position.set(snapshot.position.x, snapshot.position.y, snapshot.position.z);
-  object.quaternion.set(
-    snapshot.quaternion.x,
-    snapshot.quaternion.y,
-    snapshot.quaternion.z,
-    snapshot.quaternion.w,
-  );
-  object.scale.set(snapshot.scale.x, snapshot.scale.y, snapshot.scale.z);
-  object.updateMatrixWorld(true);
 }
 
 export function clearPoseDirty(): void {

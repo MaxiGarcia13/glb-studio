@@ -2,8 +2,8 @@ import type { Object3D } from 'three';
 import type { PoseEditKind } from './pose-edit-store';
 import { atom, computed } from 'nanostores';
 import { getRestRootScale } from '@/modules/animation/domain/rest-pose';
+import { commitPendingPose } from '@/modules/animation/stores/clip-store/actions/commit-pending-pose';
 import { pause } from '@/modules/animation/stores/clip-store/actions/playback';
-import { restorePose } from '@/modules/animation/stores/clip-store/actions/restore-pose';
 import { $clips } from '@/modules/animation/stores/clip-store/store';
 import {
   sampleMixerAt,
@@ -101,7 +101,7 @@ function resolveEditTarget(): { object: Object3D; poseKind: PoseEditKind } | nul
 
 function beginSettingsEdit(object: Object3D, poseKind: PoseEditKind): void {
   if ($poseDirty.get() && $poseEditKind.get() !== poseKind) {
-    restorePose();
+    commitPendingPose();
   }
 
   if (!$poseDirty.get()) {

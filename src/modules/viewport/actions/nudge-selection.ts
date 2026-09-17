@@ -2,7 +2,6 @@ import { Vector3 } from 'three';
 
 import { commitPendingPose } from '@/modules/animation/stores/clip-store/actions/commit-pending-pose';
 import { pause } from '@/modules/animation/stores/clip-store/actions/playback';
-import { restorePose } from '@/modules/animation/stores/clip-store/actions/restore-pose';
 import { suspendMixerBindings } from '@/modules/animation/utils/mixer-session';
 import { $editTool } from '../stores/edit-tool-store';
 import { $activeModel } from '../stores/model-store';
@@ -48,7 +47,7 @@ export function nudgeSelection(axis: NudgeAxis, sign: 1 | -1): void {
   }
 
   if ($poseDirty.get() && $poseEditKind.get() !== poseKind) {
-    restorePose();
+    commitPendingPose();
   }
 
   if (!$poseDirty.get()) {

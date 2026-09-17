@@ -1,7 +1,6 @@
 import { pushUndoableCommand } from '@/modules/animation/stores/undo-stack-store';
 import {
   getMixerTime,
-  restoreMixerPose,
   resumeMixerBindings,
   setMixerTime,
   setMixerTimeScale,
@@ -9,6 +8,7 @@ import {
 import { $poseDirty, clearPoseDirty } from '@/modules/viewport/stores/pose-edit-store';
 import { $clips } from '../store';
 import { isReadyClip } from '../utils';
+import { commitPendingPose } from './commit-pending-pose';
 
 export const MIN_TIME_SCALE = 0.1;
 export const MAX_TIME_SCALE = 3;
@@ -63,7 +63,7 @@ export function play(): void {
   if (!state.loop && state.duration > 0 && getMixerTime() >= state.duration) {
     setMixerTime(0);
   } else if ($poseDirty.get()) {
-    restoreMixerPose();
+    commitPendingPose();
   } else {
     resumeMixerBindings();
     clearPoseDirty();

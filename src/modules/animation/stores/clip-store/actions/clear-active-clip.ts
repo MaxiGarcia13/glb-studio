@@ -1,7 +1,7 @@
 import { setMixerTimeScale } from '@/modules/animation/utils/mixer-session';
 import { $poseDirty } from '@/modules/viewport/stores/pose-edit-store';
 import { $clips } from '../store';
-import { restorePose } from './restore-pose';
+import { commitPendingPose } from './commit-pending-pose';
 
 /** Clear the active clip (T-pose / bind pose). Mixer effect restores rest TRS. */
 export function clearActiveClip(): void {
@@ -11,7 +11,7 @@ export function clearActiveClip(): void {
   }
 
   if ($poseDirty.get()) {
-    restorePose();
+    commitPendingPose();
   }
 
   setMixerTimeScale(1);

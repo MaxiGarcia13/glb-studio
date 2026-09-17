@@ -20,7 +20,6 @@ export {
   renameClip,
   replaceClip,
   resetBlend,
-  restorePose,
   retargetClip,
   selectClip,
   setBlendClip,

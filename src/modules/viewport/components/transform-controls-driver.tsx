@@ -6,7 +6,6 @@ import { TransformControls } from '@react-three/drei';
 import { useEffect, useRef } from 'react';
 import { commitPendingPose } from '@/modules/animation/stores/clip-store/actions/commit-pending-pose';
 import { pause } from '@/modules/animation/stores/clip-store/actions/playback';
-import { restorePose } from '@/modules/animation/stores/clip-store/actions/restore-pose';
 import {
   resumeMixerBindings,
   suspendMixerBindings,
@@ -91,7 +90,7 @@ export function TransformControlsDriver({ controlsRef }: TransformControlsDriver
     const onObjectChange = () => {
       const kind = isMove ? 'modelRoot' : 'selection';
       if ($poseDirty.get() && $poseEditKind.get() !== kind) {
-        restorePose();
+        commitPendingPose();
       }
       if (!$poseDirty.get() && gizmoObject) {
         capturePreEditTransform(gizmoObject, kind);
