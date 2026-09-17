@@ -17,12 +17,13 @@
 
 ### Keymap (locked)
 
-Single source of truth for the catalog. **Cmd** = meta on macOS; **Ctrl** elsewhere. Letter keys are case-insensitive. Remap from today’s **W / E / R** (scale): transform modes **Q / W / E** = Move / Rotate / Scale; **R** = axes.
+Single source of truth for the catalog. **Cmd** = meta on macOS; **Ctrl** elsewhere. Letter keys are case-insensitive. Remap from today’s **W / E / R** (scale): transform modes **Q / W / E** = Move / Rotate / Scale; **R** = axes; **B** = bones.
 
 | Command id         | Chord(s)                     | Label               | Category  |
 | ------------------ | ---------------------------- | ------------------- | --------- |
 | `playPause`        | Space                        | Play / Pause        | Playback  |
 | `toggleAxes`       | R                            | Toggle world axes   | Viewport  |
+| `toggleBones`      | B                            | Toggle bones        | Viewport  |
 | `transformMove`    | Q                            | Move                | Transform |
 | `transformRotate`  | W                            | Rotate              | Transform |
 | `transformScale`   | E                            | Scale               | Transform |

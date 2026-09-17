@@ -1,10 +1,14 @@
 import { useStore } from '@nanostores/react';
 import { $model } from '../stores/model-store';
+import { $viewportSettings } from '../stores/viewport-settings-store';
 import { ModelSkeletonHelper } from './model-skeleton-helper';
 
 export function ModelViewer() {
   const { models, previewModelIds } = useStore($model, {
     keys: ['models', 'previewModelIds'],
+  });
+  const { bonesVisible } = useStore($viewportSettings, {
+    keys: ['bonesVisible'],
   });
 
   const previewSet = new Set(previewModelIds);
@@ -20,11 +24,12 @@ export function ModelViewer() {
         // Library owns the scene for the session — do not dispose on eye-toggle unmount.
         <primitive key={model.id} object={model.scene} dispose={null} />
       ))}
-      {visible
-        .filter((model) => model.source === 'imported')
-        .map((model) => (
-          <ModelSkeletonHelper key={`skeleton-${model.id}`} scene={model.scene} />
-        ))}
+      {bonesVisible
+        && visible
+          .filter((model) => model.source === 'imported')
+          .map((model) => (
+            <ModelSkeletonHelper key={`skeleton-${model.id}`} scene={model.scene} />
+          ))}
     </>
   );
 }

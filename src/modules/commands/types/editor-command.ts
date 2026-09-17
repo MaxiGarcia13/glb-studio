@@ -2,6 +2,7 @@
 export type EditorCommandId
   = | 'playPause'
     | 'toggleAxes'
+    | 'toggleBones'
     | 'transformMove'
     | 'transformRotate'
     | 'transformScale'

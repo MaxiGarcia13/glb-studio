@@ -6,6 +6,7 @@ import {
   KeyboardArrowLeftIcon,
   KeyboardArrowRightIcon,
   KeyboardArrowUpIcon,
+  KeyboardBIcon,
   KeyboardCIcon,
   KeyboardCommandIcon,
   KeyboardCtrlIcon,
@@ -33,6 +34,7 @@ type KeyboardKeyId
     | 'w'
     | 'e'
     | 'r'
+    | 'b'
     | 's'
     | 'c'
     | 'v'
@@ -56,6 +58,7 @@ const KEYBOARD_KEY_ICONS: Record<
   w: KeyboardWIcon,
   e: KeyboardEIcon,
   r: KeyboardRIcon,
+  b: KeyboardBIcon,
   s: KeyboardSIcon,
   c: KeyboardCIcon,
   v: KeyboardVIcon,

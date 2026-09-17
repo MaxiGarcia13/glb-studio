@@ -1,4 +1,5 @@
 import { ActionMenuPanel } from '@/components/action-menu';
+import { BonesVisibilityControls } from './bones-visibility-controls';
 import { SnapControls } from './snap-controls';
 import { WorldAxesControls } from './world-axes-controls';
 
@@ -7,7 +8,7 @@ interface EditorSettingsMenuProps {
   onOpenChange: (open: boolean) => void;
 }
 
-/** Settings dropdown: world axes + snap. */
+/** Settings dropdown: world axes + bones + snap. */
 export function EditorSettingsMenu({ open, onOpenChange }: EditorSettingsMenuProps) {
   return (
     <ActionMenuPanel
@@ -18,6 +19,7 @@ export function EditorSettingsMenu({ open, onOpenChange }: EditorSettingsMenuPro
       panelClassName="flex flex-col gap-6"
     >
       <WorldAxesControls />
+      <BonesVisibilityControls />
       <SnapControls />
     </ActionMenuPanel>
   );

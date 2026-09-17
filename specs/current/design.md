@@ -49,7 +49,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 ## EditorToolbar (US-30)
 
 1. Full-width Blender-style app menu bar at the top of the window (above Library / Preview / Settings columns) — **not** inside `EditorPreview`, not a floating viewport overlay
-2. `EditorToolbar` is a `menubar` with text triggers: **File** (`ActionMenu`: New model, New animation, Import, Export) and **Settings** (`ActionMenuPanel`: `WorldAxesControls`, `SnapControls`)
+2. `EditorToolbar` is a `menubar` with text triggers: **File** (`ActionMenu`: New model, New animation, Import, Export) and **Settings** (`ActionMenuPanel`: `WorldAxesControls`, `BonesVisibilityControls`, `SnapControls`)
 3. **New model** → `createEmptyModel`; **From kit…** → `FromKitModal` → `createFromKit` (starter recipes only; New model stays empty); **New animation** → `startNewAnimation(scene)` with default `ownerModelId: null` (disabled without focused scene); **Import** → `routeContentImport` + `importModelResults` / `importClipResults` (+ `createModelGroup` when `groupsToCreate` is set — US-32); **Export** → open `ExportModal` (`canExport` gate)
 4. Keep model-row **Add animation** modal unchanged (owned create / import / clone)
 5. Reuse chrome tokens (`bg-surface`, `border-border`, `Button` ghost, `ActionMenu`); one open menu at a time
@@ -68,7 +68,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 8. **Hierarchy + outliner + Group (US-26) + bones (US-31):**
    - Domain `parentPart` / `attachUnder` / `attachAllUnder` via `Object3D.attach` (world preserve); cycle guard rejects self / descendant parents; empty create groups (`createGroup` stamp) + `listCreatedPartEntries`
    - `PartOutliner` under each created model in Models — names, depth indent, collapse chevron; click → Edit + `selectObject`; `$createPartsRevision` on add / duplicate / delete / parent / ungroup
-   - **Imported (US-31):** `listBoneEntries` + `BoneOutliner` under each imported model (**bones, then owned clips**); click → Edit + select bone; Shift+click toggles. Viewport `SkeletonHelper` per previewed imported model (`ModelSkeletonHelper` — not pickable; unmount on hide/remove)
+   - **Imported (US-31):** `listBoneEntries` + `BoneOutliner` under each imported model (**bones, then owned clips**); click → Edit + select bone; Shift+click toggles. Viewport `SkeletonHelper` per previewed imported model when `$viewportSettings.bonesVisible` (`ModelSkeletonHelper` — not pickable; unmount on hide/remove or toggle off)
    - `$selection.kind`: `'none' | 'parts' | 'models'` — never mix; plain click replaces (`selectObject` / `selectModelIds`); Shift+click toggles (`toggleObject` / `toggleModelId`) in library + viewport
    - Right-click `PointerActionMenu` (Group / Ungroup) from library rows and viewport; parts Group = empty group under parts root + attach selection; parts Ungroup = dissolve groups or lift to parts root; models Group / Ungroup via `$modelGroups` session store (library tree + export units)
    - No Settings Parent `<select>`; no toolbar Unparent
@@ -218,10 +218,10 @@ Out of scope: multi-model simultaneous transform; full undo stack (US-10).
 
 ## Viewport general settings (US-14 + US-25 + US-30)
 
-1. `$viewportSettings` (`nanostores` `map`) in `viewport/stores/viewport-settings-store.ts`: `{ axesVisible, axesSize, snapToGrid, gridStepMetres, snapRotation, rotationStepDegrees }` with setters. Axes defaults `true` / `AXES_SIZE` (`10`); clamp size `1`–`50`. Snap defaults `false` / `0.1` m / `false` / `15°`; clamp grid `0.01`–`10`, rotation `1`–`180`
-2. Top **Settings** menu hosts axes (`WorldAxesControls`) and snap (`SnapControls`: checkboxes + step inputs; step fields disabled when their flag is off) — not library sidebar, Settings aside, or preview chrome
-3. Settings aside hosts **Model** (and Animation / Part / Name) — not Axes / Snap. Model has live editable **model root** position (m), rotation (degrees), and scale as **percent of rest size** (`100` = rest / bind root) via `TransformReadout` whenever a model is loaded — independent of Edit / Move (US-15 / US-21); with an active clip on the focused model, Save stores values on that clip’s `rootPositionByModelId` / `rootRotationByModelId` / `rootScaleByModelId` (scale stored as Three.js factor)
-4. `ViewportCanvas` mounts `<WorldAxes axesSize={…} />` only when `axesVisible`; `WorldAxes` rebuilds tick geometry from `axesSize` at runtime (major/minor steps stay in `viewport/constants/world-axes`)
+1. `$viewportSettings` (`nanostores` `map`) in `viewport/stores/viewport-settings-store.ts`: `{ axesVisible, axesSize, bonesVisible, snapToGrid, gridStepMetres, snapRotation, rotationStepDegrees }` with setters. Axes defaults `true` / `AXES_SIZE` (`10`); clamp size `1`–`50`. Bones default `true`. Snap defaults `false` / `0.1` m / `false` / `15°`; clamp grid `0.01`–`10`, rotation `1`–`180`
+2. Top **Settings** menu hosts axes (`WorldAxesControls`), bones (`BonesVisibilityControls`), and snap (`SnapControls`: checkboxes + step inputs; step fields disabled when their flag is off) — not library sidebar, Settings aside, or preview chrome
+3. Settings aside hosts **Model** (and Animation / Part / Name) — not Axes / Bones / Snap. Model has live editable **model root** position (m), rotation (degrees), and scale as **percent of rest size** (`100` = rest / bind root) via `TransformReadout` whenever a model is loaded — independent of Edit / Move (US-15 / US-21); with an active clip on the focused model, Save stores values on that clip’s `rootPositionByModelId` / `rootRotationByModelId` / `rootScaleByModelId` (scale stored as Three.js factor)
+4. `ViewportCanvas` mounts `<WorldAxes axesSize={…} />` only when `axesVisible`; `WorldAxes` rebuilds tick geometry from `axesSize` at runtime (major/minor steps stay in `viewport/constants/world-axes`). `ModelViewer` mounts `ModelSkeletonHelper` per previewed imported model only when `bonesVisible`. Hotkeys: **R** → `toggleAxes`; **B** → `toggleBones` (commands catalog)
 5. `TransformControlsDriver` passes `translationSnap` / `rotationSnap` (degrees→radians) only when focused model is created and the matching snap flag is on — prefer built-in TC snaps over post-`objectChange` re-quantize
 6. Session-only — no persistence. Out of scope: ground-grid toggle, unit system changes, scale snap, vertex/edge/magnet snap
 

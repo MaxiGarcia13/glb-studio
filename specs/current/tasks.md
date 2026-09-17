@@ -248,6 +248,8 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `listBoneEntries` (skeleton hierarchy for outliner)
 - [x] `BoneOutliner` under imported models (bones then clips); click → Edit + select
 - [x] `ModelSkeletonHelper` for each previewed imported model (not pickable)
+- [x] `$viewportSettings.bonesVisible` (default on) + Settings **Show bones** checkbox; gate helpers in `ModelViewer`
+- [x] `toggleBones` (**B**) in commands catalog → `setBonesVisible`
 
 ## US-32 — Group GLB round-trip
 

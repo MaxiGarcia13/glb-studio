@@ -6,7 +6,7 @@ Delta for a session undo/redo stack covering animation edits beyond pre-trim res
 
 ## Story
 
-As an editor user, I can undo and redo animation edits within the session, and I can use documented keyboard commands (playback, transform modes, axes, nudge, save, create-part clipboard, undo/redo) without hunting through the UI.
+As an editor user, I can undo and redo animation edits within the session, and I can use documented keyboard commands (playback, transform modes, axes, bones, nudge, save, create-part clipboard, undo/redo) without hunting through the UI.
 
 ## Acceptance — undo / redo
 
@@ -22,6 +22,7 @@ As an editor user, I can undo and redo animation edits within the session, and I
 - [ ] Shortcuts do not fire when focus is in an input, textarea, select, or contenteditable that owns typing
 - [ ] Transform modes: **Q** Move, **W** Rotate, **E** Scale (replaces previous W / E / R); toolbar labels match the catalog
 - [ ] **R** toggles world axes visibility
+- [ ] **B** toggles skeleton bone lines visibility (`bonesVisible`)
 - [ ] **Space** toggles play / pause when a clip can play
 - [ ] Arrow keys nudge the current selection on **X** (left/right) and **Y** (down/up); **Shift+↑ / Shift+↓** nudge on **Z** — step and space documented in design
 - [ ] **Cmd/Ctrl+S** saves the pending pose/keyframe change (`saveKeyframe` when dirty); no-op when nothing to save

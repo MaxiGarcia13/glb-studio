@@ -2,6 +2,7 @@ export { KeyboardArrowDownIcon } from './keyboard-arrow-down-icon';
 export { KeyboardArrowLeftIcon } from './keyboard-arrow-left-icon';
 export { KeyboardArrowRightIcon } from './keyboard-arrow-right-icon';
 export { KeyboardArrowUpIcon } from './keyboard-arrow-up-icon';
+export { KeyboardBIcon } from './keyboard-b-icon';
 export { KeyboardCIcon } from './keyboard-c-icon';
 export { KeyboardCommandIcon } from './keyboard-command-icon';
 export { KeyboardCtrlIcon } from './keyboard-ctrl-icon';

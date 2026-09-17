@@ -21,6 +21,7 @@ import { setTransformMode } from '@/modules/viewport/stores/transform-mode-store
 import {
   $viewportSettings,
   setAxesVisible,
+  setBonesVisible,
 } from '@/modules/viewport/stores/viewport-settings-store';
 
 /** Filled by later US-10 wire tasks (undo stack). */
@@ -36,6 +37,10 @@ function togglePlayPause(): void {
 
 function toggleAxes(): void {
   setAxesVisible(!$viewportSettings.get().axesVisible);
+}
+
+function toggleBones(): void {
+  setBonesVisible(!$viewportSettings.get().bonesVisible);
 }
 
 /**
@@ -75,6 +80,7 @@ function savePendingChange(): void {
 const HANDLERS: Record<EditorCommandId, () => void> = {
   playPause: togglePlayPause,
   toggleAxes,
+  toggleBones,
   transformMove: () => setTransformMode('translate'),
   transformRotate: () => setTransformMode('rotate'),
   transformScale: () => setTransformMode('scale'),

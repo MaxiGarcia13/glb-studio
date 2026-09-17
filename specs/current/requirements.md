@@ -131,8 +131,9 @@ As an editor user, I can show or hide the world axes and change how far the metr
 
 **Acceptance**
 
-- [x] Top **Settings** menu hosts world-axes controls (`WorldAxesControls`) — not the Settings aside
+- [x] Top **Settings** menu hosts world-axes controls (`WorldAxesControls`) and bones visibility (`BonesVisibilityControls`) — not the Settings aside
 - [x] Checkbox to show/hide world XYZ axes (and X/Y metre rulers)
+- [x] Checkbox to show/hide skeleton bone lines on previewed imported models (default on; **B** toggles via `toggleBones`)
 - [x] Numeric control for axes length in metres
 - [x] Toggling visibility mounts/unmounts axes in the viewport immediately
 - [x] Changing length updates `axesHelper` and X/Y rulers live
@@ -400,9 +401,9 @@ As an editor user, when I preview an imported character I can see its skeleton i
 - [x] Under each **imported** model in the library, a **bone outliner** lists the skeleton hierarchy (depth indent, collapse chevron); order under the model is **bones, then owned clips**
 - [x] Clicking a bone row focuses that model if needed, switches to **Edit**, and selects the bone (Shift+click toggles multi-select like parts)
 - [x] Created models keep the part outliner only — no bone outliner
-- [x] Every **previewed** imported model shows a Three.js **SkeletonHelper** in the viewport (always on while previewed; no Settings toggle)
+- [x] Every **previewed** imported model shows a Three.js **SkeletonHelper** in the viewport when **Show bones** is on (top **Settings** menu; default on; **B** toggles)
 - [x] Helpers are not pick targets (do not steal raycasts from meshes/bones)
-- [x] Hiding a model (eye off) or removing it removes its helper
+- [x] Hiding a model (eye off), removing it, or turning **Show bones** off removes its helper
 
 ### US-32 — Group GLB round-trip (split on import)
 

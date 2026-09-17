@@ -6,7 +6,7 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 
 - [x] List MVP edit operations that must be undoable commands (trim, keyframe write, speed/bake intent, …)
 - [x] Decide snapshot vs patch for undo v1 (default: clip snapshot)
-- [x] Lock keymap table (Space; R axes; Q / W / E transform; arrows / Shift+arrows nudge; Cmd/Ctrl+S save; C / V / Delete create-part; Cmd/Ctrl+Z / Shift+Z undo/redo)
+- [x] Lock keymap table (Space; R axes; B bones; Q / W / E transform; arrows / Shift+arrows nudge; Cmd/Ctrl+S save; C / V / Delete create-part; Cmd/Ctrl+Z / Shift+Z undo/redo)
 - [x] Define nudge step size and local vs world space for arrow nudges
 - [x] Document MVP limits: Copy / Paste / Delete apply to **create parts only** (no bone removal, no imported-mesh clipboard, no full-model cut/paste)
 
@@ -18,6 +18,7 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 - [x] Single `use-editor-command-hotkeys` window listener in `commands` (replace / absorb `use-transform-mode-hotkeys`)
 - [x] Remap transform modes: **Q / W / E** = Move / Rotate / Scale; update toolbar labels from catalog
 - [x] Wire **R** → toggle world axes (`axesVisible`)
+- [x] Wire **B** → toggle bones (`bonesVisible`)
 - [x] Wire **Space** → play / pause
 - [x] Wire arrow keys (+ Shift for Z) → nudge selected object on X / Y / Z
 - [x] Wire **Cmd/Ctrl+S** → save pending change (`saveKeyframe` when pose dirty)

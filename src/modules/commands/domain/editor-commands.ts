@@ -24,6 +24,12 @@ export const EDITOR_COMMANDS: readonly EditorCommand[] = [
     category: 'Viewport',
   },
   {
+    id: 'toggleBones',
+    chords: [{ key: 'b' }],
+    label: 'Toggle bones',
+    category: 'Viewport',
+  },
+  {
     id: 'transformMove',
     chords: [{ key: 'q' }],
     label: 'Move',

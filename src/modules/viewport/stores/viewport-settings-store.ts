@@ -17,6 +17,7 @@ export const ROTATION_STEP_DEGREES_MAX = 180;
 export interface ViewportSettingsState {
   axesVisible: boolean;
   axesSize: number;
+  bonesVisible: boolean;
   snapToGrid: boolean;
   gridStepMetres: number;
   snapRotation: boolean;
@@ -26,6 +27,7 @@ export interface ViewportSettingsState {
 export const $viewportSettings = map<ViewportSettingsState>({
   axesVisible: false,
   axesSize: AXES_SIZE,
+  bonesVisible: true,
   snapToGrid: false,
   gridStepMetres: GRID_STEP_METRES_DEFAULT,
   snapRotation: false,
@@ -34,6 +36,10 @@ export const $viewportSettings = map<ViewportSettingsState>({
 
 export function setAxesVisible(visible: boolean): void {
   $viewportSettings.setKey('axesVisible', visible);
+}
+
+export function setBonesVisible(visible: boolean): void {
+  $viewportSettings.setKey('bonesVisible', visible);
 }
 
 export function setAxesSize(size: number): void {
