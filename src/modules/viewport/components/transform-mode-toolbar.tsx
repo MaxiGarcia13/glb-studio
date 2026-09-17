@@ -8,7 +8,6 @@ import { MoveIcon } from '@/components/icons/move-icon';
 import { RotateIcon } from '@/components/icons/rotate-icon';
 import { ScaleIcon } from '@/components/icons/scale-icon';
 import { useActiveModel } from '../hooks/use-active-model';
-import { useTransformModeHotkeys } from '../hooks/use-transform-mode-hotkeys';
 import { $editTool } from '../stores/edit-tool-store';
 import { $selection } from '../stores/selection-store';
 import {
@@ -32,8 +31,6 @@ interface TransformModeToolbarProps {
 }
 
 export function TransformModeToolbar({ className }: TransformModeToolbarProps) {
-  useTransformModeHotkeys();
-
   const { object: selected } = useStore($selection, { keys: ['object'] });
   const mode = useStore($transformMode);
   const editTool = useStore($editTool);

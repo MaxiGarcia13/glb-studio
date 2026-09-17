@@ -5,6 +5,7 @@ export {
   formatEditorCommandChords,
   getEditorCommand,
 } from './domain/editor-commands';
+export { useEditorCommandHotkeys } from './hooks/use-editor-command-hotkeys';
 export type {
   EditorCommand,
   EditorCommandCategory,
@@ -13,3 +14,8 @@ export type {
   EditorCommandMod,
 } from './types/editor-command';
 export { isTypingTarget } from './utils/is-typing-target';
+export {
+  matchesEditorCommandChord,
+  normalizeEventKey,
+} from './utils/match-editor-command-chord';
+export { resolveEditorCommandId } from './utils/resolve-editor-command-id';

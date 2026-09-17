@@ -9,6 +9,7 @@ import { DownloadIcon } from '@/components/icons/download-icon';
 import { ManIcon } from '@/components/icons/man-icon';
 import { UploadIcon } from '@/components/icons/upload-icon';
 import { importClipResults, startNewAnimation } from '@/modules/animation/stores/clip-store';
+import { useEditorCommandHotkeys } from '@/modules/commands';
 import { createEmptyModel } from '@/modules/create/actions/create-empty-model';
 import { FromKitModal } from '@/modules/create/components/from-kit-modal';
 import { ExportModal, useExportZip } from '@/modules/export';
@@ -24,6 +25,8 @@ type OpenMenu = 'file' | 'settings' | null;
 
 /** Full-width Blender-style app menu bar (File / Settings). */
 export function EditorToolbar() {
+  useEditorCommandHotkeys();
+
   const { canExport } = useExportZip();
   const { phase } = useStore($model, { keys: ['phase'] });
   const { scene } = useActiveModel();
