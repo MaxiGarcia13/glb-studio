@@ -69,10 +69,24 @@ Acceptance requires at least trim, keyframe write, and speed/bake intent. Exact 
 | Create-part spawn / duplicate / delete / clipboard | Scene graph edits; hotkeys ship in this US, undo deferred |
 | `bakeBlend`, retarget, rename, replace/import clip, draft create | Out of scope or larger library ops; blend/retarget only get undo when those features opt in later |
 
+### Snapshot vs patch (locked — v1 = snapshot)
+
+**Decision:** undo v1 uses **before/after snapshots**, not track-level patches.
+
+| Rule | Detail |
+| --- | --- |
+| Why snapshot | Correctness first: `saveKeyframe` can rewrite many tracks + optionally rebase `sourceClip` / bind-pose overrides; inverse patches would be fragile and easy to desync from the mixer |
+| Unit of snapshot | Per stack entry: deep-clone every `AnimationClip` the command mutates (`clip.clone()`, and `sourceClip.clone()` when that reference changes), plus plain copies of scalar/library fields the command touches |
+| Per-command payload | `trimClip` → prior/next `{ clip, trimStart, trimEnd, duration }`; `saveKeyframe` → prior/next affected entry fields (`clip`, `sourceClip` if changed, root TRS maps if changed) + any bind-pose override map slice written in that commit; `setTimeScale` → prior/next `{ timeScale }` only (no clip clone) |
+| Apply | Undo/redo **replace** those fields on the library entry (new object references for clips), then rebind the mixer to the restored working clip and sync mixer `timeScale` |
+| Stack depth | Unbounded in-session for v1; no persistence. Memory is acceptable for MVP clip sizes; revisit only if profiling shows pressure |
+| Not in v1 | Diff/patch undo (per-track sample deltas), structural share-with-COW, or compressing consecutive identical command types beyond the “one commit / coalesce drag” rule above |
+
+Optimize to patches later only if snapshot memory or clone cost becomes a measured problem — out of scope for this delta.
+
 ### Approach
 
-- Command pattern: each edit pushes `{ undo, redo }` (or snapshot before/after of the working clip)
-- Prefer clip-level snapshots for correctness early; optimize to patch diffs later if needed
+- Command pattern: each edit pushes a snapshot pair `{ before, after }` (or equivalent `undo` / `redo` closures that close over those snapshots)
 - After undo/redo: replace library working clip reference and rebind mixer action; clear selection if node missing
 - Keyboard undo/redo go through the catalog (same focus rules as other shortcuts)
 
