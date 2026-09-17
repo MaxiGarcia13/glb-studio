@@ -1,3 +1,4 @@
+export { runEditorCommand } from './actions/run-editor-command';
 export {
   EDITOR_COMMANDS,
   formatEditorCommandChord,

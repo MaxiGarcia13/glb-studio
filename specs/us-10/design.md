@@ -11,7 +11,7 @@
 
 - Module: `commands` — owns the cross-cutting catalog, dispatcher, and hotkey listener (not chrome layout).
 - Pure catalog: `commands/domain/editor-commands.ts` — `{ id, chords, label, category }` only; no store writes.
-- Dispatcher: `run-editor-command(id)` maps ids to existing module actions (`animation` playback / `saveKeyframe`, `viewport` transform mode / axes, `create` part duplicate/delete, undo stack ops).
+- Dispatcher: `commands/actions/run-editor-command.ts` — maps ids to existing module actions (`play` / `pause`, `saveKeyframe`, transform mode / axes, `deleteSelectedPart`). Nudge / create-part clipboard / undo-redo handlers stay no-ops until their wire tasks land.
 - Listener: one `use-editor-command-hotkeys` hook (absorbs / replaces `use-transform-mode-hotkeys`).
 - Docs UI: `CommandsModal` opened from a **Commands** control on `EditorToolbar` (`editor-shell`); body rendered from the `commands` catalog.
 
