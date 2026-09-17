@@ -516,79 +516,121 @@ export const SIMPLE_BUILDING_KIT: Kit<'simple-building'> = {
       color: ROOF,
     },
 
-    // —— Ground-floor windows (reference: flank the door + side) ——
+    // —— Windows (aligned grids; front door/balcony kept) ——
+    // Front: left of dormer + strip right of dormer (clear of corner clip)
     ...windowPane(
       'win_front_left',
-      [BODY_X - 2.35, FOUNDATION_H + 0.75, BODY_Z + bodyHalfD],
-      { width: 1.15, height: 1.45 },
+      [BODY_X - 2.35, FOUNDATION_H + 0.7, BODY_Z + bodyHalfD],
+      { width: 1.15, height: 1.4 },
       'front',
     ),
     ...windowPane(
       'win_front_right',
-      [BODY_X + 2.55, FOUNDATION_H + 0.75, BODY_Z + bodyHalfD],
-      { width: 1.05, height: 1.35 },
+      // Dormer right edge ≈ 2.55; wall corner ≈ 3.6 — keep clear of both
+      [BODY_X + 2.95, FOUNDATION_H + 0.7, BODY_Z + bodyHalfD],
+      { width: 0.85, height: 1.4 },
       'front',
     ),
     ...windowPane(
-      'win_left_front',
-      [BODY_X - bodyHalfW, FOUNDATION_H + 0.75, BODY_Z + 1.1],
-      { width: 1.0, height: 1.35 },
-      'left',
-    ),
-    ...windowPane(
-      'win_left_back',
-      [BODY_X - bodyHalfW, FOUNDATION_H + 0.75, BODY_Z - 1.2],
-      { width: 1.15, height: 1.45 },
-      'left',
-    ),
-    ...windowPane(
-      'win_back',
-      [BODY_X, FOUNDATION_H + 0.75, BODY_Z - bodyHalfD],
-      { width: 1.4, height: 1.35 },
-      'back',
-    ),
-    ...windowPane(
-      'win_right',
-      [BODY_X + bodyHalfW, FOUNDATION_H + 0.75, BODY_Z],
-      { width: 1.2, height: 1.4 },
-      'right',
-    ),
-
-    // —— Upper windows / balcony doors ——
-    ...windowPane(
       'win_upper_left',
-      [BODY_X - 2.6, FOUNDATION_H + STOREY + 0.35, BODY_Z + bodyHalfD],
-      { width: 1.05, height: 1.7 },
+      [BODY_X - 2.5, FOUNDATION_H + STOREY + 0.4, BODY_Z + bodyHalfD],
+      { width: 1.05, height: 1.65 },
       'front',
     ),
     ...windowPane(
       'win_dormer_l',
-      [DORMER_X - 0.95, FOUNDATION_H + STOREY + 0.35, DORMER_Z + dormerHalfD],
-      { width: 0.85, height: 1.7 },
+      [DORMER_X - 0.95, FOUNDATION_H + STOREY + 0.4, DORMER_Z + dormerHalfD],
+      { width: 0.85, height: 1.65 },
       'front',
     ),
     ...windowPane(
       'win_dormer_c',
-      [DORMER_X, FOUNDATION_H + STOREY + 0.35, DORMER_Z + dormerHalfD],
-      { width: 0.85, height: 1.7 },
+      [DORMER_X, FOUNDATION_H + STOREY + 0.4, DORMER_Z + dormerHalfD],
+      { width: 0.85, height: 1.65 },
       'front',
     ),
     ...windowPane(
       'win_dormer_r',
-      [DORMER_X + 0.95, FOUNDATION_H + STOREY + 0.35, DORMER_Z + dormerHalfD],
-      { width: 0.85, height: 1.7 },
+      [DORMER_X + 0.95, FOUNDATION_H + STOREY + 0.4, DORMER_Z + dormerHalfD],
+      { width: 0.85, height: 1.65 },
       'front',
     ),
+
+    // Left side — 2×2 grid (same Z columns, same sizes)
     ...windowPane(
-      'win_upper_left_side',
-      [BODY_X - bodyHalfW, FOUNDATION_H + STOREY + 0.45, BODY_Z + 0.3],
-      { width: 1.0, height: 1.5 },
+      'win_left_gf',
+      [BODY_X - bodyHalfW, FOUNDATION_H + 0.7, BODY_Z + 1.2],
+      { width: 1.1, height: 1.4 },
       'left',
     ),
     ...windowPane(
-      'win_upper_back',
-      [BODY_X - 0.8, FOUNDATION_H + STOREY + 0.45, BODY_Z - bodyHalfD],
-      { width: 1.3, height: 1.4 },
+      'win_left_gb',
+      [BODY_X - bodyHalfW, FOUNDATION_H + 0.7, BODY_Z - 1.2],
+      { width: 1.1, height: 1.4 },
+      'left',
+    ),
+    ...windowPane(
+      'win_left_uf',
+      [BODY_X - bodyHalfW, FOUNDATION_H + STOREY + 0.45, BODY_Z + 1.2],
+      { width: 1.1, height: 1.4 },
+      'left',
+    ),
+    ...windowPane(
+      'win_left_ub',
+      [BODY_X - bodyHalfW, FOUNDATION_H + STOREY + 0.45, BODY_Z - 1.2],
+      { width: 1.1, height: 1.4 },
+      'left',
+    ),
+
+    // Right side — mirror of left (2×2)
+    ...windowPane(
+      'win_right_gf',
+      [BODY_X + bodyHalfW, FOUNDATION_H + 0.7, BODY_Z + 1.2],
+      { width: 1.1, height: 1.4 },
+      'right',
+    ),
+    ...windowPane(
+      'win_right_gb',
+      [BODY_X + bodyHalfW, FOUNDATION_H + 0.7, BODY_Z - 1.2],
+      { width: 1.1, height: 1.4 },
+      'right',
+    ),
+    ...windowPane(
+      'win_right_uf',
+      [BODY_X + bodyHalfW, FOUNDATION_H + STOREY + 0.45, BODY_Z + 1.2],
+      { width: 1.1, height: 1.4 },
+      'right',
+    ),
+    ...windowPane(
+      'win_right_ub',
+      [BODY_X + bodyHalfW, FOUNDATION_H + STOREY + 0.45, BODY_Z - 1.2],
+      { width: 1.1, height: 1.4 },
+      'right',
+    ),
+
+    // Back — 2×2 grid
+    ...windowPane(
+      'win_back_gl',
+      [BODY_X - 1.7, FOUNDATION_H + 0.7, BODY_Z - bodyHalfD],
+      { width: 1.1, height: 1.4 },
+      'back',
+    ),
+    ...windowPane(
+      'win_back_gr',
+      [BODY_X + 1.7, FOUNDATION_H + 0.7, BODY_Z - bodyHalfD],
+      { width: 1.1, height: 1.4 },
+      'back',
+    ),
+    ...windowPane(
+      'win_back_ul',
+      [BODY_X - 1.7, FOUNDATION_H + STOREY + 0.45, BODY_Z - bodyHalfD],
+      { width: 1.1, height: 1.4 },
+      'back',
+    ),
+    ...windowPane(
+      'win_back_ur',
+      [BODY_X + 1.7, FOUNDATION_H + STOREY + 0.45, BODY_Z - bodyHalfD],
+      { width: 1.1, height: 1.4 },
       'back',
     ),
   ],
