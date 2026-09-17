@@ -47,6 +47,28 @@ Ignore chords when `isTypingTarget` (input / textarea / select / contenteditable
 
 ## Undo / redo stack
 
+### MVP undoable command set (locked)
+
+Acceptance requires at least trim, keyframe write, and speed/bake intent. Exact set for US-10 v1:
+
+| Command id (stack) | User action | Mutates | Notes |
+| --- | --- | --- | --- |
+| `trimClip` | Apply trim start/end (`trimClip`) | Working `clip`, `trimStart` / `trimEnd`, `duration` | Always derived from `sourceClip`; undo restores prior working clip + trim window. Replaces one-shot “restore pre-trim” as the recoverability path once the stack exists (US-3 still satisfied via undo or re-trim from `sourceClip`). |
+| `saveKeyframe` | Save pending pose (`saveKeyframe`, including hold-to-end) | Working `clip` (and `sourceClip` / bind-pose overrides when that path rebases) | One discrete stack entry per Save click / Cmd+S that actually commits. Covers upsert and hold-window key removal inside the write. **No standalone “delete keyframe” UI today** — when one lands, it joins this set as its own command. |
+| `setTimeScale` | Change clip speed (`setTimeScale`) | `ClipEntry.timeScale` | Stored bake intent: export runs `bakeTimeScale(clip, timeScale)`. Undo restores prior scale + mixer `timeScale`. |
+
+**One stack entry = one user commit** (not every intermediate slider tick while dragging — coalesce pointer-up / blur / explicit Apply if the control is continuous).
+
+### Explicitly not undoable in US-10 v1
+
+| Operation | Why |
+| --- | --- |
+| Play / pause / stop / loop / scrub | Transport / view state; no clip mutation |
+| Unsaved gizmo / Settings pose (`restorePose`) | Ephemeral until Save; discard is not an undo step |
+| Transform mode, axes, selection, nudge | Viewport chrome / live TRS; nudge does not commit a clip |
+| Create-part spawn / duplicate / delete / clipboard | Scene graph edits; hotkeys ship in this US, undo deferred |
+| `bakeBlend`, retarget, rename, replace/import clip, draft create | Out of scope or larger library ops; blend/retarget only get undo when those features opt in later |
+
 ### Approach
 
 - Command pattern: each edit pushes `{ undo, redo }` (or snapshot before/after of the working clip)
@@ -56,7 +78,7 @@ Ignore chords when `isTypingTarget` (input / textarea / select / contenteditable
 
 ### Relation to US-3
 
-- Migrate “restore pre-trim” to an undoable TrimCommand, or keep restore as a one-shot that also pushes onto the stack consistently
+- Migrate “restore pre-trim” to an undoable `trimClip` command on the stack (re-trim from `sourceClip` remains valid without using undo)
 
 ### Non-goals
 
