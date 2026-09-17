@@ -22,6 +22,7 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 - [x] Wire **Space** → play / pause
 - [x] Wire arrow keys (+ Shift for Z) → nudge selected object on X / Y / Z
 - [x] Wire **Cmd/Ctrl+S** → save pending change (`saveKeyframe` when pose dirty)
+- [x] Auto-commit pose on gizmo drag-end, nudge, and Settings field blur (`commitPendingPose`)
 - [x] Wire **Cmd/Ctrl+C / V** → create-part copy / paste (in-session buffer or duplicate path)
 - [x] Wire **Delete** → `deleteSelectedPart` when a create part is selected
 - [x] **Commands** control on `EditorToolbar` opens a modal listing all catalog entries (no second hardcoded list)
@@ -30,8 +31,8 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 
 - [x] Command stack service in `animation` (or `commands`) domain
 - [x] Wrap trim + keyframe mutations as undoable commands
-- [ ] Undo / Redo UI + shortcuts via catalog (**Cmd/Ctrl+Z**, **Cmd/Ctrl+Shift+Z** or **Y**)
-- [ ] Mixer rebind after stack ops; integrate or replace US-3 pre-trim restore
+- [x] Undo / Redo UI + shortcuts via catalog (**Cmd/Ctrl+Z**, **Cmd/Ctrl+Shift+Z** or **Y**)
+- [x] Mixer rebind after stack ops; integrate or replace US-3 pre-trim restore
 
 ## Verify
 

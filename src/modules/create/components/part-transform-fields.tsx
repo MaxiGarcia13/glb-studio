@@ -4,6 +4,7 @@ import { useStore } from '@nanostores/react';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/input/input';
 import { Text } from '@/components/text';
+import { commitPendingPose } from '@/modules/animation/stores/clip-store';
 import {
   $transformReadout,
   applySelectionPositionAxis,
@@ -88,6 +89,7 @@ export function PartTransformFields({ mesh }: { mesh: Mesh }) {
       return;
     }
     setPositionDraft((prev) => ({ ...prev, [axis]: formatFixed(current[axis], 3) }));
+    commitPendingPose();
   };
 
   const handleRotationChange = (axis: TransformAxis, next: string) => {
@@ -110,6 +112,7 @@ export function PartTransformFields({ mesh }: { mesh: Mesh }) {
     }
     const key = axis === 'x' ? 'rotationX' : axis === 'y' ? 'rotationY' : 'rotationZ';
     setRotationDraft((prev) => ({ ...prev, [axis]: formatFixed(current[key], 1) }));
+    commitPendingPose();
   };
 
   const handleScaleChange = (axis: TransformAxis, next: string) => {
@@ -135,6 +138,7 @@ export function PartTransformFields({ mesh }: { mesh: Mesh }) {
       ...prev,
       [axis]: formatFixed(scaleToPercent(current[key]), 1),
     }));
+    commitPendingPose();
   };
 
   return (

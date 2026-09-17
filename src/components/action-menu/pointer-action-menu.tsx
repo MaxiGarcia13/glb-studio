@@ -150,9 +150,14 @@ export function PointerActionMenu({
               {item.icon}
             </span>
           )}
-          <Text as="span" className="min-w-0 truncate text-current">
+          <Text as="span" className="min-w-0 flex-1 truncate text-current">
             {item.label}
           </Text>
+          {item.shortcut && (
+            <Text as="span" variant="muted" className="shrink-0">
+              {item.shortcut}
+            </Text>
+          )}
         </button>
       ))}
     </div>,

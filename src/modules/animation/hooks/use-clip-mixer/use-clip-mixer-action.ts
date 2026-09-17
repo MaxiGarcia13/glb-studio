@@ -65,6 +65,12 @@ export function useClipMixerAction(
       return;
     }
 
+    // Drop post-Save / gizmo TRS before binding so PropertyMixer cannot keep it
+    // when setTime lands on the same playhead (undo after saveKeyframe).
+    if (scene) {
+      applyRestPose(scene);
+    }
+
     const action = mixer.clipAction(clip);
     actionRef.current = action;
     setActiveAction(modelId, action);
@@ -72,6 +78,10 @@ export function useClipMixerAction(
     // and scrubbing uses setMixerTime. App pause is gated in useClipMixerFrame.
     action.enabled = true;
     action.paused = false;
+    // stop→play re-snapshots bindings from the (rest) scene, then setTime writes
+    // the clip — same force-write as restoreMixerPose / rebindMixerClip.
+    action.play();
+    action.stop();
     action.play();
     mixer.setTime(toTimelineTime(previousTime, clip.duration, $clips.get().loop));
   }, [clip, scene, modelId, mixerRef, actionRef]);

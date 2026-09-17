@@ -86,7 +86,7 @@ export const EDITOR_COMMANDS: readonly EditorCommand[] = [
   {
     id: 'savePending',
     chords: [{ key: 's', modifiers: ['mod'] }],
-    label: 'Save pending change',
+    label: 'Commit pending pose',
     category: 'Animation',
   },
   {

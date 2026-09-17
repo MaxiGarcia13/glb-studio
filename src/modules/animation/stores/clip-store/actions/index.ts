@@ -9,6 +9,7 @@ export {
 } from './blend';
 export { clearActiveClip } from './clear-active-clip';
 export { cloneClipAs } from './clone-clip-as';
+export { commitPendingPose } from './commit-pending-pose';
 export { startNewAnimation } from './draft';
 export { importClipFiles } from './import-clip-files';
 export { importClipResults } from './import-clip-results';
@@ -27,3 +28,4 @@ export { selectClip } from './select-clip';
 export { syncClipsToSkeleton } from './sync-clips-to-skeleton';
 export { captureTrimClipSnapshot, trimClip } from './trim-clip';
 export type { TrimClipOptions } from './trim-clip';
+export { redoLastEdit, undoLastEdit } from './undo-redo';

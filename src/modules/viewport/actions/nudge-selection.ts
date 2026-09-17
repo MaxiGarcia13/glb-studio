@@ -1,5 +1,6 @@
 import { Vector3 } from 'three';
 
+import { commitPendingPose } from '@/modules/animation/stores/clip-store/actions/commit-pending-pose';
 import { pause } from '@/modules/animation/stores/clip-store/actions/playback';
 import { restorePose } from '@/modules/animation/stores/clip-store/actions/restore-pose';
 import { $clips } from '@/modules/animation/stores/clip-store/store';
@@ -27,6 +28,7 @@ const scratchWorld = new Vector3();
 /**
  * Nudge the gizmo target by one grid step on a world/local axis (US-10).
  * Edit = local space + selection; Move = world space + model root.
+ * Each step auto-commits (one undo entry).
  */
 export function nudgeSelection(axis: NudgeAxis, sign: 1 | -1): void {
   const editTool = $editTool.get();
@@ -84,4 +86,5 @@ export function nudgeSelection(axis: NudgeAxis, sign: 1 | -1): void {
 
   markPoseDirty();
   syncTransformReadout(object);
+  commitPendingPose();
 }

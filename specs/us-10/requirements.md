@@ -25,7 +25,7 @@ As an editor user, I can undo and redo animation edits within the session, and I
 - [ ] **B** toggles skeleton bone lines visibility (`bonesVisible`)
 - [ ] **Space** toggles play / pause when a clip can play
 - [ ] Arrow keys nudge the current selection on **X** (left/right) and **Y** (down/up); **Shift+↑ / Shift+↓** nudge on **Z** — step and space documented in design
-- [ ] **Cmd/Ctrl+S** saves the pending pose/keyframe change (`saveKeyframe` when dirty); no-op when nothing to save
+- [ ] **Cmd/Ctrl+S** commits a still-dirty pose (`commitPendingPose` / `saveKeyframe`); no-op when nothing to save. Pose edits normally auto-commit on gesture end (gizmo drag-end, nudge, Settings blur) so Save is not required.
 - [ ] **Cmd/Ctrl+C / V** and **Delete** operate on **create parts only** (in-session buffer or duplicate path; `deleteSelectedPart` when a create part is selected)
 - [ ] `EditorToolbar` exposes a **Commands** control that opens a modal listing all catalog entries with their chords
 - [ ] Undo / redo shortcuts are catalog entries: **Cmd/Ctrl+Z**, **Cmd/Ctrl+Shift+Z** (or **Y**)

@@ -4,6 +4,7 @@ export {
   captureTrimClipSnapshot,
   clearActiveClip,
   cloneClipAs,
+  commitPendingPose,
   importClipFiles,
   importClipResults,
   importClipsFromAnimations,
@@ -13,6 +14,7 @@ export {
   MIN_TIME_SCALE,
   pause,
   play,
+  redoLastEdit,
   removeClip,
   removeClipsByOwner,
   renameClip,
@@ -30,6 +32,7 @@ export {
   syncClipsToSkeleton,
   toggleLoop,
   trimClip,
+  undoLastEdit,
 } from './actions';
 export type { RetargetClipOptions, RetargetClipResult, RetargetScope, SetTimeScaleOptions, TrimClipOptions } from './actions';
 export { $clips } from './store';

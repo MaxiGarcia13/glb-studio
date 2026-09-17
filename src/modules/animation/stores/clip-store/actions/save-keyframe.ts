@@ -205,26 +205,76 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
   // Bind-pose commit (no ready clip): scene TRS + rebase all library clips.
   // Created models never reach here without an owned ready clip (handled above).
   if (!isReadyClip(active)) {
+    const preEdit = $preEditTransform.get();
+    if (!model || !preEdit) {
+      resumeMixerBindings();
+      clearPoseDirty();
+      return;
+    }
     const nodeName = object.name || object.uuid;
-    const before = snapshotSaveKeyframeBindPoseCommit(
-      state.clips,
-      $bindPoseOverrides.get(),
-    );
+    const beforeSceneNode = {
+      modelId: model.id,
+      nodeUuid: object.uuid,
+      position: [
+        preEdit.position.x,
+        preEdit.position.y,
+        preEdit.position.z,
+      ] as [number, number, number],
+      quaternion: [
+        preEdit.quaternion.x,
+        preEdit.quaternion.y,
+        preEdit.quaternion.z,
+        preEdit.quaternion.w,
+      ] as [number, number, number, number],
+      scale: [preEdit.scale.x, preEdit.scale.y, preEdit.scale.z] as [
+        number,
+        number,
+        number,
+      ],
+    };
+    const before = {
+      ...snapshotSaveKeyframeBindPoseCommit(
+        state.clips,
+        $bindPoseOverrides.get(),
+      ),
+      sceneNode: beforeSceneNode,
+    };
     if (!commitBindPoseToClips(nodeName)) {
       resumeMixerBindings();
       clearPoseDirty();
       return;
     }
-    const after = snapshotSaveKeyframeBindPoseCommit(
-      $clips.get().clips,
-      $bindPoseOverrides.get(),
-    );
+    const after = {
+      ...snapshotSaveKeyframeBindPoseCommit(
+        $clips.get().clips,
+        $bindPoseOverrides.get(),
+      ),
+      sceneNode: {
+        modelId: model.id,
+        nodeUuid: object.uuid,
+        position: [
+          object.position.x,
+          object.position.y,
+          object.position.z,
+        ] as [number, number, number],
+        quaternion: [
+          object.quaternion.x,
+          object.quaternion.y,
+          object.quaternion.z,
+          object.quaternion.w,
+        ] as [number, number, number, number],
+        scale: [object.scale.x, object.scale.y, object.scale.z] as [
+          number,
+          number,
+          number,
+        ],
+      },
+    };
     const clipId
       = targetClipId
         ?? state.activeClipId
         ?? before.clips[0]?.clipId
-        ?? model?.id
-        ?? 'bind-pose';
+        ?? model.id;
     pushUndoableCommand({
       id: 'saveKeyframe',
       clipId,

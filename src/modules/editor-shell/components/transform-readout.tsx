@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Input } from '@/components/input/input';
 import { Text } from '@/components/text';
 import { getRestRootScale } from '@/modules/animation/domain/rest-pose';
+import { commitPendingPose } from '@/modules/animation/stores/clip-store';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import {
   $settingsFocus,
@@ -120,6 +121,7 @@ export function TransformReadout() {
       return;
     }
     setPositionDraft((prev) => ({ ...prev, [axis]: formatFixed(current[axis], 3) }));
+    commitPendingPose();
   };
 
   const handleRotationChange = (axis: TransformAxis, next: string) => {
@@ -142,6 +144,7 @@ export function TransformReadout() {
     }
     const key = axis === 'x' ? 'rotationX' : axis === 'y' ? 'rotationY' : 'rotationZ';
     setRotationDraft((prev) => ({ ...prev, [axis]: formatFixed(current[key], 1) }));
+    commitPendingPose();
   };
 
   const handleScaleChange = (axis: TransformAxis, next: string) => {
@@ -173,6 +176,7 @@ export function TransformReadout() {
       ...prev,
       [axis]: formatFixed(scaleToRestPercent(current[key], rest[axis]), 1),
     }));
+    commitPendingPose();
   };
 
   return (

@@ -1,4 +1,4 @@
-import type { AnimationAction, AnimationMixer } from 'three';
+import type { AnimationAction, AnimationClip, AnimationMixer, Object3D } from 'three';
 
 import { clearPoseDirty } from '@/modules/viewport/stores/pose-edit-store';
 
@@ -180,4 +180,62 @@ export function setMixerTimeScale(scale: number): void {
   for (const session of transportSessions()) {
     session.mixer.timeScale = scale;
   }
+}
+
+export function listRegisteredMixerModelIds(): readonly string[] {
+  return [...sessions.keys()];
+}
+
+export function getMixerRoot(modelId: string): Object3D | null {
+  return sessions.get(modelId)?.mixer.getRoot() ?? null;
+}
+
+/**
+ * Bind `clip` on this model’s mixer and force a pose write at `time`.
+ * Caller should `applyRestPose` first when the scene may still hold a gizmo /
+ * post-save TRS — otherwise PropertyMixer can skip the write at the same
+ * playhead and leave the preview stuck.
+ */
+export function rebindMixerClip(
+  modelId: string,
+  clip: AnimationClip | null,
+  time?: number,
+): void {
+  const session = sessions.get(modelId);
+  if (!session) {
+    return;
+  }
+
+  const { mixer } = session;
+  const nextTime = time ?? mixer.time;
+
+  if (session.action) {
+    const previousClip = session.action.getClip();
+    session.action.stop();
+    mixer.uncacheAction(previousClip);
+    session.action = null;
+  }
+  if (session.blendAction) {
+    const previousBlend = session.blendAction.getClip();
+    session.blendAction.stop();
+    mixer.uncacheAction(previousBlend);
+    session.blendAction = null;
+  }
+
+  if (!clip) {
+    mixer.setTime(0);
+    return;
+  }
+
+  const action = mixer.clipAction(clip);
+  action.enabled = true;
+  action.paused = false;
+  // stop→play re-snapshots bindings from the current scene, then setTime writes
+  // track values (same pattern as restoreMixerPose).
+  action.play();
+  action.stop();
+  action.play();
+  const duration = clip.duration;
+  mixer.setTime(duration > 0 ? Math.min(Math.max(nextTime, 0), duration) : 0);
+  session.action = action;
 }

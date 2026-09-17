@@ -4,12 +4,11 @@ import type { OrbitControlsRef } from './model-framing';
 import { useStore } from '@nanostores/react';
 import { TransformControls } from '@react-three/drei';
 import { useEffect, useRef } from 'react';
+import { commitPendingPose } from '@/modules/animation/stores/clip-store/actions/commit-pending-pose';
 import { pause } from '@/modules/animation/stores/clip-store/actions/playback';
 import { restorePose } from '@/modules/animation/stores/clip-store/actions/restore-pose';
-import { $clips } from '@/modules/animation/stores/clip-store/store';
 import {
   resumeMixerBindings,
-  sampleMixerAt,
   suspendMixerBindings,
 } from '@/modules/animation/utils/mixer-session';
 import { useActiveModel } from '../hooks/use-active-model';
@@ -79,12 +78,14 @@ export function TransformControlsDriver({ controlsRef }: TransformControlsDriver
       if (dragging) {
         pause();
         suspendMixerBindings();
-      } else if (!$poseDirty.get()) {
-        resumeMixerBindings();
-      } else if (isMove && $clips.get().activeClipId) {
-        // Show the clip's start pose under the new root while Save is pending.
-        sampleMixerAt(0);
+        return;
       }
+      // Drag end: commit the gesture (one undo entry) or resume if nothing changed.
+      if ($poseDirty.get()) {
+        commitPendingPose();
+        return;
+      }
+      resumeMixerBindings();
     };
 
     const onObjectChange = () => {

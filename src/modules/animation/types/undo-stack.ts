@@ -25,11 +25,26 @@ export interface SaveKeyframeClipSlice {
   rootScaleByModelId?: Record<string, [number, number, number]>;
 }
 
+/**
+ * Scene-graph TRS for a bind-pose Save (no driving clip). Undo/redo must write
+ * this back onto the node and rest-pose map — library snapshots alone leave the
+ * gizmo pose on the preview.
+ */
+export interface SaveKeyframeSceneNode {
+  modelId: string;
+  nodeUuid: string;
+  position: [number, number, number];
+  quaternion: [number, number, number, number];
+  scale: [number, number, number];
+}
+
 export interface SaveKeyframeSnapshot {
   /** One keyframe write, or every clip touched by a bind-pose rebase. */
   clips: readonly SaveKeyframeClipSlice[];
   /** Bind-pose override map written by this commit; omit when unused. */
   bindPoseOverrides?: Record<string, Record<string, BindPoseDelta>>;
+  /** Present on bind-pose Saves; omitted for clip keyframe / root TRS commits. */
+  sceneNode?: SaveKeyframeSceneNode;
 }
 
 export interface TimeScaleSnapshot {

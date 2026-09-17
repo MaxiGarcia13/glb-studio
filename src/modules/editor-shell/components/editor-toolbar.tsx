@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useEditorCommandHotkeys } from '@/modules/commands';
 import { CommandsMenuButton } from './commands-menu-button';
+import { EditorEditMenu } from './editor-edit-menu';
 import { EditorFileMenu } from './editor-file-menu';
 import { EditorSettingsMenu } from './editor-settings-menu';
 import { SelectionContextMenu } from './selection-context-menu';
 
-type OpenMenu = 'file' | 'settings' | null;
+type OpenMenu = 'file' | 'edit' | 'settings' | null;
 
-/** Full-width Blender-style app menu bar (File / Settings / Commands). */
+/** Full-width Blender-style app menu bar (File / Edit / Settings / Commands). */
 export function EditorToolbar() {
   useEditorCommandHotkeys();
   const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
@@ -21,6 +22,10 @@ export function EditorToolbar() {
       <EditorFileMenu
         open={openMenu === 'file'}
         onOpenChange={(open) => setOpenMenu(open ? 'file' : null)}
+      />
+      <EditorEditMenu
+        open={openMenu === 'edit'}
+        onOpenChange={(open) => setOpenMenu(open ? 'edit' : null)}
       />
       <EditorSettingsMenu
         open={openMenu === 'settings'}
