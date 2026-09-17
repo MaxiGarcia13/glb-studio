@@ -44,9 +44,17 @@ Single source of truth for the catalog. **Cmd** = meta on macOS; **Ctrl** elsewh
 
 **Modifier rule:** letter chords without Cmd/Ctrl/Alt ignore the event when any of those modifiers is held (except the explicit Cmd/Ctrl rows above). Nudge Shift only applies to ↑ / ↓ for Z.
 
-### Nudge (prep decision)
+### Nudge (locked)
 
-Default proposal until prep locks otherwise: world-space position step of **0.1** (metres) on the selected object (Edit selection or Move root when applicable); ignore when nothing movable is selected. Document final step / space in this section when prep completes.
+| Rule         | Decision                                                                                                                                                                                        |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Step         | **`$viewportSettings.gridStepMetres`** (default **0.1** m, same constant as `GRID_STEP_METRES_DEFAULT`). One Settings dial drives grid snap and arrow nudge.                                    |
+| Space        | Matches TransformControls: **Edit = local**, **Move = world**.                                                                                                                                  |
+| Target       | Same as the gizmo: Edit → `$selection.object`; Move → active model root (`scene`).                                                                                                              |
+| Axes         | ← / → = −X / +X; ↑ / ↓ = +Y / −Y; Shift+↑ / Shift+↓ = +Z / −Z (catalog ids above).                                                                                                              |
+| No-op when   | Navigate tool; no movable target; focus in a typing field.                                                                                                                                      |
+| Side effects | Same as a gizmo translate tick: pause playback, suspend mixer bindings, capture pre-edit if needed, mark pose dirty (Save / Restore still apply). Nudge is **not** an undo-stack command in v1. |
+| Out of scope | Rotation / scale nudge; camera nudge; multi-selection.                                                                                                                                          |
 
 ### Create-part clipboard (MVP)
 
