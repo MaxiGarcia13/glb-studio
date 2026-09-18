@@ -54,7 +54,7 @@ Prefer pure `domain/` / `utils/` over React/R3F. Tests live under `tests/unit/` 
 - [x] Euler degrees wrap / rad↔deg
 - [x] Export file-name sanitize / unique / glb+zip resolve; `preserveGltfExtension`
 - [x] Clip validate (`splitTrackName`, skeleton mismatch counts) + `isReadyClip` / `toEntry*` shapes
-- [ ] `isExportableModel` + `resolveExportUnits`; `parseModelGroupManifest` reject paths
+- [x] `isExportableModel` + `resolveExportUnits`; `parseModelGroupManifest` reject paths
 - [ ] Axis ruler ticks + labels; hips name / mapping helpers
 
 ### P1 — Three fixtures
