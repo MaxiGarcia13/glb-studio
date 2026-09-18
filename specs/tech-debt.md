@@ -12,12 +12,12 @@ Do not start post-MVP stories (US-8) from this file.
 - [x] Delete `src/components/collapsible/collapsible-hook.tsx` — duplicate of `useCollapsible` in `collapsible-context.tsx`; barrel already exports the context version only
 - [x] Wire `ManIcon` into `LibraryModelTitle` (requirements: model header shows `ManIcon` next to the name)
 - [x] Drop unused `AssetEntry` `variant="card"` — no caller passes it; keep `row` only (types + branch in `asset-entry.tsx`)
-- [ ] Remove unused `pickObjectAtPointer` in `src/modules/viewport/domain/object-pick.ts` — callers use `pickObjectAcrossRoots` only
-- [ ] Remove unused `computeModelFraming` in `src/modules/viewport/domain/model-framing.ts` — callers use `computeScenesFraming` only
-- [ ] Remove unused `getBlendWeight` in `src/modules/animation/utils/mixer-session.ts` (`setBlendWeight` stays)
-- [ ] Remove deprecated create-parent aliases with no callers: `canParentPart`, `parentPart`, `groupPartsUnder` in `src/modules/create/domain/parent-part.ts` (live paths: `canAttachUnder` / `attachUnder` / `attachAllUnder`)
-- [ ] Remove unused `removeEmptyPartGroup` in `src/modules/create/domain/create-part-group.ts` — ungroup uses `dissolveCreateGroups`
-- [ ] Un-export internals only used in-file: `listKits` → private to `kit.ts` (`listStarterKits` stays public); `resolveInsertKeyTime` → non-export in `keyframe-write.ts`
+- [x] Remove unused `pickObjectAtPointer` in `src/modules/viewport/domain/object-pick.ts` — callers use `pickObjectAcrossRoots` only
+- [x] Remove unused `computeModelFraming` in `src/modules/viewport/domain/model-framing.ts` — callers use `computeScenesFraming` only
+- [x] Remove unused `getBlendWeight` in `src/modules/animation/utils/mixer-session.ts` (`setBlendWeight` stays)
+- [x] Remove deprecated create-parent aliases with no callers: `canParentPart`, `parentPart`, `groupPartsUnder` in `src/modules/create/domain/parent-part.ts` (live paths: `canAttachUnder` / `attachUnder` / `attachAllUnder`)
+- [x] Remove unused `removeEmptyPartGroup` in `src/modules/create/domain/create-part-group.ts` — ungroup uses `dissolveCreateGroups`
+- [x] Un-export internals only used in-file: `listKits` → private to `kit.ts` (`listStarterKits` stays public); `resolveInsertKeyTime` → non-export in `keyframe-write.ts`
 
 ## Unused public barrels
 

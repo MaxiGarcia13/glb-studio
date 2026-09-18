@@ -1,6 +1,6 @@
 import type { Object3D } from 'three';
 import { Group } from 'three';
-import { isCreateGroup, writeCreateGroup } from './group-data';
+import { writeCreateGroup } from './group-data';
 import { nextObjectName } from './object-name';
 
 /**
@@ -25,12 +25,4 @@ export function createNamedCreateGroup(parent: Object3D, name: string): Group {
   writeCreateGroup(group);
   parent.add(group);
   return group;
-}
-
-/** Remove an empty create group from the graph (does not dispose children). */
-export function removeEmptyPartGroup(group: Object3D): void {
-  if (!isCreateGroup(group)) {
-    return;
-  }
-  group.removeFromParent();
 }

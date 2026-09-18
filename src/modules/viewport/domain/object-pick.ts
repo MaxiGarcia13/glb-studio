@@ -136,19 +136,6 @@ function pickBestAcrossRoots(
   return bestMesh?.object ?? null;
 }
 
-export function pickObjectAtPointer(
-  root: Object3D,
-  camera: Camera,
-  pointer: PointerPosition,
-  size: ViewportSize,
-): Object3D | null {
-  if (size.width <= 0 || size.height <= 0) {
-    return null;
-  }
-
-  return pickBestAcrossRoots([root], camera, pointer, size);
-}
-
 /** Pick the closest bone or mesh across multiple model roots. */
 export function pickObjectAcrossRoots(
   roots: Object3D[],

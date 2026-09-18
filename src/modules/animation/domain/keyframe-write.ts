@@ -304,7 +304,7 @@ function occupiedKeyTimes(times: ArrayLike<number>): Set<number> {
  * time is taken, walk forward then backward by {@link KEY_TIME_STEP} until free.
  * Returns `null` when no free slot exists (dense track / zero duration).
  */
-export function resolveInsertKeyTime(
+function resolveInsertKeyTime(
   times: ArrayLike<number>,
   preferred: number,
   duration: number,

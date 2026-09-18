@@ -1,4 +1,4 @@
-import type { Mesh, Object3D } from 'three';
+import type { Object3D } from 'three';
 
 import { isCreateGroup, isCreateHierarchyNode } from './group-data';
 
@@ -59,15 +59,6 @@ export function canAttachUnder(
   return true;
 }
 
-/** @deprecated Prefer canAttachUnder — kept for mesh-only call sites. */
-export function canParentPart(
-  child: Mesh,
-  parent: Object3D,
-  partsRoot: Object3D,
-): boolean {
-  return canAttachUnder(child, parent, partsRoot);
-}
-
 /**
  * Reparent a create hierarchy node under another node or the parts root,
  * preserving world transform via `Object3D.attach`.
@@ -90,18 +81,6 @@ export function attachUnder(
 }
 
 /**
- * Reparent a stamped create part under another part, group, or the parts root,
- * preserving world transform via `Object3D.attach`.
- */
-export function parentPart(
-  child: Mesh,
-  parent: Object3D,
-  partsRoot: Object3D,
-): boolean {
-  return attachUnder(child, parent, partsRoot);
-}
-
-/**
  * Attach each node under `parent` (world-preserving). Skips already-parented /
  * invalid / cycle cases. Returns how many were actually reparented.
  */
@@ -120,15 +99,6 @@ export function attachAllUnder(
     }
   }
   return moved;
-}
-
-/** @deprecated Prefer attachAllUnder with an empty group parent. */
-export function groupPartsUnder(
-  active: Mesh,
-  children: readonly Mesh[],
-  partsRoot: Object3D,
-): number {
-  return attachAllUnder(active, children, partsRoot);
 }
 
 /**

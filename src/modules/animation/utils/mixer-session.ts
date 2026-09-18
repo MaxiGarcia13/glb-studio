@@ -92,10 +92,6 @@ export function setBlendWeight(weight: number): void {
   applyBlendWeights(activeSession());
 }
 
-export function getBlendWeight(): number {
-  return blendWeight;
-}
-
 /** Stop the active model's clip bindings from overwriting a manual pose edit. */
 export function suspendMixerBindings(): void {
   for (const session of transportSessions()) {
@@ -187,7 +183,12 @@ export function listRegisteredMixerModelIds(): readonly string[] {
 }
 
 export function getMixerRoot(modelId: string): Object3D | null {
-  return sessions.get(modelId)?.mixer.getRoot() ?? null;
+  const root = sessions.get(modelId)?.mixer.getRoot();
+  // Mixers here are always rooted on a scene Object3D, never AnimationObjectGroup.
+  if (!root || !('isObject3D' in root)) {
+    return null;
+  }
+  return root;
 }
 
 /**

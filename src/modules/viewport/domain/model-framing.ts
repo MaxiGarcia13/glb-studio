@@ -44,10 +44,3 @@ export function computeScenesFraming(
     maxDistance: maxDimension * 10 * 2, // 10x the size of the model, 5x the distance
   };
 }
-
-export function computeModelFraming(
-  scene: Object3D,
-  camera: PerspectiveCamera,
-): ModelFraming {
-  return computeScenesFraming([scene], camera)!;
-}

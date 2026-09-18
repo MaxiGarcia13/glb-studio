@@ -18,7 +18,7 @@ export function getKit<K extends KitId>(id: K): Kit<K> {
   return KITS[id];
 }
 
-export function listKits(): Kit[] {
+function listKits(): Kit[] {
   return Object.values(KITS);
 }
 
