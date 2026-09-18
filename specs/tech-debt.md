@@ -51,7 +51,7 @@ Prefer pure `domain/` / `utils/` over React/R3F. Tests live under `tests/unit/` 
 - [x] Commands: chord match, resolve id, typing target, group-by-category, format chord, chord key parts
 
 - [x] Timeline frames + `toTimelineTime` (edge: NaN, loop wrap, pause clamp)
-- [ ] Euler degrees wrap / rad↔deg
+- [x] Euler degrees wrap / rad↔deg
 - [ ] Export file-name sanitize / unique / glb+zip resolve; `preserveGltfExtension`
 - [ ] Clip validate (`splitTrackName`, skeleton mismatch counts) + `isReadyClip` / `toEntry*` shapes
 - [ ] `isExportableModel` + `resolveExportUnits`; `parseModelGroupManifest` reject paths
