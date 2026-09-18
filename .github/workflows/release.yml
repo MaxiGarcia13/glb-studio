@@ -1,0 +1,39 @@
+name: Release workflow
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release):') }}
+    name: CI
+    uses: ./.github/workflows/ci.yml
+    secrets: inherit
+
+  bump:
+    needs: ci
+    name: Bump Version
+    uses: MaxiGarcia13/gh-actions/.github/workflows/bump-version.yml@main
+    secrets: inherit
+    with:
+      paths: |
+        src/**
+        public/**
+        tests/**
+
+  release-notes:
+    name: Create Release Notes
+    if: ${{ needs.bump.outputs.tag != '' }}
+    needs: bump
+    uses: MaxiGarcia13/gh-actions/.github/workflows/create-release-notes.yml@main
+    with:
+      tag: ${{ needs.bump.outputs.tag }}
+      default_branch: main
