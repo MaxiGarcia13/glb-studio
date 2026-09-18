@@ -17,7 +17,7 @@ export function EditorSettingsSidebar() {
   const focus = useStore($settingsFocus);
   const showModel = focus.kind === 'idle' || focus.kind === 'group';
   const showPart = focus.kind === 'part';
-  const showAnimation = focus.kind === 'idle';
+  const showAnimation = focus.kind === 'idle' || focus.kind === 'bone';
   const showSelection = focus.kind !== 'multi';
 
   return (

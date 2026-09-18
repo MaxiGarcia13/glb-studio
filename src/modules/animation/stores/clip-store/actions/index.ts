@@ -27,3 +27,12 @@ export { syncClipsToSkeleton } from './sync-clips-to-skeleton';
 export { captureTrimClipSnapshot, trimClip } from './trim-clip';
 export type { TrimClipOptions } from './trim-clip';
 export { redoLastEdit, undoLastEdit } from './undo-redo';
+export {
+  captureKeyframeEditSnapshot,
+  finalizeKeyframeEdit,
+  updateClipKeyframe,
+} from './update-clip-keyframe';
+export type {
+  UpdateClipKeyframeOptions,
+  UpdateClipKeyframeResult,
+} from './update-clip-keyframe';

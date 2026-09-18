@@ -10,7 +10,7 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 ## Implement
 
 - [x] Track list for active clip (+ selection filter) — Settings Keys collapsible; `list-clip-tracks` + `$keyframeTrackFilter` / `$selectedTrackName`
-- [ ] Keyframe select / edit time & values
+- [x] Keyframe select / edit time & values — key table + `updateTrackKeyframe` / `updateClipKeyframe`
 - [ ] Add / delete keyframes
 - [ ] Rebind mixer after edits; show interpolation where applicable
 

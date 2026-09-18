@@ -11,7 +11,7 @@ As an editor user, I can inspect and edit keyframe curves (times and values) for
 ## Acceptance
 
 - [x] UI shows tracks for the active clip (filterable by selected bone/node)
-- [ ] User can select a keyframe and edit its time and values
+- [x] User can select a keyframe and edit its time and values
 - [ ] User can add / delete keyframes on a track from the graph or key list
 - [ ] Edits update the working clip and are reflected on next mixer rebind / play
 - [ ] Interpolation mode is visible; changing it is supported where Three.js track types allow

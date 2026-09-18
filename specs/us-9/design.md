@@ -78,6 +78,7 @@ Settings → Animation
 - Tokens: `bg-surface` / `bg-control` / `border-border` / `text-fg*` — same as Blend; even spacing `2/4/6/8`
 - Playhead time for “Add”: reuse `readClipTimelineTime` (same as US-4)
 - No change to Library clip rows or bone outliner beyond reading `$selection`
+- Settings focus: selecting a **bone** uses `$settingsFocus.kind === 'bone'` so Animation / Keys stay visible with Selection name (create `part` still hides Animation)
 
 ### Wireframe — bottom curve (stretch, not MVP gate)
 

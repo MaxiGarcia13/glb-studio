@@ -48,3 +48,33 @@ export function clipTrackDisplayLabel(track: ClipTrackInfo): string {
   }
   return track.name;
 }
+
+export interface TrackKeyframe {
+  /** Index in the track’s current times/values arrays. */
+  index: number;
+  time: number;
+  values: number[];
+}
+
+/** Keys on one track, in track order. */
+export function listTrackKeyframes(track: KeyframeTrack): TrackKeyframe[] {
+  const valueSize = track.getValueSize();
+  const keys: TrackKeyframe[] = [];
+  for (let index = 0; index < track.times.length; index++) {
+    keys.push({
+      index,
+      time: track.times[index],
+      values: Array.from(
+        track.values.subarray(index * valueSize, (index + 1) * valueSize),
+      ),
+    });
+  }
+  return keys;
+}
+
+export function findTrackByName(
+  clip: AnimationClip,
+  trackName: string,
+): KeyframeTrack | undefined {
+  return clip.tracks.find((track) => track.name === trackName);
+}

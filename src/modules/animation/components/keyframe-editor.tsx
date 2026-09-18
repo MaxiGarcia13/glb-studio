@@ -22,6 +22,7 @@ import {
   setKeyframeTrackFilter,
 } from '@/modules/animation/stores/keyframe-ui-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
+import { KeyframeKeyTable } from './keyframe-key-table';
 
 const FILTER_OPTIONS: { value: KeyframeTrackFilter; label: string }[] = [
   { value: 'selected', label: 'Selected bone' },
@@ -41,7 +42,7 @@ function resolveVisibleTracks(
 
 /**
  * Settings Keys — track list for the active ready clip, filterable by
- * viewport bone/mesh selection. Key table / mutate actions land in later US-9 tasks.
+ * viewport bone/mesh selection, plus key table when a track is selected.
  */
 export function KeyframeEditor() {
   const { clips, activeClipId } = useStore($clips, {
@@ -153,6 +154,10 @@ export function KeyframeEditor() {
               })}
             </div>
           )}
+
+      {selectedTrackName && trackInView && (
+        <KeyframeKeyTable trackName={selectedTrackName} />
+      )}
     </div>
   );
 }

@@ -276,7 +276,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 | **US-34** — In-editor skinning for created models | not started (after US-33 preferred) | [`specs/us-34/tasks.md`](../us-34/tasks.md) |
 | **US-28** — Part color maps (textures)            | not started (after US-23)           | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
 | **US-8** — Morph-target editing                   | post-MVP, not started               | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
-| **US-9** — Graph / curve keyframe UI              | post-MVP, in progress (track list)  | [`specs/us-9/tasks.md`](../us-9/tasks.md)   |
+| **US-9** — Graph / curve keyframe UI              | post-MVP, in progress (key edit)    | [`specs/us-9/tasks.md`](../us-9/tasks.md)   |
 
 ## Tech debt
 

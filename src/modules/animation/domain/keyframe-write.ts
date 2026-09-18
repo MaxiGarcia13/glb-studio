@@ -128,3 +128,94 @@ export function writeNodeKeyframe(
   working.duration = clip.duration;
   return working;
 }
+
+export interface UpdateTrackKeyframePatch {
+  time?: number;
+  values?: ArrayLike<number>;
+}
+
+export interface UpdateTrackKeyframeResult {
+  clip: AnimationClip;
+  /** Index after rewrite (time sort / collision replace). */
+  keyIndex: number;
+}
+
+/**
+ * Edit one key on a track by index. Clones the clip. Changing `time` re-sorts
+ * keys and replaces any other key at the same time. Values must match
+ * `valueSize`. Returns `null` when the track/index/patch is invalid.
+ */
+export function updateTrackKeyframe(
+  clip: AnimationClip,
+  trackName: string,
+  keyIndex: number,
+  patch: UpdateTrackKeyframePatch,
+): UpdateTrackKeyframeResult | null {
+  if (patch.time === undefined && patch.values === undefined) {
+    return null;
+  }
+
+  const working = clip.clone();
+  const track = working.tracks.find((entry) => entry.name === trackName);
+  if (!track) {
+    return null;
+  }
+
+  const valueSize = track.getValueSize();
+  const keyCount = track.times.length;
+  if (keyIndex < 0 || keyIndex >= keyCount) {
+    return null;
+  }
+
+  const nextTime = Math.fround(
+    patch.time !== undefined
+      ? Math.min(Math.max(patch.time, 0), clip.duration)
+      : track.times[keyIndex],
+  );
+
+  const nextValues
+    = patch.values !== undefined
+      ? Array.from(patch.values)
+      : Array.from(
+          track.values.subarray(keyIndex * valueSize, (keyIndex + 1) * valueSize),
+        );
+
+  if (nextValues.length !== valueSize) {
+    return null;
+  }
+
+  const pairs: { time: number; values: number[] }[] = [];
+  for (let index = 0; index < keyCount; index++) {
+    if (index === keyIndex) {
+      continue;
+    }
+    const time = Math.fround(track.times[index]);
+    if (time === nextTime) {
+      continue;
+    }
+    pairs.push({
+      time,
+      values: Array.from(
+        track.values.subarray(index * valueSize, (index + 1) * valueSize),
+      ),
+    });
+  }
+  pairs.push({ time: nextTime, values: nextValues });
+  pairs.sort((a, b) => a.time - b.time);
+
+  const nextTimes: number[] = [];
+  const nextValueFlat: number[] = [];
+  let resultIndex = 0;
+  for (let index = 0; index < pairs.length; index++) {
+    const pair = pairs[index];
+    if (pair.time === nextTime) {
+      resultIndex = index;
+    }
+    appendSample(nextTimes, nextValueFlat, pair.time, pair.values);
+  }
+
+  track.times = new Float32Array(nextTimes);
+  track.values = new Float32Array(nextValueFlat);
+  working.duration = clip.duration;
+  return { clip: working, keyIndex: resultIndex };
+}

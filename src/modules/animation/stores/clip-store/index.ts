@@ -1,10 +1,12 @@
 export {
   applyUndoableCommand,
   bakeBlend,
+  captureKeyframeEditSnapshot,
   captureTrimClipSnapshot,
   clearActiveClip,
   cloneClipAs,
   commitPendingPose,
+  finalizeKeyframeEdit,
   importClipFiles,
   importClipResults,
   importClipsFromAnimations,
@@ -31,7 +33,16 @@ export {
   toggleLoop,
   trimClip,
   undoLastEdit,
+  updateClipKeyframe,
 } from './actions';
-export type { RetargetClipOptions, RetargetClipResult, RetargetScope, SetTimeScaleOptions, TrimClipOptions } from './actions';
+export type {
+  RetargetClipOptions,
+  RetargetClipResult,
+  RetargetScope,
+  SetTimeScaleOptions,
+  TrimClipOptions,
+  UpdateClipKeyframeOptions,
+  UpdateClipKeyframeResult,
+} from './actions';
 export { $clips } from './store';
 export { isReadyClip } from './utils';

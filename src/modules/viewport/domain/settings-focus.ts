@@ -8,16 +8,21 @@ import { $selection } from '../stores/selection-store';
  * - idle: model root TRS + Animation
  * - group: Model TRS bound to the empty create group; no Animation
  * - part: Part panel (TRS + size); no Model / Animation
+ * - bone: Selection name + Animation (Keys filter); no Model / Part
  * - multi: hide Model / Part / Animation (ambiguous)
  */
-export type SettingsFocusKind = 'idle' | 'multi' | 'part' | 'group';
+export type SettingsFocusKind = 'idle' | 'multi' | 'part' | 'group' | 'bone';
 
 export interface SettingsFocus {
   kind: SettingsFocusKind;
   /** Object for Model-section TRS (model root or empty group). */
   modelTransformTarget: Object3D | null;
-  /** Selected create part / bone when kind === 'part'. */
+  /** Selected create part or bone when kind is `part` / `bone`. */
   partObject: Object3D | null;
+}
+
+function isBoneObject(object: Object3D): boolean {
+  return (object as Object3D & { isBone?: boolean }).isBone === true;
 }
 
 export function resolveSettingsFocus(): SettingsFocus {
@@ -47,6 +52,14 @@ export function resolveSettingsFocus(): SettingsFocus {
         kind: 'group',
         modelTransformTarget: object,
         partObject: null,
+      };
+    }
+
+    if (isBoneObject(object)) {
+      return {
+        kind: 'bone',
+        modelTransformTarget: null,
+        partObject: object,
       };
     }
 
