@@ -2,7 +2,7 @@
   "name": "three-editor",
   "type": "module",
   "version": "0.0.1",
-  "description": "Three js Editor",
+  "description": "A browser-native GLB character & animation editor — load or build characters, shape their motion, and ship clean GLBs without leaving the tab.",
   "author": "Maximiliano Garcia Mortigliengo",
   "license": "Apache-2.0",
   "homepage": "https://github.com/MaxiGarcia13/three-editor#readme",
