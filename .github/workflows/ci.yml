@@ -39,3 +39,8 @@ jobs:
     name: Lint
     needs: build
     uses: ./.github/workflows/lint.yml
+
+  test-unit:
+    name: Unit Tests
+    needs: build
+    uses: ./.github/workflows/test-unit.yml
