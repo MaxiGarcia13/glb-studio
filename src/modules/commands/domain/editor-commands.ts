@@ -160,9 +160,8 @@ export function formatEditorCommandChord(
     parts.push(isMac ? '⇧' : 'Shift');
   }
 
-  const key = chord.key.length === 1
-    ? chord.key.toUpperCase()
-    : (KEY_LABELS[chord.key] ?? chord.key);
+  const key = KEY_LABELS[chord.key]
+    ?? (chord.key.length === 1 ? chord.key.toUpperCase() : chord.key);
   parts.push(key);
 
   return parts.join(isMac ? '' : '+');

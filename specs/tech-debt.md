@@ -48,7 +48,8 @@ Prefer pure `domain/` / `utils/` over React/R3F. Tests live under `tests/unit/` 
 
 ### P0 — pure helpers
 
-- [ ] Commands: chord match, resolve id, typing target, group-by-category, format chord, chord key parts
+- [x] Commands: chord match, resolve id, typing target, group-by-category, format chord, chord key parts
+
 - [ ] Timeline frames + `toTimelineTime` (edge: NaN, loop wrap, pause clamp)
 - [ ] Euler degrees wrap / rad↔deg
 - [ ] Export file-name sanitize / unique / glb+zip resolve; `preserveGltfExtension`
