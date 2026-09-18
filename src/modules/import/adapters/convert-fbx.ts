@@ -5,7 +5,6 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const require = createRequire(import.meta.url);
-const defaultConvert: FbxConverter = require('fbx2gltf');
 
 const MAX_BODY_BYTES = 4.5 * 1024 * 1024; // 4.5 MB
 
@@ -14,6 +13,11 @@ export type FbxConverter = (
   destFile: string,
   args?: string[],
 ) => Promise<string>;
+
+/** Default `fbx2gltf` binding; tests may replace `run`. */
+export const fbxConverter: { run: FbxConverter } = {
+  run: require('fbx2gltf'),
+};
 
 function isFbxName(name: string): boolean {
   return /\.fbx$/i.test(name);
@@ -32,7 +36,6 @@ export class FbxConvertError extends Error {
 export async function convertFbxToGlb(
   fileName: string,
   data: ArrayBuffer,
-  convert: FbxConverter = defaultConvert,
 ): Promise<Buffer> {
   if (!isFbxName(fileName)) {
     throw new FbxConvertError('Only .fbx files are accepted', 400);
@@ -47,7 +50,7 @@ export async function convertFbxToGlb(
 
   try {
     await writeFile(srcPath, Buffer.from(data));
-    await convert(srcPath, destPath);
+    await fbxConverter.run(srcPath, destPath);
     return readFile(destPath);
   } finally {
     await rm(tmpDir, { recursive: true, force: true });
