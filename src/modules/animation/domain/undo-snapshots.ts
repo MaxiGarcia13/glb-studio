@@ -5,6 +5,7 @@ import type { ClipEntry } from '@/modules/animation/types/clip';
 
 import type {
   SaveKeyframeClipSlice,
+  SaveKeyframeSceneNode,
   SaveKeyframeSnapshot,
   TrimClipSnapshot,
 } from '@/modules/animation/types/undo-stack';
@@ -93,5 +94,56 @@ export function snapshotSaveKeyframeBindPoseCommit(
   return {
     clips,
     bindPoseOverrides: cloneBindPoseOverrides(bindPoseOverrides),
+  };
+}
+
+/** Scene-node TRS slice for bind-pose Save undo/redo. */
+export function snapshotSaveKeyframeSceneNode(
+  modelId: string,
+  nodeUuid: string,
+  trs: {
+    position: { x: number; y: number; z: number };
+    quaternion: { x: number; y: number; z: number; w: number };
+    scale: { x: number; y: number; z: number };
+  },
+): SaveKeyframeSceneNode {
+  return {
+    modelId,
+    nodeUuid,
+    position: [trs.position.x, trs.position.y, trs.position.z],
+    quaternion: [
+      trs.quaternion.x,
+      trs.quaternion.y,
+      trs.quaternion.z,
+      trs.quaternion.w,
+    ],
+    scale: [trs.scale.x, trs.scale.y, trs.scale.z],
+  };
+}
+
+/** Copy an entry with per-model root TRS maps updated for `modelId`. */
+export function withModelRootTrs(
+  entry: ClipEntry,
+  modelId: string,
+  root: {
+    position: [number, number, number];
+    rotation: [number, number, number];
+    scale: [number, number, number];
+  },
+): ClipEntry {
+  return {
+    ...entry,
+    rootPositionByModelId: {
+      ...entry.rootPositionByModelId,
+      [modelId]: root.position,
+    },
+    rootRotationByModelId: {
+      ...entry.rootRotationByModelId,
+      [modelId]: root.rotation,
+    },
+    rootScaleByModelId: {
+      ...entry.rootScaleByModelId,
+      [modelId]: root.scale,
+    },
   };
 }

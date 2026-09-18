@@ -1,4 +1,5 @@
 import type { AnimationClip, KeyframeTrack } from 'three';
+import type { ClipEntry } from '@/modules/animation/types/clip';
 import type { PreEditTransform } from '@/modules/viewport/stores/pose-edit-store';
 import { Quaternion } from 'three';
 import { splitTrackName } from '@/modules/animation/domain/clip-validate';
@@ -175,4 +176,27 @@ export function rebaseClipWithOverrides(
     rebaseClipNode(clip, nodeName, delta);
   }
   return clip;
+}
+
+/**
+ * Clone library entries and rebase `nodeName` tracks by `delta` on each clip
+ * (and sourceClip when distinct). Pure — no store writes.
+ */
+export function rebaseClipEntriesForNode(
+  entries: readonly ClipEntry[],
+  nodeName: string,
+  delta: BindPoseDelta,
+): ClipEntry[] {
+  return entries.map((entry) => {
+    if (!entry.clip) {
+      return entry;
+    }
+    const clip = entry.clip.clone();
+    rebaseClipNode(clip, nodeName, delta);
+    const sourceClip
+      = entry.sourceClip && entry.sourceClip !== entry.clip
+        ? rebaseClipNode(entry.sourceClip.clone(), nodeName, delta)
+        : clip;
+    return { ...entry, clip, sourceClip };
+  });
 }

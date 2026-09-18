@@ -1,18 +1,20 @@
-import type { Object3D } from 'three';
 import {
   computeBindPoseDelta,
-  rebaseClipNode,
+  rebaseClipEntriesForNode,
 } from '@/modules/animation/domain/bind-pose-rebase';
 import { writeNodeKeyframe } from '@/modules/animation/domain/keyframe-hold';
 import { resolveActiveClipIdForModel } from '@/modules/animation/domain/resolve-active-clip';
 import {
   applySceneRootTransform,
+  readObjectRootTrs,
   refreshRestPoseNode,
 } from '@/modules/animation/domain/rest-pose';
 import {
   snapshotSaveKeyframeBindPoseCommit,
   snapshotSaveKeyframeClip,
   snapshotSaveKeyframeRoots,
+  snapshotSaveKeyframeSceneNode,
+  withModelRootTrs,
 } from '@/modules/animation/domain/undo-snapshots';
 import {
   $bindPoseOverrides,
@@ -24,7 +26,6 @@ import {
   setMixerTime,
 } from '@/modules/animation/utils/mixer-session';
 import { readClipTimelineTime } from '@/modules/animation/utils/to-timeline-time';
-import { radiansToDegrees } from '@/modules/viewport/domain/euler-degrees';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import {
   $poseDirty,
@@ -49,20 +50,10 @@ function commitBindPoseToClips(nodeName: string): boolean {
   refreshRestPoseNode(model.scene, object);
 
   const state = $clips.get();
-  const clips = state.clips.map((entry) => {
-    if (!entry.clip) {
-      return entry;
-    }
-    const clip = entry.clip.clone();
-    rebaseClipNode(clip, nodeName, delta);
-    const sourceClip
-      = entry.sourceClip && entry.sourceClip !== entry.clip
-        ? rebaseClipNode(entry.sourceClip.clone(), nodeName, delta)
-        : clip;
-    return { ...entry, clip, sourceClip };
+  $clips.set({
+    ...state,
+    clips: rebaseClipEntriesForNode(state.clips, nodeName, delta),
   });
-
-  $clips.set({ ...state, clips });
   return true;
 }
 
@@ -77,15 +68,6 @@ function clipIdForModel(
     state.activeClipByModelId,
     state.activeSharedClipId,
   );
-}
-
-function readRootRotationDegrees(object: Object3D): [number, number, number] {
-  object.rotation.setFromQuaternion(object.quaternion, 'XYZ');
-  return [
-    radiansToDegrees(object.rotation.x),
-    radiansToDegrees(object.rotation.y),
-    radiansToDegrees(object.rotation.z),
-  ];
 }
 
 export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
@@ -115,54 +97,25 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
         : undefined;
 
       if (isReadyClip(modelClip)) {
-        const rootPosition: [number, number, number] = [
-          object.position.x,
-          object.position.y,
-          object.position.z,
-        ];
-        const rootRotation = readRootRotationDegrees(object);
-        const rootScale: [number, number, number] = [
-          object.scale.x,
-          object.scale.y,
-          object.scale.z,
-        ];
+        const root = readObjectRootTrs(object);
         const before = {
           clips: [snapshotSaveKeyframeRoots(modelClip)],
         };
-        const afterRoots = {
-          ...modelClip.rootPositionByModelId,
-          [model.id]: rootPosition,
-        };
-        const afterRotations = {
-          ...modelClip.rootRotationByModelId,
-          [model.id]: rootRotation,
-        };
-        const afterScales = {
-          ...modelClip.rootScaleByModelId,
-          [model.id]: rootScale,
-        };
+        const afterEntry = withModelRootTrs(modelClip, model.id, root);
         // Clear dirty before publishing so the mixer effect does not skip apply.
         clearPoseDirty();
         $clips.set({
           ...state,
           clips: state.clips.map((entry) =>
-            entry.id === modelClip.id
-              ? {
-                  ...entry,
-                  rootPositionByModelId: afterRoots,
-                  rootRotationByModelId: afterRotations,
-                  rootScaleByModelId: afterScales,
-                }
-              : entry,
+            entry.id === modelClip.id ? afterEntry : entry,
           ),
         });
-        const afterEntry = {
-          ...modelClip,
-          rootPositionByModelId: afterRoots,
-          rootRotationByModelId: afterRotations,
-          rootScaleByModelId: afterScales,
-        };
-        applySceneRootTransform(model.scene, rootPosition, rootRotation, rootScale);
+        applySceneRootTransform(
+          model.scene,
+          root.position,
+          root.rotation,
+          root.scale,
+        );
         pushUndoableCommand({
           id: 'saveKeyframe',
           clipId: modelClip.id,
@@ -212,32 +165,12 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
       return;
     }
     const nodeName = object.name || object.uuid;
-    const beforeSceneNode = {
-      modelId: model.id,
-      nodeUuid: object.uuid,
-      position: [
-        preEdit.position.x,
-        preEdit.position.y,
-        preEdit.position.z,
-      ] as [number, number, number],
-      quaternion: [
-        preEdit.quaternion.x,
-        preEdit.quaternion.y,
-        preEdit.quaternion.z,
-        preEdit.quaternion.w,
-      ] as [number, number, number, number],
-      scale: [preEdit.scale.x, preEdit.scale.y, preEdit.scale.z] as [
-        number,
-        number,
-        number,
-      ],
-    };
     const before = {
       ...snapshotSaveKeyframeBindPoseCommit(
         state.clips,
         $bindPoseOverrides.get(),
       ),
-      sceneNode: beforeSceneNode,
+      sceneNode: snapshotSaveKeyframeSceneNode(model.id, object.uuid, preEdit),
     };
     if (!commitBindPoseToClips(nodeName)) {
       resumeMixerBindings();
@@ -249,26 +182,7 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
         $clips.get().clips,
         $bindPoseOverrides.get(),
       ),
-      sceneNode: {
-        modelId: model.id,
-        nodeUuid: object.uuid,
-        position: [
-          object.position.x,
-          object.position.y,
-          object.position.z,
-        ] as [number, number, number],
-        quaternion: [
-          object.quaternion.x,
-          object.quaternion.y,
-          object.quaternion.z,
-          object.quaternion.w,
-        ] as [number, number, number, number],
-        scale: [object.scale.x, object.scale.y, object.scale.z] as [
-          number,
-          number,
-          number,
-        ],
-      },
+      sceneNode: snapshotSaveKeyframeSceneNode(model.id, object.uuid, object),
     };
     const clipId
       = targetClipId

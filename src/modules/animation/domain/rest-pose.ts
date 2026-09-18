@@ -1,4 +1,5 @@
 import type { Object3D } from 'three';
+import { radiansToDegrees } from '@/modules/viewport/domain/euler-degrees';
 
 interface NodeRestTransform {
   position: { x: number; y: number; z: number };
@@ -65,6 +66,27 @@ export function getRestRootScale(root: Object3D): { x: number; y: number; z: num
     return { ...transform.scale };
   }
   return { x: root.scale.x, y: root.scale.y, z: root.scale.z };
+}
+
+/**
+ * Read local position, XYZ Euler degrees, and scale for model-root Save.
+ * Syncs `rotation` from `quaternion` before converting to degrees.
+ */
+export function readObjectRootTrs(object: Object3D): {
+  position: [number, number, number];
+  rotation: [number, number, number];
+  scale: [number, number, number];
+} {
+  object.rotation.setFromQuaternion(object.quaternion, 'XYZ');
+  return {
+    position: [object.position.x, object.position.y, object.position.z],
+    rotation: [
+      radiansToDegrees(object.rotation.x),
+      radiansToDegrees(object.rotation.y),
+      radiansToDegrees(object.rotation.z),
+    ],
+    scale: [object.scale.x, object.scale.y, object.scale.z],
+  };
 }
 
 /**

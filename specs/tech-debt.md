@@ -51,7 +51,7 @@ Not copy-pasted files. Extract only if the helper stays small.
 Extract only when the next edit would otherwise be painful. Prefer one concern per file; keep call sites stable.
 
 - [x] Split keyframe domain into `keyframe-hold.ts` / `keyframe-crud.ts` / `keyframe-interpolation.ts` (+ shared `keyframe-sample.ts`); callers import deep paths — no barrel
-- [ ] Thin `save-keyframe.ts` / `retarget-clip.ts` (~332 each): move pure bind-pose commit shaping and retarget scale/hips failure helpers into `domain/`; leave store wiring in actions
+- [x] Thin `save-keyframe.ts` / `retarget-clip.ts` (~332 each): move pure bind-pose commit shaping and retarget scale/hips failure helpers into `domain/`; leave store wiring in actions
 
 ## Unit tests
 
