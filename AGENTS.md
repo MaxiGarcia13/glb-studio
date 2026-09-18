@@ -1,6 +1,6 @@
 # AGENTS
 
-Web-based **GLB Character & Animation Editor**. Agents follow Spec-Driven Development; product behavior lives in `specs/`, not here.
+Web-based **GLB Studio** (GLB character & animation editor). Agents follow Spec-Driven Development; product behavior lives in `specs/`, not here.
 
 ## Stack
 

@@ -1,6 +1,6 @@
 # Requirements — current
 
-Living product contract for the **GLB Character & Animation Editor**.
+Living product contract for **GLB Studio** (GLB character & animation editor).
 
 ## Product summary
 

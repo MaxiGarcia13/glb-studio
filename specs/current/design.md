@@ -1,6 +1,6 @@
 # Design — current
 
-Architecture for the GLB Character & Animation Editor MVP.
+Architecture for the GLB Studio MVP.
 
 ## High-level
 

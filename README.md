@@ -1,14 +1,14 @@
-# three-editor
+# GLB Studio
 
-**A browser-native GLB character & animation editor** — load or build characters, shape their motion, and ship clean GLBs without leaving the tab.
+**A browser-native character & animation editor** — load or build characters, shape their motion, and ship clean GLBs without leaving the tab.
 
 Import skinned models, create primitive kits from scratch, manage shared and model-owned clips, trim and retime animations, hold poses into keyframes, then export a zip of models and animation-only files — all client-side on Three.js.
 
 > Screenshots and a live demo are coming soon.
 
-## Why three-editor?
+## Why GLB Studio?
 
-Most character pipelines bounce between DCC tools, converters, and one-off scripts. **three-editor** keeps the loop in one place:
+Most character pipelines bounce between DCC tools, converters, and one-off scripts. **GLB Studio** keeps the loop in one place:
 
 - **See it immediately** — full-screen 3D viewport with orbit, pan, and zoom
 - **Work like an editor** — Blender-style File / Settings chrome, collapsible sidebar, command palette and hotkeys

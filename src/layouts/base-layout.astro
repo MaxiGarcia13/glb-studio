@@ -1,13 +1,15 @@
 ---
-import { name, description } from '@root/package.json';
+import { description, name } from '@root/package.json';
 import '@/styles/global.css';
 
+const [firstWord, secondWord] = name.split('-');
+const appName = firstWord.toUpperCase() + ' ' + secondWord.toLowerCase();
 const siteUrl = Astro.url.origin;
 ---
 
 <html lang="en">
   <head>
-    <title>{name}</title>
+    <title>{appName}</title>
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
@@ -16,14 +18,14 @@ const siteUrl = Astro.url.origin;
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
-    <meta property="og:title" content={name} />
+    <meta property="og:title" content={appName} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content="/og-image.png" />
     <meta property="og:url" content={siteUrl} />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={name} />
+    <meta name="twitter:title" content={appName} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="/og-image.png" />
     <meta name="twitter:url" content={siteUrl} />

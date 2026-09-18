@@ -1,6 +1,6 @@
-# Contributing to three-editor
+# Contributing to GLB Studio
 
-Thanks for helping improve **three-editor**. This guide covers how to report issues, propose changes, and find your way around the repo. For deeper architecture and agent rules, see [`AGENTS.md`](AGENTS.md).
+Thanks for helping improve **GLB Studio** (repo: `three-editor`). This guide covers how to report issues, propose changes, and find your way around the repo. For deeper architecture and agent rules, see [`AGENTS.md`](AGENTS.md).
 
 ## Ways to contribute
 
