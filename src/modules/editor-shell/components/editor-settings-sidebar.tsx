@@ -9,6 +9,7 @@ import {
 } from '@/modules/animation';
 import { PartInspector } from '@/modules/create/components/part-inspector';
 import { $settingsFocus } from '@/modules/viewport/stores/transform-readout-store';
+import { STORAGE_KEYS } from '@/utils/local-storage';
 import { SelectionNameField } from './selection-name-field';
 import { TransformReadout } from './transform-readout';
 
@@ -23,6 +24,7 @@ export function EditorSettingsSidebar() {
     <CollapsibleAside
       title="Settings"
       direction="right"
+      storageKey={STORAGE_KEYS.settingsAsideWidth}
       className="flex flex-col gap-6"
       contentClassName="pt-0"
     >

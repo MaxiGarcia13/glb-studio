@@ -11,6 +11,7 @@
 
 | ID | Summary |
 |----|---------|
+| **US-35** | Resizable Library / Settings asides + preview bar (localStorage sizes) |
 | **US-33** | Skinned starter kit (Block robot GLB) — From kit → real bones |
 | **US-34** | In-editor skinning for created models (MVP rigid weights) |
 | **US-28** | Part color maps (textures) on created models only |

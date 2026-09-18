@@ -55,7 +55,7 @@ export function KeyframeTracksPane() {
 
   if (!canEdit) {
     return (
-      <div className="flex h-64 items-center justify-center">
+      <div className="flex h-full min-h-0 items-center justify-center">
         <Text as="p" variant="muted">
           Select a ready animation to inspect its tracks.
         </Text>
@@ -71,7 +71,7 @@ export function KeyframeTracksPane() {
   }
 
   return (
-    <div className="flex h-64 min-h-0 gap-4">
+    <div className="flex h-full min-h-0 gap-4">
       <div className="flex w-56 shrink-0 flex-col gap-2 border-r border-border pr-4">
         <Text variant="muted">Tracks</Text>
         {selectionNodeName && (
