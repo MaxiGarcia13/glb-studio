@@ -7,7 +7,7 @@ import { TransformModeToolbar } from '@/modules/viewport/components/transform-mo
 import { ViewportCanvas } from '@/modules/viewport/components/viewport-canvas';
 import { ViewportStatusOverlay } from '@/modules/viewport/components/viewport-status-overlay';
 import { isMobileViewport } from '@/utils/device';
-import { PreviewPlaybackBar } from './preview-playback-bar';
+import { EditorPreviewBar } from './editor-preview-bar';
 
 export function EditorPreview() {
   const isMobile = isMobileViewport();
@@ -63,7 +63,7 @@ export function EditorPreview() {
         </div>
       </div>
 
-      <PreviewPlaybackBar />
+      <EditorPreviewBar />
     </div>
   );
 }

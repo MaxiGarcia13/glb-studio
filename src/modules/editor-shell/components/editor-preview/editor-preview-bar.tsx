@@ -20,7 +20,7 @@ const MODE_OPTIONS: { value: PlaybackBarMode; label: string }[] = [
 /**
  * Bottom preview chrome: shared transport + Timeline | Tracks mode.
  */
-export function PreviewPlaybackBar() {
+export function EditorPreviewBar() {
   const mode = useStore($playbackBarMode);
   const timeline = useClipTimelineScrubber();
 
