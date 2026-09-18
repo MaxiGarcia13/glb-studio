@@ -60,7 +60,7 @@ Prefer pure `domain/` / `utils/` over React/R3F. Tests live under `tests/unit/` 
 ### P1 — Three fixtures
 
 - [x] Bone registry labels/auto-map + Mixamo vendor suggest/displayName
-- [ ] `computePositionScaleRatio` median / null
+- [x] `computePositionScaleRatio` median / null
 - [ ] `remapClipTracks` + hips rebase + bind-pose delta/rebase (synthetic tracks)
 - [ ] `bakeBlendClip` weight/duration; `nextObjectName`
 - [ ] `convertFbxToGlb` validation (400/413) with mocked converter
