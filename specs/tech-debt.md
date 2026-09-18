@@ -12,6 +12,12 @@ Do not start post-MVP stories (US-8) from this file.
 - [x] Delete `src/components/collapsible/collapsible-hook.tsx` — duplicate of `useCollapsible` in `collapsible-context.tsx`; barrel already exports the context version only
 - [x] Wire `ManIcon` into `LibraryModelTitle` (requirements: model header shows `ManIcon` next to the name)
 - [x] Drop unused `AssetEntry` `variant="card"` — no caller passes it; keep `row` only (types + branch in `asset-entry.tsx`)
+- [ ] Remove unused `pickObjectAtPointer` in `src/modules/viewport/domain/object-pick.ts` — callers use `pickObjectAcrossRoots` only
+- [ ] Remove unused `computeModelFraming` in `src/modules/viewport/domain/model-framing.ts` — callers use `computeScenesFraming` only
+- [ ] Remove unused `getBlendWeight` in `src/modules/animation/utils/mixer-session.ts` (`setBlendWeight` stays)
+- [ ] Remove deprecated create-parent aliases with no callers: `canParentPart`, `parentPart`, `groupPartsUnder` in `src/modules/create/domain/parent-part.ts` (live paths: `canAttachUnder` / `attachUnder` / `attachAllUnder`)
+- [ ] Remove unused `removeEmptyPartGroup` in `src/modules/create/domain/create-part-group.ts` — ungroup uses `dissolveCreateGroups`
+- [ ] Un-export internals only used in-file: `listKits` → private to `kit.ts` (`listStarterKits` stays public); `resolveInsertKeyTime` → non-export in `keyframe-write.ts`
 
 ## Unused public barrels
 
@@ -37,6 +43,15 @@ Not copy-pasted files. Extract only if the helper stays small.
 - `SpeedControl` native range vs `Input` is intentional (slider + `1.0x` readout)
 - Camera, grid, axes, selection, GLTF, and timeline constants each have a single owner
 - Kit registry is live (US-27 shipped); optional clothed block kit is deferred content-only if ever wanted
+- `part-kind.ts` and kit recipe files (`simple-building`, `block-robot`) are large data registries — split only if editing becomes painful
+- `mixer-session.ts` / `transform-readout-store.ts` — medium size; split when next touching blend vs transport or readout vs apply
+
+## Complex splits
+
+Extract only when the next edit would otherwise be painful. Prefer one concern per file; keep call sites stable.
+
+- [ ] Split `src/modules/animation/domain/keyframe-write.ts` (~517 lines) into hold-pose (`writeNodeKeyframe` + helpers), per-key CRUD (update / insert / delete), and interpolation helpers
+- [ ] Thin `save-keyframe.ts` / `retarget-clip.ts` (~332 each): move pure bind-pose commit shaping and retarget scale/hips failure helpers into `domain/`; leave store wiring in actions
 
 ## Unit tests
 
@@ -65,6 +80,15 @@ Prefer pure `domain/` / `utils/` over React/R3F. Tests live under `tests/unit/` 
 - [x] `bakeBlendClip` weight/duration; `nextObjectName`
 - [x] `convertFbxToGlb` validation (400/413) with mocked converter
 
+### P2 — remaining pure domain
+
+- [ ] `command-stack`: push / undo / redo / redo-branch drop
+- [ ] `trimClipWindow` + `bakeTimeScale` (synthetic tracks; duration / time shift)
+- [ ] `writeNodeKeyframe` hold-plateau path (CRUD + interpolation already covered)
+- [ ] `canAttachUnder`: cycle / root / hierarchy reject paths
+- [ ] `buildUniqueModelPrefix` + namespace helpers in `merge-namespace.ts`
+- [ ] `isUsableSkinnedModelScene` / `isUsableCreatedModelScene`; `isNodeNameTaken`
+
 ### Out of scope here
 
-React islands, R3F hooks, mixer/store actions, full GLTF import routing — revisit after P0/P1.
+React islands, R3F hooks, mixer/store actions, full GLTF import routing — revisit after P2.
