@@ -63,7 +63,7 @@ Prefer pure `domain/` / `utils/` over React/R3F. Tests live under `tests/unit/` 
 - [x] `computePositionScaleRatio` median / null
 - [x] `remapClipTracks` + hips rebase + bind-pose delta/rebase (synthetic tracks)
 - [x] `bakeBlendClip` weight/duration; `nextObjectName`
-- [ ] `convertFbxToGlb` validation (400/413) with mocked converter
+- [x] `convertFbxToGlb` validation (400/413) with mocked converter
 
 ### Out of scope here
 

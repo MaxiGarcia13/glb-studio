@@ -31,17 +31,23 @@ describe('bakeBlendClip', () => {
 
     const mid = bakeBlendClip(primary, secondary, 0.5);
     expect(Array.from(findTrack(mid, 'Hips.position').values.slice(0, 3))).toEqual([
-      5, 0, 0,
+      5,
+      0,
+      0,
     ]);
 
     const fullB = bakeBlendClip(primary, secondary, 2);
     expect(Array.from(findTrack(fullB, 'Hips.position').values.slice(0, 3))).toEqual([
-      10, 0, 0,
+      10,
+      0,
+      0,
     ]);
 
     const fullA = bakeBlendClip(primary, secondary, -1);
     expect(Array.from(findTrack(fullA, 'Hips.position').values.slice(0, 3))).toEqual([
-      0, 0, 0,
+      0,
+      0,
+      0,
     ]);
   });
 
