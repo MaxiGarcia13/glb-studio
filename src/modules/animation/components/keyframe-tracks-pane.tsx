@@ -125,18 +125,20 @@ export function KeyframeTracksPane() {
       </div>
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
-        <Text variant="muted">Keys</Text>
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          {selectedTrackName && trackInView
-            ? (
+        {selectedTrackName && trackInView
+          ? (
+              <div className="min-h-0 flex-1 overflow-y-auto">
                 <KeyframeKeyTable trackName={selectedTrackName} />
-              )
-            : (
+              </div>
+            )
+          : (
+              <>
+                <Text variant="muted">Keys</Text>
                 <Text as="p" variant="muted">
                   Select a track to edit its keyframes.
                 </Text>
-              )}
-        </div>
+              </>
+            )}
       </div>
     </div>
   );
