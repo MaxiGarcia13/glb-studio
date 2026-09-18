@@ -53,7 +53,7 @@ Prefer pure `domain/` / `utils/` over React/R3F. Tests live under `tests/unit/` 
 - [x] Timeline frames + `toTimelineTime` (edge: NaN, loop wrap, pause clamp)
 - [x] Euler degrees wrap / rad↔deg
 - [x] Export file-name sanitize / unique / glb+zip resolve; `preserveGltfExtension`
-- [ ] Clip validate (`splitTrackName`, skeleton mismatch counts) + `isReadyClip` / `toEntry*` shapes
+- [x] Clip validate (`splitTrackName`, skeleton mismatch counts) + `isReadyClip` / `toEntry*` shapes
 - [ ] `isExportableModel` + `resolveExportUnits`; `parseModelGroupManifest` reject paths
 - [ ] Axis ruler ticks + labels; hips name / mapping helpers
 
