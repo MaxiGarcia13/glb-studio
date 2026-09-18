@@ -151,7 +151,7 @@ As an editor user, I can show or hide the world axes and change how far the metr
 - [x] Toggling visibility mounts/unmounts axes in the viewport immediately
 - [x] Changing length updates `axesHelper` and X/Y rulers live
 - [x] Defaults match prior behavior: axes visible, length `10`
-- [x] Settings are session-only (no persistence across reloads)
+- [x] Axes / bones Settings toggles are session-only (no persistence across reloads); chrome panel sizes are separate (US-35)
 
 ### US-12 — Rename library entries
 
@@ -455,6 +455,21 @@ As an editor user, I can undo and redo animation edits within the session, and I
 - [x] **Cmd/Ctrl+C / V** and **Delete** operate on **create parts only** (in-session buffer; `deleteSelectedPart` when eligible)
 - [x] `EditorToolbar` exposes a **Commands** control that opens a modal listing all catalog entries with their chords; **Edit** menu exposes Undo / Redo from the catalog
 - [x] Undo / redo shortcuts are catalog entries: **Cmd/Ctrl+Z**, **Cmd/Ctrl+Shift+Z** (or **Y**)
+
+### US-35 — Resizable editor chrome
+
+As an editor user, I can drag-resize the Library and Settings asides and the bottom preview bar so long bone lists and Tracks rows are readable, and those sizes are remembered across reloads.
+
+**Acceptance**
+
+- [x] Library (left) and Settings (right) asides are drag-resizable on desktop (`>640px`); sizes clamp to documented min/max
+- [x] Bottom preview / playback bar is drag-resizable on desktop **and** mobile (top edge)
+- [x] Aside horizontal resize is disabled on mobile (collapse / overlay unchanged)
+- [x] Panel sizes persist via project `localStorage` helpers (`glb-studio.*` keys) and restore on reload
+- [x] Collapse / expand of asides still works; resize applies only while open
+- [x] Shared `ResizableShell` owns drag + size; callers do not reimplement pointer math
+
+**Out of scope:** persisting snap / axes / other Settings toggles (session-only); aside open/closed state; double-click reset-to-default
 
 ## Post-MVP user stories
 

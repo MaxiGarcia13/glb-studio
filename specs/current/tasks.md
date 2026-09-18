@@ -268,6 +268,14 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Pose auto-commit (no Save / Restore chrome); session undo stack for trim / keyframe / timeScale
 - [x] Mixer rebind after undo/redo; pre-trim restore superseded by `trimClip` undo
 
+## US-35 — Resizable editor chrome
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] `src/utils/local-storage/` — typed keys + safe get/set
+- [x] `ResizableShell` + drag hook; wire Library / Settings (desktop) + preview bar (desktop + mobile)
+- [x] Tracks pane fills bar height; sizes restore from `localStorage` on reload
+
 ## Open deltas
 
 | US                                                | Status                              | Tasks                                       |

@@ -120,7 +120,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 3. Re-validate owned entries when a model is replaced or removed so stale clips are never silently played on a mismatched rig (`syncClipsToSkeleton`)
 4. Sidebar lists clips under their owner model or Shared Animations with Replace / Remove / Rename (iconized). Replace re-picks one file and updates **that** entry only (first clip in the file; keep the entry id and `ownerModelId`). Remove drops the entry; if it was active, select the next ready clip or clear selection. Errored clips that still have a working `AnimationClip` offer **Retarget**
 5. Active clip is chosen from the library list (US-7). Preview chrome owns Play / Pause / Stop / loop and Timeline | Tracks modes (scrubber vs key list); transport stays disabled until a valid clip is selected for that skeleton. Clicking the selected row again clears to T-pose
-6. Preview layout: viewport fills remaining height (`flex-1 min-h-0`); playback bar is a shrink-to-content footer under the canvas (not a fixed magic height overlapping the scene)
+6. Preview layout: viewport fills remaining height (`flex-1 min-h-0`); playback bar is a `ResizableShell` footer under the canvas (default `224px`, drag top edge; not a fixed magic height overlapping the scene)
 
 ## Cross-rig retargeting (US-6)
 
@@ -297,6 +297,7 @@ No durable undo across reloads; no collaborative OT/CRDT.
 - Dark infinite ground grid at `y = 0` (1 m cells, stronger section lines; `viewport/constants/ground-grid`) plus soft contact shadow under the model (`ContactShadows`)
 - Navigate / Edit / Move tool toggle when a model is loaded (Navigate first; default Edit); TransformControls for selection (Edit) or model root (Move); none in Navigate; translate / rotate / scale via preview toolbar + **Q / W / E** (default translate); Edit uses local space, Move uses world space; dragging pauses playback and suspends mixer bindings so tracks cannot overwrite the pose; drag-end **auto-commits** (US-10)
 - Collapsible sidebar docks beside the canvas (`editor-shell`); collapse/expand with labelled chevron controls
+- **Resizable chrome (US-35):** `ResizableShell` (`src/components/resizable-shell/`) owns drag + size. Library / Settings asides wrap open content (`horizontal`; left `edge="end"`, right `edge="start"`; `enabled={!isMobileViewport()}`). Preview bar uses `vertical` + `edge="start"` (desktop and mobile). Defaults: aside `288px` (`240–560`); bar `224px` (`160–560`, also ~75% viewport height while dragging). Handle: `role="separator"`, `w-2` / `h-2`, `ew-resize` / `ns-resize`; pointer capture; persist on pointer-up via `src/utils/local-storage/` keys `glb-studio.editor.aside.library.width`, `…settings.width`, `…preview-bar.height`. Do not persist open/closed or axes/snap Settings
 - Preview chrome hosts playback + Navigate/Edit/Move tools + transform mode toolbar (Edit + selection, or Move with a loaded model) + selection name overlay — **no** dirty Save / Restore chrome (US-10)
 
 ## Chrome tokens (UI)
@@ -309,7 +310,7 @@ Semantic colors live in `src/styles/global.css` `@theme` (`canvas`, `surface`, `
 
 **Floating chrome:** `FloatingToolbar` (`src/components/floating-toolbar/`) wraps Edit/Move, transform modes, create tools, and aside open chips. Controls are shared `Button` (`ghost` / `primary`), **icon-only** (name in `aria-label` + `title`). No Save / Restore pose buttons (US-10 auto-commit).
 
-**Spacing:** padding, gap, and margin use even Tailwind units (`2`, `4`, `6`, `8`, and larger even steps). Avoid odd and half units (`1`, `3`, `1.5`, …) except hairlines (`w-px`, `w-0.5`). Shared primitives (`Button`, `Input`, `Modal`, `CollapsibleAside`, `FloatingToolbar`) encode the defaults — prefer not overriding with ad-hoc padding.
+**Spacing:** padding, gap, and margin use even Tailwind units (`2`, `4`, `6`, `8`, and larger even steps). Avoid odd and half units (`1`, `3`, `1.5`, …) except hairlines (`w-px`, `w-0.5`). Shared primitives (`Button`, `Input`, `Modal`, `CollapsibleAside`, `ResizableShell`, `FloatingToolbar`) encode the defaults — prefer not overriding with ad-hoc padding.
 
 ## Export (US-5 + US-22 modal + US-26 groups + US-7 blend contract)
 
