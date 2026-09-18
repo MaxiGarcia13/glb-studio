@@ -1,7 +1,7 @@
 {
   "name": "three-editor",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Three js Editor",
   "author": "Maximiliano Garcia Mortigliengo",
   "license": "Apache-2.0",
