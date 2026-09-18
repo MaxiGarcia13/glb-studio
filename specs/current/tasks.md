@@ -270,13 +270,13 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 ## Open deltas
 
-| US                                                | Status                              | Tasks                                       |
-| ------------------------------------------------- | ----------------------------------- | ------------------------------------------- |
-| **US-33** — Skinned starter kit (Block robot GLB) | not started (before US-34)          | [`specs/us-33/tasks.md`](../us-33/tasks.md) |
-| **US-34** — In-editor skinning for created models | not started (after US-33 preferred) | [`specs/us-34/tasks.md`](../us-34/tasks.md) |
-| **US-28** — Part color maps (textures)            | not started (after US-23)           | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
-| **US-8** — Morph-target editing                   | post-MVP, not started               | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
-| **US-9** — Graph / curve keyframe UI              | post-MVP, in progress (key edit)    | [`specs/us-9/tasks.md`](../us-9/tasks.md)   |
+| US                                                | Status                               | Tasks                                       |
+| ------------------------------------------------- | ------------------------------------ | ------------------------------------------- |
+| **US-33** — Skinned starter kit (Block robot GLB) | not started (before US-34)           | [`specs/us-33/tasks.md`](../us-33/tasks.md) |
+| **US-34** — In-editor skinning for created models | not started (after US-33 preferred)  | [`specs/us-34/tasks.md`](../us-34/tasks.md) |
+| **US-28** — Part color maps (textures)            | not started (after US-23)            | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
+| **US-8** — Morph-target editing                   | post-MVP, not started                | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
+| **US-9** — Graph / curve keyframe UI              | post-MVP; bottom chrome tasks queued | [`specs/us-9/tasks.md`](../us-9/tasks.md)   |
 
 ## Tech debt
 
