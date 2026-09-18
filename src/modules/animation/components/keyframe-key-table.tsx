@@ -1,8 +1,16 @@
+import type { TrackInterpolationMode } from '@/modules/animation/domain/keyframe-write';
 import type { SaveKeyframeClipSlice } from '@/modules/animation/types/undo-stack';
 import { cn } from '@maxigarcia/js-utils';
 import { useStore } from '@nanostores/react';
 import { useEffect, useRef, useState } from 'react';
+import { Button } from '@/components/button';
+import { Select } from '@/components/select';
 import { Text } from '@/components/text';
+import {
+  getTrackInterpolation,
+  listSupportedTrackInterpolations,
+  trackInterpolationLabel,
+} from '@/modules/animation/domain/keyframe-write';
 import {
   findPlayheadKeyframeIndex,
   findTrackByName,
@@ -11,8 +19,11 @@ import {
 } from '@/modules/animation/domain/list-clip-tracks';
 import {
   $clips,
+  addClipKeyframe,
   captureKeyframeEditSnapshot,
+  deleteClipKeyframe,
   finalizeKeyframeEdit,
+  setClipTrackInterpolation,
   updateClipKeyframe,
 } from '@/modules/animation/stores/clip-store';
 import {
@@ -26,7 +37,8 @@ interface KeyframeKeyTableProps {
 }
 
 /**
- * Spreadsheet-style keys for one track: select a row, edit time / values.
+ * Spreadsheet-style keys for one track: select a row, edit time / values,
+ * add at playhead, delete selection, and change interpolation when supported.
  * Playhead row highlight is separate from edit selection.
  * Undo coalesces per focus gesture (same pattern as trim inputs).
  */
@@ -44,6 +56,14 @@ export function KeyframeKeyTable({ trackName }: KeyframeKeyTableProps) {
   const keys = track ? listTrackKeyframes(track) : [];
   const valueSize = track?.getValueSize() ?? 0;
   const keyTimesKey = keys.map((key) => key.time).join(',');
+  const supportedInterpolations = track
+    ? listSupportedTrackInterpolations(track)
+    : [];
+  const currentInterpolation = track ? getTrackInterpolation(track) : null;
+  const interpolationOptions = supportedInterpolations.map((mode) => ({
+    value: String(mode),
+    label: trackInterpolationLabel(mode),
+  }));
 
   useEffect(() => {
     const times = keyTimesKey.length === 0
@@ -62,10 +82,10 @@ export function KeyframeKeyTable({ trackName }: KeyframeKeyTableProps) {
     };
   }, [trackName, keyTimesKey]);
 
-  if (!track || keys.length === 0) {
+  if (!track) {
     return (
       <Text as="p" variant="muted">
-        This track has no keyframes.
+        Track not found on the active clip.
       </Text>
     );
   }
@@ -101,96 +121,169 @@ export function KeyframeKeyTable({ trackName }: KeyframeKeyTableProps) {
     }
   };
 
+  const handleAddAtPlayhead = () => {
+    const result = addClipKeyframe(trackName, readClipTimelineTime());
+    if (result) {
+      selectKeyframeKey(result.keyIndex);
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedKeyIndex === null) {
+      return;
+    }
+    const result = deleteClipKeyframe(trackName, selectedKeyIndex);
+    if (!result) {
+      return;
+    }
+    selectKeyframeKey(result.keyIndex);
+  };
+
+  const handleInterpolationChange = (value: string) => {
+    const mode = Number(value) as TrackInterpolationMode;
+    setClipTrackInterpolation(trackName, mode);
+  };
+
   const valueChannels = trackValueChannelLabels(trackName, valueSize).map(
     (label, channel) => ({ channel, label }),
   );
 
   return (
     <div className="flex flex-col gap-2 overflow-x-auto">
-      <div
-        className="grid gap-2 text-fg-muted"
-        style={{
-          gridTemplateColumns: `1.5rem 4rem repeat(${valueSize}, minmax(3rem, 1fr))`,
-        }}
-      >
-        <Text variant="muted">#</Text>
-        <Text variant="muted">Time</Text>
-        {valueChannels.map(({ label }) => (
-          <Text key={label} variant="muted">
-            {label}
-          </Text>
-        ))}
+      <div className="flex flex-wrap items-end gap-2">
+        <Button
+          type="button"
+          variant="default"
+          aria-label="Add keyframe at playhead"
+          title="Add keyframe at playhead"
+          onClick={handleAddAtPlayhead}
+        >
+          Add
+        </Button>
+        <Button
+          type="button"
+          variant="default"
+          aria-label="Delete selected keyframe"
+          title={
+            keys.length <= 1
+              ? 'Keep at least one keyframe on the track'
+              : 'Delete selected keyframe'
+          }
+          disabled={selectedKeyIndex === null || keys.length <= 1}
+          onClick={handleDeleteSelected}
+        >
+          Delete
+        </Button>
+        {interpolationOptions.length > 0 && currentInterpolation !== null && (
+          <div className="flex flex-col gap-2">
+            <Text variant="muted">Interpolation</Text>
+            <Select
+              aria-label="Track interpolation"
+              className="w-28"
+              value={String(currentInterpolation)}
+              options={interpolationOptions}
+              onChange={(event) => {
+                handleInterpolationChange(event.target.value);
+              }}
+            />
+          </div>
+        )}
       </div>
 
-      {keys.map((key) => {
-        const isSelected = key.index === selectedKeyIndex;
-        const isPlayhead = key.index === playheadKeyIndex;
-        return (
-          <div
-            key={`${trackName}-${key.index}-${key.time}`}
-            role="row"
-            aria-selected={isSelected}
-            aria-current={isPlayhead ? 'true' : undefined}
-            className={cn(
-              'grid items-center gap-2 rounded-sm border-l-2 px-2 py-2',
-              isPlayhead ? 'border-accent bg-control' : 'border-transparent',
-              isSelected && !isPlayhead && 'bg-surface-hover',
-              !isSelected && !isPlayhead && 'hover:bg-surface-hover/40',
-              isSelected && isPlayhead && 'bg-surface-hover',
-            )}
-            style={{
-              gridTemplateColumns: `1.5rem 4rem repeat(${valueSize}, minmax(3rem, 1fr))`,
-            }}
-            onClick={() => {
-              selectKeyframeKey(isSelected ? null : key.index);
-            }}
-          >
-            <Text variant="numeric" className="text-fg-muted">
-              {key.index}
+      {keys.length === 0
+        ? (
+            <Text as="p" variant="muted">
+              This track has no keyframes. Add one at the playhead.
             </Text>
-            <input
-              aria-label={`Key ${key.index} time`}
-              type="number"
-              step={0.01}
-              min={0}
-              value={key.time}
-              className="w-full rounded-sm bg-control px-2 py-2 text-xs text-fg"
-              onClick={(event) => event.stopPropagation()}
-              onFocus={() => {
-                selectKeyframeKey(key.index);
-                captureUndoFrom();
-              }}
-              onChange={(event) => {
-                applyLivePatch(key.index, {
-                  time: Number(event.currentTarget.value),
-                });
-              }}
-              onBlur={commitUndo}
-            />
-            {valueChannels.map(({ channel, label }) => (
-              <input
-                key={label}
-                aria-label={`Key ${key.index} ${label}`}
-                type="number"
-                step={0.01}
-                value={key.values[channel] ?? 0}
-                className="w-full rounded-sm bg-control px-2 py-2 text-xs text-fg"
-                onClick={(event) => event.stopPropagation()}
-                onFocus={() => {
-                  selectKeyframeKey(key.index);
-                  captureUndoFrom();
+          )
+        : (
+            <>
+              <div
+                className="grid gap-2 text-fg-muted"
+                style={{
+                  gridTemplateColumns: `1.5rem 4rem repeat(${valueSize}, minmax(3rem, 1fr))`,
                 }}
-                onChange={(event) => {
-                  const nextValues = [...key.values];
-                  nextValues[channel] = Number(event.currentTarget.value);
-                  applyLivePatch(key.index, { values: nextValues });
-                }}
-                onBlur={commitUndo}
-              />
-            ))}
-          </div>
-        );
-      })}
+              >
+                <Text variant="muted">#</Text>
+                <Text variant="muted">Time</Text>
+                {valueChannels.map(({ label }) => (
+                  <Text key={label} variant="muted">
+                    {label}
+                  </Text>
+                ))}
+              </div>
+
+              {keys.map((key) => {
+                const isSelected = key.index === selectedKeyIndex;
+                const isPlayhead = key.index === playheadKeyIndex;
+                return (
+                  <div
+                    key={`${trackName}-${key.index}-${key.time}`}
+                    role="row"
+                    aria-selected={isSelected}
+                    aria-current={isPlayhead ? 'true' : undefined}
+                    className={cn(
+                      'grid items-center gap-2 rounded-sm border-l-2 px-2 py-2',
+                      isPlayhead ? 'border-accent bg-control' : 'border-transparent',
+                      isSelected && !isPlayhead && 'bg-surface-hover',
+                      !isSelected && !isPlayhead && 'hover:bg-surface-hover/40',
+                      isSelected && isPlayhead && 'bg-surface-hover',
+                    )}
+                    style={{
+                      gridTemplateColumns: `1.5rem 4rem repeat(${valueSize}, minmax(3rem, 1fr))`,
+                    }}
+                    onClick={() => {
+                      selectKeyframeKey(isSelected ? null : key.index);
+                    }}
+                  >
+                    <Text variant="numeric" className="text-fg-muted">
+                      {key.index}
+                    </Text>
+                    <input
+                      aria-label={`Key ${key.index} time`}
+                      type="number"
+                      step={0.01}
+                      min={0}
+                      value={key.time}
+                      className="w-full rounded-sm bg-control px-2 py-2 text-xs text-fg"
+                      onClick={(event) => event.stopPropagation()}
+                      onFocus={() => {
+                        selectKeyframeKey(key.index);
+                        captureUndoFrom();
+                      }}
+                      onChange={(event) => {
+                        applyLivePatch(key.index, {
+                          time: Number(event.currentTarget.value),
+                        });
+                      }}
+                      onBlur={commitUndo}
+                    />
+                    {valueChannels.map(({ channel, label }) => (
+                      <input
+                        key={label}
+                        aria-label={`Key ${key.index} ${label}`}
+                        type="number"
+                        step={0.01}
+                        value={key.values[channel] ?? 0}
+                        className="w-full rounded-sm bg-control px-2 py-2 text-xs text-fg"
+                        onClick={(event) => event.stopPropagation()}
+                        onFocus={() => {
+                          selectKeyframeKey(key.index);
+                          captureUndoFrom();
+                        }}
+                        onChange={(event) => {
+                          const nextValues = [...key.values];
+                          nextValues[channel] = Number(event.currentTarget.value);
+                          applyLivePatch(key.index, { values: nextValues });
+                        }}
+                        onBlur={commitUndo}
+                      />
+                    ))}
+                  </div>
+                );
+              })}
+            </>
+          )}
     </div>
   );
 }

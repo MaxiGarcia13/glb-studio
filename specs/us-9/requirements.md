@@ -12,9 +12,9 @@ As an editor user, I can inspect and edit keyframe curves (times and values) for
 
 - [x] UI shows tracks for the active clip (filterable by selected bone/node)
 - [x] User can select a keyframe and edit its time and values
-- [ ] User can add / delete keyframes on a track from the graph or key list
-- [ ] Edits update the working clip and are reflected on next mixer rebind / play
-- [ ] Interpolation mode is visible; changing it is supported where Three.js track types allow
+- [x] User can add / delete keyframes on a track from the graph or key list
+- [x] Edits update the working clip and are reflected on next mixer rebind / play
+- [x] Interpolation mode is visible; changing it is supported where Three.js track types allow
 - [x] Bottom preview bar switches **Timeline** (scrubber) vs **Tracks** (track list | key table); transport stays available in both modes
 - [x] Keyframe UI lives only in Tracks mode — Settings Animation has no Keys panel
 

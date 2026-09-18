@@ -1,4 +1,5 @@
 export {
+  addClipKeyframe,
   applyUndoableCommand,
   bakeBlend,
   captureKeyframeEditSnapshot,
@@ -6,6 +7,7 @@ export {
   clearActiveClip,
   cloneClipAs,
   commitPendingPose,
+  deleteClipKeyframe,
   finalizeKeyframeEdit,
   importClipFiles,
   importClipResults,
@@ -26,6 +28,7 @@ export {
   selectClip,
   setBlendClip,
   setBlendWeight,
+  setClipTrackInterpolation,
   setTimeScale,
   startNewAnimation,
   stop,
@@ -36,6 +39,7 @@ export {
   updateClipKeyframe,
 } from './actions';
 export type {
+  DeleteClipKeyframeResult,
   RetargetClipOptions,
   RetargetClipResult,
   RetargetScope,
@@ -43,6 +47,5 @@ export type {
   TrimClipOptions,
   UpdateClipKeyframeOptions,
   UpdateClipKeyframeResult,
-} from './actions';
-export { $clips } from './store';
+} from './actions';export { $clips } from './store';
 export { isReadyClip } from './utils';

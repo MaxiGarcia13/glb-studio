@@ -1,5 +1,12 @@
+import type { AnimationClip } from 'three';
+import type { TrackInterpolationMode } from '@/modules/animation/domain/keyframe-write';
 import type { SaveKeyframeClipSlice } from '@/modules/animation/types/undo-stack';
-import { updateTrackKeyframe } from '@/modules/animation/domain/keyframe-write';
+import {
+  deleteTrackKeyframe,
+  insertTrackKeyframe,
+  setTrackInterpolation,
+  updateTrackKeyframe,
+} from '@/modules/animation/domain/keyframe-write';
 import { snapshotSaveKeyframeClip } from '@/modules/animation/domain/undo-snapshots';
 import { pushUndoableCommand } from '@/modules/animation/stores/undo-stack-store';
 import { $clips } from '../store';
@@ -14,6 +21,10 @@ export interface UpdateClipKeyframeResult {
   keyIndex: number;
 }
 
+export interface DeleteClipKeyframeResult {
+  keyIndex: number;
+}
+
 export function captureKeyframeEditSnapshot(): SaveKeyframeClipSlice | null {
   const state = $clips.get();
   const active = state.clips.find((entry) => entry.id === state.activeClipId);
@@ -21,6 +32,33 @@ export function captureKeyframeEditSnapshot(): SaveKeyframeClipSlice | null {
     return null;
   }
   return snapshotSaveKeyframeClip(active);
+}
+
+function publishWorkingClip(
+  clipId: string,
+  working: AnimationClip,
+  before: SaveKeyframeClipSlice | null,
+): void {
+  const state = $clips.get();
+  $clips.set({
+    ...state,
+    clips: state.clips.map((entry) =>
+      entry.id === clipId ? { ...entry, clip: working } : entry,
+    ),
+    duration: working.duration,
+    blendBaseClip: null,
+    blendClipId: null,
+    blendWeight: 0,
+  });
+
+  if (before) {
+    pushUndoableCommand({
+      id: 'saveKeyframe',
+      clipId,
+      before: { clips: [before] },
+      after: { clips: [{ clipId, clip: working.clone() }] },
+    });
+  }
 }
 
 /**
@@ -46,27 +84,78 @@ export function updateClipKeyframe(
   }
 
   const before = recordUndo ? snapshotSaveKeyframeClip(active) : null;
-  $clips.set({
-    ...state,
-    clips: state.clips.map((entry) =>
-      entry.id === active.id ? { ...entry, clip: result.clip } : entry,
-    ),
-    duration: result.clip.duration,
-    blendBaseClip: null,
-    blendClipId: null,
-    blendWeight: 0,
-  });
+  publishWorkingClip(active.id, result.clip, before);
+  return { keyIndex: result.keyIndex };
+}
 
-  if (recordUndo && before) {
-    pushUndoableCommand({
-      id: 'saveKeyframe',
-      clipId: active.id,
-      before: { clips: [before] },
-      after: { clips: [{ clipId: active.id, clip: result.clip.clone() }] },
-    });
+/**
+ * Insert (or upsert) a key on the active ready clip’s track at `time`.
+ * Publishes a new clip clone so the mixer rebinds.
+ */
+export function addClipKeyframe(
+  trackName: string,
+  time: number,
+  values?: ArrayLike<number>,
+): UpdateClipKeyframeResult | null {
+  const state = $clips.get();
+  const active = state.clips.find((entry) => entry.id === state.activeClipId);
+  if (!isReadyClip(active)) {
+    return null;
   }
 
+  const result = insertTrackKeyframe(active.clip, trackName, time, values);
+  if (!result) {
+    return null;
+  }
+
+  publishWorkingClip(active.id, result.clip, snapshotSaveKeyframeClip(active));
   return { keyIndex: result.keyIndex };
+}
+
+/**
+ * Delete one key on the active ready clip’s track. Publishes a new clip clone
+ * so the mixer rebinds.
+ */
+export function deleteClipKeyframe(
+  trackName: string,
+  keyIndex: number,
+): DeleteClipKeyframeResult | null {
+  const state = $clips.get();
+  const active = state.clips.find((entry) => entry.id === state.activeClipId);
+  if (!isReadyClip(active)) {
+    return null;
+  }
+
+  const result = deleteTrackKeyframe(active.clip, trackName, keyIndex);
+  if (!result) {
+    return null;
+  }
+
+  publishWorkingClip(active.id, result.clip, snapshotSaveKeyframeClip(active));
+  return { keyIndex: result.keyIndex };
+}
+
+/**
+ * Change track interpolation when Three.js supports the mode on that track type.
+ * Publishes a new clip clone so the mixer rebinds.
+ */
+export function setClipTrackInterpolation(
+  trackName: string,
+  interpolation: TrackInterpolationMode,
+): boolean {
+  const state = $clips.get();
+  const active = state.clips.find((entry) => entry.id === state.activeClipId);
+  if (!isReadyClip(active)) {
+    return false;
+  }
+
+  const working = setTrackInterpolation(active.clip, trackName, interpolation);
+  if (!working) {
+    return false;
+  }
+
+  publishWorkingClip(active.id, working, snapshotSaveKeyframeClip(active));
+  return true;
 }
 
 /**

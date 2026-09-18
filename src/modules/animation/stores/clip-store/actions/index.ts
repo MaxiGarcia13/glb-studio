@@ -28,11 +28,15 @@ export { captureTrimClipSnapshot, trimClip } from './trim-clip';
 export type { TrimClipOptions } from './trim-clip';
 export { redoLastEdit, undoLastEdit } from './undo-redo';
 export {
+  addClipKeyframe,
   captureKeyframeEditSnapshot,
+  deleteClipKeyframe,
   finalizeKeyframeEdit,
+  setClipTrackInterpolation,
   updateClipKeyframe,
 } from './update-clip-keyframe';
 export type {
+  DeleteClipKeyframeResult,
   UpdateClipKeyframeOptions,
   UpdateClipKeyframeResult,
 } from './update-clip-keyframe';
