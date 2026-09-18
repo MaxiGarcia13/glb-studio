@@ -22,7 +22,7 @@ Do not start until explicitly kicked off.
 - [x] Bottom bar wrapper + mode select: **Timeline** \| **Tracks** (default Timeline); session UI store — `$playbackBarMode`
 - [x] Timeline mode: keep existing `TimelineScrubber` under the shared transport row
 - [x] Tracks mode: split pane **tracks | keys** — all tracks left, key table for selection right — `KeyframeTracksPane`
-- [ ] Remove Settings → Animation **Keys** collapsible; Settings keeps trim / speed / blend only
+- [x] Remove Settings → Animation **Keys** collapsible; Settings keeps trim / speed / blend only
 
 ## Verify
 

@@ -96,3 +96,26 @@ export function trackValueChannelLabels(
   }
   return Array.from({ length: valueSize }, (_, channel) => `v${channel}`);
 }
+
+/**
+ * Index of the active key at `playheadTime`: last key with `time <= playhead`.
+ * `null` when there are no keys or the playhead is before the first key.
+ */
+export function findPlayheadKeyframeIndex(
+  times: ArrayLike<number>,
+  playheadTime: number,
+): number | null {
+  if (times.length === 0 || !Number.isFinite(playheadTime)) {
+    return null;
+  }
+
+  let index = -1;
+  for (let i = 0; i < times.length; i++) {
+    if (times[i] <= playheadTime) {
+      index = i;
+    } else {
+      break;
+    }
+  }
+  return index >= 0 ? index : null;
+}

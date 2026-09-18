@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   clipTrackDisplayLabel,
   filterClipTracksByNode,
+  findPlayheadKeyframeIndex,
   listClipTracks,
   trackValueChannelLabels,
 } from '@/modules/animation/domain/list-clip-tracks';
@@ -74,5 +75,14 @@ describe('trackValueChannelLabels', () => {
       'v0',
       'v1',
     ]);
+  });
+});
+
+describe('findPlayheadKeyframeIndex', () => {
+  it('returns the last key at or before the playhead', () => {
+    expect(findPlayheadKeyframeIndex([0, 1, 2], 1.5)).toBe(1);
+    expect(findPlayheadKeyframeIndex([0, 1, 2], 2)).toBe(2);
+    expect(findPlayheadKeyframeIndex([0, 1, 2], -0.1)).toBeNull();
+    expect(findPlayheadKeyframeIndex([], 1)).toBeNull();
   });
 });

@@ -1,9 +1,10 @@
 import type { SaveKeyframeClipSlice } from '@/modules/animation/types/undo-stack';
 import { cn } from '@maxigarcia/js-utils';
 import { useStore } from '@nanostores/react';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Text } from '@/components/text';
 import {
+  findPlayheadKeyframeIndex,
   findTrackByName,
   listTrackKeyframes,
   trackValueChannelLabels,
@@ -18,6 +19,7 @@ import {
   $selectedKeyIndex,
   selectKeyframeKey,
 } from '@/modules/animation/stores/keyframe-ui-store';
+import { readClipTimelineTime } from '@/modules/animation/utils/to-timeline-time';
 
 interface KeyframeKeyTableProps {
   trackName: string;
@@ -25,6 +27,7 @@ interface KeyframeKeyTableProps {
 
 /**
  * Spreadsheet-style keys for one track: select a row, edit time / values.
+ * Playhead row highlight is separate from edit selection.
  * Undo coalesces per focus gesture (same pattern as trim inputs).
  */
 export function KeyframeKeyTable({ trackName }: KeyframeKeyTableProps) {
@@ -34,11 +37,30 @@ export function KeyframeKeyTable({ trackName }: KeyframeKeyTableProps) {
   const selectedKeyIndex = useStore($selectedKeyIndex);
   const undoFromRef = useRef<SaveKeyframeClipSlice | null>(null);
   const dirtyRef = useRef(false);
+  const [playheadKeyIndex, setPlayheadKeyIndex] = useState<number | null>(null);
 
   const active = clips.find((entry) => entry.id === activeClipId);
   const track = active?.clip ? findTrackByName(active.clip, trackName) : undefined;
   const keys = track ? listTrackKeyframes(track) : [];
   const valueSize = track?.getValueSize() ?? 0;
+  const keyTimesKey = keys.map((key) => key.time).join(',');
+
+  useEffect(() => {
+    const times = keyTimesKey.length === 0
+      ? []
+      : keyTimesKey.split(',').map(Number);
+
+    let rafId = 0;
+    const tick = () => {
+      const next = findPlayheadKeyframeIndex(times, readClipTimelineTime());
+      setPlayheadKeyIndex((current) => (current === next ? current : next));
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(rafId);
+    };
+  }, [trackName, keyTimesKey]);
 
   if (!track || keys.length === 0) {
     return (
@@ -102,14 +124,19 @@ export function KeyframeKeyTable({ trackName }: KeyframeKeyTableProps) {
 
       {keys.map((key) => {
         const isSelected = key.index === selectedKeyIndex;
+        const isPlayhead = key.index === playheadKeyIndex;
         return (
           <div
             key={`${trackName}-${key.index}-${key.time}`}
             role="row"
             aria-selected={isSelected}
+            aria-current={isPlayhead ? 'true' : undefined}
             className={cn(
-              'grid items-center gap-2 rounded-sm px-2 py-2',
-              isSelected ? 'bg-surface-hover' : 'hover:bg-surface-hover/40',
+              'grid items-center gap-2 rounded-sm border-l-2 px-2 py-2',
+              isPlayhead ? 'border-accent bg-control' : 'border-transparent',
+              isSelected && !isPlayhead && 'bg-surface-hover',
+              !isSelected && !isPlayhead && 'hover:bg-surface-hover/40',
+              isSelected && isPlayhead && 'bg-surface-hover',
             )}
             style={{
               gridTemplateColumns: `1.5rem 4rem repeat(${valueSize}, minmax(3rem, 1fr))`,

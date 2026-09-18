@@ -82,7 +82,7 @@ Chrome: Library | Viewport + bottom bar | Settings (trim / speed / blend). `$sel
 | Bottom bar mode switch Timeline \| Tracks | Done — `$playbackBarMode` + Select on `PreviewPlaybackBar`               |
 | Timeline mode scrubber                    | Done — shown when mode is `timeline`                                     |
 | Tracks pane: tracks \| key table          | Done — all tracks left; selected track’s keys on the right |
-| Remove Settings Keys                      | `editor-settings-sidebar` — trim / speed / blend only                    |
+| Remove Settings Keys                      | Done — Settings Animation is trim / speed / blend only                   |
 | Add / delete keyframes                    | Tracks pane actions → domain helpers                                     |
 | Rebind + interpolation                    | Mixer rebind after `$clips` publish; label/Select on track               |
 
