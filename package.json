@@ -22,8 +22,8 @@
     "preview": "astro preview",
     "clean": "rm -rf .astro node_modules .next .vercel package-lock.json",
     "phoenix": "npm run clean && npm i",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest"
   },
   "dependencies": {
     "@astrojs/react": "6.0.5",
