@@ -288,16 +288,83 @@ function sampleTrackAt(track: KeyframeTrack, time: number): number[] {
   return Array.from(trackWithFactory.createInterpolant().evaluate(time));
 }
 
+/** ~1 frame at 60fps — small enough to feel “at playhead”, large enough in Float32. */
+const KEY_TIME_STEP = Math.fround(1 / 60);
+
+function occupiedKeyTimes(times: ArrayLike<number>): Set<number> {
+  const occupied = new Set<number>();
+  for (let index = 0; index < times.length; index++) {
+    occupied.add(Math.fround(times[index]));
+  }
+  return occupied;
+}
+
 /**
- * Insert (or upsert) a key at `time`. Clones the clip. When `values` is omitted,
- * samples the track’s interpolant at that time. Same-time collision replaces
- * the existing key.
+ * Clamp `preferred` to `[0, duration]`. When `onCollision` is `nudge` and that
+ * time is taken, walk forward then backward by {@link KEY_TIME_STEP} until free.
+ * Returns `null` when no free slot exists (dense track / zero duration).
+ */
+export function resolveInsertKeyTime(
+  times: ArrayLike<number>,
+  preferred: number,
+  duration: number,
+  onCollision: 'replace' | 'nudge',
+): number | null {
+  if (!Number.isFinite(duration) || duration < 0) {
+    return null;
+  }
+
+  const clamped = Math.fround(Math.min(Math.max(preferred, 0), duration));
+  if (onCollision === 'replace') {
+    return clamped;
+  }
+
+  const occupied = occupiedKeyTimes(times);
+  if (!occupied.has(clamped)) {
+    return clamped;
+  }
+
+  for (let step = 1; ; step++) {
+    const delta = Math.fround(KEY_TIME_STEP * step);
+    if (delta > duration && step > times.length + 2) {
+      break;
+    }
+    const forward = Math.fround(clamped + delta);
+    if (forward <= duration && !occupied.has(forward)) {
+      return forward;
+    }
+    const backward = Math.fround(clamped - delta);
+    if (backward >= 0 && !occupied.has(backward)) {
+      return backward;
+    }
+    if (forward > duration && backward < 0) {
+      break;
+    }
+  }
+
+  return null;
+}
+
+export interface InsertTrackKeyframeOptions {
+  /**
+   * `replace` (default) upserts when `time` matches an existing key.
+   * `nudge` keeps all existing keys and picks the nearest free time.
+   */
+  onCollision?: 'replace' | 'nudge';
+}
+
+/**
+ * Insert a key at `time`. Clones the clip. When `values` is omitted, samples
+ * the track’s interpolant at the resolved time. Default collision replaces;
+ * pass `onCollision: 'nudge'` for Add-at-playhead so a landing on an existing
+ * key still creates a new row.
  */
 export function insertTrackKeyframe(
   clip: AnimationClip,
   trackName: string,
   time: number,
   values?: ArrayLike<number>,
+  options?: InsertTrackKeyframeOptions,
 ): UpdateTrackKeyframeResult | null {
   const working = clip.clone();
   const track = working.tracks.find((entry) => entry.name === trackName);
@@ -306,7 +373,15 @@ export function insertTrackKeyframe(
   }
 
   const valueSize = track.getValueSize();
-  const nextTime = Math.fround(Math.min(Math.max(time, 0), clip.duration));
+  const nextTime = resolveInsertKeyTime(
+    track.times,
+    time,
+    clip.duration,
+    options?.onCollision ?? 'replace',
+  );
+  if (nextTime === null) {
+    return null;
+  }
 
   let nextValues: number[];
   if (values !== undefined) {

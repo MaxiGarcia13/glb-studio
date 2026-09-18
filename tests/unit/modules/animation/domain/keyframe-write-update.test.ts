@@ -148,6 +148,23 @@ describe('insertTrackKeyframe', () => {
     expect(Array.from(track.values.slice(3, 6))).toEqual([7, 7, 7]);
   });
 
+  it('nudges to a free time when onCollision is nudge', () => {
+    const result = insertTrackKeyframe(
+      vectorClip(),
+      'Hips.position',
+      0,
+      undefined,
+      { onCollision: 'nudge' },
+    );
+
+    expect(result).not.toBeNull();
+    const track = findTrackByName(result!.clip, 'Hips.position')!;
+    expect(track.times).toHaveLength(4);
+    expect(track.times[0]).toBe(0);
+    expect(track.times[1]).toBeCloseTo(1 / 60, 5);
+    expect(result!.keyIndex).toBe(1);
+  });
+
   it('samples the interpolant when values are omitted', () => {
     const result = insertTrackKeyframe(vectorClip(), 'Hips.position', 0.5);
     expect(result).not.toBeNull();

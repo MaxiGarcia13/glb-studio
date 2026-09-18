@@ -89,8 +89,9 @@ export function updateClipKeyframe(
 }
 
 /**
- * Insert (or upsert) a key on the active ready clip’s track at `time`.
- * Publishes a new clip clone so the mixer rebinds.
+ * Insert a new key on the active ready clip’s track at `time`.
+ * If a key already exists at that time, nudges to the nearest free slot so Add
+ * always creates a visible row. Publishes a new clip clone so the mixer rebinds.
  */
 export function addClipKeyframe(
   trackName: string,
@@ -103,7 +104,9 @@ export function addClipKeyframe(
     return null;
   }
 
-  const result = insertTrackKeyframe(active.clip, trackName, time, values);
+  const result = insertTrackKeyframe(active.clip, trackName, time, values, {
+    onCollision: 'nudge',
+  });
   if (!result) {
     return null;
   }
