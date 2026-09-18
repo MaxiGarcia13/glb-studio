@@ -10,13 +10,15 @@ import { describe, expect, it } from 'vitest';
 
 import {
   deleteTrackKeyframe,
-  getTrackInterpolation,
   insertTrackKeyframe,
+  updateTrackKeyframe,
+} from '@/modules/animation/domain/keyframe-crud';
+import {
+  getTrackInterpolation,
   listSupportedTrackInterpolations,
   setTrackInterpolation,
   trackInterpolationLabel,
-  updateTrackKeyframe,
-} from '@/modules/animation/domain/keyframe-write';
+} from '@/modules/animation/domain/keyframe-interpolation';
 import {
   findTrackByName,
   listTrackKeyframes,

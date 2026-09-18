@@ -1,5 +1,5 @@
 import type { SelectOption } from '@/components/select';
-import type { TrackInterpolationMode } from '@/modules/animation/domain/keyframe-write';
+import type { TrackInterpolationMode } from '@/modules/animation/domain/keyframe-interpolation';
 import { Button } from '@/components/button';
 import { PlusIcon } from '@/components/icons/plus-icon';
 import { Select } from '@/components/select';

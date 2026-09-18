@@ -17,7 +17,7 @@ Do not start post-MVP stories (US-8) from this file.
 - [x] Remove unused `getBlendWeight` in `src/modules/animation/utils/mixer-session.ts` (`setBlendWeight` stays)
 - [x] Remove deprecated create-parent aliases with no callers: `canParentPart`, `parentPart`, `groupPartsUnder` in `src/modules/create/domain/parent-part.ts` (live paths: `canAttachUnder` / `attachUnder` / `attachAllUnder`)
 - [x] Remove unused `removeEmptyPartGroup` in `src/modules/create/domain/create-part-group.ts` — ungroup uses `dissolveCreateGroups`
-- [x] Un-export internals only used in-file: `listKits` → private to `kit.ts` (`listStarterKits` stays public); `resolveInsertKeyTime` → non-export in `keyframe-write.ts`
+- [x] Un-export internals only used in-file: `listKits` → private to `kit.ts` (`listStarterKits` stays public); `resolveInsertKeyTime` → non-export in `keyframe-crud.ts`
 
 ## Unused public barrels
 
@@ -50,7 +50,7 @@ Not copy-pasted files. Extract only if the helper stays small.
 
 Extract only when the next edit would otherwise be painful. Prefer one concern per file; keep call sites stable.
 
-- [ ] Split `src/modules/animation/domain/keyframe-write.ts` (~517 lines) into hold-pose (`writeNodeKeyframe` + helpers), per-key CRUD (update / insert / delete), and interpolation helpers
+- [x] Split keyframe domain into `keyframe-hold.ts` / `keyframe-crud.ts` / `keyframe-interpolation.ts` (+ shared `keyframe-sample.ts`); callers import deep paths — no barrel
 - [ ] Thin `save-keyframe.ts` / `retarget-clip.ts` (~332 each): move pure bind-pose commit shaping and retarget scale/hips failure helpers into `domain/`; leave store wiring in actions
 
 ## Unit tests

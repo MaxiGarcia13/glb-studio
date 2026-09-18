@@ -1,12 +1,12 @@
 import type { AnimationClip } from 'three';
-import type { TrackInterpolationMode } from '@/modules/animation/domain/keyframe-write';
+import type { TrackInterpolationMode } from '@/modules/animation/domain/keyframe-interpolation';
 import type { SaveKeyframeClipSlice } from '@/modules/animation/types/undo-stack';
 import {
   deleteTrackKeyframe,
   insertTrackKeyframe,
-  setTrackInterpolation,
   updateTrackKeyframe,
-} from '@/modules/animation/domain/keyframe-write';
+} from '@/modules/animation/domain/keyframe-crud';
+import { setTrackInterpolation } from '@/modules/animation/domain/keyframe-interpolation';
 import { snapshotSaveKeyframeClip } from '@/modules/animation/domain/undo-snapshots';
 import { pushUndoableCommand } from '@/modules/animation/stores/undo-stack-store';
 import { $clips } from '../store';

@@ -4,7 +4,7 @@ import {
   getTrackInterpolation,
   listSupportedTrackInterpolations,
   trackInterpolationLabel,
-} from '@/modules/animation/domain/keyframe-write';
+} from '@/modules/animation/domain/keyframe-interpolation';
 import {
   findTrackByName,
   listTrackKeyframes,

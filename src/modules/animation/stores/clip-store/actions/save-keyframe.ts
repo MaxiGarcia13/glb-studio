@@ -3,7 +3,7 @@ import {
   computeBindPoseDelta,
   rebaseClipNode,
 } from '@/modules/animation/domain/bind-pose-rebase';
-import { writeNodeKeyframe } from '@/modules/animation/domain/keyframe-write';
+import { writeNodeKeyframe } from '@/modules/animation/domain/keyframe-hold';
 import { resolveActiveClipIdForModel } from '@/modules/animation/domain/resolve-active-clip';
 import {
   applySceneRootTransform,

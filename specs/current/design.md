@@ -182,7 +182,7 @@ Each library entry stores its own `timeScale` (default `1` on import / new draft
 
 ## Track / key list edits (US-9)
 
-1. Single write path under `animation/domain/keyframe-write.ts`: pose hold stays on `writeNodeKeyframe`; Tracks UI uses `updateTrackKeyframe` / `insertTrackKeyframe` / `deleteTrackKeyframe` / `setTrackInterpolation` only
+1. Keyframe domain split under `animation/domain/`: hold-pose in `keyframe-hold.ts` (`writeNodeKeyframe`); Tracks UI CRUD in `keyframe-crud.ts` (`updateTrackKeyframe` / `insertTrackKeyframe` / `deleteTrackKeyframe`); interpolation in `keyframe-interpolation.ts` (`setTrackInterpolation` only for writes)
 2. Store actions (`updateClipKeyframe`, `addClipKeyframe`, `deleteClipKeyframe`, `setClipTrackInterpolation`) clone the active ready clip, publish to `$clips`, clear blend preview — mixer rebinds via `useClipMixerAction` (same contract as hold)
 3. Add at playhead uses `onCollision: 'nudge'` (~1/60s) so a landing on an existing key still creates a row; delete refuses the last key (Three.js cannot construct/clone empty tracks)
 4. Interpolation: show Discrete / Linear / Smooth where the track factory exists; quaternion has no Smooth; Bezier (tangents) out of scope
