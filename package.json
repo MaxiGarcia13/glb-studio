@@ -5,13 +5,13 @@
   "description": "GLB Studio — a browser-native GLB character & animation editor. Load or build characters, shape their motion, and ship clean GLBs without leaving the tab.",
   "author": "Maximiliano Garcia Mortigliengo",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/MaxiGarcia13/three-editor#readme",
+  "homepage": "https://github.com/MaxiGarcia13/glb-studio#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MaxiGarcia13/three-editor.git"
+    "url": "git+https://github.com/MaxiGarcia13/glb-studio.git"
   },
   "bugs": {
-    "url": "https://github.com/MaxiGarcia13/three-editor/issues"
+    "url": "https://github.com/MaxiGarcia13/glb-studio/issues"
   },
   "scripts": {
     "prepare": "husky || true",

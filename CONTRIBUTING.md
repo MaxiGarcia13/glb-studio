@@ -1,11 +1,11 @@
 # Contributing to GLB Studio
 
-Thanks for helping improve **GLB Studio** (repo: `three-editor`). This guide covers how to report issues, propose changes, and find your way around the repo. For deeper architecture and agent rules, see [`AGENTS.md`](AGENTS.md).
+Thanks for helping improve **GLB Studio** (repo: `glb-studio`). This guide covers how to report issues, propose changes, and find your way around the repo. For deeper architecture and agent rules, see [`AGENTS.md`](AGENTS.md).
 
 ## Ways to contribute
 
-- **Bug reports** — use the [bug report](https://github.com/MaxiGarcia13/three-editor/issues/new?template=bug_report.md) template. Include OS, browser, steps to reproduce, and what you expected.
-- **Feature ideas** — use the [feature request](https://github.com/MaxiGarcia13/three-editor/issues/new?template=feature_request.md) template. Describe the user outcome, not just an implementation idea.
+- **Bug reports** — use the [bug report](https://github.com/MaxiGarcia13/glb-studio/issues/new?template=bug_report.md) template. Include OS, browser, steps to reproduce, and what you expected.
+- **Feature ideas** — use the [feature request](https://github.com/MaxiGarcia13/glb-studio/issues/new?template=feature_request.md) template. Describe the user outcome, not just an implementation idea.
 - **Pull requests** — fork the repo, open a PR against `main`, and keep the change focused. CI runs build and lint on every PR.
 
 Please open an issue before large features so we can align on scope.
@@ -15,8 +15,8 @@ Please open an issue before large features so we can align on scope.
 **Requirements:** Node.js 24+ (see [`.nvmrc`](.nvmrc)).
 
 ```bash
-git clone https://github.com/MaxiGarcia13/three-editor.git
-cd three-editor
+git clone https://github.com/MaxiGarcia13/glb-studio.git
+cd glb-studio
 npm install
 npm run dev
 ```

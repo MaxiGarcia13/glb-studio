@@ -42,8 +42,8 @@ Built for game and interactive creators who already live in GLB / glTF and want 
 **Requirements:** Node.js 24+ (see [`.nvmrc`](.nvmrc)).
 
 ```bash
-git clone https://github.com/MaxiGarcia13/three-editor.git
-cd three-editor
+git clone https://github.com/MaxiGarcia13/glb-studio.git
+cd glb-studio
 npm install
 npm run dev
 ```
