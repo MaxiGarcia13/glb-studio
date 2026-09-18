@@ -77,14 +77,15 @@ Chrome: Library | Viewport + bottom bar | Settings (trim / speed / blend). `$sel
 
 ### Layout → implement mapping
 
-| Task                                      | Lives in                                                   |
-| ----------------------------------------- | ---------------------------------------------------------- |
+| Task                                      | Lives in                                                                 |
+| ----------------------------------------- | ------------------------------------------------------------------------ |
 | Reusable transport controls               | Done — `usePlaybackTransport` + `PlaybackControls` (`labeled` \| `icon`) |
-| Bottom bar mode switch Timeline \| Tracks | `editor-shell` preview playback wrapper + UI store         |
-| Tracks pane: bones \| tracks + key table  | Move/adapt existing Keys UI from Settings                  |
-| Remove Settings Keys                      | `editor-settings-sidebar` — trim / speed / blend only      |
-| Add / delete keyframes                    | Tracks pane actions → domain helpers                       |
-| Rebind + interpolation                    | Mixer rebind after `$clips` publish; label/Select on track |
+| Bottom bar mode switch Timeline \| Tracks | Done — `$playbackBarMode` + Select on `PreviewPlaybackBar`               |
+| Timeline mode scrubber                    | Done — shown when mode is `timeline`                                     |
+| Tracks pane: bones \| tracks + key table  | Move/adapt existing Keys UI from Settings (placeholder until then)       |
+| Remove Settings Keys                      | `editor-settings-sidebar` — trim / speed / blend only                    |
+| Add / delete keyframes                    | Tracks pane actions → domain helpers                                     |
+| Rebind + interpolation                    | Mixer rebind after `$clips` publish; label/Select on track               |
 
 ## Non-goals
 
