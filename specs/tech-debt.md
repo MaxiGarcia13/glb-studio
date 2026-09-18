@@ -37,3 +37,33 @@ Not copy-pasted files. Extract only if the helper stays small.
 - `SpeedControl` native range vs `Input` is intentional (slider + `1.0x` readout)
 - Camera, grid, axes, selection, GLTF, and timeline constants each have a single owner
 - Kit registry is live (US-27 shipped); optional clothed block kit is deferred content-only if ever wanted
+
+## Unit tests
+
+Prefer pure `domain/` / `utils/` over React/R3F. Tests live under `tests/unit/` at the repo root (kebab-case files, mirror `src/` layout). Tick only after the suite is green in CI.
+
+### Harness
+
+- [ ] Add Vitest + `npm run test` / `test:watch`; `tests/unit/` + `@/` alias; CI job runs unit tests
+
+### P0 — pure helpers
+
+- [ ] Commands: chord match, resolve id, typing target, group-by-category, format chord, chord key parts
+- [ ] Timeline frames + `toTimelineTime` (edge: NaN, loop wrap, pause clamp)
+- [ ] Euler degrees wrap / rad↔deg
+- [ ] Export file-name sanitize / unique / glb+zip resolve; `preserveGltfExtension`
+- [ ] Clip validate (`splitTrackName`, skeleton mismatch counts) + `isReadyClip` / `toEntry*` shapes
+- [ ] `isExportableModel` + `resolveExportUnits`; `parseModelGroupManifest` reject paths
+- [ ] Axis ruler ticks + labels; hips name / mapping helpers
+
+### P1 — Three fixtures
+
+- [ ] Bone registry labels/auto-map + Mixamo vendor suggest/displayName
+- [ ] `computePositionScaleRatio` median / null
+- [ ] `remapClipTracks` + hips rebase + bind-pose delta/rebase (synthetic tracks)
+- [ ] `bakeBlendClip` weight/duration; `nextObjectName`
+- [ ] `convertFbxToGlb` validation (400/413) with mocked converter
+
+### Out of scope here
+
+React islands, R3F hooks, mixer/store actions, full GLTF import routing — revisit after P0/P1.
