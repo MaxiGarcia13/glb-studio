@@ -2,7 +2,12 @@ import { useStore } from '@nanostores/react';
 import { Collapsible, CollapsibleContent, CollapsibleHeader } from '@/components/collapsible';
 import { CollapsibleAside } from '@/components/collapsible-aside/collapsible-aside';
 import { Text } from '@/components/text';
-import { BlendControls, ClipTrimInputs, SpeedControl } from '@/modules/animation';
+import {
+  BlendControls,
+  ClipTrimInputs,
+  KeyframeEditor,
+  SpeedControl,
+} from '@/modules/animation';
 import { PartInspector } from '@/modules/create/components/part-inspector';
 import { $settingsFocus } from '@/modules/viewport/stores/transform-readout-store';
 import { SelectionNameField } from './selection-name-field';
@@ -50,6 +55,13 @@ export function EditorSettingsSidebar() {
                 <CollapsibleHeader title="Blend" />
                 <CollapsibleContent className="gap-4">
                   <BlendControls />
+                </CollapsibleContent>
+              </Collapsible>
+
+              <Collapsible className="gap-2" defaultOpen>
+                <CollapsibleHeader title="Keys" />
+                <CollapsibleContent className="gap-4">
+                  <KeyframeEditor />
                 </CollapsibleContent>
               </Collapsible>
             </div>
