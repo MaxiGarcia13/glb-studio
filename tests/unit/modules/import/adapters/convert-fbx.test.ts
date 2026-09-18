@@ -4,8 +4,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   convertFbxToGlb,
-  FbxConvertError,
   fbxConverter,
+  FbxConvertError,
 } from '@/modules/import/adapters/convert-fbx';
 
 describe('convertFbxToGlb', () => {
