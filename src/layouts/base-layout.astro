@@ -1,6 +1,8 @@
 ---
 import { name, description } from '@root/package.json';
 import '@/styles/global.css';
+
+const siteUrl = Astro.url.origin;
 ---
 
 <html lang="en">
@@ -17,6 +19,14 @@ import '@/styles/global.css';
     <meta property="og:title" content={name} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content="/og-image.png" />
+    <meta property="og:url" content={siteUrl} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={name} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="/og-image.png" />
+    <meta name="twitter:url" content={siteUrl} />
   </head>
   <body>
     <slot />
