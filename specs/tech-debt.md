@@ -44,7 +44,7 @@ Prefer pure `domain/` / `utils/` over React/R3F. Tests live under `tests/unit/` 
 
 ### Harness
 
-- [ ] Add Vitest + `npm run test` / `test:watch`; `tests/unit/` + `@/` alias; CI job runs unit tests
+- [x] Add Vitest + `npm run test` / `test:watch`; `tests/unit/` + `@/` alias; CI job runs unit tests
 
 ### P0 — pure helpers
 
@@ -62,7 +62,7 @@ Prefer pure `domain/` / `utils/` over React/R3F. Tests live under `tests/unit/` 
 - [x] Bone registry labels/auto-map + Mixamo vendor suggest/displayName
 - [x] `computePositionScaleRatio` median / null
 - [x] `remapClipTracks` + hips rebase + bind-pose delta/rebase (synthetic tracks)
-- [ ] `bakeBlendClip` weight/duration; `nextObjectName`
+- [x] `bakeBlendClip` weight/duration; `nextObjectName`
 - [ ] `convertFbxToGlb` validation (400/413) with mocked converter
 
 ### Out of scope here
