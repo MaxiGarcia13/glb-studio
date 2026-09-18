@@ -48,7 +48,11 @@ export function LibrarySectionCollapsible({
           headerClassName,
         )}
       >
-        {leading}
+        {leading != null && (
+          <span className="inline-flex shrink-0 self-center text-fg-muted" aria-hidden>
+            {leading}
+          </span>
+        )}
         <div className={cn('flex items-center gap-2 flex-1 min-w-0', headerContentClassName)}>
           {typeof title === 'string'
             ? (

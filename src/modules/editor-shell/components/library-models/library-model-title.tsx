@@ -1,6 +1,7 @@
 import type { UseAssetEntryRenameResult } from '@/components/asset-entry/use-asset-entry-rename';
 import { cn } from '@maxigarcia/js-utils';
 import { AssetEntryRenameInput } from '@/components/asset-entry/asset-entry-rename-input';
+import { ManIcon } from '@/components/icons/man-icon';
 import { Text } from '@/components/text';
 import { LibraryModelPreviewButton } from './library-model-preview-button';
 
@@ -37,10 +38,13 @@ export function LibraryModelTitle({
             event.stopPropagation();
             onContextMenu?.(event);
           }}
-          className="flex-1 min-w-0 text-left cursor-pointer"
+          className="flex flex-1 min-w-0 items-center gap-2 text-left cursor-pointer"
           aria-pressed={selected}
           title={selected ? 'Deselect model' : 'Select model'}
         >
+          <span className="shrink-0 text-fg-muted">
+            <ManIcon />
+          </span>
           <Text
             as="h2"
             className={cn(
@@ -53,8 +57,6 @@ export function LibraryModelTitle({
         </button>
 
         <LibraryModelPreviewButton modelId={modelId} className="p-2" />
-        {' '}
-
       </div>
     );
   }

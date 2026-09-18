@@ -101,7 +101,6 @@ export function ClipRows({ clips, ownerModelId, className }: ClipRowsProps) {
         return (
           <AssetEntry
             key={entry.id}
-            variant="row"
             leading={<AnimationIcon />}
             label={entry.name}
             title={`${entry.name} (${entry.sourceFile})`}

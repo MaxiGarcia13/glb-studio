@@ -1,10 +1,11 @@
-import type { Group, Object3D } from 'three';
+import type { Bone, Group } from 'three';
 import { cn } from '@maxigarcia/js-utils';
 import { useStore } from '@nanostores/react';
-import { useState } from 'react';
-import { ChevronRight } from '@/components/icons/chevron-right-icon';
+import { Bone as ThreeBone } from 'three';
+import { BoneIcon } from '@/components/icons/bone-icon';
 import { Text } from '@/components/text';
 import { listBoneEntries } from '@/modules/animation/domain/list-bones';
+import { LibrarySectionCollapsible } from '@/modules/editor-shell/components/library-section-collapsible';
 import { setEditTool } from '@/modules/viewport/stores/edit-tool-store';
 import { $model, selectModel } from '@/modules/viewport/stores/model-store';
 import {
@@ -19,41 +20,117 @@ interface BoneOutlinerProps {
   className?: string;
 }
 
-function isUnderCollapsedAncestor(
-  object: Object3D,
-  collapsed: ReadonlySet<string>,
-): boolean {
-  let current: Object3D | null = object.parent;
-  while (current) {
-    if (collapsed.has(current.uuid)) {
-      return true;
-    }
-    current = current.parent;
-  }
-  return false;
-}
-
 /**
  * Library outliner of skeleton bones for an imported model.
+ * Parents use `LibrarySectionCollapsible` (closed by default). BoneIcon marks bone rows.
  * Click a row to focus the model (if needed), switch to Edit, and select the bone.
- * Shift+click toggles membership. Parents can be collapsed via the row chevron.
+ * Shift+click toggles membership.
  */
 export function BoneOutliner({ modelId, scene, className }: BoneOutlinerProps) {
   const { object: active, objects } = useStore($selection, {
     keys: ['object', 'objects'],
   });
-  const [collapsedIds, setCollapsedIds] = useState<ReadonlySet<string>>(
-    () => new Set(),
-  );
   const entries = listBoneEntries(scene);
 
   if (entries.length === 0) {
     return null;
   }
 
-  const visible = entries.filter(
-    ({ bone }) => !isUnderCollapsedAncestor(bone, collapsedIds),
-  );
+  const boneSet = new Set(entries.map(({ bone }) => bone));
+  const roots = entries.filter(({ depth }) => depth === 0).map(({ bone }) => bone);
+
+  function getChildren(bone: Bone): Bone[] {
+    return bone.children.filter(
+      (child): child is Bone => child instanceof ThreeBone && boneSet.has(child),
+    );
+  }
+
+  function selectBone(bone: Bone, event: React.MouseEvent) {
+    if ($model.get().activeModelId !== modelId) {
+      selectModel(modelId);
+    }
+    setEditTool('edit');
+    if (event.shiftKey) {
+      toggleObject(bone);
+      return;
+    }
+    selectObject(bone);
+  }
+
+  function renderBone(bone: Bone) {
+    const children = getChildren(bone);
+    const label = bone.name || bone.uuid;
+    const isSelected = objects.includes(bone);
+    const isActive = active === bone;
+
+    const title = (
+      <button
+        type="button"
+        title={label}
+        className="min-w-0 flex-1 cursor-pointer truncate text-left"
+        onClick={(event) => {
+          event.stopPropagation();
+          selectBone(bone, event);
+        }}
+      >
+        <Text
+          as="span"
+          className={cn(
+            'min-w-0 truncate',
+            isActive || isSelected ? 'text-fg' : 'text-current',
+          )}
+        >
+          {label}
+        </Text>
+      </button>
+    );
+
+    if (children.length === 0) {
+      return (
+        <div
+          key={bone.uuid}
+          role="treeitem"
+          aria-selected={isSelected}
+          className={cn(
+            'flex w-full min-h-8 items-center gap-2 rounded-sm px-2 py-2 transition-colors',
+            isActive
+              ? 'bg-surface-hover text-fg'
+              : isSelected
+                ? 'bg-control text-fg'
+                : 'text-fg hover:bg-surface-hover/40',
+          )}
+        >
+          <span className="inline-flex h-8 w-4 shrink-0" aria-hidden />
+          <button
+            type="button"
+            title={label}
+            className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 truncate text-left"
+            onClick={(event) => selectBone(bone, event)}
+          >
+            <span className="shrink-0 text-fg-muted" aria-hidden>
+              <BoneIcon />
+            </span>
+            <Text as="span" className="min-w-0 truncate text-current">
+              {label}
+            </Text>
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <LibrarySectionCollapsible
+        key={bone.uuid}
+        title={title}
+        defaultOpen={false}
+        selected={isActive || isSelected}
+        showChevron
+        showTreeGuide
+      >
+        {children.map((child) => renderBone(child))}
+      </LibrarySectionCollapsible>
+    );
+  }
 
   return (
     <div
@@ -61,85 +138,7 @@ export function BoneOutliner({ modelId, scene, className }: BoneOutlinerProps) {
       role="tree"
       aria-label="Bones"
     >
-      {visible.map(({ bone, depth, hasChildren }) => {
-        const isSelected = objects.includes(bone);
-        const isActive = active === bone;
-        const label = bone.name || bone.uuid;
-        const expanded = hasChildren && !collapsedIds.has(bone.uuid);
-
-        return (
-          <div
-            key={bone.uuid}
-            role="treeitem"
-            aria-selected={isSelected}
-            aria-expanded={hasChildren ? expanded : undefined}
-            className={cn(
-              'flex w-full min-h-8 items-center gap-2 rounded-sm py-2 pr-2 transition-colors',
-              isActive
-                ? 'bg-surface-hover text-fg'
-                : isSelected
-                  ? 'bg-control text-fg'
-                  : 'text-fg hover:bg-surface-hover/40',
-            )}
-            style={{ paddingLeft: `${8 + depth * 16}px` }}
-          >
-            <span className="inline-flex h-8 w-4 shrink-0 items-center justify-center">
-              {hasChildren
-                ? (
-                    <button
-                      type="button"
-                      aria-label={expanded ? `Collapse ${label}` : `Expand ${label}`}
-                      title={expanded ? 'Collapse' : 'Expand'}
-                      className="inline-flex h-8 w-4 cursor-pointer items-center justify-center text-fg-muted hover:text-fg"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        setCollapsedIds((current) => {
-                          const next = new Set(current);
-                          if (next.has(bone.uuid)) {
-                            next.delete(bone.uuid);
-                          } else {
-                            next.add(bone.uuid);
-                          }
-                          return next;
-                        });
-                      }}
-                    >
-                      <ChevronRight
-                        className={cn(
-                          'transition-transform',
-                          expanded && 'rotate-90',
-                        )}
-                        aria-hidden
-                      />
-                    </button>
-                  )
-                : null}
-            </span>
-
-            <button
-              type="button"
-              title={label}
-              className="min-w-0 flex-1 cursor-pointer truncate text-left"
-              onClick={(event) => {
-                if ($model.get().activeModelId !== modelId) {
-                  selectModel(modelId);
-                }
-                setEditTool('edit');
-                if (event.shiftKey) {
-                  toggleObject(bone);
-                  return;
-                }
-                selectObject(bone);
-              }}
-            >
-              <Text as="span" className="min-w-0 truncate text-current">
-                {label}
-              </Text>
-            </button>
-          </div>
-        );
-      })}
+      {roots.map((bone) => renderBone(bone))}
     </div>
   );
 }
