@@ -108,7 +108,10 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 - `$clips` holds `blendClipId`, `blendWeight`, `blendBaseClip` (primary snapshot when a partner is chosen)
 - Blend overlay is **viewport-only** until **Bake** flattens primary + secondary at weight into the active library clip and resets the form; **Reset** clears the form without writing
 - Unsaved bone/gizmo edits auto-commit on gesture end (US-10); **Hold Pose to End** commits into the active clip
-- Playback bar: controls + scrubber only
+- Playback bar: shared transport + mode **Timeline** | **Tracks** (`$playbackBarMode`, default Timeline)
+  - Timeline: existing scrubber under the transport row
+  - Tracks: split pane track list | key table (`KeyframeTracksPane`); bone/part selection filters tracks; key CRUD + track interpolation live here only
+- Settings Animation: Start/End, Speed, Blend only (no Keys panel)
 
 ## Animation import
 
@@ -116,7 +119,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 2. Validate each clip's track targets against the loaded character node/skeleton map; missing/unknown bones → the entry is marked errored with user-visible copy (no silent remap; no automatic vendor prefix rewriting in playback)
 3. Re-validate owned entries when a model is replaced or removed so stale clips are never silently played on a mismatched rig (`syncClipsToSkeleton`)
 4. Sidebar lists clips under their owner model or Shared Animations with Replace / Remove / Rename (iconized). Replace re-picks one file and updates **that** entry only (first clip in the file; keep the entry id and `ownerModelId`). Remove drops the entry; if it was active, select the next ready clip or clear selection. Errored clips that still have a working `AnimationClip` offer **Retarget**
-5. Active clip is chosen from the library list (US-7). Preview chrome owns Play / Pause / Stop / loop and the scrubber; those stay disabled until a valid clip is selected for that skeleton. Clicking the selected row again clears to T-pose
+5. Active clip is chosen from the library list (US-7). Preview chrome owns Play / Pause / Stop / loop and Timeline | Tracks modes (scrubber vs key list); transport stays disabled until a valid clip is selected for that skeleton. Clicking the selected row again clears to T-pose
 6. Preview layout: viewport fills remaining height (`flex-1 min-h-0`); playback bar is a shrink-to-content footer under the canvas (not a fixed magic height overlapping the scene)
 
 ## Cross-rig retargeting (US-6)
@@ -176,6 +179,14 @@ Each library entry stores its own `timeScale` (default `1` on import / new draft
    - Clear pose dirty
 5. Catalog Undo while dirty flushes `commitPendingPose` then pops that stack entry (cancels the open edit)
 6. After hold, clear pose dirty but **leave the previous action suspended**; `useClipMixerAction` rebinds the updated clip at the same playhead (uncache previous action). Do not call `restoreMixerPose` / `resumeMixerBindings` in `saveKeyframe` — those resample the old action and desync the scrubber playhead
+
+## Track / key list edits (US-9)
+
+1. Single write path under `animation/domain/keyframe-write.ts`: pose hold stays on `writeNodeKeyframe`; Tracks UI uses `updateTrackKeyframe` / `insertTrackKeyframe` / `deleteTrackKeyframe` / `setTrackInterpolation` only
+2. Store actions (`updateClipKeyframe`, `addClipKeyframe`, `deleteClipKeyframe`, `setClipTrackInterpolation`) clone the active ready clip, publish to `$clips`, clear blend preview — mixer rebinds via `useClipMixerAction` (same contract as hold)
+3. Add at playhead uses `onCollision: 'nudge'` (~1/60s) so a landing on an existing key still creates a row; delete refuses the last key (Three.js cannot construct/clone empty tracks)
+4. Interpolation: show Discrete / Linear / Smooth where the track factory exists; quaternion has no Smooth; Bezier (tangents) out of scope
+5. UI selection: `$selectedTrackName` / `$selectedKeyIndex`; Tracks pane filters by viewport bone/part `$selection` when present
 
 Bind-pose / Move / T-pose commit branching: see **Edit / Move tools & bind pose (US-15)** below.
 

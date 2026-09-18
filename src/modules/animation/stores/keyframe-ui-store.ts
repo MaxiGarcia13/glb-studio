@@ -1,19 +1,10 @@
 import { atom } from 'nanostores';
 
-/** Settings Keys filter: selected bone/mesh vs every track on the active clip. */
-export type KeyframeTrackFilter = 'selected' | 'all';
-
-export const $keyframeTrackFilter = atom<KeyframeTrackFilter>('selected');
-
 /** Selected track by `KeyframeTrack.name` within the active clip; `null` if none. */
 export const $selectedTrackName = atom<string | null>(null);
 
 /** Selected key index on `$selectedTrackName`; `null` if none. */
 export const $selectedKeyIndex = atom<number | null>(null);
-
-export function setKeyframeTrackFilter(filter: KeyframeTrackFilter): void {
-  $keyframeTrackFilter.set(filter);
-}
 
 export function selectKeyframeTrack(name: string | null): void {
   if ($selectedTrackName.get() !== name) {

@@ -47,5 +47,6 @@ export type {
   TrimClipOptions,
   UpdateClipKeyframeOptions,
   UpdateClipKeyframeResult,
-} from './actions';export { $clips } from './store';
+} from './actions';
+export { $clips } from './store';
 export { isReadyClip } from './utils';

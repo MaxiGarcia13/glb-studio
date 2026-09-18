@@ -59,6 +59,19 @@ As an editor user, I can pause on the timeline, move a selected bone/mesh, and s
 - [x] Hold finds or creates the matching `VectorKeyframeTrack` / `QuaternionKeyframeTrack` on the **active** clip and writes a plateau from the clip-local playhead through clip duration so the pose holds for the rest of the animation; timestamp is timeline playhead (`[0, duration]`), not raw accumulated `mixer.time`. Re-edit later by scrubbing and holding again
 - [x] Cancelling an in-progress dirty gesture uses Undo (flush then pop) — no Restore Pose control (US-10)
 
+### US-9 — Track / key list keyframe UI
+
+As an editor user, I can inspect and edit keyframe times and values for tracks on the active clip from the bottom preview bar.
+
+**Acceptance**
+
+- [x] Bottom preview bar switches **Timeline** (scrubber) vs **Tracks** (track list | key table); shared transport (play / pause / stop / loop) stays available in both modes; default mode is Timeline
+- [x] Tracks mode lists tracks for the active ready clip; selecting a bone/part in Library / viewport filters the list to that node; selecting a track shows its key table
+- [x] User can select a keyframe and edit its time and values; Add inserts at the playhead (nudges if a key already exists there); per-row delete keeps at least one key (Three.js cannot clone empty tracks)
+- [x] Interpolation mode is visible per selected track; Discrete / Linear / Smooth where the track type allows (quaternion has no Smooth); Bezier out of scope
+- [x] Key / interpolation edits publish a new working clip clone so the mixer rebinds on next play / scrub (same pattern as pose hold)
+- [x] Settings Animation is trim / speed / blend only — no Keys panel
+
 ### US-5 — Zip export
 
 As an editor user, I can download a zip of each model and of each animation as separate files.
@@ -450,7 +463,6 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 - **US-33** — Skinned starter kit (Block robot GLB) → [`specs/us-33/`](../us-33/) (prefer before US-34)
 - **US-34** — In-editor skinning for created models (MVP) → [`specs/us-34/`](../us-34/)
 - **US-8** — Morph-target editing → [`specs/us-8/`](../us-8/)
-- **US-9** — Graph / curve keyframe UI → [`specs/us-9/`](../us-9/)
 
 ## Non-functional requirements
 

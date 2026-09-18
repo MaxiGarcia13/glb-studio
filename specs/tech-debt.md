@@ -2,7 +2,7 @@
 
 Internal cleanup. No changelog unless user-visible product changed. Tick only after the change is in.
 
-Do not start post-MVP stories (US-8 / US-9) from this file.
+Do not start post-MVP stories (US-8) from this file.
 
 ## Dead code
 
