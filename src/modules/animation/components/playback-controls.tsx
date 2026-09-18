@@ -1,57 +1,85 @@
 import { cn } from '@maxigarcia/js-utils';
-import { useStore } from '@nanostores/react';
 import { Button } from '@/components/button';
 import { PauseIcon } from '@/components/icons/pause-icon';
 import { PlayIcon } from '@/components/icons/play-icon';
 import { RepeatIcon } from '@/components/icons/repeat-icon';
 import { StopIcon } from '@/components/icons/stop-icon';
-import { $model } from '@/modules/viewport/stores/model-store';
-import { $clips, pause, play, stop, toggleLoop } from '../stores/clip-store';
+import { usePlaybackTransport } from '../hooks/use-playback-transport';
+
+export type PlaybackControlsVariant = 'labeled' | 'icon';
 
 interface PlaybackControlsProps {
   className?: string;
+  /**
+   * `labeled` — Play / Pause / Stop / Loop text (legacy centered bar).
+   * `icon` — icon-only compact row for shared Timeline | Tracks chrome.
+   */
+  variant?: PlaybackControlsVariant;
 }
 
-export function PlaybackControls({ className }: PlaybackControlsProps) {
-  const { playing, loop, activeClipId } = useStore($clips, {
-    keys: ['playing', 'loop', 'activeClipId'],
-  });
-  const { previewModelIds } = useStore($model, { keys: ['previewModelIds'] });
+/**
+ * Reusable transport controls. Same store wiring for every bottom-bar mode;
+ * only layout density changes via `variant`.
+ */
+export function PlaybackControls({
+  className,
+  variant = 'labeled',
+}: PlaybackControlsProps) {
+  const { playing, loop, enabled, play, pause, stop, toggleLoop }
+    = usePlaybackTransport();
 
-  // Clip selection drives play; model focus is not required (US-20 play is global).
-  const enabled = activeClipId !== null && previewModelIds.length > 0;
+  const iconOnly = variant === 'icon';
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
+    <div
+      role="toolbar"
+      aria-label="Playback"
+      className={cn('flex items-center gap-2', className)}
+    >
       <Button
         onClick={playing ? pause : play}
         disabled={!enabled}
         aria-label={playing ? 'Pause' : 'Play'}
         aria-pressed={playing}
-        className="flex-1 flex items-center justify-center gap-2 max-w-20"
+        variant={iconOnly ? 'ghost' : 'default'}
+        title={playing ? 'Pause' : 'Play'}
+        className={cn(
+          'flex items-center justify-center gap-2',
+          !iconOnly && 'flex-1 max-w-20',
+        )}
       >
         {playing ? <PauseIcon /> : <PlayIcon />}
-        {playing ? 'Pause' : 'Play'}
+        {!iconOnly && (playing ? 'Pause' : 'Play')}
       </Button>
       <Button
         onClick={stop}
         disabled={!enabled}
         aria-label="Stop"
-        className="flex-1 flex items-center justify-center gap-2 max-w-20"
+        title="Stop"
+        variant={iconOnly ? 'ghost' : 'default'}
+        className={cn(
+          'flex items-center justify-center gap-2',
+          !iconOnly && 'flex-1 max-w-20',
+        )}
       >
         <StopIcon />
-        Stop
+        {!iconOnly && 'Stop'}
       </Button>
       <Button
         onClick={toggleLoop}
         disabled={!enabled}
         aria-label="Toggle loop"
         aria-pressed={loop}
+        title={loop ? 'Loop' : 'Once'}
         variant="ghost"
-        className={`flex-1 flex items-center justify-center gap-2 max-w-20 ${loop ? 'text-accent' : ''}`}
+        className={cn(
+          'flex items-center justify-center gap-2',
+          !iconOnly && 'flex-1 max-w-20',
+          loop && 'text-accent',
+        )}
       >
         <RepeatIcon />
-        {loop ? 'Loop' : 'Once'}
+        {!iconOnly && (loop ? 'Loop' : 'Once')}
       </Button>
     </div>
   );

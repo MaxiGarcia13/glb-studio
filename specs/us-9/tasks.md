@@ -18,7 +18,7 @@ Do not start until explicitly kicked off. Tick only after acceptance.
 
 Do not start until explicitly kicked off.
 
-- [ ] Extract reusable playback transport controls (play / pause / stop / loop) for use in both bar modes
+- [x] Extract reusable playback transport controls (play / pause / stop / loop) for use in both bar modes — `usePlaybackTransport` + `PlaybackControls` `labeled` \| `icon`
 - [ ] Bottom bar wrapper + mode select: **Timeline** \| **Tracks** (default Timeline); session UI store
 - [ ] Timeline mode: keep existing `TimelineScrubber` under the shared transport row
 - [ ] Tracks mode: split pane **bones | tracks** (+ key table for selected track); sync bone pick with `$selection` / track filter

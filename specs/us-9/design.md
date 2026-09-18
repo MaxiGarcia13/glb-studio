@@ -79,7 +79,7 @@ Chrome: Library | Viewport + bottom bar | Settings (trim / speed / blend). `$sel
 
 | Task                                      | Lives in                                                   |
 | ----------------------------------------- | ---------------------------------------------------------- |
-| Reusable transport controls               | `animation` PlaybackControls (compose in both modes)       |
+| Reusable transport controls               | Done — `usePlaybackTransport` + `PlaybackControls` (`labeled` \| `icon`) |
 | Bottom bar mode switch Timeline \| Tracks | `editor-shell` preview playback wrapper + UI store         |
 | Tracks pane: bones \| tracks + key table  | Move/adapt existing Keys UI from Settings                  |
 | Remove Settings Keys                      | `editor-settings-sidebar` — trim / speed / blend only      |
