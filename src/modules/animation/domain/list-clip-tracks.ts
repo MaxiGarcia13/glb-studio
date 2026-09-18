@@ -78,3 +78,21 @@ export function findTrackByName(
 ): KeyframeTrack | undefined {
   return clip.tracks.find((track) => track.name === trackName);
 }
+
+const CHANNEL_XYZ = ['X', 'Y', 'Z'] as const;
+const CHANNEL_XYZW = ['X', 'Y', 'Z', 'W'] as const;
+
+/** Column headers for a track’s value components (XYZ / XYZW when known). */
+export function trackValueChannelLabels(
+  trackName: string,
+  valueSize: number,
+): string[] {
+  const { suffix } = splitTrackName(trackName);
+  if (suffix === '.quaternion' && valueSize === 4) {
+    return [...CHANNEL_XYZW];
+  }
+  if ((suffix === '.position' || suffix === '.scale') && valueSize === 3) {
+    return [...CHANNEL_XYZ];
+  }
+  return Array.from({ length: valueSize }, (_, channel) => `v${channel}`);
+}

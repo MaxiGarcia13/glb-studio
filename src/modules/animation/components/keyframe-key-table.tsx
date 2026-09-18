@@ -6,6 +6,7 @@ import { Text } from '@/components/text';
 import {
   findTrackByName,
   listTrackKeyframes,
+  trackValueChannelLabels,
 } from '@/modules/animation/domain/list-clip-tracks';
 import {
   $clips,
@@ -78,13 +79,12 @@ export function KeyframeKeyTable({ trackName }: KeyframeKeyTableProps) {
     }
   };
 
-  const valueChannels = Array.from({ length: valueSize }, (_, channel) => ({
-    channel,
-    label: `v${channel}`,
-  }));
+  const valueChannels = trackValueChannelLabels(trackName, valueSize).map(
+    (label, channel) => ({ channel, label }),
+  );
 
   return (
-    <div className="flex max-h-64 flex-col gap-2 overflow-x-auto overflow-y-auto">
+    <div className="flex flex-col gap-2 overflow-x-auto">
       <div
         className="grid gap-2 text-fg-muted"
         style={{

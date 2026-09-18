@@ -1,6 +1,7 @@
 export { BlendControls } from './components/blend-controls';
 export { ClipTrimInputs } from './components/clip-trim-inputs';
 export { KeyframeEditor } from './components/keyframe-editor';
+export { KeyframeTracksPane } from './components/keyframe-tracks-pane';
 export { PlaybackControls } from './components/playback-controls';
 export type { PlaybackControlsVariant } from './components/playback-controls';
 export { SpeedControl } from './components/speed-control';

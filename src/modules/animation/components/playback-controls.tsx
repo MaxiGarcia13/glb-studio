@@ -3,6 +3,7 @@ import { Button } from '@/components/button';
 import { PauseIcon } from '@/components/icons/pause-icon';
 import { PlayIcon } from '@/components/icons/play-icon';
 import { RepeatIcon } from '@/components/icons/repeat-icon';
+import { RepeatOffIcon } from '@/components/icons/repeat-off-icon';
 import { StopIcon } from '@/components/icons/stop-icon';
 import { usePlaybackTransport } from '../hooks/use-playback-transport';
 
@@ -78,7 +79,7 @@ export function PlaybackControls({
           loop && 'text-accent',
         )}
       >
-        <RepeatIcon />
+        {loop ? <RepeatIcon /> : <RepeatOffIcon />}
         {!iconOnly && (loop ? 'Loop' : 'Once')}
       </Button>
     </div>

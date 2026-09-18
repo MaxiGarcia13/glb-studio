@@ -21,7 +21,7 @@ Do not start until explicitly kicked off.
 - [x] Extract reusable playback transport controls (play / pause / stop / loop) for use in both bar modes — `usePlaybackTransport` + `PlaybackControls` `labeled` \| `icon`
 - [x] Bottom bar wrapper + mode select: **Timeline** \| **Tracks** (default Timeline); session UI store — `$playbackBarMode`
 - [x] Timeline mode: keep existing `TimelineScrubber` under the shared transport row
-- [ ] Tracks mode: split pane **bones | tracks** (+ key table for selected track); sync bone pick with `$selection` / track filter
+- [x] Tracks mode: split pane **tracks | keys** — all tracks left, key table for selection right — `KeyframeTracksPane`
 - [ ] Remove Settings → Animation **Keys** collapsible; Settings keeps trim / speed / blend only
 
 ## Verify

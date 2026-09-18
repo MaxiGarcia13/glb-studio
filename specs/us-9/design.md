@@ -44,7 +44,7 @@ Public export today: **`writeNodeKeyframe` only**. Hold helpers are private.
 
 ## Prep — MVP layout (revised: bottom chrome)
 
-**Choice:** key-list MVP lives in the **bottom center column** (under the viewport), not Settings. A mode switch chooses **Timeline** (existing scrubber) vs **Tracks** (bones | tracks + key table). Settings Animation keeps trim / speed / blend only — **remove** the Keys collapsible once Tracks mode ships.
+**Choice:** key-list MVP lives in the **bottom center column** (under the viewport), not Settings. A mode switch chooses **Timeline** (existing scrubber) vs **Tracks** (track list | key table). Settings Animation keeps trim / speed / blend only — **remove** the Keys collapsible once Tracks mode ships.
 
 Chrome: Library | Viewport + bottom bar | Settings (trim / speed / blend). `$selection` / bone list in Tracks mode drives track filter.
 
@@ -62,17 +62,16 @@ Chrome: Library | Viewport + bottom bar | Settings (trim / speed / blend). `$sel
 ├──────────────────────────────────────────────────────────┤
 │  Timeline mode: TimelineScrubber (existing)              │
 │  Tracks mode:                                            │
-│    ┌─────────────┬─────────────────────────────────────┐ │
-│    │ bones       │ tracks list                         │ │
-│    │ (filter /   │ selected track → key table          │ │
-│    │  select)    │ (+ add/delete when those tasks land)│ │
-│    └─────────────┴─────────────────────────────────────┘ │
+│    ┌──────────────────┬────────────────────────────────┐ │
+│    │ All tracks list  │ Key table for selected track   │ │
+│    │ (scrollable)     │ (scrollable)                   │ │
+│    └──────────────────┴────────────────────────────────┘ │
 └──────────────────────────────────────────────────────────┘
 ```
 
 - Module: `editor-shell` hosts the bar wrapper + mode store; `animation` owns track/key UI + reusable `PlaybackControls`
 - Default mode: Timeline
-- Tracks mode bone column may mirror / drive `$selection` (Edit tool) so viewport gizmo and track filter stay in sync
+- Tracks mode lists clip tracks on the left (all by default; filtered to the selected bone when `$selection` is a part/bone); selecting a track shows that track’s key table on the right
 - Tokens: `bg-surface` / `bg-control` / `border-border` / `text-fg*`; even spacing `2/4/6/8`
 
 ### Layout → implement mapping
@@ -82,7 +81,7 @@ Chrome: Library | Viewport + bottom bar | Settings (trim / speed / blend). `$sel
 | Reusable transport controls               | Done — `usePlaybackTransport` + `PlaybackControls` (`labeled` \| `icon`) |
 | Bottom bar mode switch Timeline \| Tracks | Done — `$playbackBarMode` + Select on `PreviewPlaybackBar`               |
 | Timeline mode scrubber                    | Done — shown when mode is `timeline`                                     |
-| Tracks pane: bones \| tracks + key table  | Move/adapt existing Keys UI from Settings (placeholder until then)       |
+| Tracks pane: tracks \| key table          | Done — all tracks left; selected track’s keys on the right |
 | Remove Settings Keys                      | `editor-settings-sidebar` — trim / speed / blend only                    |
 | Add / delete keyframes                    | Tracks pane actions → domain helpers                                     |
 | Rebind + interpolation                    | Mixer rebind after `$clips` publish; label/Select on track               |

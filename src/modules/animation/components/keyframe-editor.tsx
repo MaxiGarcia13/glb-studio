@@ -41,10 +41,9 @@ function resolveVisibleTracks(
 }
 
 /**
- * Settings Keys — track list for the active ready clip, filterable by
- * viewport bone/mesh selection, plus key table when a track is selected.
+ * Settings Keys stack: filter + track list + key table (until Settings Keys is removed).
  */
-export function KeyframeEditor() {
+export function KeyframeEditor({ className }: { className?: string }) {
   const { clips, activeClipId } = useStore($clips, {
     keys: ['clips', 'activeClipId'],
   });
@@ -77,7 +76,7 @@ export function KeyframeEditor() {
 
   if (!canEdit) {
     return (
-      <Text as="p" variant="muted">
+      <Text as="p" variant="muted" className={className}>
         Select a ready animation to inspect its tracks.
       </Text>
     );
@@ -95,7 +94,7 @@ export function KeyframeEditor() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={cn('flex flex-col gap-4', className)}>
       <Select
         label="Filter"
         value={filter}
