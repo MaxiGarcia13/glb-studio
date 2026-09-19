@@ -1,0 +1,40 @@
+# US-36 — Tasks
+
+Tick only after acceptance criteria for that item pass.
+
+## Spec / kickoff
+
+- [x] **Lock product choices** — Whole-zip Format; GLB default; pack-then-convert; Assimp-class CLI; 4.5MB reject — see [`requirements.md`](./requirements.md)
+- [x] **Design note** — Convert API + modal + naming — see [`design.md`](./design.md)
+
+## Convert API
+
+- [ ] **Choose / pin Linux convert binary** — Assimp (or documented substitute) runnable on Vercel Node; document install / `includeFiles` / `excludeFiles` like US-16
+- [ ] **Server adapter `convertGlbToFbx`** — Tmpdir write/read; reject non-`.glb` name (400) and oversize (413); cleanup always
+- [ ] **`POST /api/v1/glb-to-fbx`** — `prerender = false`; multipart `file`; return FBX with `content-disposition` basename `.fbx`
+- [ ] **Unit tests** — Validation paths with mocked converter (mirror `convert-fbx` tests)
+
+## Client export path
+
+- [ ] **`ensureFbxFile` service** — POST buffer/file to convert API; surface error message for modal
+- [ ] **Format-aware file names** — `resolveExportFileName(…, 'glb' | 'fbx')`; zip default `glb-export` / `fbx-export`
+- [ ] **`downloadExportZip({ format })`** — GLB path unchanged; FBX path convert-each-then-zip; fail closed (no partial download)
+- [ ] **`useExportZip` + types** — Pass `format` through options
+
+## Export modal UI
+
+- [ ] **Format `<Select>`** — GLB / FBX; reset to GLB on open; editor UI tokens
+- [ ] **Summary + defaults** — Copy and zip basename follow format
+- [ ] **Error / busy** — Convert failures stay in modal; busy covers convert + zip
+
+## Verify
+
+- [ ] **GLB export** — Same zip contents as before; no convert network calls
+- [ ] **FBX export** — Zip of `.fbx` files; opens in a DCC or engine smoke check (mesh ± skeleton ± clip as available)
+- [ ] **Oversize / convert fail** — Modal error; no zip download
+- [ ] **Import path** — FBX → GLB import still works; unaffected by this story
+- [ ] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md)
+
+## Ship
+
+- [ ] Fold into `specs/current/`; CHANGELOG **US-36**; delete `specs/us-36/`
