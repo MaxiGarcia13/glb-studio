@@ -1,7 +1,6 @@
 import type { ExportFormat } from '@/modules/export/utils/file-name';
 import { useEffect, useRef, useState } from 'react';
 import { Modal } from '@/components/modal';
-import { Text } from '@/components/text';
 import { useExportZip } from '@/modules/export/hooks/use-export-zip';
 import { defaultZipBaseName } from '@/modules/export/utils/file-name';
 import {
@@ -12,6 +11,7 @@ import {
 } from './default-names';
 import { ExportFileNames } from './export-file-names';
 import { ExportModalActions } from './export-modal-actions';
+import { ExportModalError } from './export-modal-error';
 import { ExportZipSummary } from './export-zip-summary';
 
 interface ExportModalProps {
@@ -61,8 +61,17 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
     wasOpenRef.current = open;
   }, [open, exportUnits, multiModelGroups, setError]);
 
+  function handleClose(): void {
+    // Keep the modal open while pack / convert is in flight.
+    if (busy) {
+      return;
+    }
+    onClose();
+  }
+
   function handleFormatChange(next: ExportFormat): void {
     setFormat(next);
+    setError(null);
     setZipBaseName((previous) =>
       isDefaultZipBaseName(previous) ? defaultZipBaseName(next) : previous,
     );
@@ -78,7 +87,7 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
       });
       onClose();
     } catch {
-      // Error surfaced via hook state; keep modal open.
+      // Error surfaced via hook state; keep modal open (no partial zip).
     }
   }
 
@@ -86,10 +95,10 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
     <Modal
       open={open}
       title="Export"
-      onClose={onClose}
+      onClose={handleClose}
       className="max-w-md"
     >
-      <div className="flex flex-col gap-4 min-h-0 overflow-y-auto">
+      <div className="flex flex-col gap-4 min-h-0 overflow-y-auto" aria-busy={busy}>
         <ExportZipSummary
           format={format}
           groupCount={groupCount}
@@ -121,15 +130,12 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
           }}
         />
 
-        {error && (
-          <Text as="div" variant="error" className="whitespace-pre-line">
-            {error}
-          </Text>
-        )}
+        {error ? <ExportModalError message={error} /> : null}
 
         <ExportModalActions
           busy={busy}
-          onCancel={onClose}
+          format={format}
+          onCancel={handleClose}
           onExport={() => void handleExport()}
         />
       </div>

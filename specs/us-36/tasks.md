@@ -25,7 +25,7 @@ Tick only after acceptance criteria for that item pass.
 
 - [x] **Format `<Select>`** — GLB / FBX; reset to GLB on open; editor UI tokens
 - [x] **Summary + defaults** — Copy and zip basename follow format
-- [ ] **Error / busy** — Convert failures stay in modal; busy covers convert + zip
+- [x] **Error / busy** — Convert failures stay in modal; busy covers convert + zip
 
 ## Verify
 
