@@ -1,18 +1,17 @@
+import type { Object3D } from 'three';
 import { Vector3 } from 'three';
 
 import { commitPendingPose } from '@/modules/animation/stores/clip-store/actions/commit-pending-pose';
 import { pause } from '@/modules/animation/stores/clip-store/actions/playback';
 import { suspendMixerBindings } from '@/modules/animation/utils/mixer-session';
 import { POSITION_EDIT_STEP_METRES } from '../constants/position-edit';
-import { $editTool } from '../stores/edit-tool-store';
-import { $activeModel } from '../stores/model-store';
+import { resolvePositionEditTargets } from '../domain/resolve-position-edit-targets';
 import {
   $poseDirty,
   $poseEditKind,
-  capturePreEditTransform,
+  capturePreEditNodes,
   markPoseDirty,
 } from '../stores/pose-edit-store';
-import { $selection } from '../stores/selection-store';
 import { syncTransformReadout } from '../stores/transform-readout-store';
 
 export type NudgeAxis = 'x' | 'y' | 'z';
@@ -20,28 +19,31 @@ export type NudgeAxis = 'x' | 'y' | 'z';
 const scratchDelta = new Vector3();
 const scratchWorld = new Vector3();
 
+function applyWorldStep(object: Object3D, axis: NudgeAxis, step: number): void {
+  object.parent?.updateMatrixWorld(true);
+  object.getWorldPosition(scratchWorld);
+  scratchDelta.set(0, 0, 0);
+  scratchDelta[axis] = step;
+  scratchWorld.add(scratchDelta);
+  if (object.parent) {
+    object.parent.worldToLocal(scratchWorld);
+  }
+  object.position.copy(scratchWorld);
+}
+
 /**
- * Nudge the gizmo target by one position-edit step on a world/local axis (US-10).
+ * Nudge every position-edit target by one step on a world/local axis (US-10).
  * Step matches TRS position input spinners (`POSITION_EDIT_STEP_METRES`).
- * Edit = local space + selection; Move = world space + model root.
+ * Edit = local space + selection roots; Move = world space + model root;
+ * model multi-select = world space on each selected model root.
  * Each step auto-commits (one undo entry).
  */
 export function nudgeSelection(axis: NudgeAxis, sign: 1 | -1): void {
-  const editTool = $editTool.get();
-  if (editTool === 'navigate') {
+  const { targets, primary, space, poseKind } = resolvePositionEditTargets();
+  if (targets.length === 0 || !primary) {
     return;
   }
 
-  const isMove = editTool === 'move';
-  const activeModel = $activeModel.get();
-  const object = isMove
-    ? activeModel?.scene ?? null
-    : $selection.get().object;
-  if (!object) {
-    return;
-  }
-
-  const poseKind = isMove ? 'modelRoot' : 'selection';
   const step = POSITION_EDIT_STEP_METRES * sign;
 
   if ($poseDirty.get() && $poseEditKind.get() !== poseKind) {
@@ -49,30 +51,22 @@ export function nudgeSelection(axis: NudgeAxis, sign: 1 | -1): void {
   }
 
   if (!$poseDirty.get()) {
-    capturePreEditTransform(object, poseKind);
+    capturePreEditNodes(targets, poseKind);
   }
 
   pause();
   suspendMixerBindings();
 
-  if (isMove) {
-    // World-space translate along world X / Y / Z, then write local position.
-    object.parent?.updateMatrixWorld(true);
-    object.getWorldPosition(scratchWorld);
-    scratchDelta.set(0, 0, 0);
-    scratchDelta[axis] = step;
-    scratchWorld.add(scratchDelta);
-    if (object.parent) {
-      object.parent.worldToLocal(scratchWorld);
+  for (const { object } of targets) {
+    if (space === 'world') {
+      applyWorldStep(object, axis, step);
+    } else {
+      object.position[axis] += step;
     }
-    object.position.copy(scratchWorld);
-  } else {
-    // Local-space translate along the object's local axes.
-    object.position[axis] += step;
+    object.updateMatrixWorld(true);
   }
 
-  object.updateMatrixWorld(true);
   markPoseDirty();
-  syncTransformReadout(object);
+  syncTransformReadout(primary);
   commitPendingPose();
 }

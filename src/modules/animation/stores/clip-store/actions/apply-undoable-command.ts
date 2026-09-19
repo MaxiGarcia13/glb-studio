@@ -128,12 +128,7 @@ function applySaveKeyframeSnapshot(snapshot: SaveKeyframeSnapshot): void {
  * Bind-pose Saves leave TRS on the scene and in the rest-pose map. Restore both
  * so Undo works with no driving clip (rebindMixersForClips would no-op).
  */
-function applySaveKeyframeSceneNode(snapshot: SaveKeyframeSnapshot): void {
-  const sceneNode = snapshot.sceneNode;
-  if (!sceneNode) {
-    return;
-  }
-
+function applyOneSceneNode(sceneNode: NonNullable<SaveKeyframeSnapshot['sceneNode']>): void {
   const model = $model.get().models.find((entry) => entry.id === sceneNode.modelId);
   if (!model) {
     return;
@@ -161,6 +156,13 @@ function applySaveKeyframeSceneNode(snapshot: SaveKeyframeSnapshot): void {
   node.scale.set(sceneNode.scale[0], sceneNode.scale[1], sceneNode.scale[2]);
   refreshRestPoseNode(model.scene, node);
   model.scene.updateMatrixWorld(true);
+}
+
+function applySaveKeyframeSceneNode(snapshot: SaveKeyframeSnapshot): void {
+  const nodes = snapshot.sceneNodes ?? (snapshot.sceneNode ? [snapshot.sceneNode] : []);
+  for (const sceneNode of nodes) {
+    applyOneSceneNode(sceneNode);
+  }
 }
 
 /** Replace library fields from a stack snapshot, then rebind preview mixers. */

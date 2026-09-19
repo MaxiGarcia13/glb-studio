@@ -1,6 +1,7 @@
 import type { Object3D } from 'three';
 
 import { atom } from 'nanostores';
+import { $activeModel } from './model-store';
 
 export type PoseEditKind = 'modelRoot' | 'selection';
 
@@ -10,13 +11,25 @@ export interface PreEditTransform {
   scale: { x: number; y: number; z: number };
 }
 
+export interface PreEditNodeSnapshot {
+  modelId: string;
+  nodeUuid: string;
+  transform: PreEditTransform;
+}
+
 /** True while a gizmo or Settings pose edit is open (commits on gesture end). */
 export const $poseDirty = atom(false);
 
 /** Which object the current dirty edit applies to (independent of active tool). */
 export const $poseEditKind = atom<PoseEditKind | null>(null);
 
-/** TRS snapshot captured on first edit; used for bind-pose deltas; cleared on commit. */
+/**
+ * TRS snapshot(s) captured on first edit; used for bind-pose deltas and
+ * multi-select undo. Cleared on commit. Single-target edits store one entry.
+ */
+export const $preEditNodes = atom<PreEditNodeSnapshot[] | null>(null);
+
+/** Primary node's pre-edit TRS (same as `$preEditNodes[0].transform` when set). */
 export const $preEditTransform = atom<PreEditTransform | null>(null);
 
 export function markPoseDirty(): void {
@@ -25,12 +38,8 @@ export function markPoseDirty(): void {
   }
 }
 
-export function capturePreEditTransform(object: Object3D, kind: PoseEditKind): void {
-  if ($preEditTransform.get()) {
-    return;
-  }
-  $poseEditKind.set(kind);
-  $preEditTransform.set({
+function snapshotTransform(object: Object3D): PreEditTransform {
+  return {
     position: { x: object.position.x, y: object.position.y, z: object.position.z },
     quaternion: {
       x: object.quaternion.x,
@@ -39,7 +48,32 @@ export function capturePreEditTransform(object: Object3D, kind: PoseEditKind): v
       w: object.quaternion.w,
     },
     scale: { x: object.scale.x, y: object.scale.y, z: object.scale.z },
-  });
+  };
+}
+
+export function capturePreEditTransform(object: Object3D, kind: PoseEditKind): void {
+  if ($preEditNodes.get()) {
+    return;
+  }
+  const modelId = $activeModel.get()?.id ?? '';
+  capturePreEditNodes([{ object, modelId }], kind);
+}
+
+export function capturePreEditNodes(
+  nodes: readonly { object: Object3D; modelId: string }[],
+  kind: PoseEditKind,
+): void {
+  if ($preEditNodes.get() || nodes.length === 0) {
+    return;
+  }
+  $poseEditKind.set(kind);
+  const snapshots = nodes.map((entry) => ({
+    modelId: entry.modelId,
+    nodeUuid: entry.object.uuid,
+    transform: snapshotTransform(entry.object),
+  }));
+  $preEditNodes.set(snapshots);
+  $preEditTransform.set(snapshots[0]?.transform ?? null);
 }
 
 export function clearPoseDirty(): void {
@@ -47,5 +81,6 @@ export function clearPoseDirty(): void {
     $poseDirty.set(false);
   }
   $preEditTransform.set(null);
+  $preEditNodes.set(null);
   $poseEditKind.set(null);
 }

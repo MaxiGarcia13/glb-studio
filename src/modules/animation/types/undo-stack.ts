@@ -45,6 +45,8 @@ export interface SaveKeyframeSnapshot {
   bindPoseOverrides?: Record<string, Record<string, BindPoseDelta>>;
   /** Present on bind-pose Saves; omitted for clip keyframe / root TRS commits. */
   sceneNode?: SaveKeyframeSceneNode;
+  /** Multi-select position commits — every moved root (supersedes single `sceneNode`). */
+  sceneNodes?: readonly SaveKeyframeSceneNode[];
 }
 
 export interface TimeScaleSnapshot {

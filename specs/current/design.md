@@ -213,7 +213,7 @@ Bind-pose / Move / T-pose commit branching: see **Edit / Move tools & bind pose 
 12. **Bind-pose deltas** — per `modelId` + node name; cleared on model remove/replace. Position `p' = p + Δp`; quaternion `q' = Δq * q`; scale `s' = s * Δs`. Import / Replace / retarget apply accumulated overrides for the active model
 13. **Load hoist (US-21)** — `hoistRootTransform` after parse: while the scene has one child, compose non-identity child TRS into the scene (clear child) or peel identity-only wrappers via `attach`; stops at multi-child or geometry/bone nodes
 
-Out of scope: multi-model simultaneous transform.
+Multi-select **position** (nudge + Settings XYZ delta) moves every selected model root or part root together; rotation / scale / TransformControls stay single-target.
 
 ## Editor commands + undo stack (US-10)
 
@@ -247,7 +247,7 @@ Out of scope: multi-model simultaneous transform.
 
 ### Nudge
 
-Step = `POSITION_EDIT_STEP_METRES` (`0.01` m) — same as Settings / part TRS position input spinners. Independent of snap grid (`gridStepMetres`). Space matches TransformControls (**Edit = local**, **Move = world**). Target = gizmo target (Edit → `$selection.object`; Move → model root). Side effects: pause, suspend mixer, capture pre-edit, apply step, **auto-commit** (`saveKeyframe` stack entry). No rotation/scale/camera/multi-select nudge.
+Step = `POSITION_EDIT_STEP_METRES` (`0.01` m) — same as Settings / part TRS position input spinners. Independent of snap grid (`gridStepMetres`). Space matches TransformControls (**Edit = local**, **Move = world**). Targets = `resolvePositionEditTargets`: **Edit** → part-selection roots (`$selection.objects`, skipping nodes nested under another selected node); **Move** → active model root; **model multi-select** → each selected model’s scene root (world). Side effects: pause, suspend mixer, capture pre-edit per target, apply the same step to every target, **auto-commit** (`saveKeyframe` with `sceneNodes` when more than one). No rotation/scale/camera nudge. Settings multi-select shows position XYZ bound to the primary (last-clicked); typing applies a **shared delta** to every target.
 
 ### Create-part clipboard (MVP limits)
 
@@ -258,7 +258,7 @@ Eligible on focused `source === 'created'` model: stamped create parts (`userDat
 | Stack id       | User action                 | Notes                                                                                     |
 | -------------- | --------------------------- | ----------------------------------------------------------------------------------------- |
 | `trimClip`     | Apply trim                  | Before/after `{ clip, trimStart, trimEnd, duration }`; replaces one-shot pre-trim restore |
-| `saveKeyframe` | Auto-commit pose / keyframe | One entry per finished gesture; includes bind-pose scene TRS when no driving clip; created models without an owned ready clip push `sceneNode` only |
+| `saveKeyframe` | Auto-commit pose / keyframe | One entry per finished gesture; includes bind-pose scene TRS when no driving clip; created models without an owned ready clip push `sceneNode` / `sceneNodes`; multi-select position commits restore every moved root via `sceneNodes` |
 | `setTimeScale` | Speed slider commit         | Before/after `{ timeScale }`; bake intent for export                                      |
 
 One stack entry = one user commit (coalesce drag/typing with `recordUndo: false` until pointer-up / blur). Snapshot (not patch) clones mutated `AnimationClip`s. Unbounded in-session; cleared on reload. After undo/redo: replace library fields, rebind mixer (`rebindMixersForClips`); `sceneNode`-only entries restore mesh/group TRS + rest pose without clip rebind. Not undoable: transport, viewport chrome, create-part graph membership (add / delete / paste / group / ungroup), blend/retarget/rename/import.
@@ -286,7 +286,7 @@ No durable undo across reloads; no collaborative OT/CRDT.
 
 1. `$viewportSettings` (`nanostores` `map`) in `viewport/stores/viewport-settings-store.ts`: `{ axesVisible, axesSize, bonesVisible, snapToGrid, gridStepMetres, snapRotation, rotationStepDegrees }` with setters. Axes defaults `true` / `AXES_SIZE` (`10`); clamp size `1`–`50`. Bones default `true`. Snap defaults `false` / `0.1` m / `false` / `15°`; clamp grid `0.01`–`10`, rotation `1`–`180`
 2. Top **Settings** menu hosts axes (`WorldAxesControls`), bones (`BonesVisibilityControls`), and snap (`SnapControls`: checkboxes + step inputs; step fields disabled when their flag is off) — not library sidebar, Settings aside, or preview chrome
-3. Settings aside hosts **Model** (and Animation / Part / Name) — not Axes / Bones / Snap. Model has live editable **model root** position (m), rotation (degrees), and scale as **percent of rest size** (`100` = rest / bind root) via `TransformReadout` whenever a model is loaded — independent of Edit / Move (US-15 / US-21); with an active clip on the focused model, auto-commit stores values on that clip’s `rootPositionByModelId` / `rootRotationByModelId` / `rootScaleByModelId` (scale stored as Three.js factor)
+3. Settings aside hosts **Model** (and Animation / Part / Name) — not Axes / Bones / Snap. Model has live editable **model root** position (m), rotation (degrees), and scale as **percent of rest size** (`100` = rest / bind root) via `TransformReadout` whenever a model is loaded — independent of Edit / Move (US-15 / US-21); with an active clip on the focused model, auto-commit stores values on that clip’s `rootPositionByModelId` / `rootRotationByModelId` / `rootScaleByModelId` (scale stored as Three.js factor). **Multi-select** shows a **Selection** section with position XYZ only (`TransformReadout` `positionOnly`); values mirror the primary (last-clicked) and edits apply a shared delta to every selected root
 4. `ViewportCanvas` mounts `<WorldAxes axesSize={…} />` only when `axesVisible`; `WorldAxes` rebuilds tick geometry from `axesSize` at runtime (major/minor steps stay in `viewport/constants/world-axes`). `ModelViewer` mounts `ModelSkeletonHelper` per previewed imported model only when `bonesVisible`. Hotkeys: **R** → `toggleAxes`; **B** → `toggleBones` (commands catalog)
 5. `TransformControlsDriver` passes `translationSnap` / `rotationSnap` (degrees→radians) only when focused model is created and the matching snap flag is on — prefer built-in TC snaps over post-`objectChange` re-quantize
 6. Session-only — no persistence. Out of scope: ground-grid toggle, unit system changes, scale snap, vertex/edge/magnet snap

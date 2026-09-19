@@ -1,6 +1,6 @@
 import type { Object3D } from 'three';
 import { isCreateGroup } from '@/modules/create/domain/group-data';
-import { $activeModel } from '../stores/model-store';
+import { $activeModel, $model } from '../stores/model-store';
 import { $selection } from '../stores/selection-store';
 
 /**
@@ -9,7 +9,7 @@ import { $selection } from '../stores/selection-store';
  * - group: Model TRS bound to the empty create group; no Animation
  * - part: Part panel (TRS + size); no Model / Animation
  * - bone: Selection name + Animation (Keys filter); no Model / Part
- * - multi: hide Model / Part / Animation (ambiguous)
+ * - multi: position XYZ only (shared delta); primary bound for readout
  *
  * Part / group focus is create-model only (US-34: after skin, source → imported).
  */
@@ -21,10 +21,21 @@ export interface SettingsFocus {
   modelTransformTarget: Object3D | null;
   /** Selected create part or bone when kind is `part` / `bone`. */
   partObject: Object3D | null;
+  /** Primary object for multi-select position readout / delta baseline. */
+  multiTransformTarget: Object3D | null;
 }
 
 function isBoneObject(object: Object3D): boolean {
   return (object as Object3D & { isBone?: boolean }).isBone === true;
+}
+
+function idleFocus(root: Object3D | null): SettingsFocus {
+  return {
+    kind: 'idle',
+    modelTransformTarget: root,
+    partObject: null,
+    multiTransformTarget: null,
+  };
 }
 
 export function resolveSettingsFocus(): SettingsFocus {
@@ -35,19 +46,33 @@ export function resolveSettingsFocus(): SettingsFocus {
 
   if (selection.kind === 'models') {
     if (selection.modelIds.length > 1) {
-      return { kind: 'multi', modelTransformTarget: null, partObject: null };
+      const lastId = selection.modelIds[selection.modelIds.length - 1];
+      const primary
+        = $model.get().models.find((entry) => entry.id === lastId)?.scene
+          ?? root;
+      return {
+        kind: 'multi',
+        modelTransformTarget: null,
+        partObject: null,
+        multiTransformTarget: primary,
+      };
     }
-    return { kind: 'idle', modelTransformTarget: root, partObject: null };
+    return idleFocus(root);
   }
 
   if (selection.kind === 'parts') {
     if (selection.objects.length > 1) {
-      return { kind: 'multi', modelTransformTarget: null, partObject: null };
+      return {
+        kind: 'multi',
+        modelTransformTarget: null,
+        partObject: null,
+        multiTransformTarget: selection.object,
+      };
     }
 
     const object = selection.object;
     if (!object) {
-      return { kind: 'idle', modelTransformTarget: root, partObject: null };
+      return idleFocus(root);
     }
 
     if (created && isCreateGroup(object)) {
@@ -55,6 +80,7 @@ export function resolveSettingsFocus(): SettingsFocus {
         kind: 'group',
         modelTransformTarget: object,
         partObject: null,
+        multiTransformTarget: null,
       };
     }
 
@@ -63,6 +89,7 @@ export function resolveSettingsFocus(): SettingsFocus {
         kind: 'bone',
         modelTransformTarget: null,
         partObject: object,
+        multiTransformTarget: null,
       };
     }
 
@@ -71,12 +98,13 @@ export function resolveSettingsFocus(): SettingsFocus {
         kind: 'part',
         modelTransformTarget: null,
         partObject: object,
+        multiTransformTarget: null,
       };
     }
 
     // Imported / skinned mesh pick — keep model + Animation, not create Part tools.
-    return { kind: 'idle', modelTransformTarget: root, partObject: null };
+    return idleFocus(root);
   }
 
-  return { kind: 'idle', modelTransformTarget: root, partObject: null };
+  return idleFocus(root);
 }

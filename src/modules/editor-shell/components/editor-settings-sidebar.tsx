@@ -16,6 +16,7 @@ import { TransformReadout } from './transform-readout';
 export function EditorSettingsSidebar() {
   const focus = useStore($settingsFocus);
   const showModel = focus.kind === 'idle' || focus.kind === 'group';
+  const showMultiPosition = focus.kind === 'multi';
   const showPart = focus.kind === 'part';
   const showAnimation = focus.kind === 'idle' || focus.kind === 'bone';
   const showSelection = focus.kind !== 'multi';
@@ -35,6 +36,15 @@ export function EditorSettingsSidebar() {
               Model
             </Text>
             <TransformReadout />
+          </div>
+        )}
+
+        {showMultiPosition && (
+          <div className="flex flex-col gap-4">
+            <Text as="h2" variant="section">
+              Selection
+            </Text>
+            <TransformReadout positionOnly />
           </div>
         )}
 

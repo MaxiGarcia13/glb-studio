@@ -10,11 +10,13 @@ import {
   suspendMixerBindings,
 } from '@/modules/animation/utils/mixer-session';
 import { degreesToRadians, radiansToDegrees, wrapDegrees } from '../domain/euler-degrees';
+import { resolveMultiSelectionPositionTargets } from '../domain/resolve-position-edit-targets';
 import { resolveSettingsFocus } from '../domain/settings-focus';
 import { $activeModel } from './model-store';
 import {
   $poseDirty,
   $poseEditKind,
+  capturePreEditNodes,
   capturePreEditTransform,
   markPoseDirty,
 
@@ -53,7 +55,10 @@ export const $settingsFocus = computed(
  */
 export const $settingsTransformTarget = computed(
   [$settingsFocus],
-  (focus) => focus.modelTransformTarget ?? focus.partObject,
+  (focus) =>
+    focus.multiTransformTarget
+    ?? focus.modelTransformTarget
+    ?? focus.partObject,
 );
 
 function readRotationDegrees(object: Object3D): {
@@ -124,10 +129,16 @@ function finishSettingsEdit(object: Object3D, poseKind: PoseEditKind): void {
 }
 
 /**
- * Apply one position axis from Settings (model root or selected group).
+ * Apply one position axis from Settings (model root, group, or multi-select delta).
  */
 export function applyTransformPositionAxis(axis: TransformAxis, value: number): void {
   if (!Number.isFinite(value)) {
+    return;
+  }
+
+  const focus = resolveSettingsFocus();
+  if (focus.kind === 'multi') {
+    applyMultiPositionAxis(axis, value);
     return;
   }
 
@@ -144,6 +155,41 @@ export function applyTransformPositionAxis(axis: TransformAxis, value: number): 
   beginSettingsEdit(object, poseKind);
   object.position[axis] = value;
   finishSettingsEdit(object, poseKind);
+}
+
+function applyMultiPositionAxis(axis: TransformAxis, value: number): void {
+  const { targets, primary, poseKind } = resolveMultiSelectionPositionTargets();
+  if (!primary || targets.length === 0) {
+    return;
+  }
+
+  const current = primary.position[axis];
+  if (current === value) {
+    return;
+  }
+  const delta = value - current;
+
+  if ($poseDirty.get() && $poseEditKind.get() !== poseKind) {
+    commitPendingPose();
+  }
+  if (!$poseDirty.get()) {
+    capturePreEditNodes(targets, poseKind);
+  }
+
+  pause();
+  suspendMixerBindings();
+
+  for (const { object } of targets) {
+    object.position[axis] += delta;
+    object.updateMatrixWorld(true);
+  }
+
+  if (poseKind === 'modelRoot' && $clips.get().activeClipId) {
+    sampleMixerAt(0);
+  }
+
+  markPoseDirty();
+  syncTransformReadout(primary);
 }
 
 /**
