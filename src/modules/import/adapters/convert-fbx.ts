@@ -3,6 +3,7 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { hasModelExtension } from '@/utils/with-model-extension';
 
 const require = createRequire(import.meta.url);
 
@@ -19,10 +20,6 @@ export const fbxConverter: { run: FbxConverter } = {
   run: require('fbx2gltf'),
 };
 
-function isFbxName(name: string): boolean {
-  return /\.fbx$/i.test(name);
-}
-
 export class FbxConvertError extends Error {
   constructor(
     message: string,
@@ -37,7 +34,7 @@ export async function convertFbxToGlb(
   fileName: string,
   data: ArrayBuffer,
 ): Promise<Buffer> {
-  if (!isFbxName(fileName)) {
+  if (!hasModelExtension(fileName, 'fbx')) {
     throw new FbxConvertError('Only .fbx files are accepted', 400);
   }
   if (data.byteLength > MAX_BODY_BYTES) {

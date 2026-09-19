@@ -1,8 +1,8 @@
 import type { APIRoute } from 'astro';
 import {
-  convertFbxToGlb,
-  FbxConvertError,
-} from '@/modules/import/adapters/convert-fbx';
+  convertGlbToFbx,
+  GlbToFbxConvertError,
+} from '@/modules/export/adapters/convert-glb-to-fbx';
 import { toArrayBuffer } from '@/utils/to-array-buffer';
 import { withModelExtension } from '@/utils/with-model-extension';
 
@@ -22,20 +22,20 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const arrayBuffer = await file.arrayBuffer();
-    const glbBuffer = await convertFbxToGlb(file.name, arrayBuffer);
+    const fbxBuffer = await convertGlbToFbx(file.name, arrayBuffer);
 
-    return new Response(toArrayBuffer(glbBuffer), {
+    return new Response(toArrayBuffer(fbxBuffer), {
       status: 200,
       headers: {
-        'content-type': 'model/gltf-binary',
-        'content-disposition': `attachment; filename="${withModelExtension(file.name, 'glb')}"`,
+        'content-type': 'application/octet-stream',
+        'content-disposition': `attachment; filename="${withModelExtension(file.name, 'fbx')}"`,
       },
     });
   } catch (err) {
-    if (err instanceof FbxConvertError) {
+    if (err instanceof GlbToFbxConvertError) {
       return new Response(err.message, { status: err.status });
     }
-    console.error('[fbx-to-glb]', err);
+    console.error('[glb-to-fbx]', err);
     return new Response('Conversion failed', { status: 500 });
   }
 };

@@ -1,5 +1,6 @@
 import { Buffer } from 'node:buffer';
 import { AssimpError, createAssimp } from 'libassimp';
+import { hasModelExtension } from '@/utils/with-model-extension';
 
 const MAX_BODY_BYTES = 4.5 * 1024 * 1024; // 4.5 MB
 
@@ -35,10 +36,6 @@ export const glbToFbxConverter: { run: GlbToFbxConverter } = {
   },
 };
 
-function isGlbName(name: string): boolean {
-  return /\.glb$/i.test(name);
-}
-
 export class GlbToFbxConvertError extends Error {
   constructor(
     message: string,
@@ -53,7 +50,7 @@ export async function convertGlbToFbx(
   fileName: string,
   data: ArrayBuffer,
 ): Promise<Buffer> {
-  if (!isGlbName(fileName)) {
+  if (!hasModelExtension(fileName, 'glb')) {
     throw new GlbToFbxConvertError('Only .glb files are accepted', 400);
   }
   if (data.byteLength > MAX_BODY_BYTES) {
