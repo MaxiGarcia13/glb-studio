@@ -12,7 +12,7 @@
 - [x] **`canSkinModel(model)`** — Prerequisites + disabled reason string
 - [x] **`buildBonesFromCreateGroups(scene)`** — Name-stable Bone tree matching group hierarchy
 - [x] **`bindMeshesRigid(scene, skeleton)`** — Per-part SkinnedMesh (or equivalent) with weight 1 to parent bone; bind matrices correct at rest
-- [ ] **`skinCreatedModel(modelId)` action** — Clone → convert → swap on success; restore original on failure; user-visible error
+- [x] **`skinCreatedModel(modelId)` action** — Clone → convert → swap on success; restore original on failure; user-visible error
 
 ## Library / viewport gates
 
