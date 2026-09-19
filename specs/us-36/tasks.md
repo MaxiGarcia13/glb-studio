@@ -19,7 +19,7 @@ Tick only after acceptance criteria for that item pass.
 - [x] **`ensureFbxFile` service** — POST buffer/file to convert API; surface error message for modal
 - [x] **Format-aware file names** — `resolveExportFileName(…, 'glb' | 'fbx')`; zip default `glb-export` / `fbx-export`
 - [x] **`downloadExportZip({ format })`** — GLB path unchanged; FBX path convert-each-then-zip; fail closed (no partial download)
-- [ ] **`useExportZip` + types** — Pass `format` through options
+- [x] **`useExportZip` + types** — Pass `format` through options
 
 ## Export modal UI
 

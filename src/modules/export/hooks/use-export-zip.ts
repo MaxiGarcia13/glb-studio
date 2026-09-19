@@ -23,6 +23,10 @@ export function useExportZip() {
   const canExport
     = exportUnits.length > 0 || clips.some((entry) => entry.clip !== null);
 
+  /**
+   * Pack and download the export zip.
+   * Pass `format: 'fbx'` to convert each packed GLB via the convert API.
+   */
   async function download(options: ExportZipOptions = {}): Promise<void> {
     setBusy(true);
     setError(null);
