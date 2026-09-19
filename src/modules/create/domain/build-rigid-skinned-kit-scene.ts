@@ -1,5 +1,5 @@
 import type { BufferGeometry, Material, Object3D } from 'three';
-import type { Kit } from '@/modules/create/types/kit';
+import type { GroupRecipe, PartRecipe } from '@/modules/create/types/kit';
 
 import {
   Bone,
@@ -16,17 +16,25 @@ import { getPartKind } from './part-kind';
 
 const ARMATURE_NAME = 'Armature';
 
+/** Mesh recipe input for offline rigid skinning (registered MeshKit or maintainer recipe). */
+export interface RigidSkinnedKitRecipe {
+  id?: string;
+  label: string;
+  groups?: readonly GroupRecipe[];
+  parts: readonly PartRecipe[];
+}
+
 /**
  * Build a bind-pose skinned scene from a mesh kit recipe (rigid weights).
  * Offline / maintainer use (US-33 kit GLB); not generated at runtime in the app.
  */
-export function buildRigidSkinnedSceneFromKit(kit: Kit): Group {
+export function buildRigidSkinnedSceneFromKit(kit: RigidSkinnedKitRecipe): Group {
   const root = new Group();
   root.name = kit.label;
 
   const groups = kit.groups ?? [];
   if (groups.length === 0) {
-    throw new Error(`Kit "${kit.id}" has no groups to turn into a skeleton`);
+    throw new Error(`Kit "${kit.id ?? kit.label}" has no groups to turn into a skeleton`);
   }
 
   const nodesByName = new Map<string, Object3D>();
@@ -71,7 +79,7 @@ export function buildRigidSkinnedSceneFromKit(kit: Kit): Group {
   }
 
   if (bones.length === 0) {
-    throw new Error(`Kit "${kit.id}" produced no bones`);
+    throw new Error(`Kit "${kit.id ?? kit.label}" produced no bones`);
   }
 
   const skeleton = new Skeleton(bones);
@@ -79,7 +87,9 @@ export function buildRigidSkinnedSceneFromKit(kit: Kit): Group {
 
   for (const recipe of kit.parts) {
     if (!recipe.parent) {
-      throw new Error(`Part "${recipe.name}" in kit "${kit.id}" has no parent bone`);
+      throw new Error(
+        `Part "${recipe.name}" in kit "${kit.id ?? kit.label}" has no parent bone`,
+      );
     }
     const parentNode = nodesByName.get(recipe.parent);
     if (!(parentNode instanceof Bone)) {

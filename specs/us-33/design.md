@@ -22,7 +22,7 @@ type Kit
 
 `listStarterKits` / From kit modal: unchanged UX; skinned kits appear beside mesh kits.
 
-**Dual Block robot (locked):** primary kit id for the skinned asset keeps label **Block robot**; existing mesh recipe is relabeled **Block robot (parts)** (separate `KitId`, e.g. `block-robot-parts`) so US-34 can still skin the create-group fixture.
+**Block robot (locked):** single From kit entry — skinned asset id `block-robot`. The mesh create-group recipe (`BLOCK_ROBOT_MESH_RECIPE`) is maintainer-only for `npm run kits:block-robot`, not listed in From kit.
 
 ## Spawn path
 

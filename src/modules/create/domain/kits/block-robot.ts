@@ -1,4 +1,4 @@
-import type { Kit } from '@/modules/create/types/kit';
+import type { GroupRecipe, PartRecipe } from '@/modules/create/types/kit';
 
 const IDENTITY_ROTATION = [0, 0, 0] as const;
 
@@ -89,13 +89,17 @@ const neckY = yNeck + NECK_H / 2;
 const kneeY = yKnee + KNEE_R;
 
 /**
- * Slender humanoid robot — Y Bot–ish segments under an Armature group tree.
- * Groups are stamped create groups (not skinned bones). New model stays empty.
+ * Maintainer-only mesh recipe for offline skinned GLB generation (`npm run kits:block-robot`).
+ * Not registered in From kit — users get the skinned kit (`block-robot`).
  */
-export const BLOCK_ROBOT_KIT: Kit<'block-robot'> = {
-  id: 'block-robot',
+export interface BlockRobotMeshRecipe {
+  label: string;
+  groups: readonly GroupRecipe[];
+  parts: readonly PartRecipe[];
+}
+
+export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
   label: 'Block robot',
-  description: 'A slender white-and-black humanoid you can recolour and rearrange.',
   groups: [
     { name: 'Armature', position: [0, 0, 0] },
     { name: 'Hips', parent: 'Armature', position: [0, hipsY, 0] },

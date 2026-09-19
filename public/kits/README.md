@@ -4,7 +4,7 @@ Maintainer notes for files under `public/kits/`. Not a user-facing product surfa
 
 ## Block robot (`block-robot.glb`)
 
-Skinned starter for **From kit → Block robot** (US-33). Generated offline from the mesh create-group recipe (`src/modules/create/domain/kits/block-robot.ts`); committed here for a stable URL (`/kits/block-robot.glb`).
+Skinned starter for **From kit → Block robot** (US-33). Generated offline from the maintainer mesh recipe (`BLOCK_ROBOT_MESH_RECIPE` in `src/modules/create/domain/kits/block-robot.ts`); committed here for a stable URL (`/kits/block-robot.glb`). That recipe is **not** a From kit entry.
 
 Regenerate:
 

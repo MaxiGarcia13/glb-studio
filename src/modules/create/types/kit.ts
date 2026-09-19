@@ -1,7 +1,10 @@
 import type { PartKindId, PartSizeParams } from './part';
 
-/** Kit ids — New model stays `empty`; optional presets are US-27. */
-export type KitId = 'empty' | 'simple-building' | 'block-robot';
+/** Kit ids — New model stays `empty`; optional presets are US-27 / US-33. */
+export type KitId
+  = | 'empty'
+    | 'simple-building'
+    | 'block-robot';
 
 export type ColorHex = `#${string}`;
 
@@ -33,11 +36,28 @@ export interface PartRecipe {
   color: ColorHex;
 }
 
-export interface Kit<K extends KitId = KitId> {
+export interface SkinnedKitAsset {
+  /** Stable URL under `public/kits/` (e.g. `/kits/block-robot.glb`). */
+  url: string;
+  /** Library row file name when spawning (e.g. `Block robot.glb`). */
+  defaultFileName?: string;
+}
+
+interface KitMeta<K extends KitId = KitId> {
   id: K;
   label: string;
   description: string;
-  /** Optional armature-style group tree (declared parents before children). */
+}
+
+/** Mesh + optional create-group recipe (created-model path). */
+export interface MeshKit<K extends KitId = KitId> extends KitMeta<K> {
   groups?: readonly GroupRecipe[];
   parts: readonly PartRecipe[];
 }
+
+/** Pre-skinned GLB asset (imported-model path). */
+export interface SkinnedKit<K extends KitId = KitId> extends KitMeta<K> {
+  skinnedAsset: SkinnedKitAsset;
+}
+
+export type Kit<K extends KitId = KitId> = MeshKit<K> | SkinnedKit<K>;

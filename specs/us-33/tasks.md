@@ -4,7 +4,7 @@ Prefer completing this before US-34. Tick only after acceptance.
 
 ## Spec / kickoff
 
-- [x] **Lock product choices** — Dual kits; offline script → `public/kits/`; T-pose only (no demo clips) — see [`requirements.md`](./requirements.md) Locked product choices
+- [x] **Lock product choices** — Replace (skinned Block robot only); offline script → `public/kits/`; T-pose only — see [`requirements.md`](./requirements.md) Locked product choices
 - [x] **Bone / clip contract note** — [`public/kits/README.md`](../../public/kits/README.md); design links to it
 
 ## Asset
@@ -15,21 +15,21 @@ Prefer completing this before US-34. Tick only after acceptance.
 
 ## Kit registry + spawn
 
-- [ ] **Extend `Kit` type** — Discriminated mesh recipe vs `skinnedAsset`; type-safe `KitId`
-- [ ] **Register skinned Block robot** — Label + description in From kit list (primary “Block robot”)
-- [ ] **`createFromKit` skinned branch** — Parse GLB → imported library entry + owned embedded clips (none expected); no create-parts revision bump required
-- [ ] **Error path** — Failed load surfaces clear copy; library unchanged
+- [x] **Extend `Kit` type** — Discriminated `MeshKit` vs `SkinnedKit`; type-safe `KitId`
+- [x] **Register skinned Block robot** — Label + description in From kit list (“Block robot”)
+- [x] **`createFromKit` skinned branch** — Fetch/parse GLB → `importModelResults` (imported); no create-parts revision bump
+- [x] **Error path** — Failed load shows clear copy in From kit modal; library unchanged
 
 ## Mesh kit disposition
 
-- [ ] **Rename mesh Block robot** — Label **Block robot (parts)**; keep recipe; Modern house + empty as-is
+- [x] **Remove mesh Block robot from From kit** — Recipe kept as maintainer-only `BLOCK_ROBOT_MESH_RECIPE`; Modern house + empty as-is
 
 ## Verify
 
 - [ ] **From kit → skinned robot** — SkeletonHelper visible; bone outliner; select bone; Edit gizmo
 - [ ] **Clip path** — Import a matching clip / retarget still works (kit has no embedded demos)
 - [ ] **Export zip** — Model GLB re-imports as skinned character
-- [ ] **New model / house / parts kit** — Unaffected (parts kit still spawns create-group robot)
+- [ ] **New model / house kit** — Unaffected
 - [ ] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md)
 
 ## Ship

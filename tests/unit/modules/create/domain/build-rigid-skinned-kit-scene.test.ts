@@ -2,11 +2,11 @@ import { Bone, SkinnedMesh } from 'three';
 import { describe, expect, it } from 'vitest';
 
 import { buildRigidSkinnedSceneFromKit } from '@/modules/create/domain/build-rigid-skinned-kit-scene';
-import { BLOCK_ROBOT_KIT } from '@/modules/create/domain/kits/block-robot';
+import { BLOCK_ROBOT_MESH_RECIPE } from '@/modules/create/domain/kits/block-robot';
 
 describe('buildRigidSkinnedSceneFromKit', () => {
   it('builds an Armature with 17 bones and rigid skinned meshes for Block robot', () => {
-    const scene = buildRigidSkinnedSceneFromKit(BLOCK_ROBOT_KIT);
+    const scene = buildRigidSkinnedSceneFromKit(BLOCK_ROBOT_MESH_RECIPE);
 
     const bones: string[] = [];
     let skinnedMeshes = 0;
@@ -34,6 +34,6 @@ describe('buildRigidSkinnedSceneFromKit', () => {
     expect(bones).toContain('Hips');
     expect(bones).toContain('LeftHand');
     expect(bones).toContain('RightFoot');
-    expect(skinnedMeshes).toBe(BLOCK_ROBOT_KIT.parts.length);
+    expect(skinnedMeshes).toBe(BLOCK_ROBOT_MESH_RECIPE.parts.length);
   });
 });

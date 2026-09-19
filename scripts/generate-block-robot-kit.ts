@@ -12,7 +12,7 @@ import { Bone, SkinnedMesh } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 import { buildRigidSkinnedSceneFromKit } from '@/modules/create/domain/build-rigid-skinned-kit-scene';
-import { BLOCK_ROBOT_KIT } from '@/modules/create/domain/kits/block-robot';
+import { BLOCK_ROBOT_MESH_RECIPE } from '@/modules/create/domain/kits/block-robot';
 import { exportGlbBinary } from '@/modules/export/adapters/gltf-exporter';
 
 /** GLTFExporter binary path uses FileReader; Node does not provide it. */
@@ -38,7 +38,8 @@ const OUT_DIR = path.join(ROOT, 'public', 'kits');
 const OUT_FILE = path.join(OUT_DIR, 'block-robot.glb');
 
 async function main(): Promise<void> {
-  const scene = buildRigidSkinnedSceneFromKit(BLOCK_ROBOT_KIT);
+  const scene = buildRigidSkinnedSceneFromKit(BLOCK_ROBOT_MESH_RECIPE);
+  scene.name = 'Block robot';
   const buffer = await exportGlbBinary(scene, []);
 
   await mkdir(OUT_DIR, { recursive: true });

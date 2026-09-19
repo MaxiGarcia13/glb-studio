@@ -1,5 +1,5 @@
 import type { Group, Mesh, Object3D } from 'three';
-import type { Kit } from '@/modules/create/types/kit';
+import type { MeshKit } from '@/modules/create/types/kit';
 import { MeshStandardMaterial } from 'three';
 import { createNamedCreateGroup } from './create-part-group';
 import { attachUnder } from './parent-part';
@@ -10,7 +10,7 @@ import { getPartKind } from './part-kind';
  * Recipe TRS is authored in world space; optional `parent` uses world-preserving attach
  * so armature groups sit at joint pivots for outliner / Edit parenting.
  */
-export function instantiateKitParts(scene: Object3D, kit: Kit): Mesh[] {
+export function instantiateKitParts(scene: Object3D, kit: MeshKit): Mesh[] {
   const groupsByName = new Map<string, Group>();
 
   for (const recipe of kit.groups ?? []) {

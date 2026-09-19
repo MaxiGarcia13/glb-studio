@@ -22,21 +22,22 @@ As an editor user with little 3D experience, I can start from a **skinned** Bloc
 - [ ] User can Edit-select bones, Hold Pose / playback / export like any other imported character
 - [ ] Zip export packs the skinned kit model as a normal imported GLB (mesh + owned ready clips)
 - [ ] **File → New model** and the mesh-only Modern house kit stay unchanged
-- [ ] **Dual kits:** primary **Block robot** is the skinned GLB; mesh + create-group recipe remains as **Block robot (parts)** (US-34 QA fixture)
+- [ ] **Block robot** From kit entry is the skinned GLB only (previous mesh create-group recipe is not listed)
 - [x] Asset contract is documented (bone naming convention, no embedded demo clips, approx poly/bone count, license) — [`public/kits/README.md`](../../public/kits/README.md)
 - [ ] Load failure of the kit GLB shows a clear error; does not leave a half-empty library entry
 
 ## Out of scope
 
 - In-editor auto-rig / weight painting (US-34)
-- Converting the mesh Block robot in-session into skinned (US-34)
+- Converting a mesh Block robot in-session into skinned (US-34)
 - Skinning the Modern house kit
 - Marketplace / remote kit download
 - Retarget UI changes (existing US-6 path is enough if bone names match registry)
 - Demo / idle clips inside the skinned kit GLB (import / retarget remains the path)
+- Listing the maintainer mesh recipe as a From kit entry
 
 ## Locked product choices (kickoff)
 
-1. **Dual kits** — From kit lists **Block robot** (skinned asset) and **Block robot (parts)** (existing mesh + create-group recipe). Modern house + empty unchanged.
+1. **Replace** — From kit lists a single **Block robot** (skinned asset). Mesh create-group recipe is maintainer-only for GLB regeneration, not a starter kit. Modern house + empty unchanged.
 2. **Asset source** — Offline script generates a skinned GLB from the create-group recipe (rigid weights OK); commit the `.glb` under `public/kits/`. Script is maintainers-only (not shipped to users). Not generated at runtime in the browser.
 3. **Starter clips** — Bind / T-pose only; **no** embedded demo clips in the kit GLB.
