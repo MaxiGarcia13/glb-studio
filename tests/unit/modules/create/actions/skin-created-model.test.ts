@@ -1,6 +1,8 @@
-import { BoxGeometry, Group, Mesh, MeshStandardMaterial, SkinnedMesh } from 'three';
+import type { ClipEntry } from '@/modules/animation/types/clip';
+import { AnimationClip, BoxGeometry, Group, Mesh, MeshStandardMaterial, SkinnedMesh } from 'three';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { $clips } from '@/modules/animation/stores/clip-store';
 import { skinCreatedModel } from '@/modules/create/actions/skin-created-model';
 import { writeCreateGroup } from '@/modules/create/domain/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
@@ -8,6 +10,26 @@ import * as convertModule from '@/modules/create/domain/skinning/convert-created
 import { isUsableSkinnedModelScene } from '@/modules/import/domain/model-scene-kind';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { clearSelection, selectObject } from '@/modules/viewport/stores/selection-store';
+
+function clipEntry(overrides: Partial<ClipEntry>): ClipEntry {
+  return {
+    id: 'clip-1',
+    name: 'pose',
+    sourceFile: 'pose.glb',
+    clip: new AnimationClip('pose', 1, []),
+    sourceClip: null,
+    status: 'ready',
+    error: null,
+    timeScale: 1,
+    sourceBindLengths: {},
+    sourceBindFrames: {},
+    ownerModelId: null,
+    rootPositionByModelId: {},
+    rootRotationByModelId: {},
+    rootScaleByModelId: {},
+    ...overrides,
+  };
+}
 
 function createPart(name: string): Mesh {
   const mesh = new Mesh(new BoxGeometry(1, 1, 1), new MeshStandardMaterial());
@@ -46,6 +68,20 @@ describe('skinCreatedModel', () => {
       previewModelIds: [],
       phase: 'idle',
       error: null,
+    });
+    $clips.set({
+      clips: [],
+      activeClipId: null,
+      activeSharedClipId: null,
+      activeClipByModelId: {},
+      blendBaseClip: null,
+      blendClipId: null,
+      blendWeight: 0,
+      playing: false,
+      loop: false,
+      duration: 0,
+      trimStart: 0,
+      trimEnd: 0,
     });
   });
 
@@ -139,5 +175,35 @@ describe('skinCreatedModel', () => {
     expect($model.get().models[0]!.scene).toBe(scene);
     expect($model.get().models[0]!.source).toBe('created');
     expect($model.get().error).toBe('corrupt intermediate');
+  });
+
+  it('drops owned clips after a successful skin', () => {
+    const scene = skinnableScene();
+    $model.set({
+      models: [
+        {
+          id: 'm1',
+          fileName: 'hero.glb',
+          scene,
+          source: 'created',
+        },
+      ],
+      activeModelId: 'm1',
+      previewModelIds: ['m1'],
+      phase: 'loaded',
+      error: null,
+    });
+    $clips.set({
+      ...$clips.get(),
+      clips: [
+        clipEntry({ id: 'owned', name: 'mesh-pose', ownerModelId: 'm1' }),
+        clipEntry({ id: 'shared', name: 'shared-walk', ownerModelId: null }),
+      ],
+    });
+
+    const result = skinCreatedModel('m1');
+
+    expect(result.ok).toBe(true);
+    expect($clips.get().clips.map((entry) => entry.id)).toEqual(['shared']);
   });
 });

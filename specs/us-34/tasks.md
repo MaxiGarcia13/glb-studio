@@ -21,13 +21,13 @@
 
 ## UI
 
-- [ ] **Skin model control** — Library model ⋯ item; wired to `canSkinModel`; busy/disabled states
-- [ ] **Copy** — Success silent or one-line; failures explicit
+- [x] **Skin model control** — Library model ⋯ item; wired to `canSkinModel`; busy/disabled states
+- [x] **Copy** — Success silent or one-line; failures explicit
 
 ## Clips / export
 
-- [ ] **Owned clip policy** — Drop mesh / create-part object tracks for that model after skin
-- [ ] **Export + re-import** — Skinned GLB round-trips as skinned imported model with bones
+- [x] **Owned clip policy** — Drop mesh / create-part object tracks for that model after skin
+- [x] **Export + re-import** — Skinned GLB round-trips as skinned imported model with bones
 
 ## Verify
 
