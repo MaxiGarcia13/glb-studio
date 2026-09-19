@@ -1,7 +1,9 @@
+import type { ExportFormat } from '../utils/file-name';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/button';
 import { Input } from '@/components/input/input';
 import { Modal } from '@/components/modal';
+import { Select } from '@/components/select';
 import { Text } from '@/components/text';
 import { useExportZip } from '../hooks/use-export-zip';
 import { stripGlbExtension } from '../utils/file-name';
@@ -10,6 +12,11 @@ interface ExportModalProps {
   open: boolean;
   onClose: () => void;
 }
+
+const FORMAT_OPTIONS: { value: ExportFormat; label: string }[] = [
+  { value: 'glb', label: 'GLB' },
+  { value: 'fbx', label: 'FBX' },
+];
 
 function countSharedWorkingClips(
   clips: { ownerModelId: string | null; clip: unknown }[],
@@ -47,6 +54,7 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
     multiModelGroups,
     clips,
   } = useExportZip();
+  const [format, setFormat] = useState<ExportFormat>('glb');
   const [zipBaseName, setZipBaseName] = useState('glb-export');
   const [modelBaseNames, setModelBaseNames] = useState<Record<string, string>>({});
   const [groupBaseNames, setGroupBaseNames] = useState<Record<string, string>>({});
@@ -62,6 +70,7 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
         .filter((unit) => unit.kind === 'single')
         .flatMap((unit) => unit.models);
       setError(null);
+      setFormat('glb');
       setZipBaseName('glb-export');
       setModelBaseNames(defaultModelNames(singleModels));
       setGroupBaseNames(
@@ -76,6 +85,7 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
   async function handleExport(): Promise<void> {
     try {
       await download({
+        format,
         zipFileName: zipBaseName,
         groupFileNames: groupBaseNames,
         modelFileNames: modelBaseNames,
@@ -132,6 +142,18 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
           <Text as="h2" variant="section">
             File names
           </Text>
+          <Select
+            label="Format"
+            value={format}
+            options={FORMAT_OPTIONS}
+            disabled={busy}
+            onChange={(event) => {
+              const next = event.target.value;
+              if (next === 'glb' || next === 'fbx') {
+                setFormat(next);
+              }
+            }}
+          />
           <Input
             label="Zip archive"
             value={zipBaseName}
