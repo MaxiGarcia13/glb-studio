@@ -86,7 +86,7 @@ Prefer pure `domain/` / `utils/` over React/R3F. Tests live under `tests/unit/` 
 - [x] `trimClipWindow` + `bakeTimeScale` (synthetic tracks; duration / time shift)
 - [x] `writeNodeKeyframe` hold-plateau path (CRUD + interpolation already covered)
 - [x] `canAttachUnder`: cycle / root / hierarchy reject paths
-- [ ] `buildUniqueModelPrefix` + namespace helpers in `merge-namespace.ts`
+- [x] `buildUniqueModelPrefix` + namespace helpers in `merge-namespace.ts`
 - [ ] `isUsableSkinnedModelScene` / `isUsableCreatedModelScene`; `isNodeNameTaken`
 
 ### Out of scope here
