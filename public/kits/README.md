@@ -34,10 +34,10 @@ Names match the mesh kit’s create-group joints and align with the Mixamo vendo
 
 ### Mesh / skinning
 
-- **Bind pose:** T-pose (arms horizontal along ±X).
+- **Bind pose:** T-pose (arms horizontal along ±X). Bone local **+Y** follows each Mixamo-style chain continuation (child at ~(0, length, 0)) so US-6 retarget quaternions land correctly.
 - At least one `SkinnedMesh`; look matches the white/black/cyan block humanoid.
 - MVP: **rigid** weights (each segment mesh 100% to its parent bone). Soft weights optional later.
-- Scale: ~Y Bot height (~1.8 m). Palms face down in T-pose (wide across knuckles / world Z, thin on Y); knuckles sit at the palm tip with per-phalanx finger capsules. Short cylinder axles at `*Shoulder` and `*UpLeg` bridge chest→arm and hip→thigh so whole-limb rotation stays visually connected. Low-poly (roughly 1–5k tris depending on cylinder tessellation).
+- Scale: limb bone lengths match Mixamo `body-block` locals (cm÷100) for US-6 retarget; Mixamo sides (left = +X). Palms face down in T-pose; knuckles match body-block hand locals with per-phalanx finger capsules. Shoulder / elbow / knee / ankle are black joint spheres (`*Arm` / `*ForeArm` / `*Leg` / `*Foot`); `*Shoulder` bones stay for Mixamo retarget with no mesh. Hip axles on `*UpLeg` bridge hip→thigh. Low-poly (roughly 1–5k tris depending on cylinder tessellation).
 
 ### Clips / root motion
 

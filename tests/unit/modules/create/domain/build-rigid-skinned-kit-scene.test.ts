@@ -1,4 +1,4 @@
-import { Bone, SkinnedMesh } from 'three';
+import { Bone, SkinnedMesh, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 
 import { buildRigidSkinnedSceneFromKit } from '@/modules/create/domain/build-rigid-skinned-kit-scene';
@@ -37,5 +37,42 @@ describe('buildRigidSkinnedSceneFromKit', () => {
     expect(bones).toContain('RightHandIndex1');
     expect(bones).toContain('LeftToeBase');
     expect(skinnedMeshes).toBe(BLOCK_ROBOT_MESH_RECIPE.parts.length);
+  });
+
+  it('orients limb bones so Mixamo-style local +Y points at the chain child', () => {
+    const scene = buildRigidSkinnedSceneFromKit(BLOCK_ROBOT_MESH_RECIPE);
+    scene.updateMatrixWorld(true);
+
+    const byName = new Map<string, Bone>();
+    scene.traverse((object) => {
+      if (object instanceof Bone) {
+        byName.set(object.name, object);
+      }
+    });
+
+    const forearm = byName.get('LeftForeArm');
+    const hand = byName.get('LeftHand');
+    const leg = byName.get('LeftLeg');
+    expect(forearm && hand && leg).toBeTruthy();
+    if (!forearm || !hand || !leg) {
+      return;
+    }
+
+    // Child sits on parent local +Y (Mixamo rest), not along world ±X.
+    expect(Math.abs(hand.position.x)).toBeLessThan(1e-4);
+    expect(Math.abs(hand.position.z)).toBeLessThan(1e-4);
+    expect(hand.position.y).toBeGreaterThan(0.2);
+
+    expect(Math.abs(leg.position.x)).toBeLessThan(1e-4);
+    expect(Math.abs(leg.position.z)).toBeLessThan(1e-4);
+    expect(leg.position.y).toBeGreaterThan(0.3);
+
+    const localYWorld = new Vector3(0, 1, 0).transformDirection(forearm.matrixWorld);
+    const forearmPos = new Vector3();
+    const handPos = new Vector3();
+    forearm.getWorldPosition(forearmPos);
+    hand.getWorldPosition(handPos);
+    const toHand = handPos.sub(forearmPos).normalize();
+    expect(localYWorld.dot(toHand)).toBeGreaterThan(0.99);
   });
 });

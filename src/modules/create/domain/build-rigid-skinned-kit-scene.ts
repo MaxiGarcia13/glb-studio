@@ -13,6 +13,7 @@ import {
 } from 'three';
 
 import { getPartKind } from './part-kind';
+import { orientSkeletonMixamoAxes } from './orient-skeleton-mixamo-axes';
 
 const ARMATURE_NAME = 'Armature';
 
@@ -27,6 +28,7 @@ export interface RigidSkinnedKitRecipe {
 /**
  * Build a bind-pose skinned scene from a mesh kit recipe (rigid weights).
  * Offline / maintainer use (US-33 kit GLB); not generated at runtime in the app.
+ * Bones are reoriented to Mixamo local-+Y chain axes so US-6 retarget quats land correctly.
  */
 export function buildRigidSkinnedSceneFromKit(kit: RigidSkinnedKitRecipe): Group {
   const root = new Group();
@@ -81,6 +83,10 @@ export function buildRigidSkinnedSceneFromKit(kit: RigidSkinnedKitRecipe): Group
   if (bones.length === 0) {
     throw new Error(`Kit "${kit.id ?? kit.label}" produced no bones`);
   }
+
+  root.updateMatrixWorld(true);
+  orientSkeletonMixamoAxes(bones);
+  root.updateMatrixWorld(true);
 
   const skeleton = new Skeleton(bones);
   const pendingMeshes: Array<{ mesh: Mesh; boneIndex: number }> = [];
