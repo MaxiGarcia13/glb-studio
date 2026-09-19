@@ -32,26 +32,26 @@ flowchart TD
 
 ## Convert API (mirror US-16)
 
-| Piece | Role |
-| ----- | ---- |
-| `src/pages/api/v1/glb-to-fbx.ts` | `prerender = false`; multipart `file`; return FBX bytes |
+| Piece                                                 | Role                                                                                              |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `src/pages/api/v1/glb-to-fbx.ts`                      | `prerender = false`; multipart `file`; return FBX bytes                                           |
 | `export/adapters/convert-glb-to-fbx.ts` (server-only) | `libassimp` `convert({ name, bytes }, { to: 'fbx' })` with **WASM** backend; validate name + size |
-| `export/services/ensure-fbx-file.ts` (client) | `fetch` convert endpoint; map errors for the modal |
+| `export/services/ensure-fbx-file.ts` (client)         | `fetch` convert endpoint; map errors for the modal                                                |
 
 ### Locked converter — `libassimp@0.3.0` (Assimp WASM)
 
 **Why not a Linux Assimp CLI / NAPI addon alone?** There is no `fbx2gltf`-style single package that ships every OS binary. `libassimp` optional NAPI addons (`libassimp-linux-x64-gnu`, etc.) are OS-gated and cannot be installed on Darwin for a Mac → Vercel `includeFiles` path. WASM ships inside `libassimp` on every host.
 
-| Item | Pin |
-| ---- | --- |
-| npm | `libassimp@0.3.0` (exact) |
-| Call | `createAssimp({ backend: 'wasm' })` then `convert({ name: 'input.glb', bytes }, { to: 'fbx' })` — or the default `convert` after forcing wasm on the adapter instance |
-| Engine | Assimp (FBX binary export); Node ≥ 22.14 |
-| Artifact | `node_modules/libassimp/dist/wasm/libassimp.wasm` (~11 MB) |
+| Item     | Pin                                                                                                                                                                   |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| npm      | `libassimp@0.3.0` (exact)                                                                                                                                             |
+| Call     | `createAssimp({ backend: 'wasm' })` then `convert({ name: 'input.glb', bytes }, { to: 'fbx' })` — or the default `convert` after forcing wasm on the adapter instance |
+| Engine   | Assimp (FBX binary export); Node ≥ 22.14                                                                                                                              |
+| Artifact | `node_modules/libassimp/dist/wasm/libassimp.wasm` (~11 MB)                                                                                                            |
 
 **Vercel packaging** (`astro.config.mjs`, same NFT pattern as US-16):
 
-```js
+```
 ssr: { external: ['fbx2gltf', 'libassimp'] },
 adapter: vercel({
   includeFiles: [
@@ -79,7 +79,6 @@ Constraints (same class as US-16):
 
 **Not** `fbx2gltf` — that binary is one-way FBX → glTF.
 
-
 ## Naming
 
 Extend `export/utils/file-name.ts`:
@@ -90,13 +89,13 @@ Extend `export/utils/file-name.ts`:
 
 ## Layering
 
-| Layer                        | Placement                            |
-| ---------------------------- | ------------------------------------ |
-| Modal Format state           | `export/components/export-modal.tsx` |
-| Options + pack orchestration | `export/domain/zip-download.ts`      |
-| HTTP to convert API          | `export/services/`                   |
-| Native CLI / Assimp WASM + tmp or in-memory I/O | `export/adapters/` |
-| API route                    | `src/pages/api/v1/glb-to-fbx.ts`     |
+| Layer                                           | Placement                            |
+| ----------------------------------------------- | ------------------------------------ |
+| Modal Format state                              | `export/components/export-modal.tsx` |
+| Options + pack orchestration                    | `export/domain/zip-download.ts`      |
+| HTTP to convert API                             | `export/services/`                   |
+| Native CLI / Assimp WASM + tmp or in-memory I/O | `export/adapters/`                   |
+| API route                                       | `src/pages/api/v1/glb-to-fbx.ts`     |
 
 Do not put convert HTTP in `domain/`. Do not put Assimp in the client bundle.
 
