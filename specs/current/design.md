@@ -135,6 +135,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 7. After a successful remap, apply the previewed model’s accumulated **bind-pose deltas** to the remapped tracks — mismatched imports cannot rebase on import because track names still use the source rig
 8. **Position scale (US-17):** on Apply, compute `ratio = median(‖target bind local pos‖ / ‖source bind local pos‖)` over mapped pairs with both lengths > ε (`1e-6`). Capture `sourceBindLengths` from the clip GLB scene at import; target lengths from the previewed scene at Apply. If no usable pairs → clear error; no clip write / no All-models renames. Ratio is relative to the **previewed** skeleton
 9. **Hips bind-frame (US-18):** keep `.position` only for the mapped hips bone; drop other position tracks. Rebase hips quaternions and hips **delta-from-bind** positions through source→target parent world quaternions at rest: `p' = targetBind + R_tgt⁻¹ · R_src · ((p − sourceBind) · ratio)`. Capture `sourceBindFrames` (local position + parent world quat) at clip load; target frames from the previewed scene. Missing hips / frames while positions exist → clear Apply error
+10. **Meshless / Mixamo without-skin sources:** `fbx2gltf` often emits clips with an armature of plain nodes and **no** `skins[]`, so Three.js never creates `Bone`s. When bone/skin bind capture is empty, fall back to rest TRS of **clip track target nodes** (same maps) so US-17 / US-18 Apply still works. No silent retarget — name mismatch still Needs retarget (US-6)
 
 ### Bone registry (vendor adapters)
 
@@ -335,6 +336,7 @@ A model with no matching clips still ships as a mesh-only file when packed as a 
 3. Convert **before** skeleton / clip validation. Failures use existing model `error` / clip failed-entry copy
 4. API is `@astrojs/vercel` Node serverless (`src/pages/api/v1/fbx-to-glb.ts`, `prerender = false`), not Edge. Server-only `import/adapters/convert-fbx.ts` runs `fbx2gltf` under `os.tmpdir()`; Linux binary via `includeFiles`; Darwin/Windows excluded from the Vercel bundle
 5. Body cap matches Vercel payload (typically 4.5MB). No Mixamo convert flags; bone mismatch still uses US-6
+6. Mixamo **Without Skin** FBX → animation-only shared/owned clips after convert; meshless bind fallback (see Animation import §10) so retarget scale/hips rebase has source bind data
 
 ## FBX export convert (US-36)
 

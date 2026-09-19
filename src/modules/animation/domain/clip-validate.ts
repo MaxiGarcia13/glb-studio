@@ -21,6 +21,22 @@ export function splitTrackName(trackName: string): { nodeName: string; suffix: s
   return { nodeName: trackName, suffix: null };
 }
 
+/** Node names referenced by TRS / morph tracks on the given clips. */
+export function collectClipTargetNodeNames(
+  clips: readonly AnimationClip[],
+): Set<string> {
+  const names = new Set<string>();
+  for (const clip of clips) {
+    for (const track of clip.tracks) {
+      const { nodeName, suffix } = splitTrackName(track.name);
+      if (suffix && nodeName) {
+        names.add(nodeName);
+      }
+    }
+  }
+  return names;
+}
+
 export function buildSkeletonNodeSet(scene: Object3D): Set<string> {
   const names = new Set<string>();
   scene.traverse((object) => {

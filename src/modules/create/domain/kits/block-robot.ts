@@ -143,12 +143,17 @@ const hipConnectorY = yHip - HIP_CONNECTOR_H + 0.02;
 /**
  * Foot box sole on the ground (`footBoxY = 0` + ground-origin).
  * Ankle bone / sphere center at `footY` (= foot top).
- * Toe stays at the same Y as the ankle so Foot +Y is pure +Z (flat on the
- * grid) — a downward toe made the bone cut diagonally through the box and
- * read as feet yawed out on X after Mixamo retarget.
+ *
+ * Mixamo `body-block` Foot +Y is forward and down (~32°), not flat +Z.
+ * US-6 copies Mixamo quaternions into that frame — a horizontal toe made
+ * rest-pose foot pitch plant the boxes into the floor. Toe sits on the sole
+ * so the helper stays on-grid; pitch matches body-block Δy/Δz.
  */
 const footBoxY = 0;
-const toeZ = FOOT_D * 0.7;
+const MIXAMO_FOOT_PITCH_Y = 0.523;
+const MIXAMO_FOOT_PITCH_Z = 0.851;
+const toeY = 0;
+const toeZ = footY * (MIXAMO_FOOT_PITCH_Z / MIXAMO_FOOT_PITCH_Y);
 
 interface FingerChainSpec {
   finger: string;
@@ -347,11 +352,11 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
     { name: 'LeftUpLeg', parent: 'Hips', position: [LEG_X, yHip, 0] },
     { name: 'LeftLeg', parent: 'LeftUpLeg', position: [LEG_X, kneeBoneY, 0] },
     { name: 'LeftFoot', parent: 'LeftLeg', position: [LEG_X, footY, 0] },
-    { name: 'LeftToeBase', parent: 'LeftFoot', position: [LEG_X, footY, toeZ] },
+    { name: 'LeftToeBase', parent: 'LeftFoot', position: [LEG_X, toeY, toeZ] },
     { name: 'RightUpLeg', parent: 'Hips', position: [-LEG_X, yHip, 0] },
     { name: 'RightLeg', parent: 'RightUpLeg', position: [-LEG_X, kneeBoneY, 0] },
     { name: 'RightFoot', parent: 'RightLeg', position: [-LEG_X, footY, 0] },
-    { name: 'RightToeBase', parent: 'RightFoot', position: [-LEG_X, footY, toeZ] },
+    { name: 'RightToeBase', parent: 'RightFoot', position: [-LEG_X, toeY, toeZ] },
   ],
   parts: [
     {

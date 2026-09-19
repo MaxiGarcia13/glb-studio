@@ -103,8 +103,8 @@ export async function routeContentImport(files: File[]): Promise<ContentRouterRe
         sharedClips.push({
           name: stripExtension(gltfFile.name),
           clips: gltf.animations,
-          sourceBindLengths: captureBindLengths(gltf.scene),
-          sourceBindFrames: captureBindFrames(gltf.scene),
+          sourceBindLengths: captureBindLengths(gltf.scene, gltf.animations),
+          sourceBindFrames: captureBindFrames(gltf.scene, gltf.animations),
         });
         URL.revokeObjectURL(blobUrl);
         blobUrl = undefined;

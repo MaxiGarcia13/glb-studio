@@ -1,7 +1,8 @@
-import type { Object3D, SkinnedMesh } from 'three';
+import type { AnimationClip, Object3D, SkinnedMesh } from 'three';
 
 import { Bone } from 'three';
 
+import { collectClipTargetNodeNames } from '@/modules/animation/domain/clip-validate';
 import { BONE_VENDOR_ADAPTERS } from '../adapters/bone-vendors';
 
 /**
@@ -115,11 +116,38 @@ export function buildTargetBoneNames(scene: Object3D): Set<string> {
 }
 
 /**
+ * Rest-pose local-position lengths for named nodes (meshless animation sources).
+ */
+export function captureBindLengthsFromNodeNames(
+  scene: Object3D,
+  nodeNames: Iterable<string>,
+): Record<string, number> {
+  const lengths: Record<string, number> = {};
+  for (const name of nodeNames) {
+    if (!name || name in lengths) {
+      continue;
+    }
+    const object = scene.getObjectByName(name);
+    if (!object) {
+      continue;
+    }
+    lengths[name] = object.position.length();
+  }
+  return lengths;
+}
+
+/**
  * Rest-pose local-position lengths (bone name → ‖position‖) from a GLB scene.
  * Same bone set as `buildTargetBoneNames`, used to derive the US-17 position
  * scale ratio at Apply.
+ *
+ * When the scene has no Bones/SkinnedMesh and `clips` are provided, falls back
+ * to clip track target nodes (Mixamo without-skin after fbx2gltf).
  */
-export function captureBindLengths(scene: Object3D): Record<string, number> {
+export function captureBindLengths(
+  scene: Object3D,
+  clips?: readonly AnimationClip[],
+): Record<string, number> {
   const lengths: Record<string, number> = {};
 
   const addBone = (bone: Bone) => {
@@ -141,5 +169,8 @@ export function captureBindLengths(scene: Object3D): Record<string, number> {
     }
   });
 
-  return lengths;
+  if (Object.keys(lengths).length > 0 || !clips?.length) {
+    return lengths;
+  }
+  return captureBindLengthsFromNodeNames(scene, collectClipTargetNodeNames(clips));
 }

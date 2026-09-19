@@ -20,8 +20,8 @@ export async function loadClipsFromFile(file: File): Promise<ClipLoadResult> {
     return {
       name: stripExtension(gltfFile.name),
       clips: gltf.animations,
-      sourceBindLengths: captureBindLengths(gltf.scene),
-      sourceBindFrames: captureBindFrames(gltf.scene),
+      sourceBindLengths: captureBindLengths(gltf.scene, gltf.animations),
+      sourceBindFrames: captureBindFrames(gltf.scene, gltf.animations),
     };
   } catch (error) {
     if (error instanceof Error && error.message === `File "${file.name}" contains no animation clips`) {
