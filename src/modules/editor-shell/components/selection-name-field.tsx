@@ -1,6 +1,5 @@
 import type { Object3D } from 'three';
 import { useStore } from '@nanostores/react';
-import { useEffect } from 'react';
 import { AssetEntryRenameInput } from '@/components/asset-entry/asset-entry-rename-input';
 import { useAssetEntryRename } from '@/components/asset-entry/use-asset-entry-rename';
 import { Text } from '@/components/text';
@@ -11,6 +10,7 @@ function SelectionNameEditor({ object }: { object: Object3D }) {
   const label = object.name;
 
   const {
+    editing,
     draft,
     inputRef,
     setDraft,
@@ -22,28 +22,38 @@ function SelectionNameEditor({ object }: { object: Object3D }) {
     onRename: renameSelectedObject,
   });
 
-  // Remount via parent `key` resets state; re-enter when the committed name changes.
-  useEffect(() => {
-    startEditing();
-  }, [label, startEditing]);
-
   return (
     <div className="flex flex-col gap-2">
       <Text variant="muted">Name</Text>
-      <AssetEntryRenameInput
-        inputRef={inputRef}
-        value={draft}
-        onChange={setDraft}
-        onCommit={commit}
-        onCancel={cancel}
-      />
+      {editing
+        ? (
+            <AssetEntryRenameInput
+              inputRef={inputRef}
+              value={draft}
+              onChange={setDraft}
+              onCommit={commit}
+              onCancel={cancel}
+            />
+          )
+        : (
+            <button
+              type="button"
+              onClick={startEditing}
+              aria-label={`Rename ${label || 'selection'}`}
+              title="Rename"
+              className="w-full min-w-0 rounded-sm bg-control px-2 py-2 text-left text-xs text-fg truncate"
+            >
+              {label || 'Unnamed'}
+            </button>
+          )}
     </div>
   );
 }
 
 /**
  * Settings Name field for the current selection (any mesh or bone).
- * Enter / blur commit, Escape cancel — same hook as library rename.
+ * Click to edit; Enter / blur commit, Escape cancel — same hook as library rename.
+ * Stays out of edit mode by default so editor hotkeys keep working (US-10).
  */
 export function SelectionNameField() {
   const { object: selected } = useStore($selection, { keys: ['object'] });
