@@ -38,5 +38,5 @@ As an editor user, when I choose **File → Export** I can pick **GLB** (default
 1. **Whole-zip format** — one Format select on the Export modal; all packed entries use that format.
 2. **GLB default** — opening the modal resets Format to GLB (same as today’s behavior).
 3. **Pack-then-convert** — always build GLB bytes with existing packers; FBX path converts those bytes on the server, then zips.
-4. **Converter** — Linux CLI convert tool shipped like US-16’s `fbx2gltf` (planned: **Assimp** `assimp export`); Darwin/Windows binaries excluded from the Vercel bundle. Exact package / binary path locked in design when the adapter lands.
+4. **Converter** — **`libassimp@0.3.0`** (Assimp) via **WASM** backend (`createAssimp({ backend: 'wasm' })` → `convert(…, { to: 'fbx' })`). Vercel ships `dist/wasm/libassimp.wasm` through `includeFiles`; optional platform NAPI addons are `excludeFiles` (same NFT pattern as US-16). Not a Linux Assimp CLI and not `fbx2gltf` (one-way).
 5. **Size** — reject any single convert payload over ~4.5MB with a clear modal error (no silent skip of some entries).

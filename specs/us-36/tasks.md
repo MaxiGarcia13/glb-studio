@@ -9,7 +9,7 @@ Tick only after acceptance criteria for that item pass.
 
 ## Convert API
 
-- [ ] **Choose / pin Linux convert binary** — Assimp (or documented substitute) runnable on Vercel Node; document install / `includeFiles` / `excludeFiles` like US-16
+- [x] **Choose / pin Linux convert binary** — Locked **`libassimp@0.3.0` WASM** (Assimp); `astro.config.mjs` `includeFiles` / `excludeFiles` + `ssr.external` — see [`design.md`](./design.md)
 - [ ] **Server adapter `convertGlbToFbx`** — Tmpdir write/read; reject non-`.glb` name (400) and oversize (413); cleanup always
 - [ ] **`POST /api/v1/glb-to-fbx`** — `prerender = false`; multipart `file`; return FBX with `content-disposition` basename `.fbx`
 - [ ] **Unit tests** — Validation paths with mocked converter (mirror `convert-fbx` tests)

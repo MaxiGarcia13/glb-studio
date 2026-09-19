@@ -32,19 +32,53 @@ flowchart TD
 
 ## Convert API (mirror US-16)
 
-| Piece                                                 | Role                                                                    |
-| ----------------------------------------------------- | ----------------------------------------------------------------------- |
-| `src/pages/api/v1/glb-to-fbx.ts`                      | `prerender = false`; multipart `file`; return FBX bytes                 |
-| `export/adapters/convert-glb-to-fbx.ts` (server-only) | Write tmp GLB → Assimp (or locked CLI) → read FBX; validate name + size |
-| `export/services/ensure-fbx-file.ts` (client)         | `fetch` convert endpoint; map errors for the modal                      |
+| Piece | Role |
+| ----- | ---- |
+| `src/pages/api/v1/glb-to-fbx.ts` | `prerender = false`; multipart `file`; return FBX bytes |
+| `export/adapters/convert-glb-to-fbx.ts` (server-only) | `libassimp` `convert({ name, bytes }, { to: 'fbx' })` with **WASM** backend; validate name + size |
+| `export/services/ensure-fbx-file.ts` (client) | `fetch` convert endpoint; map errors for the modal |
+
+### Locked converter — `libassimp@0.3.0` (Assimp WASM)
+
+**Why not a Linux Assimp CLI / NAPI addon alone?** There is no `fbx2gltf`-style single package that ships every OS binary. `libassimp` optional NAPI addons (`libassimp-linux-x64-gnu`, etc.) are OS-gated and cannot be installed on Darwin for a Mac → Vercel `includeFiles` path. WASM ships inside `libassimp` on every host.
+
+| Item | Pin |
+| ---- | --- |
+| npm | `libassimp@0.3.0` (exact) |
+| Call | `createAssimp({ backend: 'wasm' })` then `convert({ name: 'input.glb', bytes }, { to: 'fbx' })` — or the default `convert` after forcing wasm on the adapter instance |
+| Engine | Assimp (FBX binary export); Node ≥ 22.14 |
+| Artifact | `node_modules/libassimp/dist/wasm/libassimp.wasm` (~11 MB) |
+
+**Vercel packaging** (`astro.config.mjs`, same NFT pattern as US-16):
+
+```js
+ssr: { external: ['fbx2gltf', 'libassimp'] },
+adapter: vercel({
+  includeFiles: [
+    './node_modules/fbx2gltf/bin/Linux/FBX2glTF',
+    './node_modules/libassimp/dist/wasm/libassimp.wasm',
+  ],
+  excludeFiles: [
+    './node_modules/fbx2gltf/bin/Darwin/FBX2glTF',
+    './node_modules/fbx2gltf/bin/Windows_NT/FBX2glTF.exe',
+    './node_modules/libassimp-darwin-arm64/libassimp.darwin-arm64.node',
+    './node_modules/libassimp-linux-x64-gnu/libassimp.linux-x64-gnu.node',
+    './node_modules/libassimp-win32-x64-msvc/libassimp.win32-x64-msvc.node',
+  ],
+}),
+```
+
+Optional NAPI addons may still install locally for other tooling; the convert adapter **must** use `backend: 'wasm'` so production never depends on a missing `.node`. Exclude those addons from the serverless bundle.
 
 Constraints (same class as US-16):
 
-- Vercel Node, not Edge; Linux binary via `includeFiles`; Darwin/Windows `excludeFiles`
+- Vercel Node, not Edge; WASM via `includeFiles`; optional NAPI addons in `excludeFiles`
 - Cap ~4.5MB per request body
-- Cleanup `os.tmpdir()` always
+- Prefer in-memory convert (no tmpdir required); tmpdir OK if the adapter writes for debugging
+- Do not put `libassimp` in the client bundle
 
 **Not** `fbx2gltf` — that binary is one-way FBX → glTF.
+
 
 ## Naming
 
@@ -61,7 +95,7 @@ Extend `export/utils/file-name.ts`:
 | Modal Format state           | `export/components/export-modal.tsx` |
 | Options + pack orchestration | `export/domain/zip-download.ts`      |
 | HTTP to convert API          | `export/services/`                   |
-| Native CLI + tmp I/O         | `export/adapters/`                   |
+| Native CLI / Assimp WASM + tmp or in-memory I/O | `export/adapters/` |
 | API route                    | `src/pages/api/v1/glb-to-fbx.ts`     |
 
 Do not put convert HTTP in `domain/`. Do not put Assimp in the client bundle.
