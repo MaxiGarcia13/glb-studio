@@ -3,7 +3,7 @@ import type { ModelLoadResult } from '@/modules/viewport/types/model';
 import { captureBindFrames } from '@/modules/animation/domain/bind-frame';
 import { captureBindLengths } from '@/modules/animation/domain/bone-registry';
 import { hoistRootTransform } from '@/modules/viewport/domain/hoist-root-transform';
-import { parseGltfFile } from '@/utils/glb-parse';
+import { parseGltfFile, stripAssetExtension } from '@/utils/glb-parse';
 import {
   isUsableCreatedModelScene,
   isUsableSkinnedModelScene,
@@ -26,12 +26,6 @@ export interface ContentRouterResult {
   errors: string[];
   /** Editor model groups to recreate after `importModelResults`. */
   groupsToCreate: PendingModelGroupImport[];
-}
-
-const NAME_EXTENSION_PATTERN = /\.(?:glb|gltf|fbx)$/i;
-
-function stripExtension(name: string): string {
-  return name.replace(NAME_EXTENSION_PATTERN, '');
 }
 
 /**
@@ -101,7 +95,7 @@ export async function routeContentImport(files: File[]): Promise<ContentRouterRe
         blobUrl = undefined;
       } else if (gltf.animations && gltf.animations.length > 0) {
         sharedClips.push({
-          name: stripExtension(gltfFile.name),
+          name: stripAssetExtension(gltfFile.name),
           clips: gltf.animations,
           sourceBindLengths: captureBindLengths(gltf.scene, gltf.animations),
           sourceBindFrames: captureBindFrames(gltf.scene, gltf.animations),

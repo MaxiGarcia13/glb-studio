@@ -8,6 +8,14 @@ export const GLTF_FILE_ACCEPT = '.glb,.gltf,.fbx';
 /** Case-insensitive filename match for `.glb` / `.gltf`. */
 export const GLTF_EXTENSION_PATTERN = /\.(?:glb|gltf)$/i;
 
+/** Trailing `.glb` / `.gltf` / `.fbx` (case-insensitive) — import/export basenames. */
+export const ASSET_EXTENSION_PATTERN = /\.(?:glb|gltf|fbx)$/i;
+
+/** Strip trailing `.glb` / `.gltf` / `.fbx` from a filename. */
+export function stripAssetExtension(name: string): string {
+  return name.replace(ASSET_EXTENSION_PATTERN, '');
+}
+
 /**
  * If `previous` ends with `.glb`/`.gltf` and `next` has no extension, append the previous one.
  * Keeps a user-chosen `.glb`/`.gltf` (or any other suffix) as typed.

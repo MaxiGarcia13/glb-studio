@@ -2,7 +2,7 @@ import type { ClipLoadResult } from '../types/clip';
 import { captureBindFrames } from '@/modules/animation/domain/bind-frame';
 import { captureBindLengths } from '@/modules/animation/domain/bone-registry';
 import { ensureGltfFile } from '@/modules/import/services/ensure-gltf-file';
-import { parseGltfFile } from '@/utils/glb-parse';
+import { parseGltfFile, stripAssetExtension } from '@/utils/glb-parse';
 
 export async function loadClipsFromFile(file: File): Promise<ClipLoadResult> {
   let blobUrl: string | undefined;
@@ -18,7 +18,7 @@ export async function loadClipsFromFile(file: File): Promise<ClipLoadResult> {
     }
 
     return {
-      name: stripExtension(gltfFile.name),
+      name: stripAssetExtension(gltfFile.name),
       clips: gltf.animations,
       sourceBindLengths: captureBindLengths(gltf.scene, gltf.animations),
       sourceBindFrames: captureBindFrames(gltf.scene, gltf.animations),
@@ -34,10 +34,4 @@ export async function loadClipsFromFile(file: File): Promise<ClipLoadResult> {
       URL.revokeObjectURL(blobUrl);
     }
   }
-}
-
-const NAME_EXTENSION_PATTERN = /\.(?:glb|gltf|fbx)$/i;
-
-function stripExtension(name: string): string {
-  return name.replace(NAME_EXTENSION_PATTERN, '');
 }

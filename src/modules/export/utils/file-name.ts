@@ -1,16 +1,16 @@
-import { GLTF_EXTENSION_PATTERN } from '@/utils/glb-parse';
+import {
+  GLTF_EXTENSION_PATTERN,
+  stripAssetExtension,
+} from '@/utils/glb-parse';
 
 export type ExportFormat = 'glb' | 'fbx';
-
-/** Strip trailing `.glb` / `.gltf` / `.fbx` (case-insensitive). */
-const EXPORT_EXTENSION_PATTERN = /\.(?:glb|gltf|fbx)$/i;
 
 export function stripGlbExtension(fileName: string): string {
   return fileName.replace(GLTF_EXTENSION_PATTERN, '');
 }
 
 export function stripExportExtension(fileName: string): string {
-  return fileName.replace(EXPORT_EXTENSION_PATTERN, '');
+  return stripAssetExtension(fileName);
 }
 
 export function uniqueFileName(fileName: string, taken: Set<string>): string {
