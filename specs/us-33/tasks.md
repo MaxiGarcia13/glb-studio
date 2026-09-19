@@ -9,9 +9,9 @@ Prefer completing this before US-34. Tick only after acceptance.
 
 ## Asset
 
-- [ ] **Generate skinned Block robot GLB** — Offline script from create-group recipe; humanoid bind pose; bones; at least one skinned mesh; no embedded demo clips
-- [ ] **Place asset in repo** — Stable URL under `public/kits/`
-- [ ] **Manual inspect** — Confirm no clips (or empty anim list), bone names, no unexpected root motion (per AGENTS hard constraints)
+- [x] **Generate skinned Block robot GLB** — Offline script from create-group recipe; humanoid bind pose; bones; at least one skinned mesh; no embedded demo clips (`npm run kits:block-robot`)
+- [x] **Place asset in repo** — `public/kits/block-robot.glb` → `/kits/block-robot.glb`
+- [x] **Manual inspect** — 17 bones (contract names), 22 skinned meshes, 0 animations; no root-motion clips
 
 ## Kit registry + spawn
 

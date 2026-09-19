@@ -6,22 +6,28 @@ Maintainer notes for files under `public/kits/`. Not a user-facing product surfa
 
 Skinned starter for **From kit → Block robot** (US-33). Generated offline from the mesh create-group recipe (`src/modules/create/domain/kits/block-robot.ts`); committed here for a stable URL (`/kits/block-robot.glb`).
 
+Regenerate:
+
+```bash
+npm run kits:block-robot
+```
+
 ### Skeleton
 
 - **Root:** `Armature` (container). Bind-pose bones use **unprefixed** Mixamo-style local names (no `mixamorig:`).
 - **Bone count:** 17 (no shoulders, toes, or fingers).
 
-| Parent | Bones |
-| ------ | ----- |
-| Armature | `Hips` |
-| Hips | `Spine`, `LeftUpLeg`, `RightUpLeg` |
-| Spine | `Chest` |
-| Chest | `Neck`, `LeftArm`, `RightArm` |
-| Neck | `Head` |
-| LeftArm → | `LeftForeArm` → `LeftHand` |
-| RightArm → | `RightForeArm` → `RightHand` |
-| LeftUpLeg → | `LeftLeg` → `LeftFoot` |
-| RightUpLeg → | `RightLeg` → `RightFoot` |
+| Parent       | Bones                              |
+| ------------ | ---------------------------------- |
+| Armature     | `Hips`                             |
+| Hips         | `Spine`, `LeftUpLeg`, `RightUpLeg` |
+| Spine        | `Chest`                            |
+| Chest        | `Neck`, `LeftArm`, `RightArm`      |
+| Neck         | `Head`                             |
+| LeftArm →    | `LeftForeArm` → `LeftHand`         |
+| RightArm →   | `RightForeArm` → `RightHand`       |
+| LeftUpLeg →  | `LeftLeg` → `LeftFoot`             |
+| RightUpLeg → | `RightLeg` → `RightFoot`           |
 
 Names match the mesh kit’s create-group joints and align with the Mixamo vendor adapter’s local/canonical keys (`Hips`, `LeftArm`, …) so US-6 retarget can suggest mappings when clip bones are Mixamo-prefixed.
 

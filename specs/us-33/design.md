@@ -33,7 +33,7 @@ type Kit
 
 ## Asset authoring (locked)
 
-**Approach:** offline script from the create-group Block robot recipe → bones + **rigid** weights (each segment 100% to one bone); commit `public/kits/block-robot.glb` (or equivalent). Script is maintainers-only — not run in the browser and not shipped as a user feature.
+**Approach:** offline script (`npm run kits:block-robot` → `scripts/generate-block-robot-kit.ts`) from the create-group Block robot recipe → bones + **rigid** weights (each segment 100% to one bone); commit `public/kits/block-robot.glb`. Builder: `buildRigidSkinnedSceneFromKit`. Script is maintainers-only — not run in the browser and not shipped as a user feature.
 
 **Clips:** bind / T-pose only — **no** embedded demo animations. Users import / retarget clips as today.
 
