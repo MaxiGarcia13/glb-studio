@@ -5,7 +5,7 @@ Prefer completing this before US-34. Tick only after acceptance.
 ## Spec / kickoff
 
 - [x] **Lock product choices** — Dual kits; offline script → `public/kits/`; T-pose only (no demo clips) — see [`requirements.md`](./requirements.md) Locked product choices
-- [ ] **Bone / clip contract note** — Short doc in design or `public/kits/README` (names, license, expected skeleton)
+- [x] **Bone / clip contract note** — [`public/kits/README.md`](../../public/kits/README.md); design links to it
 
 ## Asset
 

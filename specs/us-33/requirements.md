@@ -23,7 +23,7 @@ As an editor user with little 3D experience, I can start from a **skinned** Bloc
 - [ ] Zip export packs the skinned kit model as a normal imported GLB (mesh + owned ready clips)
 - [ ] **File → New model** and the mesh-only Modern house kit stay unchanged
 - [ ] **Dual kits:** primary **Block robot** is the skinned GLB; mesh + create-group recipe remains as **Block robot (parts)** (US-34 QA fixture)
-- [ ] Asset contract is documented (bone naming convention, no embedded demo clips, approx poly/bone count, license)
+- [x] Asset contract is documented (bone naming convention, no embedded demo clips, approx poly/bone count, license) — [`public/kits/README.md`](../../public/kits/README.md)
 - [ ] Load failure of the kit GLB shows a clear error; does not leave a half-empty library entry
 
 ## Out of scope

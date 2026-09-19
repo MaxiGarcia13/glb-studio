@@ -39,6 +39,10 @@ type Kit
 
 Soft weights / Blender hand-authoring remain optional later polish; not required for US-33 MVP.
 
+### Bone / clip contract
+
+Canonical note (names, hierarchy, poly budget, license, no clips / no root motion): [`public/kits/README.md`](../../public/kits/README.md). Keep that file in sync when the GLB or recipe joint list changes.
+
 ## Export / round-trip
 
 Same as any imported model. No create-part stamps required. Group export (US-26/32) works if the user groups this model with others.
