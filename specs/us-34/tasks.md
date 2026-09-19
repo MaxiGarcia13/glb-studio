@@ -9,7 +9,7 @@
 
 ## Domain: detect + convert
 
-- [ ] **`canSkinModel(model)`** — Prerequisites + disabled reason string
+- [x] **`canSkinModel(model)`** — Prerequisites + disabled reason string
 - [ ] **`buildBonesFromCreateGroups(scene)`** — Name-stable Bone tree matching group hierarchy
 - [ ] **`bindMeshesRigid(scene, skeleton)`** — Per-part SkinnedMesh (or equivalent) with weight 1 to parent bone; bind matrices correct at rest
 - [ ] **`skinCreatedModel(modelId)` action** — Clone → convert → swap on success; restore original on failure; user-visible error
