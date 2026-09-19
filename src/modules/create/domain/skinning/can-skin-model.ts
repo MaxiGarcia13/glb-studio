@@ -2,6 +2,7 @@ import type { Object3D } from 'three';
 import type { ModelEntry } from '@/modules/viewport/types/model';
 
 import { listCreatedPartEntries, listCreatedParts } from '../list-created-parts';
+import { ARMATURE_GROUP_NAME } from './build-bones-from-create-groups';
 
 export interface SkinModelAvailability {
   enabled: boolean;
@@ -27,13 +28,16 @@ function sceneHasUsableSkeleton(scene: Object3D): boolean {
   return hasSkinnedMesh && hasSkeleton;
 }
 
-function countCreateGroups(scene: Object3D): number {
-  return listCreatedPartEntries(scene).filter((entry) => entry.isGroup).length;
+/** Create groups that become skeleton bones (`Armature` is a container only). */
+function countBoneCreateGroups(scene: Object3D): number {
+  return listCreatedPartEntries(scene).filter(
+    (entry) => entry.isGroup && entry.object.name !== ARMATURE_GROUP_NAME,
+  ).length;
 }
 
 /**
  * Whether **Skin model** is available for a library entry.
- * Prerequisites: created source, ≥1 create group, ≥1 stamped part, not already skinned.
+ * Prerequisites: created source, ≥1 bone create group, ≥1 stamped part, not already skinned.
  */
 export function canSkinModel(model: ModelEntry): SkinModelAvailability {
   if (sceneHasUsableSkeleton(model.scene)) {
@@ -44,7 +48,7 @@ export function canSkinModel(model: ModelEntry): SkinModelAvailability {
     return { enabled: false, reason: 'Skin works on created models' };
   }
 
-  if (countCreateGroups(model.scene) === 0) {
+  if (countBoneCreateGroups(model.scene) === 0) {
     return { enabled: false, reason: 'Add create groups before skinning' };
   }
 

@@ -19,7 +19,7 @@ Created model (createGroup tree + stamped meshes)
         │
         ▼
 1. Snapshot / clone scene (failure must not destroy original)
-2. Map each createGroup → Bone (same names; parent links preserved)
+2. Map each createGroup → Bone (same names; parent links preserved). A create group named `Armature` becomes a container `Group` (not a skeleton bone), matching US-33 kit export.
 3. For each stamped mesh under a joint:
      - Build SkinnedMesh (or convert BufferGeometry + skinIndex/skinWeight)
      - Rigid weights: all vertices → parent bone index (weight 1)

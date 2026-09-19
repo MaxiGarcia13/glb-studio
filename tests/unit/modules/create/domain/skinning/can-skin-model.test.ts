@@ -105,4 +105,16 @@ describe('canSkinModel', () => {
       reason: 'Add create groups before skinning',
     });
   });
+
+  it('disables when only an Armature group exists', () => {
+    const scene = new Group();
+    const armature = createGroup('Armature');
+    armature.add(createPart('box'));
+    scene.add(armature);
+
+    expect(canSkinModel(model({ source: 'created', scene }))).toEqual({
+      enabled: false,
+      reason: 'Add create groups before skinning',
+    });
+  });
 });
