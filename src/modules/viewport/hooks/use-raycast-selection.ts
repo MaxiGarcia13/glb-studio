@@ -100,7 +100,9 @@ export function useRaycastSelection(): void {
         return;
       }
 
-      const target = picked ? resolveJointPickTarget(picked) : null;
+      const target = picked
+        ? (owner?.source === 'created' ? resolveJointPickTarget(picked) : picked)
+        : null;
       if (owner) {
         focusModel(owner.id);
       }
@@ -147,7 +149,9 @@ export function useRaycastSelection(): void {
           openContextMenuForModel(event, owner.id);
           return;
         }
-        const target = event.shiftKey ? picked : resolveJointPickTarget(picked);
+        const target = event.shiftKey || owner.source !== 'created'
+          ? picked
+          : resolveJointPickTarget(picked);
         openContextMenuForPart(event, target, owner.id);
         return;
       }

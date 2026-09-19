@@ -18,7 +18,9 @@ import {
   getUngroupModelsAvailability,
   ungroupSelectedModels,
 } from '@/modules/viewport/actions/ungroup-selected-models';
+import { findModelEntryForObject } from '@/modules/viewport/domain/model-scene';
 import { $modelGroups } from '@/modules/viewport/stores/model-group-store';
+import { $model } from '@/modules/viewport/stores/model-store';
 import {
   $selectionContextMenu,
   closeSelectionContextMenu,
@@ -26,7 +28,7 @@ import {
 import { $selection } from '@/modules/viewport/stores/selection-store';
 
 function buildMenuItems(): ActionMenuItem[] {
-  const { kind } = $selection.get();
+  const { kind, objects } = $selection.get();
 
   if (kind === 'models') {
     const groupModels = getGroupModelsAvailability();
@@ -51,6 +53,15 @@ function buildMenuItems(): ActionMenuItem[] {
         },
       },
     ];
+  }
+
+  // Create Group / Ungroup only on created models (hidden after US-34 skin).
+  const anchor = objects[0];
+  const owner = anchor
+    ? findModelEntryForObject(anchor, $model.get().models)
+    : null;
+  if (!owner || owner.source !== 'created') {
+    return [];
   }
 
   const groupParts = getGroupPartsAvailability();

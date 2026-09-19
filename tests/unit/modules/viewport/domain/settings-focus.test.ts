@@ -73,4 +73,33 @@ describe('resolveSettingsFocus', () => {
 
     expect(resolveSettingsFocus().kind).toBe('part');
   });
+
+  it('does not use part focus for meshes on imported / skinned models', () => {
+    const scene = new Group();
+    const mesh = new Mesh(new BoxGeometry(1, 1, 1), new MeshBasicMaterial());
+    mesh.name = 'Body';
+    scene.add(mesh);
+
+    $model.set({
+      models: [
+        {
+          id: 'm1',
+          fileName: 'skinned.glb',
+          scene,
+          source: 'imported',
+        },
+      ],
+      activeModelId: 'm1',
+      previewModelIds: ['m1'],
+      phase: 'loaded',
+      error: null,
+    });
+    selectObject(mesh);
+
+    expect(resolveSettingsFocus()).toMatchObject({
+      kind: 'idle',
+      modelTransformTarget: scene,
+      partObject: null,
+    });
+  });
 });

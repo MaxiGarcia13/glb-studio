@@ -10,6 +10,8 @@ import { $selection } from '../stores/selection-store';
  * - part: Part panel (TRS + size); no Model / Animation
  * - bone: Selection name + Animation (Keys filter); no Model / Part
  * - multi: hide Model / Part / Animation (ambiguous)
+ *
+ * Part / group focus is create-model only (US-34: after skin, source → imported).
  */
 export type SettingsFocusKind = 'idle' | 'multi' | 'part' | 'group' | 'bone';
 
@@ -29,6 +31,7 @@ export function resolveSettingsFocus(): SettingsFocus {
   const selection = $selection.get();
   const model = $activeModel.get();
   const root = model?.scene ?? null;
+  const created = model?.source === 'created';
 
   if (selection.kind === 'models') {
     if (selection.modelIds.length > 1) {
@@ -47,7 +50,7 @@ export function resolveSettingsFocus(): SettingsFocus {
       return { kind: 'idle', modelTransformTarget: root, partObject: null };
     }
 
-    if (isCreateGroup(object)) {
+    if (created && isCreateGroup(object)) {
       return {
         kind: 'group',
         modelTransformTarget: object,
@@ -63,11 +66,16 @@ export function resolveSettingsFocus(): SettingsFocus {
       };
     }
 
-    return {
-      kind: 'part',
-      modelTransformTarget: null,
-      partObject: object,
-    };
+    if (created) {
+      return {
+        kind: 'part',
+        modelTransformTarget: null,
+        partObject: object,
+      };
+    }
+
+    // Imported / skinned mesh pick — keep model + Animation, not create Part tools.
+    return { kind: 'idle', modelTransformTarget: root, partObject: null };
   }
 
   return { kind: 'idle', modelTransformTarget: root, partObject: null };

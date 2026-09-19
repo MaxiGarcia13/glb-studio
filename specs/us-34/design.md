@@ -8,6 +8,7 @@ One reliable path: **create-group armature → Bone skeleton + rigid-skinned mes
 
 - Entry: library model **⋯ → Skin model**
 - After skin: freeze create tools; `source → imported`
+- Create toolbar, part outliner, Part inspector, and create Group/Ungroup are gated on `source === 'created'` (automatic after skin). Mesh picks on skinned models use idle Settings focus — not Part tools.
 - No groups: disable (no heuristic)
 - Clips: drop mesh-object owned tracks
 - Weights: rigid only
