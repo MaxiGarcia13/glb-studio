@@ -1,3 +1,5 @@
+import type { BufferGeometry, Mesh } from 'three';
+
 export interface PartSizeParamsById {
   box: { width: number; height: number; depth: number };
   sphere: { radius: number };
@@ -44,4 +46,14 @@ export interface PartSizeField {
    * (e.g. polygon sides).
    */
   unit?: 'm' | null;
+}
+
+/** One registered primitive kind: how to build it and what the inspector edits. */
+export interface PartKind<K extends PartKindId = PartKindId> {
+  id: K;
+  label: string;
+  defaultParams: PartSizeParams<K>;
+  sizeFields: readonly PartSizeField[];
+  createGeometry: (params: PartSizeParams<K>) => BufferGeometry;
+  createMesh: (params: PartSizeParams<K>) => Mesh;
 }
