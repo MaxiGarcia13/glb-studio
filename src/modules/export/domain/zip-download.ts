@@ -10,6 +10,7 @@ import { $activeModel, $model } from '@/modules/viewport/stores/model-store';
 import { downloadBlob } from '../adapters/download';
 import { buildZipArchive } from '../adapters/zip';
 import {
+  EXPORT_ZIP_FILE_NAME,
   resolveGlbFileName,
   resolveZipFileName,
   stripGlbExtension,
@@ -19,8 +20,6 @@ import { packClipGlb } from './clip-glb';
 import { isExportableModel } from './exportable-model';
 import { packMergedModelsGlb } from './merged-glb';
 import { packModelGlb } from './model-glb';
-
-export const EXPORT_ZIP_FILE_NAME = 'glb-export.zip';
 
 export interface ExportZipOptions {
   /** Download name for the zip archive (`.zip` appended if missing). */

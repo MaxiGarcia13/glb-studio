@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  defaultExportZipFileName,
+  defaultZipBaseName,
+  resolveExportFileName,
   resolveGlbFileName,
   resolveZipFileName,
   sanitizeBaseName,
+  stripExportExtension,
   stripGlbExtension,
   uniqueFileName,
 } from '@/modules/export/utils/file-name';
@@ -13,6 +17,15 @@ describe('stripGlbExtension', () => {
     expect(stripGlbExtension('hero.glb')).toBe('hero');
     expect(stripGlbExtension('Hero.GLTF')).toBe('Hero');
     expect(stripGlbExtension('plain')).toBe('plain');
+  });
+});
+
+describe('stripExportExtension', () => {
+  it('strips .glb / .gltf / .fbx case-insensitively', () => {
+    expect(stripExportExtension('hero.glb')).toBe('hero');
+    expect(stripExportExtension('Hero.GLTF')).toBe('Hero');
+    expect(stripExportExtension('walk.FBX')).toBe('walk');
+    expect(stripExportExtension('plain')).toBe('plain');
   });
 });
 
@@ -45,6 +58,31 @@ describe('uniqueFileName', () => {
   });
 });
 
+describe('defaultZipBaseName / defaultExportZipFileName', () => {
+  it('returns format-specific defaults', () => {
+    expect(defaultZipBaseName('glb')).toBe('glb-export');
+    expect(defaultZipBaseName('fbx')).toBe('fbx-export');
+    expect(defaultExportZipFileName('glb')).toBe('glb-export.zip');
+    expect(defaultExportZipFileName('fbx')).toBe('fbx-export.zip');
+  });
+});
+
+describe('resolveExportFileName', () => {
+  it('appends the requested format extension', () => {
+    expect(resolveExportFileName('hero.gltf', 'export.glb', 'glb')).toBe(
+      'hero.glb',
+    );
+    expect(resolveExportFileName('hero.fbx', 'export.glb', 'fbx')).toBe(
+      'hero.fbx',
+    );
+    expect(resolveExportFileName('hero', 'export.glb', 'fbx')).toBe('hero.fbx');
+    expect(resolveExportFileName(undefined, 'fallback.glb', 'fbx')).toBe(
+      'fallback.fbx',
+    );
+    expect(resolveExportFileName(undefined, '', 'glb')).toBe('export.glb');
+  });
+});
+
 describe('resolveGlbFileName', () => {
   it('ensures a .glb name from raw or fallback', () => {
     expect(resolveGlbFileName('hero.gltf', 'export.glb')).toBe('hero.glb');
@@ -56,7 +94,9 @@ describe('resolveGlbFileName', () => {
   });
 
   it('sanitizes path-like raw names', () => {
-    expect(resolveGlbFileName('path/to/model.glb', 'x.glb')).toBe('path-to-model.glb');
+    expect(resolveGlbFileName('path/to/model.glb', 'x.glb')).toBe(
+      'path-to-model.glb',
+    );
   });
 });
 
@@ -64,7 +104,14 @@ describe('resolveZipFileName', () => {
   it('ensures a .zip name from raw or fallback', () => {
     expect(resolveZipFileName('pack', 'glb-export.zip')).toBe('pack.zip');
     expect(resolveZipFileName('pack.ZIP', 'glb-export.zip')).toBe('pack.zip');
-    expect(resolveZipFileName(undefined, 'glb-export.zip')).toBe('glb-export.zip');
+    expect(resolveZipFileName(undefined, 'glb-export.zip')).toBe(
+      'glb-export.zip',
+    );
     expect(resolveZipFileName('   ', '')).toBe('glb-export.zip');
+  });
+
+  it('uses format-specific zip default when fallback is empty', () => {
+    expect(resolveZipFileName(undefined, '', 'fbx')).toBe('fbx-export.zip');
+    expect(resolveZipFileName('   ', '', 'glb')).toBe('glb-export.zip');
   });
 });
