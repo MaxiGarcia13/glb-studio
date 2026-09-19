@@ -22,12 +22,12 @@ flowchart LR
 
 ## Assets
 
-| Asset              | Role                                                                                                  |
-| ------------------ | ----------------------------------------------------------------------------------------------------- |
-| Model GLB/GLTF     | Skinned mesh + skeleton when **imported**; many in the session, **several** previewed at once (US-20) |
-| Created model      | Empty or primitive mesh scene (`source: 'created'`); no skeleton required (US-23)                     |
-| Animation GLB/GLTF | Source of `AnimationClip`s only; mesh payload ignored or discarded after clip extract                 |
-| Model / clip FBX   | Converted to GLB via `POST /api/v1/fbx-to-glb`, then the same load path as above                      |
+| Asset              | Role                                                                                                                      |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| Model GLB/GLTF     | Skinned mesh + skeleton when **imported**; many in the session, **several** previewed at once (US-20)                     |
+| Created model      | Empty or primitive mesh scene (`source: 'created'`); no skeleton required (US-23)                                         |
+| Animation GLB/GLTF | Source of `AnimationClip`s only; mesh payload ignored or discarded after clip extract                                     |
+| Model / clip FBX   | Import: converted to GLB via `POST /api/v1/fbx-to-glb`. Export: optional Format FBX via `POST /api/v1/glb-to-fbx` (US-36) |
 
 Clips have **ownership** (`ownerModelId`: `null` = Shared Animations; otherwise listed only under that model). Owned clips validate against their owner skeleton; shared clips validate against the model in context (focused for Shared UI; a given model when checking that model’s conflicts / export). Mismatch → user-visible Needs retarget; explicit retarget flow (US-6 / US-19). Shared global status is not flipped when each mixer mounts; per-model fit is checked in the library UI.
 
@@ -312,18 +312,19 @@ Semantic colors live in `src/styles/global.css` `@theme` (`canvas`, `surface`, `
 
 **Spacing:** padding, gap, and margin use even Tailwind units (`2`, `4`, `6`, `8`, and larger even steps). Avoid odd and half units (`1`, `3`, `1.5`, …) except hairlines (`w-px`, `w-0.5`). Shared primitives (`Button`, `Input`, `Modal`, `CollapsibleAside`, `ResizableShell`, `FloatingToolbar`) encode the defaults — prefer not overriding with ad-hoc padding.
 
-## Export (US-5 + US-22 modal + US-26 groups + US-7 blend contract)
+## Export (US-5 + US-22 modal + US-26 groups + US-7 blend + US-36 format)
 
-**File → Export** opens an **Export** modal. Confirm builds a **zip** in the browser (no server):
+**File → Export** opens an **Export** modal with a **Format** select (**GLB** default / **FBX**). Confirm packs units as GLB in the browser, then optionally converts each entry to FBX before zipping:
 
 1. If there are no **exportable** models **and** no working clips → disable Export; do not open a useless pack
 2. `resolveExportUnits`: each `$modelGroups` entry with ≥2 **exportable** members → one **group** unit; leftover / ungrouped exportable models → one **single** unit each. Created models with zero stamped mesh parts are not exportable (omitted from units and from group pack membership)
-3. **Single units:** `packModelGlb` — **Imported:** mesh + owned ready + validating shared; **Created:** mesh + owned ready (no shared attach). Bake each included clip’s `timeScale` when ≠ `1`. Shared working clips also ship as animation-only `.glb`s (skeleton fallback prefers an imported model). Owned clips never leave their model GLB
-4. **Group units:** `packMergedModelsGlb` — clone member scenes, unique bone-name prefix per model, parent under a temp root named after the group. Embed **every owned ready clip** for each member (bake `timeScale`, remap tracks to that model’s prefixed bone names; disambiguate clip names on collision). Stamp `userData.threeEditorModelGroup` + per-member stamps for US-32 round-trip. Do **not** merge picks into a multi-character Scene clip. Shared clips still emit only as unprefixed animation-only sidecars (never packed into the group GLB)
-5. Filename collisions inside the zip get a numeric suffix. Modal supplies optional basenames: zip archive, each group GLB, each ungrouped model GLB — sanitized with `resolveZipFileName` / `resolveGlbFileName`; animation-only files keep library clip names. No **Merge visible models** checkbox / `mergeModels` opt-in — editor groups are the opt-in
-6. Trigger a single download of the zip blob. Any exporter or zip failure → user-visible error; no partial archive
+3. **Single units:** `packModelGlb` — **Imported:** mesh + owned ready + validating shared; **Created:** mesh + owned ready (no shared attach). Bake each included clip’s `timeScale` when ≠ `1`. Shared working clips also ship as animation-only sidecars (skeleton fallback prefers an imported model). Owned clips never leave their model file
+4. **Group units:** `packMergedModelsGlb` — clone member scenes, unique bone-name prefix per model, parent under a temp root named after the group. Embed **every owned ready clip** for each member (bake `timeScale`, remap tracks to that model’s prefixed bone names; disambiguate clip names on collision). Stamp `userData.threeEditorModelGroup` + per-member stamps for US-32 round-trip (GLB). Do **not** merge picks into a multi-character Scene clip. Shared clips still emit only as unprefixed animation-only sidecars
+5. Filename collisions inside the zip get a numeric suffix. Modal supplies Format + optional basenames: zip archive (`glb-export` / `fbx-export` defaults), each group file, each ungrouped model — sanitized with `resolveZipFileName` / `resolveExportFileName(…, format)`; animation-only files keep library clip names + format extension. No **Merge visible models** checkbox / `mergeModels` opt-in — editor groups are the opt-in
+6. **Format GLB:** zip packed buffers as `.glb` and download (no convert). **Format FBX:** `ensureFbxFile` → `POST /api/v1/glb-to-fbx` per entry (`libassimp` WASM); fail any entry → abort (no partial zip). Busy spans pack + convert + zip; dismiss blocked while busy
+7. Trigger a single download of the zip blob. Any exporter, convert, or zip failure → user-visible modal error; no partial archive
 
-A model with no matching clips still ships as a mesh-only `.glb` when packed as a single unit (or as a mesh-only member inside a group GLB). There are no per-row download buttons.
+A model with no matching clips still ships as a mesh-only file when packed as a single unit (or as a mesh-only member inside a group file). There are no per-row download buttons. FBX is a convert of the packed GLB — group-manifest round-trip and bit-identical FBX ↔ GLB are not required.
 
 **Blend vs zip (locked):** live blend is viewport playback only (`blendClipId` / `blendWeight` / `blendBaseClip` never enter the exporter). `packModelGlb` / `packMergedModelsGlb` / `packClipGlb` / `downloadExportZip` read each entry’s working `clip` (+ `timeScale` bake) — the same discrete library data as US-5. After **Bake**, the flattened mix replaces the active entry’s `clip` and therefore exports with that clip; without Bake, the zip is unchanged by the overlay.
 
@@ -334,7 +335,13 @@ A model with no matching clips still ships as a mesh-only `.glb` when packed as 
 3. Convert **before** skeleton / clip validation. Failures use existing model `error` / clip failed-entry copy
 4. API is `@astrojs/vercel` Node serverless (`src/pages/api/v1/fbx-to-glb.ts`, `prerender = false`), not Edge. Server-only `import/adapters/convert-fbx.ts` runs `fbx2gltf` under `os.tmpdir()`; Linux binary via `includeFiles`; Darwin/Windows excluded from the Vercel bundle
 5. Body cap matches Vercel payload (typically 4.5MB). No Mixamo convert flags; bone mismatch still uses US-6
-6. Zip export (US-5) stays in-browser — convert is the only server round-trip
+
+## FBX export convert (US-36)
+
+1. `POST /api/v1/glb-to-fbx` (`prerender = false`): multipart `file`; server adapter `export/adapters/convert-glb-to-fbx` runs `libassimp` with `backend: 'wasm'`; reject non-`.glb` (400) and oversize (413)
+2. Client `export/services/ensure-fbx-file` posts packed GLB buffers; `downloadExportZip({ format: 'fbx' })` convert-each then zip
+3. Vercel packaging: `ssr.external` includes `libassimp`; `includeFiles` ships `libassimp/dist/wasm/libassimp.wasm`; optional platform NAPI `.node` addons are `excludeFiles`
+4. Allowed server round-trips: FBX **import** (US-16) and optional FBX **export** convert (US-36); GLB export stays browser-only
 
 ## Layering rules
 

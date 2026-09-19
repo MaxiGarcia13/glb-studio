@@ -82,6 +82,15 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Filename inputs: zip + group / per-model basenames when groups exist
 - [x] Manual verify separate vs grouped (owned clips retained in group GLB)
 
+## US-36 — Export format GLB | FBX
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] `libassimp@0.3.0` WASM + `convertGlbToFbx` + `POST /api/v1/glb-to-fbx`
+- [x] `ensureFbxFile` + `downloadExportZip({ format })` + format-aware file names
+- [x] Export modal Format select; summary / zip defaults; busy / error while converting
+- [x] Unit tests for convert validation (mocked converter)
+
 ## US-13 — Selection name overlay
 
 **Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).

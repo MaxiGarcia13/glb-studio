@@ -78,12 +78,12 @@ As an editor user, I can download a zip of each model and of each animation as s
 
 **Acceptance**
 
-- [x] **File → Export** uses `GLTFExporter` and builds a zip in the browser — no server round-trip
-- [x] Zip contains one `{model}.glb` per loaded model: that model’s scene plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips). **Created** models pack the mesh scene plus **owned** ready clips (no shared-clip attach). **Created** models with **no stamped mesh parts** are omitted from the zip (empty New models are not exported)
-- [x] Zip contains one `{clip}.glb` per **shared** library clip that has a working `AnimationClip` — animation-only, no mesh (owned clips ship only inside their model GLB when not merging)
+- [x] **File → Export** packs with `GLTFExporter` in the browser for **GLB** (default) — no convert hop; optional **FBX** format packs the same units then converts each file via `POST /api/v1/glb-to-fbx` before zipping (US-36)
+- [x] Zip contains one `{model}.glb` (or `.fbx` when Format is FBX) per loaded model: that model’s scene plus that model’s **owned** ready clips and **shared** clips that validate against that skeleton (skip conflicted shared; never pack another model’s owned clips). **Created** models pack the mesh scene plus **owned** ready clips (no shared-clip attach). **Created** models with **no stamped mesh parts** are omitted from the zip (empty New models are not exported)
+- [x] Zip contains one `{clip}.glb` (or `.fbx`) per **shared** library clip that has a working `AnimationClip` — animation-only, no mesh (owned clips ship only inside their model file when not merging)
 - [x] Each clip’s stored `timeScale` is baked into that clip’s exported track times / duration per design
 - [x] Filename collisions inside the zip get a numeric suffix
-- [x] Export is disabled or errors when there is nothing to pack; exporter failure does not download a partial zip
+- [x] Export is disabled or errors when there is nothing to pack; exporter / convert failure does not download a partial zip
 
 ### US-22 — Export modal (+ multi-model pack; superseded opt-in by US-26)
 
@@ -93,11 +93,25 @@ As an editor user, when I choose **File → Export** I can confirm the zip conte
 
 - [x] **File → Export** opens an **Export** modal (does not pack immediately)
 - [x] Modal shows a short summary of what will be packed; confirm builds the zip
-- [x] Ungrouped **exportable** models pack as separate GLBs (US-5); empty created models (no stamped mesh parts) are omitted
-- [x] Each editor **model group** with ≥2 exportable members packs as **one** GLB via bone-prefixed merge (US-26); that GLB includes **each member’s owned ready clips** (tracks remapped to that model’s bone prefix) — no multi-character Scene bake / clip merge; shared clips still ship only as animation-only sidecars
-- [x] Group GLBs stamp an editor manifest so re-import restores **group → models → per-model clips** (US-32)
+- [x] Modal **Format** select: **GLB** (default on open) or **FBX** — whole zip uses that format; summary + zip default basename follow format (`glb-export` / `fbx-export`) (US-36)
+- [x] Ungrouped **exportable** models pack as separate files (US-5); empty created models (no stamped mesh parts) are omitted
+- [x] Each editor **model group** with ≥2 exportable members packs as **one** file via bone-prefixed merge (US-26); that file includes **each member’s owned ready clips** (tracks remapped to that model’s bone prefix) — no multi-character Scene bake / clip merge; shared clips still ship only as animation-only sidecars
+- [x] Group GLBs stamp an editor manifest so re-import restores **group → models → per-model clips** (US-32) — FBX export does not guarantee the same round-trip
 - [x] Filename collisions and no-partial-zip rules from US-5 still apply
-- [x] Modal edits zip basename + per-group / per-model basenames; empty/invalid → defaults; extensions auto-applied; animation files keep library names
+- [x] Modal edits zip basename + per-group / per-model basenames; empty/invalid → defaults; extensions auto-applied for the selected format; animation files keep library names
+- [x] Convert / oversize failures stay in the modal (busy spans pack + convert + zip; dismiss blocked while busy) (US-36)
+
+### US-36 — Export format GLB | FBX
+
+As an editor user, when I choose **File → Export** I can pick **GLB** (default) or **FBX** so the zip uses the chosen extension without changing pack rules.
+
+**Acceptance**
+
+- [x] Export modal **Format** control: GLB (default) / FBX; whole-zip format only
+- [x] GLB path: in-browser pack → zip — no convert hop
+- [x] FBX path: pack GLB units → `POST /api/v1/glb-to-fbx` per entry → zip of `.fbx` files; fail closed (no partial download)
+- [x] Convert API is Vercel Node (`libassimp` WASM); ~4.5MB per-file body cap
+- [x] Import (including FBX → GLB) unchanged when exporting GLB
 
 ### US-11 — Model library
 
@@ -510,7 +524,8 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
 - Bones, skinning, Mixamo / retarget on **empty / mesh-kit created** models — planned as [`US-34`](../us-34/) (in-editor skin MVP); skinned **From kit** asset is US-33 (shipped)
-- Server accounts (FBX convert via US-16 is the allowed server round-trip; no user accounts)
+- Server accounts (FBX import via US-16 and optional FBX export convert via US-36 are the allowed server round-trips; no user accounts)
 - Collaborative editing / durable undo across reloads
 - Full NLA strip editorial beyond US-7 blend/cross-fade
-- FBX larger than Vercel’s function payload (typically 4.5MB) until a later blob / chunked upload
+- FBX / GLB larger than Vercel’s function payload (typically 4.5MB) until a later blob / chunked upload
+- Per-entry format mix inside one export zip; client-side FBX writer; bit-identical FBX ↔ GLB round-trip / group-manifest on FBX export
