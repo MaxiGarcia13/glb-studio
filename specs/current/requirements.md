@@ -401,7 +401,7 @@ As an editor user, I can group parts (and models) with multi-select + context me
 - [x] Skeleton-bone outliner for imported models is **US-31** (deferred from this story)
 - [x] **Shift+click** multi-selects in the library (model rows + part outliner) and viewport; parts and models never mix in one selection
 - [x] With a part or model multi-selection, **arrow-key nudge** and Settings **position XYZ** apply the same delta to every selected root (nested parts under another selected node are skipped once); rotation / scale / gizmo multi-drag stay single-target
-- [x] **Right-click** opens Group / Ungroup when the selection allows it (library + preview); Group creates a new empty container (not “parent under last-clicked mesh/model”)
+- [x] **Right-click** opens Group / Ungroup when the selection allows it (library + preview); Group creates a new empty container whose pivot is the average world origin of the selection (not the model floor / not “parent under last-clicked mesh/model”)
 - [x] Settings **Parent** `<select>` and create-toolbar Unparent are removed (context menu only)
 - [x] Models can be **grouped / ungrouped** the same way; each model group with ≥2 exportable members packs as one GLB (meshes + each member’s owned ready clips, bone-prefixed; shared stay sidecars); ungrouped models stay separate; empty created models omitted; Export modal Merge checkbox removed
 

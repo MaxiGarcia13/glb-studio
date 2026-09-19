@@ -2,7 +2,10 @@ import type { Object3D } from 'three';
 import { findModelEntryForObject } from '@/modules/viewport/domain/model-scene';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { $selection, selectObject } from '@/modules/viewport/stores/selection-store';
-import { createEmptyPartGroup } from '../domain/create-part-group';
+import {
+  averageWorldPosition,
+  createEmptyPartGroup,
+} from '../domain/create-part-group';
 import { isCreateHierarchyNode } from '../domain/group-data';
 import { attachAllUnder } from '../domain/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
@@ -108,7 +111,9 @@ export function groupSelectedParts(): boolean {
     return false;
   }
 
-  const group = createEmptyPartGroup(context.partsRoot);
+  context.partsRoot.updateMatrixWorld(true);
+  const worldPivot = averageWorldPosition(context.nodes);
+  const group = createEmptyPartGroup(context.partsRoot, { worldPivot });
   const moved = attachAllUnder(group, context.nodes, context.partsRoot);
   if (moved === 0) {
     group.removeFromParent();
