@@ -16,7 +16,7 @@
 
 ## Library / viewport gates
 
-- [ ] **`isSkinnedLibraryModel`** — Shared predicate for SkeletonHelper + BoneOutliner (`source === 'imported'` with usable skeleton)
+- [x] **`isSkinnedLibraryModel`** — Shared predicate for SkeletonHelper + BoneOutliner (`source === 'imported'` with usable skeleton)
 - [ ] **Part tools after skin** — Hide create toolbar / part outliner (follows `source → imported`); do not leave broken part-edit paths
 
 ## UI

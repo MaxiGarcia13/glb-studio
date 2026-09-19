@@ -1,3 +1,4 @@
+import type { ModelEntry } from '@/modules/viewport/types/model';
 import {
   Bone,
   BoxGeometry,
@@ -7,12 +8,30 @@ import {
   Skeleton,
   SkinnedMesh,
 } from 'three';
-import { describe, expect, it } from 'vitest';
 
+import { describe, expect, it } from 'vitest';
 import {
+  isSkinnedLibraryModel,
   isUsableCreatedModelScene,
   isUsableSkinnedModelScene,
 } from '@/modules/import/domain/model-scene-kind';
+
+function model(
+  source: ModelEntry['source'],
+  scene: ModelEntry['scene'],
+): ModelEntry {
+  return { id: 'm1', fileName: 'm.glb', source, scene };
+}
+
+function skinnedScene(): Group {
+  const bone = new Bone();
+  const skinned = new SkinnedMesh(new BoxGeometry(1, 1, 1), new MeshBasicMaterial());
+  skinned.add(bone);
+  skinned.bind(new Skeleton([bone]));
+  const scene = new Group();
+  scene.add(skinned);
+  return scene;
+}
 
 describe('isUsableSkinnedModelScene', () => {
   it('requires a SkinnedMesh with a skeleton', () => {
@@ -40,6 +59,22 @@ describe('isUsableSkinnedModelScene', () => {
     const scene = new Group();
     scene.add(new Mesh(new BoxGeometry(1, 1, 1), new MeshBasicMaterial()));
     expect(isUsableSkinnedModelScene(scene)).toBe(false);
+  });
+});
+
+describe('isSkinnedLibraryModel', () => {
+  it('is true for imported models with a usable skeleton', () => {
+    expect(isSkinnedLibraryModel(model('imported', skinnedScene()))).toBe(true);
+  });
+
+  it('is false for created models even with a skeleton', () => {
+    expect(isSkinnedLibraryModel(model('created', skinnedScene()))).toBe(false);
+  });
+
+  it('is false for imported models without a skeleton', () => {
+    const scene = new Group();
+    scene.add(new Mesh(new BoxGeometry(1, 1, 1), new MeshBasicMaterial()));
+    expect(isSkinnedLibraryModel(model('imported', scene))).toBe(false);
   });
 });
 

@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/react';
+import { isSkinnedLibraryModel } from '@/modules/import/domain/model-scene-kind';
 import { $model } from '../stores/model-store';
 import { $viewportSettings } from '../stores/viewport-settings-store';
 import { ModelSkeletonHelper } from './model-skeleton-helper';
@@ -26,7 +27,7 @@ export function ModelViewer() {
       ))}
       {bonesVisible
         && visible
-          .filter((model) => model.source === 'imported')
+          .filter((model) => isSkinnedLibraryModel(model))
           .map((model) => (
             <ModelSkeletonHelper key={`skeleton-${model.id}`} scene={model.scene} />
           ))}

@@ -17,6 +17,7 @@ import { PartOutliner } from '@/modules/create/components/part-outliner';
 import { listCreatedParts } from '@/modules/create/domain/list-created-parts';
 import { $createPartsRevision } from '@/modules/create/stores/create-parts-revision-store';
 import { LibrarySectionCollapsible } from '@/modules/editor-shell/components/library-section-collapsible';
+import { isSkinnedLibraryModel } from '@/modules/import/domain/model-scene-kind';
 import { openContextMenuForModel } from '@/modules/viewport/actions/open-selection-context-menu';
 import {
   $model,
@@ -54,8 +55,9 @@ export function LibraryModel({ model }: LibraryModelProps) {
   const [addAnimationOpen, setAddAnimationOpen] = useState(false);
   const ownedClips = clips.filter((entry) => entry.ownerModelId === model.id);
   const isCreated = model.source === 'created';
+  const skinned = isSkinnedLibraryModel(model);
   const partCount = isCreated ? listCreatedParts(model.scene).length : 0;
-  const boneCount = isCreated ? 0 : listBoneEntries(model.scene).length;
+  const boneCount = skinned ? listBoneEntries(model.scene).length : 0;
   const hasNested
     = (isCreated && partCount > 0) || boneCount > 0 || ownedClips.length > 0;
   const nodeNames = buildSkeletonNodeSet(model.scene);
@@ -131,7 +133,10 @@ export function LibraryModel({ model }: LibraryModelProps) {
       >
         {isCreated
           ? <PartOutliner modelId={model.id} scene={model.scene} />
-          : <BoneOutliner modelId={model.id} scene={model.scene} />}
+          : null}
+        {skinned
+          ? <BoneOutliner modelId={model.id} scene={model.scene} />
+          : null}
         {ownedClips.length > 0
           ? <ClipRows clips={ownedClips} ownerModelId={model.id} />
           : null}

@@ -1,5 +1,5 @@
 import type { Mesh, Object3D } from 'three';
-import type { ModelLoadResult } from '@/modules/viewport/types/model';
+import type { ModelEntry, ModelLoadResult } from '@/modules/viewport/types/model';
 
 /** Skinned character GLB: needs SkinnedMesh + skeleton. */
 export function isUsableSkinnedModelScene(scene: ModelLoadResult['scene']): boolean {
@@ -17,6 +17,14 @@ export function isUsableSkinnedModelScene(scene: ModelLoadResult['scene']): bool
   });
 
   return hasSkinnedMesh && hasSkeleton;
+}
+
+/**
+ * Library models that should get SkeletonHelper + bone outliner (US-31 / US-34).
+ * Imported skinned kits and in-editor skinned created models (`source → imported`).
+ */
+export function isSkinnedLibraryModel(model: ModelEntry): boolean {
+  return model.source === 'imported' && isUsableSkinnedModelScene(model.scene);
 }
 
 /**
