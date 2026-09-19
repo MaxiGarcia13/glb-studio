@@ -16,7 +16,7 @@ Tick only after acceptance criteria for that item pass.
 
 ## Client export path
 
-- [ ] **`ensureFbxFile` service** — POST buffer/file to convert API; surface error message for modal
+- [x] **`ensureFbxFile` service** — POST buffer/file to convert API; surface error message for modal
 - [ ] **Format-aware file names** — `resolveExportFileName(…, 'glb' | 'fbx')`; zip default `glb-export` / `fbx-export`
 - [ ] **`downloadExportZip({ format })`** — GLB path unchanged; FBX path convert-each-then-zip; fail closed (no partial download)
 - [ ] **`useExportZip` + types** — Pass `format` through options
