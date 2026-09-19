@@ -1,11 +1,11 @@
 # US-34 — Tasks
 
-**Do not start until explicitly kicked off.** US-33 skinned kit is shipped for visual QA. Tick only after acceptance.
+**Kicked off.** Product choices locked in [`requirements.md`](./requirements.md). Tick only after acceptance.
 
 ## Spec / kickoff
 
-- [ ] **Lock product choices** — Entry point; after-skin part editing; no-groups behavior; `source` strategy; clip migration ([`requirements.md`](./requirements.md))
-- [ ] **Confirm MVP = rigid weights only** — No paint UI in this US
+- [x] **Lock product choices** — Entry: model ⋯; after-skin: freeze; no-groups: disable; `source` → `imported`; clips: drop mesh tracks ([`requirements.md`](./requirements.md))
+- [x] **Confirm MVP = rigid weights only** — No paint UI in this US
 
 ## Domain: detect + convert
 
@@ -16,17 +16,17 @@
 
 ## Library / viewport gates
 
-- [ ] **`isSkinnedLibraryModel`** — Shared predicate for SkeletonHelper + BoneOutliner (imported **or** skinned-created)
-- [ ] **Part tools after skin** — Per kickoff: hide create toolbar / part outliner or keep read-only; do not leave broken part-edit paths
+- [ ] **`isSkinnedLibraryModel`** — Shared predicate for SkeletonHelper + BoneOutliner (`source === 'imported'` with usable skeleton)
+- [ ] **Part tools after skin** — Hide create toolbar / part outliner (follows `source → imported`); do not leave broken part-edit paths
 
 ## UI
 
-- [ ] **Skin model control** — Wired to availability helper; busy/disabled states
+- [ ] **Skin model control** — Library model ⋯ item; wired to `canSkinModel`; busy/disabled states
 - [ ] **Copy** — Success silent or one-line; failures explicit
 
 ## Clips / export
 
-- [ ] **Owned clip policy** — Implement kickoff choice (likely clear incompatible mesh tracks)
+- [ ] **Owned clip policy** — Drop mesh / create-part object tracks for that model after skin
 - [ ] **Export + re-import** — Skinned GLB round-trips as skinned imported model with bones
 
 ## Verify
