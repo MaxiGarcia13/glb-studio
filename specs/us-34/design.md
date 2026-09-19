@@ -51,7 +51,7 @@ Avoid hardcoding Mixamo prefixes; bone names come from the user’s create-group
 
 ## Relation to US-33
 
-US-33 ships a **finished** skinned GLB for beginners. US-34 lets users **author** then skin. QA: skin the mesh Block robot (if kept) and compare bone count / helper to US-33 asset.
+US-33 shipped a **finished** skinned GLB for beginners (`/kits/block-robot.glb`). US-34 lets users **author** then skin. QA: compare bone count / helper on a user-skinned created model to the US-33 asset (mesh Block robot From kit entry was removed).
 
 ## Fold into current on ship
 

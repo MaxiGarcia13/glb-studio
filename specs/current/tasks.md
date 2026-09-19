@@ -241,6 +241,14 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Joint select on pick (`resolveJointPickTarget`) — nearest create-group; Shift+click mesh bypass
 - [x] Optional clothed block variant deferred (content-only if ever added; not required)
 
+## US-33 — Skinned starter kit (Block robot GLB)
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] Discriminated `MeshKit` / `SkinnedKit`; Block robot → `/kits/block-robot.glb` (`source: 'imported'`)
+- [x] Offline `npm run kits:block-robot` + `public/kits/` contract (T-pose, no demo clips)
+- [x] From kit error path; Modern house + New model unchanged
+
 ## US-31 — Bone outliner + skeleton helper
 
 **Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
@@ -278,12 +286,11 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 ## Open deltas
 
-| US                                                | Status                              | Tasks                                       |
-| ------------------------------------------------- | ----------------------------------- | ------------------------------------------- |
-| **US-33** — Skinned starter kit (Block robot GLB) | kicked off (choices locked)         | [`specs/us-33/tasks.md`](../us-33/tasks.md) |
-| **US-34** — In-editor skinning for created models | not started (after US-33 preferred) | [`specs/us-34/tasks.md`](../us-34/tasks.md) |
-| **US-28** — Part color maps (textures)            | not started (after US-23)           | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
-| **US-8** — Morph-target editing                   | post-MVP, not started               | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
+| US                                                | Status                    | Tasks                                       |
+| ------------------------------------------------- | ------------------------- | ------------------------------------------- |
+| **US-34** — In-editor skinning for created models | not started               | [`specs/us-34/tasks.md`](../us-34/tasks.md) |
+| **US-28** — Part color maps (textures)            | not started (after US-23) | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
+| **US-8** — Morph-target editing                   | post-MVP, not started     | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 
 ## Tech debt
 

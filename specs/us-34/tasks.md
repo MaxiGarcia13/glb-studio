@@ -1,6 +1,6 @@
 # US-34 — Tasks
 
-**Do not start until explicitly kicked off.** Prefer **US-33 shipped** (or at least its skinned GLB available) for visual QA. Tick only after acceptance.
+**Do not start until explicitly kicked off.** US-33 skinned kit is shipped for visual QA. Tick only after acceptance.
 
 ## Spec / kickoff
 

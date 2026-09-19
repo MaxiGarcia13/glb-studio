@@ -2,9 +2,9 @@
 
 Delta to turn **created** models (empty + mesh kits with create-group armatures) into **skinned** characters inside the editor. Parent: [`specs/current/requirements.md`](../current/requirements.md).
 
-**Depends on:** US-23/24/26/27 (create parts + groups), US-31 (bone UI once skinned). **Improved by:** US-33 (reference skinned kit for QA / naming).
+**Depends on:** US-23/24/26/27 (create parts + groups), US-31 (bone UI once skinned). **Improved by:** US-33 (shipped skinned Block robot kit for QA / naming).
 
-**Status:** Not started — do not implement until explicitly kicked off. Prefer **US-33 first**.
+**Status:** Not started — do not implement until explicitly kicked off.
 
 ## Story
 

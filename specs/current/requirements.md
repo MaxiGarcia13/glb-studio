@@ -366,7 +366,7 @@ As an editor user, I can create models / shared animations, import files, and ex
 
 - [x] Full-width `EditorToolbar` exposes a **File** text menu with: **New model**, **From kit…**, **New animation**, **Import**, **Export**
 - [x] **New model** creates an empty `source: 'created'` model; removed from the Models library header
-- [x] **From kit…** opens a secondary modal of starter kits (label + one-line description); choosing one creates a `source: 'created'` model with recipe parts on the same preview / focus path as New model
+- [x] **From kit…** opens a secondary modal of starter kits (label + one-line description); choosing a **mesh** kit creates a `source: 'created'` model with recipe parts; choosing a **skinned** kit loads a GLB as `source: 'imported'` (US-33) — same preview / focus path as New model for mesh kits
 - [x] **New animation** creates a **shared** draft (`ownerModelId: null`); disabled when no focused model scene; removed from the Shared Animations header
 - [x] **Import** opens a multi-file picker (`.glb` / `.gltf` / `.fbx`); removed from Models and Shared headers
 - [x] Per file, Import routes by content: usable skinned mesh + skeleton → model library (`imported`, embedded clips **owned**); mesh-only scenes → model library (`created`, embedded clips **owned**); animations but no usable model → Shared Animations; neither → user-visible error for that file; other files in the batch still process
@@ -396,14 +396,31 @@ As an editor user, I can optionally start from a starter kit (for example a mode
 
 **Acceptance**
 
-- [x] At least **two** kits are registered (**Modern house** / `simple-building`, **Block robot**) using the kit recipe format
+- [x] At least **two** kits are registered (**Modern house** / `simple-building`, **Block robot**) in the kit registry
 - [x] A secondary **From kit…** entry (not the Plus button) lists them with beginner-friendly labels and one-line descriptions
-- [x] Creating from a kit follows the same library / preview / Edit / export path as `createEmptyModel`
+- [x] **Mesh** kits follow the same library / preview / Edit / export path as `createEmptyModel` (`source: 'created'`)
 - [x] Plus / New model still creates an **empty** model with no modal
 - [x] No new PartKind is required unless a kit truly needs one; prefer existing kinds
-- [x] Kits remain editable (parts are normal meshes — not locked prefabs)
-- [x] On a created model with stamped create-group hierarchy (e.g. Block robot Armature), **Edit** viewport pick prefers the **nearest parent create-group** so transforming that joint moves its child parts together (limb feels connected)
+- [x] **Mesh** kits remain editable (parts are normal meshes — not locked prefabs)
+- [x] On a created model with stamped create-group hierarchy, **Edit** viewport pick prefers the **nearest parent create-group** so transforming that joint moves its child parts together (limb feels connected)
 - [x] User can still target the **mesh** when needed (e.g. Shift+click on pick) for color / size / single-part edits; outliner clicks stay exact
+
+### US-33 — Skinned starter kit (Block robot GLB)
+
+As an editor user with little 3D experience, I can start from a **skinned** Block robot kit so I immediately see bones in the viewport, browse joints in the library, and play skeletal animations — like an imported Mixamo character — without leaving the From kit flow.
+
+**Acceptance**
+
+- [x] Kit registry supports a **skinned asset** kit kind (`skinnedAsset` URL) in addition to mesh + create-group recipes
+- [x] **From kit…** lists **Block robot** (skinned GLB only); choosing it loads `/kits/block-robot.glb` into the model library as `source: 'imported'`
+- [x] Viewport shows skeleton lines on the skinned kit model (same helper as other imported models)
+- [x] Library under that model shows **bones, then owned clips** (US-31 order); embedded GLB clips register as owned (none in the shipped kit)
+- [x] User can Edit-select bones, Hold Pose / playback / export like any other imported character
+- [x] Zip export packs the skinned kit model as a normal imported GLB
+- [x] **File → New model** and the mesh-only Modern house kit stay unchanged
+- [x] Mesh create-group Block robot recipe is maintainer-only (`BLOCK_ROBOT_MESH_RECIPE` / `npm run kits:block-robot`), not listed in From kit
+- [x] Asset contract documented in [`public/kits/README.md`](../../public/kits/README.md) (T-pose bind, bone names, no demo clips, license)
+- [x] Load failure of the kit GLB shows a clear error in the From kit modal; does not leave a half-empty library entry
 
 ### US-31 — Bone outliner + skeleton helper (imported)
 
@@ -475,7 +492,6 @@ As an editor user, I can drag-resize the Library and Settings asides and the bot
 
 Not started; do not implement until explicitly kicked off. Full requirements, design, and tasks live only in the delta folders (not duplicated here):
 
-- **US-33** — Skinned starter kit (Block robot GLB) → [`specs/us-33/`](../us-33/) (prefer before US-34)
 - **US-34** — In-editor skinning for created models (MVP) → [`specs/us-34/`](../us-34/)
 - **US-8** — Morph-target editing → [`specs/us-8/`](../us-8/)
 
@@ -490,10 +506,10 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 ## Out of scope (still excluded)
 
 - Material / texture editing on **imported** characters (created-model color maps are US-28)
-- Kit marketplace / remote download; user-authored kit save/share; auto-rig / skinned kits; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
+- Kit marketplace / remote download; user-authored kit save/share; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
-- Bones, skinning, Mixamo / retarget on **empty / mesh-kit created** models — planned as [`US-33`](../us-33/) (skinned kit asset) + [`US-34`](../us-34/) (in-editor skin MVP); not started
+- Bones, skinning, Mixamo / retarget on **empty / mesh-kit created** models — planned as [`US-34`](../us-34/) (in-editor skin MVP); skinned **From kit** asset is US-33 (shipped)
 - Server accounts (FBX convert via US-16 is the allowed server round-trip; no user accounts)
 - Collaborative editing / durable undo across reloads
 - Full NLA strip editorial beyond US-7 blend/cross-fade
