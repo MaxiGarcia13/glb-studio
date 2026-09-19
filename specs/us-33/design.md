@@ -16,11 +16,13 @@ type Kit
 
 `SkinnedKitAsset`:
 
-- `url` or bundler URL to a `.glb` (prefer static asset under `public/kits/` or `src/assets/kits/`)
+- `url` or bundler URL to a `.glb` under `public/kits/` (locked path)
 - Optional `defaultFileName` for the library row (e.g. `Block robot.glb`)
 - Documented bone contract (humanoid names aligned with bone registry where practical)
 
 `listStarterKits` / From kit modal: unchanged UX; skinned kits appear beside mesh kits.
+
+**Dual Block robot (locked):** primary kit id for the skinned asset keeps label **Block robot**; existing mesh recipe is relabeled **Block robot (parts)** (separate `KitId`, e.g. `block-robot-parts`) so US-34 can still skin the create-group fixture.
 
 ## Spawn path
 
@@ -29,16 +31,13 @@ type Kit
 3. `source: 'imported'` so US-31 helper + bone outliner apply automatically
 4. Embedded animations → `importClipsFromAnimations` as owned (no auto-select — T-pose until user picks)
 
-## Asset authoring
+## Asset authoring (locked)
 
-| Option                                                      | Pros                       | Cons                                                        |
-| ----------------------------------------------------------- | -------------------------- | ----------------------------------------------------------- |
-| Hand-authored GLB in Blender                                | Full control, real weights | Content work; keep in sync with brand look                  |
-| Offline script: create-group recipe → bones + rigid weights | Matches current robot look | Script maintenance; weights are rigid (no bend deformation) |
+**Approach:** offline script from the create-group Block robot recipe → bones + **rigid** weights (each segment 100% to one bone); commit `public/kits/block-robot.glb` (or equivalent). Script is maintainers-only — not run in the browser and not shipped as a user feature.
 
-**MVP recommendation:** hand-authored or script-generated GLB checked into the repo; not generated at runtime in the browser.
+**Clips:** bind / T-pose only — **no** embedded demo animations. Users import / retarget clips as today.
 
-Rigid skinning (each segment weighted 100% to one bone) is acceptable for MVP if the look matches the current Block robot; soft weights are nicer but not required for US-33.
+Soft weights / Blender hand-authoring remain optional later polish; not required for US-33 MVP.
 
 ## Export / round-trip
 

@@ -1,35 +1,35 @@
 # US-33 — Tasks
 
-**Do not start until explicitly kicked off.** Prefer completing this before US-34. Tick only after acceptance.
+Prefer completing this before US-34. Tick only after acceptance.
 
 ## Spec / kickoff
 
-- [ ] **Lock product choices** — Replace vs dual Block robot kits; asset source; whether demo clips ship in the GLB ([`requirements.md`](./requirements.md) Open product choice)
+- [x] **Lock product choices** — Dual kits; offline script → `public/kits/`; T-pose only (no demo clips) — see [`requirements.md`](./requirements.md) Locked product choices
 - [ ] **Bone / clip contract note** — Short doc in design or `public/kits/README` (names, license, expected skeleton)
 
 ## Asset
 
-- [ ] **Author or generate skinned Block robot GLB** — Humanoid bind pose; bones; at least one skinned mesh; optional 1–2 demo clips
-- [ ] **Place asset in repo** — Stable URL for the kit loader (`public/kits/…` or bundled import)
-- [ ] **Manual inspect** — Confirm clips, bone names, no unexpected root motion (per AGENTS hard constraints)
+- [ ] **Generate skinned Block robot GLB** — Offline script from create-group recipe; humanoid bind pose; bones; at least one skinned mesh; no embedded demo clips
+- [ ] **Place asset in repo** — Stable URL under `public/kits/`
+- [ ] **Manual inspect** — Confirm no clips (or empty anim list), bone names, no unexpected root motion (per AGENTS hard constraints)
 
 ## Kit registry + spawn
 
 - [ ] **Extend `Kit` type** — Discriminated mesh recipe vs `skinnedAsset`; type-safe `KitId`
-- [ ] **Register skinned Block robot** — Label + description in From kit list
-- [ ] **`createFromKit` skinned branch** — Parse GLB → imported library entry + owned embedded clips; no create-parts revision bump required
+- [ ] **Register skinned Block robot** — Label + description in From kit list (primary “Block robot”)
+- [ ] **`createFromKit` skinned branch** — Parse GLB → imported library entry + owned embedded clips (none expected); no create-parts revision bump required
 - [ ] **Error path** — Failed load surfaces clear copy; library unchanged
 
 ## Mesh kit disposition
 
-- [ ] **Apply kickoff choice** — Remove or rename previous create-group Block robot; keep Modern house + empty as-is
+- [ ] **Rename mesh Block robot** — Label **Block robot (parts)**; keep recipe; Modern house + empty as-is
 
 ## Verify
 
 - [ ] **From kit → skinned robot** — SkeletonHelper visible; bone outliner; select bone; Edit gizmo
-- [ ] **Clip playback** — If kit embeds clips, select and play; else import a matching clip / retarget path still works
+- [ ] **Clip path** — Import a matching clip / retarget still works (kit has no embedded demos)
 - [ ] **Export zip** — Model GLB re-imports as skinned character
-- [ ] **New model / house kit** — Unaffected
+- [ ] **New model / house / parts kit** — Unaffected (parts kit still spawns create-group robot)
 - [ ] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md)
 
 ## Ship
