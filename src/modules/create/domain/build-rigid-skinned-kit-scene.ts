@@ -12,8 +12,8 @@ import {
   Uint16BufferAttribute,
 } from 'three';
 
-import { getPartKind } from './part-kind';
 import { orientSkeletonMixamoAxes } from './orient-skeleton-mixamo-axes';
+import { getPartKind } from './part-kind';
 
 const ARMATURE_NAME = 'Armature';
 
