@@ -84,7 +84,7 @@ Prefer pure `domain/` / `utils/` over React/R3F. Tests live under `tests/unit/` 
 
 - [x] `command-stack`: push / undo / redo / redo-branch drop
 - [x] `trimClipWindow` + `bakeTimeScale` (synthetic tracks; duration / time shift)
-- [ ] `writeNodeKeyframe` hold-plateau path (CRUD + interpolation already covered)
+- [x] `writeNodeKeyframe` hold-plateau path (CRUD + interpolation already covered)
 - [ ] `canAttachUnder`: cycle / root / hierarchy reject paths
 - [ ] `buildUniqueModelPrefix` + namespace helpers in `merge-namespace.ts`
 - [ ] `isUsableSkinnedModelScene` / `isUsableCreatedModelScene`; `isNodeNameTaken`
