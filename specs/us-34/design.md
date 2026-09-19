@@ -31,14 +31,14 @@ Created model (createGroup tree + stamped meshes)
 
 ## Domain ownership
 
-| Concern                             | Module                                                                                                               |
-| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Detect skinnable created model      | `create/domain/` (`canSkinModel` + disabled reason)                                                                  |
-| Build bones from create groups      | `create/domain/` (group walk)                                                                                        |
-| Rigid bind / SkinnedMesh build      | `create/domain/skinning/` (new)                                                                                      |
+| Concern                             | Module                                                                                                                   |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Detect skinnable created model      | `create/domain/` (`canSkinModel` + disabled reason)                                                                      |
+| Build bones from create groups      | `create/domain/` (group walk)                                                                                            |
+| Rigid bind / SkinnedMesh build      | `create/domain/skinning/` (new)                                                                                          |
 | Gate SkeletonHelper / bone outliner | Shared `isSkinnedLibraryModel(model)` — true for `source === 'imported'` with usable skeleton (covers post-skin + US-33) |
-| UI action                           | `LibraryModelActions` ⋯ item; busy/disabled from `canSkinModel`                                                      |
-| Export                              | Existing `packModelGlb` once scene is skinned                                                                        |
+| UI action                           | `LibraryModelActions` ⋯ item; busy/disabled from `canSkinModel`                                                          |
+| Export                              | Existing `packModelGlb` once scene is skinned                                                                            |
 
 Avoid hardcoding Mixamo prefixes; bone names come from the user’s create-group names (Block robot already uses Hips / Spine / … — good for later retarget).
 

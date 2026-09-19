@@ -23,14 +23,14 @@ As an editor user building a character from parts (or the mesh Block robot), I c
 
 ## Locked product choices (kickoff)
 
-| Choice | Decision |
-| --- | --- |
-| **Entry point** | Library model **⋯** → **Skin model** (same menu as Rename / Replace). Not File menu; not create toolbar. |
-| **After skin** | **Freeze** — hide create toolbar + part outliner; bone outliner + owned clips only. No part-edit paths left live. |
-| **No-groups models** | **Disable** with clear reason (e.g. “Add create groups before skinning”). No auto-armature heuristic. House / prop kits stay disabled. |
-| **`source` flag** | On success, set **`source: 'imported'`** (same as US-33 skinned kit). No new `skinned-created`. Gate helper/outliner via shared `isSkinnedLibraryModel` that covers imported skinned scenes. |
-| **Clip strategy** | **Drop** owned clips that target mesh / create-part object paths; leave the model’s owned library empty (or skeletal-ready) for new clips. Do not remap mesh tracks onto bones in MVP. |
-| **Weights** | **Rigid only** — weight 1 to parent bone; no paint UI in this US. |
+| Choice               | Decision                                                                                                                                                                                     |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Entry point**      | Library model **⋯** → **Skin model** (same menu as Rename / Replace). Not File menu; not create toolbar.                                                                                     |
+| **After skin**       | **Freeze** — hide create toolbar + part outliner; bone outliner + owned clips only. No part-edit paths left live.                                                                            |
+| **No-groups models** | **Disable** with clear reason (e.g. “Add create groups before skinning”). No auto-armature heuristic. House / prop kits stay disabled.                                                       |
+| **`source` flag**    | On success, set **`source: 'imported'`** (same as US-33 skinned kit). No new `skinned-created`. Gate helper/outliner via shared `isSkinnedLibraryModel` that covers imported skinned scenes. |
+| **Clip strategy**    | **Drop** owned clips that target mesh / create-part object paths; leave the model’s owned library empty (or skeletal-ready) for new clips. Do not remap mesh tracks onto bones in MVP.       |
+| **Weights**          | **Rigid only** — weight 1 to parent bone; no paint UI in this US.                                                                                                                            |
 
 ## Acceptance
 
