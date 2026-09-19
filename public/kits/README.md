@@ -33,6 +33,7 @@ Names match the mesh kit’s create-group joints and align with the Mixamo vendo
 
 ### Mesh / skinning
 
+- **Bind pose:** T-pose (arms horizontal along ±X).
 - At least one `SkinnedMesh`; look matches the white/black/cyan block humanoid.
 - MVP: **rigid** weights (each segment mesh 100% to its parent bone). Soft weights optional later.
 - Scale: ~Y Bot height (~1.8 m). Approx: ~20 primitive segments; low-poly (roughly 1–5k tris depending on cylinder tessellation).

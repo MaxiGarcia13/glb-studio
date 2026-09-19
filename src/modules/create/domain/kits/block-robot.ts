@@ -75,11 +75,18 @@ const faceRingZ = HEAD_R * 0.75;
 const shoulderY = yChest + CHEST_H - 0.04;
 const armX = CHEST_W / 2 + UPPER_ARM_R + 0.02;
 
-const yUpperArm = shoulderY - UPPER_ARM_TOTAL;
-const yElbow = yUpperArm - ELBOW_R;
-const elbowCenterY = yElbow + ELBOW_R;
-const yForearm = elbowCenterY - FOREARM_TOTAL;
-const yHand = yForearm - HAND_H;
+/** T-pose: arms along ±X (capsules/hands use ±90° Z so local +Y maps outward→inward). */
+const HALF_PI = Math.PI / 2;
+const LEFT_ARM_ROTATION = [0, 0, -HALF_PI] as const;
+const RIGHT_ARM_ROTATION = [0, 0, HALF_PI] as const;
+
+const leftElbowX = -armX - UPPER_ARM_TOTAL;
+const leftWristX = leftElbowX - FOREARM_TOTAL;
+const leftHandTipX = leftWristX - HAND_H;
+
+const rightElbowX = armX + UPPER_ARM_TOTAL;
+const rightWristX = rightElbowX + FOREARM_TOTAL;
+const rightHandTipX = rightWristX + HAND_H;
 
 /** Joint pivots (world) — rotating a group swings its children. */
 const hipsY = yHip + HIP_H / 2;
@@ -90,7 +97,7 @@ const kneeY = yKnee + KNEE_R;
 
 /**
  * Maintainer-only mesh recipe for offline skinned GLB generation (`npm run kits:block-robot`).
- * Not registered in From kit — users get the skinned kit (`block-robot`).
+ * Bind pose is a T-pose (arms along ±X). Not registered in From kit — users get the skinned kit.
  */
 export interface BlockRobotMeshRecipe {
   label: string;
@@ -108,11 +115,11 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
     { name: 'Neck', parent: 'Chest', position: [0, neckY, 0] },
     { name: 'Head', parent: 'Neck', position: [0, headCenterY, 0] },
     { name: 'LeftArm', parent: 'Chest', position: [-armX, shoulderY, 0] },
-    { name: 'LeftForeArm', parent: 'LeftArm', position: [-armX, elbowCenterY, 0] },
-    { name: 'LeftHand', parent: 'LeftForeArm', position: [-armX, yHand + HAND_H, 0] },
+    { name: 'LeftForeArm', parent: 'LeftArm', position: [leftElbowX, shoulderY, 0] },
+    { name: 'LeftHand', parent: 'LeftForeArm', position: [leftWristX, shoulderY, 0] },
     { name: 'RightArm', parent: 'Chest', position: [armX, shoulderY, 0] },
-    { name: 'RightForeArm', parent: 'RightArm', position: [armX, elbowCenterY, 0] },
-    { name: 'RightHand', parent: 'RightForeArm', position: [armX, yHand + HAND_H, 0] },
+    { name: 'RightForeArm', parent: 'RightArm', position: [rightElbowX, shoulderY, 0] },
+    { name: 'RightHand', parent: 'RightForeArm', position: [rightWristX, shoulderY, 0] },
     { name: 'LeftUpLeg', parent: 'Hips', position: [-LEG_X, yHip, 0] },
     { name: 'LeftLeg', parent: 'LeftUpLeg', position: [-LEG_X, kneeY, 0] },
     { name: 'LeftFoot', parent: 'LeftLeg', position: [-LEG_X, 0, 0] },
@@ -179,8 +186,8 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       kind: 'capsule',
       name: 'upper_arm_left',
       parent: 'LeftArm',
-      position: [-armX, yUpperArm, 0],
-      rotation: [...IDENTITY_ROTATION],
+      position: [leftElbowX, shoulderY, 0],
+      rotation: [...LEFT_ARM_ROTATION],
       params: { radius: UPPER_ARM_R, length: UPPER_ARM_LEN },
       color: PLATE,
     },
@@ -188,7 +195,7 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       kind: 'sphere',
       name: 'elbow_left',
       parent: 'LeftForeArm',
-      position: [-armX, yElbow, 0],
+      position: [leftElbowX, shoulderY - ELBOW_R, 0],
       rotation: [...IDENTITY_ROTATION],
       params: { radius: ELBOW_R },
       color: FRAME,
@@ -197,8 +204,8 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       kind: 'capsule',
       name: 'forearm_left',
       parent: 'LeftForeArm',
-      position: [-armX, yForearm, 0],
-      rotation: [...IDENTITY_ROTATION],
+      position: [leftWristX, shoulderY, 0],
+      rotation: [...LEFT_ARM_ROTATION],
       params: { radius: FOREARM_R, length: FOREARM_LEN },
       color: PLATE,
     },
@@ -206,8 +213,8 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       kind: 'box',
       name: 'hand_left',
       parent: 'LeftHand',
-      position: [-armX, yHand, 0],
-      rotation: [...IDENTITY_ROTATION],
+      position: [leftHandTipX, shoulderY, 0],
+      rotation: [...LEFT_ARM_ROTATION],
       params: { width: HAND_W, height: HAND_H, depth: HAND_D },
       color: FRAME,
     },
@@ -215,8 +222,8 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       kind: 'capsule',
       name: 'upper_arm_right',
       parent: 'RightArm',
-      position: [armX, yUpperArm, 0],
-      rotation: [...IDENTITY_ROTATION],
+      position: [rightElbowX, shoulderY, 0],
+      rotation: [...RIGHT_ARM_ROTATION],
       params: { radius: UPPER_ARM_R, length: UPPER_ARM_LEN },
       color: PLATE,
     },
@@ -224,7 +231,7 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       kind: 'sphere',
       name: 'elbow_right',
       parent: 'RightForeArm',
-      position: [armX, yElbow, 0],
+      position: [rightElbowX, shoulderY - ELBOW_R, 0],
       rotation: [...IDENTITY_ROTATION],
       params: { radius: ELBOW_R },
       color: FRAME,
@@ -233,8 +240,8 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       kind: 'capsule',
       name: 'forearm_right',
       parent: 'RightForeArm',
-      position: [armX, yForearm, 0],
-      rotation: [...IDENTITY_ROTATION],
+      position: [rightWristX, shoulderY, 0],
+      rotation: [...RIGHT_ARM_ROTATION],
       params: { radius: FOREARM_R, length: FOREARM_LEN },
       color: PLATE,
     },
@@ -242,8 +249,8 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       kind: 'box',
       name: 'hand_right',
       parent: 'RightHand',
-      position: [armX, yHand, 0],
-      rotation: [...IDENTITY_ROTATION],
+      position: [rightHandTipX, shoulderY, 0],
+      rotation: [...RIGHT_ARM_ROTATION],
       params: { width: HAND_W, height: HAND_H, depth: HAND_D },
       color: FRAME,
     },
