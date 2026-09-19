@@ -1,5 +1,7 @@
 import type { GroupRecipe, PartRecipe } from '@/modules/create/types/kit';
 
+import { Euler, Quaternion, Vector3 } from 'three';
+
 const IDENTITY_ROTATION = [0, 0, 0] as const;
 
 /** White plating / black structure / cyan face ring (Optimus-style block approx). */
@@ -47,15 +49,30 @@ const UPPER_ARM_LEN = 0.2;
 const UPPER_ARM_TOTAL = UPPER_ARM_LEN + 2 * UPPER_ARM_R;
 
 const ELBOW_R = 0.038;
-const SHOULDER_R = 0.045;
+/** Short axle bridging chest → upper arm (replaces a lone shoulder sphere). */
+const SHOULDER_CONNECTOR_R = 0.038;
+const HIP_CONNECTOR_R = 0.05;
+const HIP_CONNECTOR_H = 0.06;
 
 const FOREARM_R = 0.038;
 const FOREARM_LEN = 0.2;
 const FOREARM_TOTAL = FOREARM_LEN + 2 * FOREARM_R;
 
-const HAND_H = 0.09;
-const HAND_W = 0.07;
-const HAND_D = 0.035;
+/**
+ * Palm box after ±90° Z (same as arm capsules):
+ * height (`HAND_H`) → along the arm; width (`HAND_W`) → world Y (thickness);
+ * depth (`HAND_D`) → world Z (across knuckles). Mixamo T-pose palms face down.
+ */
+const HAND_H = 0.12;
+const HAND_W = 0.03;
+const HAND_D = 0.1;
+
+const FINGER_R = 0.01;
+const FINGER_THUMB_R = 0.012;
+const FINGER_SEG = 0.034;
+const THUMB_SEG = 0.036;
+const THUMB_DY = 0.007;
+const THUMB_DZ = 0.008;
 
 const LEG_X = 0.09;
 const FOOT_Z = FOOT_D / 2 - 0.05;
@@ -74,9 +91,9 @@ const faceRingY = headCenterY - (FACE_RING_R + FACE_RING_TUBE);
 const faceRingZ = HEAD_R * 0.75;
 
 const shoulderY = yChest + CHEST_H - 0.04;
-/** Shoulder joint spheres only — slightly below the arm chain so they sit into the chest sides. */
-const shoulderMeshY = shoulderY - 0.06;
 const armX = CHEST_W / 2 + UPPER_ARM_R + 0.02;
+/** Chest side → arm root gap, plus a little overlap so the hinge reads solid. */
+const SHOULDER_CONNECTOR_H = armX - CHEST_W / 2 + 0.02;
 
 /** T-pose: arms along ±X (capsules/hands use ±90° Z so local +Y maps outward→inward). */
 const HALF_PI = Math.PI / 2;
@@ -99,18 +116,64 @@ const upperChestY = yChest + CHEST_H * 0.78;
 const neckY = yNeck + NECK_H / 2;
 const kneeY = yKnee + KNEE_R;
 const shoulderX = armX * 0.35;
-/** Midpoint of the chest→arm gap (fills the floating shoulder). */
-const leftShoulderMeshX = -(CHEST_W / 2 + armX) / 2;
-const rightShoulderMeshX = (CHEST_W / 2 + armX) / 2;
+/** Hip axle sits mostly under the hip box and slightly into the thigh top. */
+const hipConnectorY = yHip - HIP_CONNECTOR_H + 0.02;
 const toeY = FOOT_H * 0.4;
 const toeZ = FOOT_D * 0.55;
-/** Finger segment length along the arm axis (leaf bones; no finger meshes). */
-const FINGER_SEG = 0.028;
+
+interface FingerChainSpec {
+  finger: string;
+  y: number;
+  z: number;
+  base: number;
+  radius: number;
+  seg: number;
+  dy: number;
+  dz: number;
+}
 
 /**
- * Mixamo Y Bot–compatible finger chain (world positions).
- * `sign` is −1 for Left (−X), +1 for Right (+X).
+ * Mixamo Y Bot–compatible finger chains (world positions).
+ * Z spread is absolute (both thumbs toward +Z / forward) — do not mirror with hand sign.
+ * Knuckle `base` sits at the palm tip so fingers do not float past the box.
  */
+function fingerChainSpecs(handY: number): FingerChainSpec[] {
+  return [
+    {
+      finger: 'Thumb',
+      y: handY - 0.02,
+      z: 0.028,
+      base: 0.04,
+      radius: FINGER_THUMB_R,
+      seg: THUMB_SEG,
+      dy: THUMB_DY,
+      dz: THUMB_DZ,
+    },
+    { finger: 'Index', y: handY, z: 0.028, base: HAND_H, radius: FINGER_R, seg: FINGER_SEG, dy: 0, dz: 0 },
+    {
+      finger: 'Middle',
+      y: handY,
+      z: 0,
+      base: HAND_H + 0.006,
+      radius: FINGER_R,
+      seg: FINGER_SEG,
+      dy: 0,
+      dz: 0,
+    },
+    { finger: 'Ring', y: handY, z: -0.024, base: HAND_H, radius: FINGER_R, seg: FINGER_SEG, dy: 0, dz: 0 },
+    {
+      finger: 'Pinky',
+      y: handY,
+      z: -0.04,
+      base: HAND_H - 0.012,
+      radius: FINGER_R,
+      seg: FINGER_SEG,
+      dy: 0,
+      dz: 0,
+    },
+  ];
+}
+
 function fingerGroups(
   side: 'Left' | 'Right',
   handX: number,
@@ -118,24 +181,88 @@ function fingerGroups(
   sign: -1 | 1,
 ): GroupRecipe[] {
   const hand = `${side}Hand`;
-  const chains: Array<{ finger: string; y: number; z: number; base: number }> = [
-    { finger: 'Thumb', y: handY - 0.022, z: sign * 0.03, base: 0.035 },
-    { finger: 'Index', y: handY, z: sign * 0.025, base: 0.09 },
-    { finger: 'Middle', y: handY, z: 0, base: 0.095 },
-    { finger: 'Ring', y: handY, z: -sign * 0.022, base: 0.09 },
-    { finger: 'Pinky', y: handY, z: -sign * 0.045, base: 0.08 },
-  ];
-
   const groups: GroupRecipe[] = [];
-  for (const { finger, y, z, base } of chains) {
+  for (const { finger, y, z, base, seg, dy, dz } of fingerChainSpecs(handY)) {
     for (let i = 1; i <= 3; i += 1) {
       const name = `${side}Hand${finger}${i}`;
       const parent = i === 1 ? hand : `${side}Hand${finger}${i - 1}`;
-      const x = handX + sign * (base + (i - 1) * FINGER_SEG);
-      groups.push({ name, parent, position: [x, y, z] });
+      const along = i - 1;
+      const boneY = y - along * dy;
+      const boneZ = z + along * dz;
+      const x = handX + sign * (base + along * seg);
+      groups.push({ name, parent, position: [x, boneY, boneZ] });
     }
   }
   return groups;
+}
+
+/**
+ * One rigid capsule per phalanx. Positioned at the distal end of the segment
+ * (same convention as upper-arm / forearm capsules). Thumb meshes follow the
+ * forward (+Z) fan so both hands share the same thumb direction.
+ */
+function fingerParts(
+  side: 'Left' | 'Right',
+  handX: number,
+  handY: number,
+  sign: -1 | 1,
+  rotation: readonly [number, number, number],
+): PartRecipe[] {
+  const parts: PartRecipe[] = [];
+  for (const { finger, y, z, base, radius, seg, dy, dz } of fingerChainSpecs(handY)) {
+    for (let i = 1; i <= 3; i += 1) {
+      const bone = `${side}Hand${finger}${i}`;
+      const thumbFan = finger === 'Thumb';
+      const proximalAlong = i - 1;
+      const distalAlong = i;
+      const proximalY = y - proximalAlong * dy;
+      const proximalZ = z + proximalAlong * dz;
+      const distalY = y - distalAlong * dy;
+      const distalZ = z + distalAlong * dz;
+      const proximalX = handX + sign * (base + proximalAlong * seg);
+      const distalX = handX + sign * (base + distalAlong * seg);
+      const spacing = Math.hypot(
+        distalX - proximalX,
+        distalY - proximalY,
+        distalZ - proximalZ,
+      );
+      const length = Math.max(0.004, spacing - 2 * radius + 0.002);
+      const meshRotation: [number, number, number] = thumbFan
+        ? rotationAligningLocalYTo(
+            proximalX - distalX,
+            proximalY - distalY,
+            proximalZ - distalZ,
+          )
+        : [rotation[0], rotation[1], rotation[2]];
+      parts.push({
+        kind: 'capsule',
+        name: `${side.toLowerCase()}_finger_${finger.toLowerCase()}_${i}`,
+        parent: bone,
+        position: [distalX, distalY, distalZ],
+        rotation: meshRotation,
+        params: { radius, length },
+        color: FRAME,
+      });
+    }
+  }
+  return parts;
+}
+
+const _alignY = new Vector3(0, 1, 0);
+const _alignDir = new Vector3();
+const _alignQuat = new Quaternion();
+const _alignEuler = new Euler();
+
+/** Euler XYZ that maps capsule local +Y onto the given world direction. */
+function rotationAligningLocalYTo(
+  dx: number,
+  dy: number,
+  dz: number,
+): [number, number, number] {
+  _alignDir.set(dx, dy, dz).normalize();
+  _alignQuat.setFromUnitVectors(_alignY, _alignDir);
+  _alignEuler.setFromQuaternion(_alignQuat, 'XYZ');
+  return [_alignEuler.x, _alignEuler.y, _alignEuler.z];
 }
 
 /**
@@ -234,12 +361,12 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       color: FACE_GLOW,
     },
     {
-      kind: 'sphere',
+      kind: 'cylinder',
       name: 'shoulder_left',
       parent: 'LeftShoulder',
-      position: [leftShoulderMeshX, shoulderMeshY, 0],
-      rotation: [...IDENTITY_ROTATION],
-      params: { radius: SHOULDER_R },
+      position: [-armX, shoulderY, 0],
+      rotation: [...LEFT_ARM_ROTATION],
+      params: { radius: SHOULDER_CONNECTOR_R, height: SHOULDER_CONNECTOR_H },
       color: FRAME,
     },
     {
@@ -278,13 +405,14 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       params: { width: HAND_W, height: HAND_H, depth: HAND_D },
       color: FRAME,
     },
+    ...fingerParts('Left', leftWristX, shoulderY, -1, LEFT_ARM_ROTATION),
     {
-      kind: 'sphere',
+      kind: 'cylinder',
       name: 'shoulder_right',
       parent: 'RightShoulder',
-      position: [rightShoulderMeshX, shoulderMeshY, 0],
-      rotation: [...IDENTITY_ROTATION],
-      params: { radius: SHOULDER_R },
+      position: [armX, shoulderY, 0],
+      rotation: [...RIGHT_ARM_ROTATION],
+      params: { radius: SHOULDER_CONNECTOR_R, height: SHOULDER_CONNECTOR_H },
       color: FRAME,
     },
     {
@@ -323,6 +451,16 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       params: { width: HAND_W, height: HAND_H, depth: HAND_D },
       color: FRAME,
     },
+    ...fingerParts('Right', rightWristX, shoulderY, 1, RIGHT_ARM_ROTATION),
+    {
+      kind: 'cylinder',
+      name: 'hip_left',
+      parent: 'LeftUpLeg',
+      position: [-LEG_X, hipConnectorY, 0],
+      rotation: [...IDENTITY_ROTATION],
+      params: { radius: HIP_CONNECTOR_R, height: HIP_CONNECTOR_H },
+      color: FRAME,
+    },
     {
       kind: 'capsule',
       name: 'thigh_left',
@@ -357,6 +495,15 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       position: [-LEG_X, 0, FOOT_Z],
       rotation: [...IDENTITY_ROTATION],
       params: { width: FOOT_W, height: FOOT_H, depth: FOOT_D },
+      color: FRAME,
+    },
+    {
+      kind: 'cylinder',
+      name: 'hip_right',
+      parent: 'RightUpLeg',
+      position: [LEG_X, hipConnectorY, 0],
+      rotation: [...IDENTITY_ROTATION],
+      params: { radius: HIP_CONNECTOR_R, height: HIP_CONNECTOR_H },
       color: FRAME,
     },
     {

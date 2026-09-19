@@ -15,7 +15,7 @@ npm run kits:block-robot
 ### Skeleton
 
 - **Root:** `Armature` (container). Bind-pose bones use **unprefixed** Mixamo-style local names (no `mixamorig:`).
-- **Bone count:** 52 (same set as Mixamo Y Bot — shoulders, `UpperChest`, toes, and full finger chains). Finger/toe bones are leaf joints with no dedicated meshes (rigid skinning stays on the block segments).
+- **Bone count:** 52 (same set as Mixamo Y Bot — shoulders, `UpperChest`, toes, and full finger chains). Finger bones have rigid capsule meshes per phalanx; toes remain leaf joints without dedicated meshes.
 
 | Parent         | Bones                                                                 |
 | -------------- | --------------------------------------------------------------------- |
@@ -37,7 +37,7 @@ Names match the mesh kit’s create-group joints and align with the Mixamo vendo
 - **Bind pose:** T-pose (arms horizontal along ±X).
 - At least one `SkinnedMesh`; look matches the white/black/cyan block humanoid.
 - MVP: **rigid** weights (each segment mesh 100% to its parent bone). Soft weights optional later.
-- Scale: ~Y Bot height (~1.8 m). Approx: ~20 primitive segments; low-poly (roughly 1–5k tris depending on cylinder tessellation).
+- Scale: ~Y Bot height (~1.8 m). Palms face down in T-pose (wide across knuckles / world Z, thin on Y); knuckles sit at the palm tip with per-phalanx finger capsules. Short cylinder axles at `*Shoulder` and `*UpLeg` bridge chest→arm and hip→thigh so whole-limb rotation stays visually connected. Low-poly (roughly 1–5k tris depending on cylinder tessellation).
 
 ### Clips / root motion
 
