@@ -77,8 +77,7 @@ export function skinCreatedModel(modelId: string): SkinCreatedModelResult {
     bumpCreatePartsRevision();
 
     return { ok: true };
-  }
-  catch (error) {
+  } catch (error) {
     disposeScene(snapshot);
     if (skinnedScene) {
       disposeScene(skinnedScene);
