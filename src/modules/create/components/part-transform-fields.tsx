@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Input } from '@/components/input/input';
 import { Text } from '@/components/text';
 import { commitPendingPose } from '@/modules/animation/stores/clip-store';
+import { POSITION_EDIT_STEP_METRES } from '@/modules/viewport/constants/position-edit';
 import {
   $transformReadout,
   applySelectionPositionAxis,
@@ -151,7 +152,7 @@ export function PartTransformFields({ mesh }: { mesh: Mesh }) {
               key={`part-pos-${axis}`}
               label={`${axis.toUpperCase()} (m)`}
               type="number"
-              step={0.01}
+              step={POSITION_EDIT_STEP_METRES}
               value={enabled ? positionDraft[axis] : '—'}
               disabled={!enabled}
               className="flex-1 w-full"

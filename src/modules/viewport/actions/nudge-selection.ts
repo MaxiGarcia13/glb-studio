@@ -3,6 +3,7 @@ import { Vector3 } from 'three';
 import { commitPendingPose } from '@/modules/animation/stores/clip-store/actions/commit-pending-pose';
 import { pause } from '@/modules/animation/stores/clip-store/actions/playback';
 import { suspendMixerBindings } from '@/modules/animation/utils/mixer-session';
+import { POSITION_EDIT_STEP_METRES } from '../constants/position-edit';
 import { $editTool } from '../stores/edit-tool-store';
 import { $activeModel } from '../stores/model-store';
 import {
@@ -13,7 +14,6 @@ import {
 } from '../stores/pose-edit-store';
 import { $selection } from '../stores/selection-store';
 import { syncTransformReadout } from '../stores/transform-readout-store';
-import { $viewportSettings } from '../stores/viewport-settings-store';
 
 export type NudgeAxis = 'x' | 'y' | 'z';
 
@@ -21,7 +21,8 @@ const scratchDelta = new Vector3();
 const scratchWorld = new Vector3();
 
 /**
- * Nudge the gizmo target by one grid step on a world/local axis (US-10).
+ * Nudge the gizmo target by one position-edit step on a world/local axis (US-10).
+ * Step matches TRS position input spinners (`POSITION_EDIT_STEP_METRES`).
  * Edit = local space + selection; Move = world space + model root.
  * Each step auto-commits (one undo entry).
  */
@@ -41,10 +42,7 @@ export function nudgeSelection(axis: NudgeAxis, sign: 1 | -1): void {
   }
 
   const poseKind = isMove ? 'modelRoot' : 'selection';
-  const step = $viewportSettings.get().gridStepMetres * sign;
-  if (!(step !== 0 && Number.isFinite(step))) {
-    return;
-  }
+  const step = POSITION_EDIT_STEP_METRES * sign;
 
   if ($poseDirty.get() && $poseEditKind.get() !== poseKind) {
     commitPendingPose();

@@ -247,7 +247,7 @@ Out of scope: multi-model simultaneous transform.
 
 ### Nudge
 
-Step = `$viewportSettings.gridStepMetres` (default 0.1 m). Space matches TransformControls (**Edit = local**, **Move = world**). Target = gizmo target (Edit → `$selection.object`; Move → model root). Side effects: pause, suspend mixer, capture pre-edit, apply step, **auto-commit** (`saveKeyframe` stack entry). No rotation/scale/camera/multi-select nudge.
+Step = `POSITION_EDIT_STEP_METRES` (`0.01` m) — same as Settings / part TRS position input spinners. Independent of snap grid (`gridStepMetres`). Space matches TransformControls (**Edit = local**, **Move = world**). Target = gizmo target (Edit → `$selection.object`; Move → model root). Side effects: pause, suspend mixer, capture pre-edit, apply step, **auto-commit** (`saveKeyframe` stack entry). No rotation/scale/camera/multi-select nudge.
 
 ### Create-part clipboard (MVP limits)
 

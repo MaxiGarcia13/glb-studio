@@ -481,7 +481,7 @@ As an editor user, I can undo and redo animation edits within the session, and I
 - [x] Transform modes: **Q** Move, **W** Rotate, **E** Scale; toolbar labels match the catalog
 - [x] **R** toggles world axes visibility; **B** toggles skeleton bone lines (`bonesVisible`)
 - [x] **Space** toggles play / pause when a clip can play
-- [x] Arrow keys nudge the current selection on **X** (left/right) and **Y** (down/up); **Shift+↑ / Shift+↓** nudge on **Z**
+- [x] Arrow keys nudge the current selection on **X** (left/right) and **Y** (down/up); **Shift+↑ / Shift+↓** nudge on **Z**; each step is `0.01` m (same as position TRS inputs), not the snap grid step
 - [x] Pose edits **auto-commit** on gesture end (gizmo drag-end, nudge, Settings blur, tool/selection change, play); **Cmd/Ctrl+S** commits if still dirty; no Save / Restore pose chrome
 - [x] **Cmd/Ctrl+C / V** copy / paste create parts, create groups, and part multi-select (in-session buffer); **Delete** removes the eligible selection (`deleteSelectedPart`)
 - [x] `EditorToolbar` exposes a **Commands** control that opens a modal listing all catalog entries with their chords; **Edit** menu exposes Undo / Redo from the catalog

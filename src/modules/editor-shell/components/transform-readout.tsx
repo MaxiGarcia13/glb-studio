@@ -5,6 +5,7 @@ import { Input } from '@/components/input/input';
 import { Text } from '@/components/text';
 import { getRestRootScale } from '@/modules/animation/domain/rest-pose';
 import { commitPendingPose } from '@/modules/animation/stores/clip-store';
+import { POSITION_EDIT_STEP_METRES } from '@/modules/viewport/constants/position-edit';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import {
   $settingsFocus,
@@ -190,7 +191,7 @@ export function TransformReadout() {
               key={`pos-${axis}`}
               label={`${axis.toUpperCase()} (m)`}
               type="number"
-              step={0.01}
+              step={POSITION_EDIT_STEP_METRES}
               value={enabled ? positionDraft[axis] : '—'}
               disabled={!enabled}
               className="flex-1 w-full"
