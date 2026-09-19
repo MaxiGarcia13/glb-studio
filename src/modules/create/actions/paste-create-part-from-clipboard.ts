@@ -1,22 +1,47 @@
+import type { Object3D } from 'three';
+import { commitPendingPose } from '@/modules/animation/stores/clip-store/actions/commit-pending-pose';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
-import { selectObject } from '@/modules/viewport/stores/selection-store';
-import { instantiateCreatePartSnapshot } from '../domain/create-part-clipboard';
+import { $poseDirty } from '@/modules/viewport/stores/pose-edit-store';
+import {
+  $selection,
+  selectObject,
+} from '@/modules/viewport/stores/selection-store';
+import { instantiateClipboardPayload } from '../domain/create-part-clipboard';
 import { $createPartClipboard } from '../stores/create-part-clipboard-store';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
+
+function selectPastedRoots(roots: Object3D[]): void {
+  if (roots.length === 0) {
+    return;
+  }
+  if (roots.length === 1) {
+    selectObject(roots[0]!);
+    return;
+  }
+  if ($poseDirty.get()) {
+    commitPendingPose();
+  }
+  $selection.set({
+    object: roots[roots.length - 1]!,
+    objects: roots,
+    modelIds: [],
+    kind: 'parts',
+  });
+}
 
 /**
  * Paste the session create-part clipboard into the focused created model.
  * No-op when the buffer is empty or focus is not a created model.
  */
 export function pasteCreatePartFromClipboard(): void {
-  const entry = $createPartClipboard.get();
+  const payload = $createPartClipboard.get();
   const activeModel = $activeModel.get();
 
-  if (!entry || !activeModel || activeModel.source !== 'created') {
+  if (!payload || !activeModel || activeModel.source !== 'created') {
     return;
   }
 
-  const mesh = instantiateCreatePartSnapshot(entry, activeModel.scene);
-  selectObject(mesh);
+  const roots = instantiateClipboardPayload(payload, activeModel.scene);
+  selectPastedRoots(roots);
   bumpCreatePartsRevision();
 }

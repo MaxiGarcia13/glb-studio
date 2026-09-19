@@ -144,10 +144,34 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
   // Created parts (US-23): Hold Pose only into a ready clip **owned by this model**.
   // Shared / other-owned driving clips must not gain part tracks (e.g. `capsule.*`),
   // or character clips pick up Needs-retarget mismatches.
+  // Still push sceneNode undo so Edit gizmo / inspector TRS can be reversed.
   if (model?.source === 'created') {
     const ownedReady
       = isReadyClip(active) && active.ownerModelId === model.id;
     if (!ownedReady) {
+      const preEdit = $preEditTransform.get();
+      if (preEdit) {
+        pushUndoableCommand({
+          id: 'saveKeyframe',
+          clipId: model.id,
+          before: {
+            clips: [],
+            sceneNode: snapshotSaveKeyframeSceneNode(
+              model.id,
+              object.uuid,
+              preEdit,
+            ),
+          },
+          after: {
+            clips: [],
+            sceneNode: snapshotSaveKeyframeSceneNode(
+              model.id,
+              object.uuid,
+              object,
+            ),
+          },
+        });
+      }
       refreshRestPoseNode(model.scene, object);
       resumeMixerBindings();
       clearPoseDirty();

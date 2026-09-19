@@ -92,13 +92,13 @@ export const EDITOR_COMMANDS: readonly EditorCommand[] = [
   {
     id: 'copyCreatePart',
     chords: [{ key: 'c', modifiers: ['mod'] }],
-    label: 'Copy create part',
+    label: 'Copy create part / group',
     category: 'Create',
   },
   {
     id: 'pasteCreatePart',
     chords: [{ key: 'v', modifiers: ['mod'] }],
-    label: 'Paste create part',
+    label: 'Paste create part / group',
     category: 'Create',
   },
   {

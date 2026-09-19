@@ -469,7 +469,7 @@ As an editor user, I can undo and redo animation edits within the session, and I
 **Acceptance — undo / redo**
 
 - [x] Undo / Redo controls (Edit menu) and standard shortcuts reverse and reapply discrete edit commands
-- [x] Covered operations: trim apply, keyframe save/update (auto-commit pose), and speed changes that mutate exported bake intent (`timeScale`) — exact command set in design
+- [x] Covered operations: trim apply, keyframe save/update (auto-commit pose — including created-part / create-group TRS when no owned ready clip), and speed changes that mutate exported bake intent (`timeScale`) — exact command set in design
 - [x] Stack is per-session (not persisted to disk)
 - [x] Pre-trim recoverability is via undo of `trimClip` (and re-trim from `sourceClip`); one-shot Restore pre-trim chrome superseded
 - [x] Undoing does not leave the mixer bound to a disposed/stale clip
@@ -483,7 +483,7 @@ As an editor user, I can undo and redo animation edits within the session, and I
 - [x] **Space** toggles play / pause when a clip can play
 - [x] Arrow keys nudge the current selection on **X** (left/right) and **Y** (down/up); **Shift+↑ / Shift+↓** nudge on **Z**
 - [x] Pose edits **auto-commit** on gesture end (gizmo drag-end, nudge, Settings blur, tool/selection change, play); **Cmd/Ctrl+S** commits if still dirty; no Save / Restore pose chrome
-- [x] **Cmd/Ctrl+C / V** and **Delete** operate on **create parts only** (in-session buffer; `deleteSelectedPart` when eligible)
+- [x] **Cmd/Ctrl+C / V** copy / paste create parts, create groups, and part multi-select (in-session buffer); **Delete** removes the eligible selection (`deleteSelectedPart`)
 - [x] `EditorToolbar` exposes a **Commands** control that opens a modal listing all catalog entries with their chords; **Edit** menu exposes Undo / Redo from the catalog
 - [x] Undo / redo shortcuts are catalog entries: **Cmd/Ctrl+Z**, **Cmd/Ctrl+Shift+Z** (or **Y**)
 

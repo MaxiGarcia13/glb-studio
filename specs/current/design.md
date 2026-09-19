@@ -64,7 +64,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
 4. Parts are named meshes (`nextPartName` → `box`, `box_2`, …); metres + Y-up; bottom-origin geometry so identity TRS sits on the ground; later `spawnPart` siblings get a small +X offset so they are not stacked
 5. When focused model is `source: 'created'`: vertical create **ToolBar** after Settings (Add part palette, color, duplicate, delete); Settings **PartInspector** for kind size fields; first-run hint when nothing is selected. Toolbar (and palette) hidden for imported focus. **Edit** gizmo targets the selected part; **Move** targets the model root (all parts)
 6. Edit auto-commit for created-part selection (US-10 — no Save / Restore chrome):
-   - **No ready clip owned by this model** (including when only a **shared** clip is driving playback): commit local TRS on the mesh (scene graph + rest-pose refresh); never write keyframes into shared/other-owned clips or rebase library clips — avoids part names (e.g. `capsule`) contaminating character animations
+   - **No ready clip owned by this model** (including when only a **shared** clip is driving playback): commit local TRS on the mesh / create group (scene graph + rest-pose refresh); push a `saveKeyframe` stack entry with `sceneNode` before/after only (empty `clips` — never write keyframes into shared/other-owned clips or rebase library clips)
    - **Ready clip owned by this model:** Hold Pose to End into that owned clip (same as imported selection edits)
 7. `packModelGlb`: created models pack mesh scene **plus owned ready clips**; shared clips are not attached. Created models with **zero stamped mesh parts** (`listCreatedParts`) are omitted from `resolveExportUnits` / the zip. Content import accepts mesh-only GLBs back as `source: 'created'`. Animation-only zip fallback prefers an imported rig when one exists
 8. **Hierarchy + outliner + Group (US-26) + bones (US-31):**
@@ -238,7 +238,7 @@ Out of scope: multi-model simultaneous transform.
 | `nudgePosY` / `nudgeNegY`            | ↑ / ↓                        | Nudge +Y / −Y            | Transform |
 | `nudgePosZ` / `nudgeNegZ`            | Shift+↑ / Shift+↓            | Nudge +Z / −Z            | Transform |
 | `savePending`                        | Cmd/Ctrl+S                   | Commit pending pose      | Animation |
-| `copyCreatePart` / `pasteCreatePart` | Cmd/Ctrl+C / V               | Copy / Paste create part | Create    |
+| `copyCreatePart` / `pasteCreatePart` | Cmd/Ctrl+C / V               | Copy / Paste create part or group | Create    |
 | `deleteCreatePart`                   | Delete                       | Delete create part       | Create    |
 | `undo`                               | Cmd/Ctrl+Z                   | Undo                     | History   |
 | `redo`                               | Cmd/Ctrl+Shift+Z, Cmd/Ctrl+Y | Redo                     | History   |
@@ -251,17 +251,17 @@ Step = `$viewportSettings.gridStepMetres` (default 0.1 m). Space matches Transfo
 
 ### Create-part clipboard (MVP limits)
 
-Eligible: mesh with `userData.createPart` on focused `source === 'created'` model. Copy → in-session buffer `{ kind, params, color, local TRS }` (not OS clipboard). Paste → spawn like duplicate into focused created model. Delete → `deleteSelectedPart`. Session-only buffer; groups not targets. **No-op:** bones, imported meshes, full-model clipboard, multi-select, Cut. Create-part clipboard ops are **not** on the undo stack in v1.
+Eligible on focused `source === 'created'` model: stamped create parts (`userData.createPart`), create groups (`userData.createGroup`), and part multi-select (`$selection.objects`). Copy → in-session buffer of root node trees (each part: `{ kind, params, color, local TRS }`; each group: `{ local TRS, children[] }`). Multi-select skips nodes nested under another selected node. Paste → instantiate under the focused created model’s scene root with a slight +X offset on each root; select the pasted root(s). Delete → `deleteSelectedPart` (single selection). Session-only buffer (not OS clipboard). **No-op:** bones, imported meshes, full-model clipboard, Cut. Create-part clipboard ops (copy/paste/delete/add) are **not** on the undo stack in v1; **pose** auto-commits on created parts/groups **are** undoable via `sceneNode`.
 
 ### Undoable command set (v1 snapshots)
 
 | Stack id       | User action                 | Notes                                                                                     |
 | -------------- | --------------------------- | ----------------------------------------------------------------------------------------- |
 | `trimClip`     | Apply trim                  | Before/after `{ clip, trimStart, trimEnd, duration }`; replaces one-shot pre-trim restore |
-| `saveKeyframe` | Auto-commit pose / keyframe | One entry per finished gesture; includes bind-pose scene TRS when no driving clip         |
+| `saveKeyframe` | Auto-commit pose / keyframe | One entry per finished gesture; includes bind-pose scene TRS when no driving clip; created models without an owned ready clip push `sceneNode` only |
 | `setTimeScale` | Speed slider commit         | Before/after `{ timeScale }`; bake intent for export                                      |
 
-One stack entry = one user commit (coalesce drag/typing with `recordUndo: false` until pointer-up / blur). Snapshot (not patch) clones mutated `AnimationClip`s. Unbounded in-session; cleared on reload. After undo/redo: replace library fields, rebind mixer (`rebindMixersForClips`). Not undoable: transport, viewport chrome, create-part graph edits, blend/retarget/rename/import.
+One stack entry = one user commit (coalesce drag/typing with `recordUndo: false` until pointer-up / blur). Snapshot (not patch) clones mutated `AnimationClip`s. Unbounded in-session; cleared on reload. After undo/redo: replace library fields, rebind mixer (`rebindMixersForClips`); `sceneNode`-only entries restore mesh/group TRS + rest pose without clip rebind. Not undoable: transport, viewport chrome, create-part graph membership (add / delete / paste / group / ungroup), blend/retarget/rename/import.
 
 ### Non-goals
 

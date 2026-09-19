@@ -1,33 +1,43 @@
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
-import { snapshotCreatePart } from '../domain/create-part-clipboard';
-import { readCreatePart } from '../domain/part-data';
+import {
+  resolveClipboardRoots,
+  snapshotClipboardFromRoots,
+} from '../domain/create-part-clipboard';
+import { isCreateHierarchyNode } from '../domain/group-data';
 import { setCreatePartClipboard } from '../stores/create-part-clipboard-store';
-import { asMesh, isInActiveModelScene } from '../utils/selected-part';
+import { isInActiveModelScene } from '../utils/selected-part';
 
 /**
- * Copy the selected stamped create part into the session clipboard.
- * No-op when selection is not an eligible create part.
+ * Copy selected stamped create parts and/or create groups into the session
+ * clipboard. Supports single selection and part multi-select. No-op when the
+ * selection has no eligible hierarchy nodes on the focused created model.
  */
 export function copySelectedCreatePart(): void {
   const activeModel = $activeModel.get();
-  const selected = $selection.get().object;
+  const selection = $selection.get();
 
-  if (!activeModel || activeModel.source !== 'created' || !selected) {
+  if (
+    !activeModel
+    || activeModel.source !== 'created'
+    || selection.kind !== 'parts'
+    || selection.objects.length === 0
+  ) {
     return;
   }
 
-  const mesh = asMesh(selected);
-  if (!mesh || !isInActiveModelScene(mesh, activeModel.scene)) {
+  const eligible = selection.objects.filter(
+    (object) =>
+      isCreateHierarchyNode(object)
+      && isInActiveModelScene(object, activeModel.scene),
+  );
+  if (eligible.length === 0) {
     return;
   }
 
-  if (!readCreatePart(mesh)) {
-    return;
-  }
-
-  const snapshot = snapshotCreatePart(mesh);
-  if (snapshot) {
-    setCreatePartClipboard(snapshot);
+  const roots = resolveClipboardRoots(eligible);
+  const payload = snapshotClipboardFromRoots(roots);
+  if (payload) {
+    setCreatePartClipboard(payload);
   }
 }
