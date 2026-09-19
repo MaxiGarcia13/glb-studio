@@ -5,7 +5,7 @@ import { buildRigidSkinnedSceneFromKit } from '@/modules/create/domain/build-rig
 import { BLOCK_ROBOT_MESH_RECIPE } from '@/modules/create/domain/kits/block-robot';
 
 describe('buildRigidSkinnedSceneFromKit', () => {
-  it('builds an Armature with 17 bones and rigid skinned meshes for Block robot', () => {
+  it('builds an Armature with 52 Mixamo-matching bones and rigid skinned meshes for Block robot', () => {
     const scene = buildRigidSkinnedSceneFromKit(BLOCK_ROBOT_MESH_RECIPE);
 
     const bones: string[] = [];
@@ -30,10 +30,12 @@ describe('buildRigidSkinnedSceneFromKit', () => {
     });
 
     expect(armature).toBe(true);
-    expect(bones).toHaveLength(17);
+    expect(bones).toHaveLength(52);
     expect(bones).toContain('Hips');
-    expect(bones).toContain('LeftHand');
-    expect(bones).toContain('RightFoot');
+    expect(bones).toContain('UpperChest');
+    expect(bones).toContain('LeftShoulder');
+    expect(bones).toContain('RightHandIndex1');
+    expect(bones).toContain('LeftToeBase');
     expect(skinnedMeshes).toBe(BLOCK_ROBOT_MESH_RECIPE.parts.length);
   });
 });

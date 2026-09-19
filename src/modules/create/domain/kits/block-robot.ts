@@ -47,6 +47,7 @@ const UPPER_ARM_LEN = 0.2;
 const UPPER_ARM_TOTAL = UPPER_ARM_LEN + 2 * UPPER_ARM_R;
 
 const ELBOW_R = 0.038;
+const SHOULDER_R = 0.045;
 
 const FOREARM_R = 0.038;
 const FOREARM_LEN = 0.2;
@@ -73,6 +74,8 @@ const faceRingY = headCenterY - (FACE_RING_R + FACE_RING_TUBE);
 const faceRingZ = HEAD_R * 0.75;
 
 const shoulderY = yChest + CHEST_H - 0.04;
+/** Shoulder joint spheres only — slightly below the arm chain so they sit into the chest sides. */
+const shoulderMeshY = shoulderY - 0.06;
 const armX = CHEST_W / 2 + UPPER_ARM_R + 0.02;
 
 /** T-pose: arms along ±X (capsules/hands use ±90° Z so local +Y maps outward→inward). */
@@ -92,12 +95,53 @@ const rightHandTipX = rightWristX + HAND_H;
 const hipsY = yHip + HIP_H / 2;
 const spineY = yWaist + WAIST_H / 2;
 const chestY = yChest + CHEST_H / 2;
+const upperChestY = yChest + CHEST_H * 0.78;
 const neckY = yNeck + NECK_H / 2;
 const kneeY = yKnee + KNEE_R;
+const shoulderX = armX * 0.35;
+/** Midpoint of the chest→arm gap (fills the floating shoulder). */
+const leftShoulderMeshX = -(CHEST_W / 2 + armX) / 2;
+const rightShoulderMeshX = (CHEST_W / 2 + armX) / 2;
+const toeY = FOOT_H * 0.4;
+const toeZ = FOOT_D * 0.55;
+/** Finger segment length along the arm axis (leaf bones; no finger meshes). */
+const FINGER_SEG = 0.028;
+
+/**
+ * Mixamo Y Bot–compatible finger chain (world positions).
+ * `sign` is −1 for Left (−X), +1 for Right (+X).
+ */
+function fingerGroups(
+  side: 'Left' | 'Right',
+  handX: number,
+  handY: number,
+  sign: -1 | 1,
+): GroupRecipe[] {
+  const hand = `${side}Hand`;
+  const chains: Array<{ finger: string; y: number; z: number; base: number }> = [
+    { finger: 'Thumb', y: handY - 0.022, z: sign * 0.03, base: 0.035 },
+    { finger: 'Index', y: handY, z: sign * 0.025, base: 0.09 },
+    { finger: 'Middle', y: handY, z: 0, base: 0.095 },
+    { finger: 'Ring', y: handY, z: -sign * 0.022, base: 0.09 },
+    { finger: 'Pinky', y: handY, z: -sign * 0.045, base: 0.08 },
+  ];
+
+  const groups: GroupRecipe[] = [];
+  for (const { finger, y, z, base } of chains) {
+    for (let i = 1; i <= 3; i += 1) {
+      const name = `${side}Hand${finger}${i}`;
+      const parent = i === 1 ? hand : `${side}Hand${finger}${i - 1}`;
+      const x = handX + sign * (base + (i - 1) * FINGER_SEG);
+      groups.push({ name, parent, position: [x, y, z] });
+    }
+  }
+  return groups;
+}
 
 /**
  * Maintainer-only mesh recipe for offline skinned GLB generation (`npm run kits:block-robot`).
  * Bind pose is a T-pose (arms along ±X). Not registered in From kit — users get the skinned kit.
+ * Skeleton matches Mixamo Y Bot bone count (52) and unprefixed local names for retarget.
  */
 export interface BlockRobotMeshRecipe {
   label: string;
@@ -112,20 +156,27 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
     { name: 'Hips', parent: 'Armature', position: [0, hipsY, 0] },
     { name: 'Spine', parent: 'Hips', position: [0, spineY, 0] },
     { name: 'Chest', parent: 'Spine', position: [0, chestY, 0] },
-    { name: 'Neck', parent: 'Chest', position: [0, neckY, 0] },
+    { name: 'UpperChest', parent: 'Chest', position: [0, upperChestY, 0] },
+    { name: 'Neck', parent: 'UpperChest', position: [0, neckY, 0] },
     { name: 'Head', parent: 'Neck', position: [0, headCenterY, 0] },
-    { name: 'LeftArm', parent: 'Chest', position: [-armX, shoulderY, 0] },
+    { name: 'LeftShoulder', parent: 'UpperChest', position: [-shoulderX, shoulderY, 0] },
+    { name: 'LeftArm', parent: 'LeftShoulder', position: [-armX, shoulderY, 0] },
     { name: 'LeftForeArm', parent: 'LeftArm', position: [leftElbowX, shoulderY, 0] },
     { name: 'LeftHand', parent: 'LeftForeArm', position: [leftWristX, shoulderY, 0] },
-    { name: 'RightArm', parent: 'Chest', position: [armX, shoulderY, 0] },
+    ...fingerGroups('Left', leftWristX, shoulderY, -1),
+    { name: 'RightShoulder', parent: 'UpperChest', position: [shoulderX, shoulderY, 0] },
+    { name: 'RightArm', parent: 'RightShoulder', position: [armX, shoulderY, 0] },
     { name: 'RightForeArm', parent: 'RightArm', position: [rightElbowX, shoulderY, 0] },
     { name: 'RightHand', parent: 'RightForeArm', position: [rightWristX, shoulderY, 0] },
+    ...fingerGroups('Right', rightWristX, shoulderY, 1),
     { name: 'LeftUpLeg', parent: 'Hips', position: [-LEG_X, yHip, 0] },
     { name: 'LeftLeg', parent: 'LeftUpLeg', position: [-LEG_X, kneeY, 0] },
     { name: 'LeftFoot', parent: 'LeftLeg', position: [-LEG_X, 0, 0] },
+    { name: 'LeftToeBase', parent: 'LeftFoot', position: [-LEG_X, toeY, toeZ] },
     { name: 'RightUpLeg', parent: 'Hips', position: [LEG_X, yHip, 0] },
     { name: 'RightLeg', parent: 'RightUpLeg', position: [LEG_X, kneeY, 0] },
     { name: 'RightFoot', parent: 'RightLeg', position: [LEG_X, 0, 0] },
+    { name: 'RightToeBase', parent: 'RightFoot', position: [LEG_X, toeY, toeZ] },
   ],
   parts: [
     {
@@ -183,6 +234,15 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       color: FACE_GLOW,
     },
     {
+      kind: 'sphere',
+      name: 'shoulder_left',
+      parent: 'LeftShoulder',
+      position: [leftShoulderMeshX, shoulderMeshY, 0],
+      rotation: [...IDENTITY_ROTATION],
+      params: { radius: SHOULDER_R },
+      color: FRAME,
+    },
+    {
       kind: 'capsule',
       name: 'upper_arm_left',
       parent: 'LeftArm',
@@ -216,6 +276,15 @@ export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
       position: [leftHandTipX, shoulderY, 0],
       rotation: [...LEFT_ARM_ROTATION],
       params: { width: HAND_W, height: HAND_H, depth: HAND_D },
+      color: FRAME,
+    },
+    {
+      kind: 'sphere',
+      name: 'shoulder_right',
+      parent: 'RightShoulder',
+      position: [rightShoulderMeshX, shoulderMeshY, 0],
+      rotation: [...IDENTITY_ROTATION],
+      params: { radius: SHOULDER_R },
       color: FRAME,
     },
     {

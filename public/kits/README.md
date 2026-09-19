@@ -15,21 +15,22 @@ npm run kits:block-robot
 ### Skeleton
 
 - **Root:** `Armature` (container). Bind-pose bones use **unprefixed** Mixamo-style local names (no `mixamorig:`).
-- **Bone count:** 17 (no shoulders, toes, or fingers).
+- **Bone count:** 52 (same set as Mixamo Y Bot — shoulders, `UpperChest`, toes, and full finger chains). Finger/toe bones are leaf joints with no dedicated meshes (rigid skinning stays on the block segments).
 
-| Parent       | Bones                              |
-| ------------ | ---------------------------------- |
-| Armature     | `Hips`                             |
-| Hips         | `Spine`, `LeftUpLeg`, `RightUpLeg` |
-| Spine        | `Chest`                            |
-| Chest        | `Neck`, `LeftArm`, `RightArm`      |
-| Neck         | `Head`                             |
-| LeftArm →    | `LeftForeArm` → `LeftHand`         |
-| RightArm →   | `RightForeArm` → `RightHand`       |
-| LeftUpLeg →  | `LeftLeg` → `LeftFoot`             |
-| RightUpLeg → | `RightLeg` → `RightFoot`           |
+| Parent         | Bones                                                                 |
+| -------------- | --------------------------------------------------------------------- |
+| Armature       | `Hips`                                                                |
+| Hips           | `Spine`, `LeftUpLeg`, `RightUpLeg`                                    |
+| Spine          | `Chest`                                                               |
+| Chest          | `UpperChest`                                                          |
+| UpperChest     | `Neck`, `LeftShoulder`, `RightShoulder`                               |
+| Neck           | `Head`                                                                |
+| LeftShoulder → | `LeftArm` → `LeftForeArm` → `LeftHand` → thumb/index/middle/ring/pinky |
+| RightShoulder →| `RightArm` → `RightForeArm` → `RightHand` → (same finger chains)      |
+| LeftUpLeg →    | `LeftLeg` → `LeftFoot` → `LeftToeBase`                                |
+| RightUpLeg →   | `RightLeg` → `RightFoot` → `RightToeBase`                             |
 
-Names match the mesh kit’s create-group joints and align with the Mixamo vendor adapter’s local/canonical keys (`Hips`, `LeftArm`, …) so US-6 retarget can suggest mappings when clip bones are Mixamo-prefixed.
+Names match the mesh kit’s create-group joints and align with the Mixamo vendor adapter’s local/canonical keys (`Hips`, `Chest`↔`Spine1`, `UpperChest`↔`Spine2`, fingers, …) so US-6 retarget can suggest mappings when clip bones are Mixamo-prefixed.
 
 ### Mesh / skinning
 

@@ -53,8 +53,8 @@ async function main(): Promise<void> {
   if (report.animations !== 0) {
     throw new Error('Expected no embedded animations');
   }
-  if (report.bones.length !== 17) {
-    throw new Error(`Expected 17 bones, got ${report.bones.length}`);
+  if (report.bones.length !== 52) {
+    throw new Error(`Expected 52 bones (Mixamo Y Bot set), got ${report.bones.length}`);
   }
   if (report.skinnedMeshes < 1) {
     throw new Error('Expected at least one SkinnedMesh');
