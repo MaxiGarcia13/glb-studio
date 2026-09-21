@@ -1,47 +1,30 @@
 import type { Object3D } from 'three';
-import { $model, selectModel } from '../stores/model-store';
 import { openSelectionContextMenu } from '../stores/selection-context-menu-store';
-import {
-  isModelInSelection,
-  isObjectInSelection,
-  selectModelIds,
-  selectObject,
-} from '../stores/selection-store';
 
-/** Ensure a model is the (sole) model selection, then open the context menu. */
+/**
+ * Open the selection context menu without changing selection or focus.
+ * Menu actions always read the current `$selection`.
+ */
 export function openContextMenuForModel(
   event: Pick<MouseEvent, 'clientX' | 'clientY' | 'preventDefault' | 'stopPropagation'>,
-  modelId: string,
+  _modelId: string,
 ): void {
   event.preventDefault();
   event.stopPropagation();
-
-  if (!isModelInSelection(modelId)) {
-    selectModel(modelId);
-    if ($model.get().activeModelId === modelId) {
-      selectModelIds([modelId]);
-    }
-  }
-
   openSelectionContextMenu(event.clientX, event.clientY);
 }
 
-/** Ensure a part is selected (replace if not in the set), then open the context menu. */
+/**
+ * Open the selection context menu without changing selection or focus.
+ * Menu actions always read the current `$selection`.
+ */
 export function openContextMenuForPart(
   event: Pick<MouseEvent, 'clientX' | 'clientY' | 'preventDefault' | 'stopPropagation'>,
-  mesh: Object3D,
-  modelId: string,
+  _mesh: Object3D,
+  _modelId: string,
 ): void {
   event.preventDefault();
   event.stopPropagation();
-
-  if (!isObjectInSelection(mesh)) {
-    if ($model.get().activeModelId !== modelId) {
-      selectModel(modelId);
-    }
-    selectObject(mesh);
-  }
-
   openSelectionContextMenu(event.clientX, event.clientY);
 }
 
