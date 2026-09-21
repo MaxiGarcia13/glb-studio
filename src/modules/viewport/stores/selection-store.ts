@@ -93,6 +93,36 @@ export function selectModelIds(modelIds: readonly string[]): void {
 }
 
 /**
+ * Replace one selected part with another (e.g. drill-in from create-group → mesh).
+ * If `from` is not selected, falls back to selecting `to`. Active becomes `to`.
+ */
+export function replaceObjectInSelection(from: Object3D, to: Object3D): void {
+  if (from === to) {
+    return;
+  }
+
+  const prev = $selection.get();
+  if (prev.kind !== 'parts' || !prev.objects.includes(from)) {
+    selectObject(to);
+    return;
+  }
+
+  const withoutFrom = prev.objects.filter((entry) => entry !== from);
+  const nextObjects = withoutFrom.includes(to) ? withoutFrom : [...withoutFrom, to];
+
+  if (prev.object !== to) {
+    flushOpenPoseEdit();
+  }
+
+  $selection.set({
+    object: to,
+    objects: nextObjects,
+    modelIds: [],
+    kind: 'parts',
+  });
+}
+
+/**
  * Shift+click parts: toggle membership. Switching from models starts a parts selection.
  * Active becomes the toggled-on object, or the last remaining when deselecting active.
  */

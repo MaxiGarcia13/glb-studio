@@ -1,7 +1,10 @@
 import { useStore } from '@nanostores/react';
 import { useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
-import { resolveJointPickTarget } from '@/modules/create/domain/resolve-joint-pick';
+import {
+  resolveJointPickTarget,
+  resolveShiftCreatePartPick,
+} from '@/modules/create/domain/resolve-joint-pick';
 import {
   openContextMenuAtPointer,
   openContextMenuForModel,
@@ -13,7 +16,9 @@ import { pickObjectAcrossRoots } from '../domain/object-pick';
 import { $editTool } from '../stores/edit-tool-store';
 import { $model, focusModel } from '../stores/model-store';
 import {
+  $selection,
   clearSelection,
+  replaceObjectInSelection,
   selectObject,
   toggleModelId,
   toggleObject,
@@ -88,7 +93,7 @@ export function useRaycastSelection(): void {
         return;
       }
 
-      // Edit tool — Shift+click keeps the mesh (joint-pick bypass + multi-select).
+      // Edit tool — Shift+click multi-select (group promote + drill-in on created parts).
       if (event.shiftKey) {
         if (!picked) {
           return;
@@ -96,12 +101,25 @@ export function useRaycastSelection(): void {
         if (owner) {
           focusModel(owner.id, { preserveSelection: true });
         }
+        if (owner?.source === 'created') {
+          const pick = resolveShiftCreatePartPick(picked, $selection.get().objects);
+          if (pick.type === 'replace') {
+            replaceObjectInSelection(pick.from, pick.to);
+          } else {
+            toggleObject(pick.object);
+          }
+          return;
+        }
         toggleObject(picked);
         return;
       }
 
       const target = picked
-        ? (owner?.source === 'created' ? resolveJointPickTarget(picked) : picked)
+        ? (
+          owner?.source === 'created'
+            ? resolveJointPickTarget(picked, $selection.get().objects)
+            : picked
+        )
         : null;
       if (owner) {
         focusModel(owner.id);
@@ -149,9 +167,9 @@ export function useRaycastSelection(): void {
           openContextMenuForModel(event, owner.id);
           return;
         }
-        const target = event.shiftKey || owner.source !== 'created'
-          ? picked
-          : resolveJointPickTarget(picked);
+        const target = owner.source === 'created'
+          ? resolveJointPickTarget(picked, $selection.get().objects)
+          : picked;
         openContextMenuForPart(event, target, owner.id);
         return;
       }

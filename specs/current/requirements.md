@@ -418,7 +418,7 @@ As an editor user, I can optionally start from a starter kit (for example a mode
 - [x] No new PartKind is required unless a kit truly needs one; prefer existing kinds
 - [x] **Mesh** kits remain editable (parts are normal meshes — not locked prefabs)
 - [x] On a created model with stamped create-group hierarchy, **Edit** viewport pick prefers the **nearest parent create-group** so transforming that joint moves its child parts together (limb feels connected)
-- [x] User can still target the **mesh** when needed (e.g. Shift+click on pick) for color / size / single-part edits; outliner clicks stay exact
+- [x] User can still target the **mesh** when needed: a **second** viewport pick on the same part while its parent create-group is selected drills into the mesh (plain or Shift+click); outliner clicks stay exact
 
 ### US-33 — Skinned starter kit (Block robot GLB)
 

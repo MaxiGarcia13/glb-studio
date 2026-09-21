@@ -247,7 +247,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 **Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
 
 - [x] Modern house (`simple-building`) + Block robot kit recipes + From kit UI
-- [x] Joint select on pick (`resolveJointPickTarget`) — nearest create-group; Shift+click mesh bypass
+- [x] Joint select on pick (`resolveJointPickTarget`) — nearest create-group; second pick drills into mesh (plain / Shift)
 - [x] Optional clothed block variant deferred (content-only if ever added; not required)
 
 ## US-33 — Skinned starter kit (Block robot GLB)
