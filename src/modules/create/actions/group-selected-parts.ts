@@ -20,7 +20,7 @@ interface GroupPartsContext {
   partsRoot: Object3D;
 }
 
-function resolveGroupPartsContext(): GroupPartsContext | null {
+function resolveMultiPartContext(): GroupPartsContext | null {
   const { kind, objects } = $selection.get();
   if (kind !== 'parts' || objects.length < 2) {
     return null;
@@ -41,7 +41,6 @@ function resolveGroupPartsContext(): GroupPartsContext | null {
     if (findModelEntryForObject(entry, models)?.id !== owner.id) {
       continue;
     }
-    // Skip nodes that are descendants of another selected node (would nest twice).
     const nestedUnderSelection = objects.some(
       (other) =>
         other !== entry
@@ -71,6 +70,11 @@ function isDescendant(object: Object3D, ancestor: Object3D): boolean {
   return false;
 }
 
+/** Shared by Group and Make joint (≥2 create nodes on one created model). */
+export function resolveGroupPartsContext(): GroupPartsContext | null {
+  return resolveMultiPartContext();
+}
+
 /** Whether Group is available for the current part multi-selection. */
 export function getGroupPartsAvailability(): GroupPartsAvailability {
   const { kind, objects } = $selection.get();
@@ -87,7 +91,7 @@ export function getGroupPartsAvailability(): GroupPartsAvailability {
     return { enabled: false, reason: 'Select at least two parts' };
   }
 
-  const context = resolveGroupPartsContext();
+  const context = resolveMultiPartContext();
   if (!context) {
     return {
       enabled: false,
@@ -102,18 +106,21 @@ export function getGroupPartsAvailability(): GroupPartsAvailability {
 }
 
 /**
- * Create an empty group and parent all selected create nodes under it.
+ * Create an organizational create group and parent selected nodes under it.
  * World transforms preserved. Selects the new group.
  */
 export function groupSelectedParts(): boolean {
-  const context = resolveGroupPartsContext();
+  const context = resolveMultiPartContext();
   if (!context) {
     return false;
   }
 
   context.partsRoot.updateMatrixWorld(true);
   const worldPivot = averageWorldPosition(context.nodes);
-  const group = createEmptyPartGroup(context.partsRoot, { worldPivot });
+  const group = createEmptyPartGroup(context.partsRoot, {
+    worldPivot,
+    role: 'group',
+  });
   const moved = attachAllUnder(group, context.nodes, context.partsRoot);
   if (moved === 0) {
     group.removeFromParent();

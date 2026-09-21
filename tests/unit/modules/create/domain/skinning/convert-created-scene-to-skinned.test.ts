@@ -1,7 +1,7 @@
 import { Bone, BoxGeometry, Group, Mesh, MeshStandardMaterial, SkinnedMesh } from 'three';
 import { describe, expect, it } from 'vitest';
 
-import { writeCreateGroup } from '@/modules/create/domain/group-data';
+import { writeCreateJoint } from '@/modules/create/domain/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import { convertCreatedSceneToSkinned } from '@/modules/create/domain/skinning/convert-created-scene-to-skinned';
 import { isUsableSkinnedModelScene } from '@/modules/import/domain/model-scene-kind';
@@ -19,7 +19,7 @@ function createPart(name: string): Mesh {
 function createGroup(name: string): Group {
   const group = new Group();
   group.name = name;
-  writeCreateGroup(group);
+  writeCreateJoint(group);
   return group;
 }
 

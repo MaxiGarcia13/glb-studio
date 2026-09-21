@@ -8,7 +8,7 @@ import {
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { writeCreateGroup } from '@/modules/create/domain/group-data';
+import { writeCreateJoint } from '@/modules/create/domain/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import { convertCreatedSceneToSkinned } from '@/modules/create/domain/skinning/convert-created-scene-to-skinned';
 import { packModelGlb } from '@/modules/export/domain/model-glb';
@@ -48,7 +48,7 @@ function createPart(name: string): Mesh {
 function createGroup(name: string): Group {
   const group = new Group();
   group.name = name;
-  writeCreateGroup(group);
+  writeCreateJoint(group);
   return group;
 }
 

@@ -1,7 +1,7 @@
 import { Bone, Group, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 
-import { writeCreateGroup } from '@/modules/create/domain/group-data';
+import { writeCreateGroup, writeCreateJoint } from '@/modules/create/domain/group-data';
 import {
   ARMATURE_GROUP_NAME,
   buildBonesFromCreateGroups,
@@ -10,7 +10,7 @@ import {
 function createGroup(name: string): Group {
   const group = new Group();
   group.name = name;
-  writeCreateGroup(group);
+  writeCreateJoint(group);
   return group;
 }
 
@@ -81,9 +81,9 @@ describe('buildBonesFromCreateGroups', () => {
     expect(propBone!.parent).toBe(armature);
   });
 
-  it('throws when there are no create groups', () => {
+  it('throws when there are no joints', () => {
     expect(() => buildBonesFromCreateGroups(new Group())).toThrow(
-      /No create groups/,
+      /No joints/,
     );
   });
 
@@ -92,5 +92,18 @@ describe('buildBonesFromCreateGroups', () => {
     scene.add(createGroup(ARMATURE_GROUP_NAME));
 
     expect(() => buildBonesFromCreateGroups(scene)).toThrow(/No bones produced/);
+  });
+
+  it('skips plain organizational groups when building bones', () => {
+    const scene = new Group();
+    const hips = createGroup('Hips');
+    const bag = new Group();
+    bag.name = 'Extras';
+    writeCreateGroup(bag);
+    hips.add(bag);
+    scene.add(hips);
+
+    const { bones } = buildBonesFromCreateGroups(scene);
+    expect(bones.map((bone) => bone.name)).toEqual(['Hips']);
   });
 });

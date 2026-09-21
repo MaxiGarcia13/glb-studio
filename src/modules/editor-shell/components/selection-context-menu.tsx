@@ -6,10 +6,17 @@ import {
   getGroupPartsAvailability,
   groupSelectedParts,
 } from '@/modules/create/actions/group-selected-parts';
+import { getMakeJointAvailability } from '@/modules/create/actions/make-joint-selected-parts';
 import {
   getUngroupPartsAvailability,
   ungroupSelectedParts,
 } from '@/modules/create/actions/ungroup-selected-parts';
+import {
+  getUnjointPartsAvailability,
+  unjointSelectedParts,
+} from '@/modules/create/actions/unjoint-selected-parts';
+import { MakeJointModal } from '@/modules/create/components/make-joint-modal';
+import { openMakeJointModal } from '@/modules/create/stores/make-joint-ui-store';
 import {
   getGroupModelsAvailability,
   groupSelectedModels,
@@ -55,7 +62,7 @@ function buildMenuItems(): ActionMenuItem[] {
     ];
   }
 
-  // Create Group / Ungroup only on created models (hidden after US-34 skin).
+  // Part hierarchy actions only on created models (hidden after US-34 skin).
   const anchor = objects[0];
   const owner = anchor
     ? findModelEntryForObject(anchor, $model.get().models)
@@ -66,6 +73,8 @@ function buildMenuItems(): ActionMenuItem[] {
 
   const groupParts = getGroupPartsAvailability();
   const ungroupParts = getUngroupPartsAvailability();
+  const makeJoint = getMakeJointAvailability();
+  const unjoint = getUnjointPartsAvailability();
   return [
     {
       id: 'group',
@@ -85,6 +94,24 @@ function buildMenuItems(): ActionMenuItem[] {
         ungroupSelectedParts();
       },
     },
+    {
+      id: 'make-joint',
+      label: 'Make joint',
+      disabled: !makeJoint.enabled,
+      title: makeJoint.reason,
+      onSelect: () => {
+        openMakeJointModal();
+      },
+    },
+    {
+      id: 'unjoint',
+      label: 'Unjoint',
+      disabled: !unjoint.enabled,
+      title: unjoint.reason,
+      onSelect: () => {
+        unjointSelectedParts();
+      },
+    },
   ];
 }
 
@@ -100,13 +127,16 @@ export function SelectionContextMenu() {
   const items = menu.open ? buildMenuItems() : [];
 
   return (
-    <PointerActionMenu
-      open={menu.open}
-      x={menu.x}
-      y={menu.y}
-      items={items}
-      onClose={onClose}
-      aria-label="Selection actions"
-    />
+    <>
+      <PointerActionMenu
+        open={menu.open}
+        x={menu.x}
+        y={menu.y}
+        items={items}
+        onClose={onClose}
+        aria-label="Selection actions"
+      />
+      <MakeJointModal />
+    </>
   );
 }

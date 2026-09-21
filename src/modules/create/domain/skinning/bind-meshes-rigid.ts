@@ -6,7 +6,7 @@ import {
   Uint16BufferAttribute,
 } from 'three';
 
-import { isCreateGroup } from '../group-data';
+import { isCreateJoint } from '../group-data';
 import { listCreatedParts } from '../list-created-parts';
 import { ARMATURE_GROUP_NAME } from './build-bones-from-create-groups';
 
@@ -54,7 +54,7 @@ function resolveParentBoneIndex(
   skeleton: Skeleton,
   rootIndex: number,
 ): number | null {
-  const group = findNearestCreateGroup(mesh);
+  const group = findNearestCreateJoint(mesh);
   if (!group || group.name === ARMATURE_GROUP_NAME) {
     return rootIndex;
   }
@@ -63,10 +63,10 @@ function resolveParentBoneIndex(
   return index >= 0 ? index : null;
 }
 
-function findNearestCreateGroup(mesh: Object3D): Object3D | null {
+function findNearestCreateJoint(mesh: Object3D): Object3D | null {
   let current: Object3D | null = mesh.parent;
   while (current) {
-    if (isCreateGroup(current)) {
+    if (isCreateJoint(current)) {
       return current;
     }
     current = current.parent;

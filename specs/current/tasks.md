@@ -239,7 +239,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `parentPart` / `attachUnder` / empty create groups; cycle guard; world preserve
 - [x] `PartOutliner` (indent, collapse, click + Shift+click select); `$createPartsRevision`
 - [x] Multi-selection store (`kind: parts | models`); Shift+click library + viewport; selection highlight
-- [x] Context-menu Group / Ungroup for parts and models; remove Settings Parent + toolbar Unparent
+- [x] Context-menu Group / Ungroup + Make joint / Unjoint for create parts (joints vs plain groups); Group / Ungroup for models; remove Settings Parent + toolbar Unparent
 - [x] Export packs model groups as one GLB (owned clips remapped; no Scene bake); ungrouped separate; Merge checkbox removed
 
 ## US-27 — Additional kits via registry

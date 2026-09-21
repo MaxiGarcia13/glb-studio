@@ -1,11 +1,13 @@
 import type { Object3D } from 'three';
 import { readCreatePart } from './part-data';
 
-/** Empty group node `userData` key (no mesh). */
+/** Empty group / joint node `userData` key (no mesh). */
 export const CREATE_GROUP_USER_DATA_KEY = 'createGroup';
 
+export type CreateGroupKind = 'group' | 'joint';
+
 export interface CreateGroupUserData {
-  kind: 'group';
+  kind: CreateGroupKind;
 }
 
 export function readCreateGroup(object: Object3D): CreateGroupUserData | null {
@@ -14,21 +16,36 @@ export function readCreateGroup(object: Object3D): CreateGroupUserData | null {
     return null;
   }
   const { kind } = raw as { kind?: unknown };
-  if (kind !== 'group') {
+  if (kind !== 'group' && kind !== 'joint') {
     return null;
   }
-  return { kind: 'group' };
+  return { kind };
 }
 
+/** Organizational create group (not a skeleton bone). */
 export function writeCreateGroup(object: Object3D): void {
-  object.userData[CREATE_GROUP_USER_DATA_KEY] = { kind: 'group' };
+  object.userData[CREATE_GROUP_USER_DATA_KEY] = { kind: 'group' } satisfies CreateGroupUserData;
 }
 
+/** Skeleton joint create group (becomes a Bone on Skin). */
+export function writeCreateJoint(object: Object3D): void {
+  object.userData[CREATE_GROUP_USER_DATA_KEY] = { kind: 'joint' } satisfies CreateGroupUserData;
+}
+
+/** True for either a plain group or a joint stamp. */
 export function isCreateGroup(object: Object3D): boolean {
   return readCreateGroup(object) !== null;
 }
 
-/** True when the node is a stamped create part mesh or an empty create group. */
+export function isCreateJoint(object: Object3D): boolean {
+  return readCreateGroup(object)?.kind === 'joint';
+}
+
+export function isCreatePlainGroup(object: Object3D): boolean {
+  return readCreateGroup(object)?.kind === 'group';
+}
+
+/** True when the node is a stamped create part mesh or an empty create group/joint. */
 export function isCreateHierarchyNode(object: Object3D): boolean {
   if (isCreateGroup(object)) {
     return true;

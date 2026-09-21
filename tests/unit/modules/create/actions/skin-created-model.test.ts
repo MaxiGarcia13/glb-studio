@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { $clips } from '@/modules/animation/stores/clip-store';
 import { skinCreatedModel } from '@/modules/create/actions/skin-created-model';
-import { writeCreateGroup } from '@/modules/create/domain/group-data';
+import { writeCreateJoint } from '@/modules/create/domain/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import * as convertModule from '@/modules/create/domain/skinning/convert-created-scene-to-skinned';
 import { isUsableSkinnedModelScene } from '@/modules/import/domain/model-scene-kind';
@@ -44,7 +44,7 @@ function createPart(name: string): Mesh {
 function createGroup(name: string): Group {
   const group = new Group();
   group.name = name;
-  writeCreateGroup(group);
+  writeCreateJoint(group);
   return group;
 }
 
@@ -142,10 +142,10 @@ describe('skinCreatedModel', () => {
     const result = skinCreatedModel('m1');
 
     expect(result.ok).toBe(false);
-    expect(result.error).toBe('Add create groups before skinning');
+    expect(result.error).toBe('Add joints before skinning');
     expect($model.get().models[0]!.scene).toBe(scene);
     expect($model.get().models[0]!.source).toBe('created');
-    expect($model.get().error).toBe('Add create groups before skinning');
+    expect($model.get().error).toBe('Add joints before skinning');
   });
 
   it('keeps the original library scene when conversion fails', () => {

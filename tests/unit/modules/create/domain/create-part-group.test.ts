@@ -5,6 +5,10 @@ import {
   averageWorldPosition,
   createEmptyPartGroup,
 } from '@/modules/create/domain/create-part-group';
+import {
+  isCreateJoint,
+  isCreatePlainGroup,
+} from '@/modules/create/domain/group-data';
 import { attachAllUnder } from '@/modules/create/domain/parent-part';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 
@@ -52,6 +56,7 @@ describe('createEmptyPartGroup', () => {
     partsRoot.updateMatrixWorld(true);
 
     expect(group.position.toArray()).toEqual([2, 3, 0]);
+    expect(group.name).toBe('group');
 
     const aWorld = new Vector3();
     const bWorld = new Vector3();
@@ -74,5 +79,25 @@ describe('createEmptyPartGroup', () => {
 
     expect(worldPivot.toArray()).toEqual([10, 4, 0]);
     expect(group.position.toArray()).toEqual([0, 4, 0]);
+  });
+
+  it('uses the requested joint name base and uniquifies on collision', () => {
+    const partsRoot = new Group();
+    const existing = createEmptyPartGroup(partsRoot, { name: 'Hips', role: 'joint' });
+    const next = createEmptyPartGroup(partsRoot, { name: 'Hips', role: 'joint' });
+
+    expect(existing.name).toBe('Hips');
+    expect(next.name).toBe('Hips_2');
+  });
+
+  it('stamps organizational groups vs joints separately', () => {
+    const partsRoot = new Group();
+    const group = createEmptyPartGroup(partsRoot, { role: 'group' });
+    const joint = createEmptyPartGroup(partsRoot, { name: 'Spine', role: 'joint' });
+
+    expect(group.name).toBe('group');
+    expect(joint.name).toBe('Spine');
+    expect(isCreatePlainGroup(group)).toBe(true);
+    expect(isCreateJoint(joint)).toBe(true);
   });
 });

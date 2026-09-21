@@ -10,7 +10,10 @@ import {
 } from 'three';
 
 import { describe, expect, it } from 'vitest';
-import { writeCreateGroup } from '@/modules/create/domain/group-data';
+import {
+  writeCreateGroup,
+  writeCreateJoint,
+} from '@/modules/create/domain/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import { canSkinModel } from '@/modules/create/domain/skinning/can-skin-model';
 
@@ -24,7 +27,14 @@ function createPart(name: string): Mesh {
   return mesh;
 }
 
-function createGroup(name: string): Group {
+function createJoint(name: string): Group {
+  const group = new Group();
+  group.name = name;
+  writeCreateJoint(group);
+  return group;
+}
+
+function createPlainGroup(name: string): Group {
   const group = new Group();
   group.name = name;
   writeCreateGroup(group);
@@ -41,15 +51,27 @@ function model(partial: Pick<ModelEntry, 'source' | 'scene'> & { id?: string }):
 }
 
 describe('canSkinModel', () => {
-  it('enables when created model has groups and parts', () => {
+  it('enables when created model has joints and parts', () => {
     const scene = new Group();
-    const hips = createGroup('Hips');
+    const hips = createJoint('Hips');
     hips.add(createPart('torso'));
     scene.add(hips);
 
     expect(canSkinModel(model({ source: 'created', scene }))).toEqual({
       enabled: true,
-      reason: 'Convert create groups into a skeleton',
+      reason: 'Convert joints into a skeleton',
+    });
+  });
+
+  it('disables when only plain groups exist (no joints)', () => {
+    const scene = new Group();
+    const bundle = createPlainGroup('group');
+    bundle.add(createPart('box'));
+    scene.add(bundle);
+
+    expect(canSkinModel(model({ source: 'created', scene }))).toEqual({
+      enabled: false,
+      reason: 'Add joints before skinning',
     });
   });
 
@@ -77,19 +99,19 @@ describe('canSkinModel', () => {
     });
   });
 
-  it('disables created models with no create groups', () => {
+  it('disables created models with no joints', () => {
     const scene = new Group();
     scene.add(createPart('box'));
 
     expect(canSkinModel(model({ source: 'created', scene }))).toEqual({
       enabled: false,
-      reason: 'Add create groups before skinning',
+      reason: 'Add joints before skinning',
     });
   });
 
-  it('disables created models with groups but no parts', () => {
+  it('disables created models with joints but no parts', () => {
     const scene = new Group();
-    scene.add(createGroup('Hips'));
+    scene.add(createJoint('Hips'));
 
     expect(canSkinModel(model({ source: 'created', scene }))).toEqual({
       enabled: false,
@@ -102,19 +124,19 @@ describe('canSkinModel', () => {
 
     expect(canSkinModel(model({ source: 'created', scene }))).toEqual({
       enabled: false,
-      reason: 'Add create groups before skinning',
+      reason: 'Add joints before skinning',
     });
   });
 
-  it('disables when only an Armature group exists', () => {
+  it('disables when only an Armature joint exists', () => {
     const scene = new Group();
-    const armature = createGroup('Armature');
+    const armature = createJoint('Armature');
     armature.add(createPart('box'));
     scene.add(armature);
 
     expect(canSkinModel(model({ source: 'created', scene }))).toEqual({
       enabled: false,
-      reason: 'Add create groups before skinning',
+      reason: 'Add joints before skinning',
     });
   });
 });

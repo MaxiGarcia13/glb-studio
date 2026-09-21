@@ -1,34 +1,47 @@
 import type { Object3D } from 'three';
 import { Bone, Group } from 'three';
 
+import { isCreateGroup, isCreateJoint } from '../group-data';
 import { listCreatedPartEntries } from '../list-created-parts';
 
 /** Matches offline kit skinning — container, not a Skeleton bone. */
 export const ARMATURE_GROUP_NAME = 'Armature';
 
 export interface CreateGroupBoneTree {
-  /** Skeleton bones in create-group pre-order (excludes Armature). */
+  /** Skeleton bones in joint pre-order (excludes Armature). */
   bones: Bone[];
   /**
-   * Present when a create group is named `Armature`.
+   * Present when a create joint/group is named `Armature`.
    * Root bones are parented under it; not included in `bones`.
    */
   armature: Group | null;
-  /** Source create group → Bone or Armature Group. */
+  /** Source joint → Bone or Armature Group. */
   groupToNode: Map<Object3D, Bone | Group>;
 }
 
 /**
- * Build a Bone hierarchy that mirrors create-group names and parenting.
+ * Whether this create node participates in the skin armature.
+ * Joints become bones; a node named `Armature` is the non-bone container
+ * (kit stamp is usually a joint with that name).
+ */
+export function isSkinArmatureNode(object: Object3D): boolean {
+  if (object.name === ARMATURE_GROUP_NAME && isCreateGroup(object)) {
+    return true;
+  }
+  return isCreateJoint(object);
+}
+
+/**
+ * Build a Bone hierarchy from **joints** (plain create groups are skipped).
  * Copies world transforms at call time (bind pose). Does not mutate `scene`.
  */
 export function buildBonesFromCreateGroups(scene: Object3D): CreateGroupBoneTree {
   const groups = listCreatedPartEntries(scene)
-    .filter((entry) => entry.isGroup)
+    .filter((entry) => entry.isGroup && isSkinArmatureNode(entry.object))
     .map((entry) => entry.object);
 
   if (groups.length === 0) {
-    throw new Error('No create groups to turn into bones');
+    throw new Error('No joints to turn into bones');
   }
 
   scene.updateMatrixWorld(true);
@@ -63,7 +76,7 @@ export function buildBonesFromCreateGroups(scene: Object3D): CreateGroupBoneTree
   }
 
   if (bones.length === 0) {
-    throw new Error('No bones produced — add create groups other than Armature');
+    throw new Error('No bones produced — add joints other than Armature');
   }
 
   staging.updateMatrixWorld(true);
@@ -74,7 +87,7 @@ export function buildBonesFromCreateGroups(scene: Object3D): CreateGroupBoneTree
       continue;
     }
 
-    const parentGroup = findCreateGroupAncestor(group, groupSet, scene);
+    const parentGroup = findSkinArmatureAncestor(group, groupSet, scene);
     if (parentGroup) {
       const parentNode = groupToNode.get(parentGroup);
       if (parentNode) {
@@ -95,7 +108,7 @@ export function buildBonesFromCreateGroups(scene: Object3D): CreateGroupBoneTree
   return { bones, armature, groupToNode };
 }
 
-function findCreateGroupAncestor(
+function findSkinArmatureAncestor(
   group: Object3D,
   groupSet: Set<Object3D>,
   partsRoot: Object3D,

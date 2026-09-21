@@ -1,6 +1,7 @@
 import type { Object3D } from 'three';
 
 import type { SaveKeyframeSceneNode } from '@/modules/animation/types/undo-stack';
+import type { PreEditNodeSnapshot } from '@/modules/viewport/stores/pose-edit-store';
 import type { ModelEntry } from '@/modules/viewport/types/model';
 import {
   computeBindPoseDelta,
@@ -40,7 +41,7 @@ import {
   $preEditNodes,
   $preEditTransform,
   clearPoseDirty,
-  type PreEditNodeSnapshot,
+
 } from '@/modules/viewport/stores/pose-edit-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
 import { $clips } from '../store';

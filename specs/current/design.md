@@ -72,7 +72,7 @@ Do not add a second debug canvas, FPS overlay render path, or smoke-test scene t
    - `PartOutliner` under each created model in Models — names, depth indent, collapse chevron; click → Edit + `selectObject`; `$createPartsRevision` on add / duplicate / delete / parent / ungroup
    - **Imported (US-31):** `listBoneEntries` + `BoneOutliner` under each imported model (**bones, then owned clips**); click → Edit + select bone; Shift+click toggles. Viewport `SkeletonHelper` per previewed imported model when `$viewportSettings.bonesVisible` (`ModelSkeletonHelper` — not pickable; unmount on hide/remove or toggle off)
    - `$selection.kind`: `'none' | 'parts' | 'models'` — never mix; plain click replaces (`selectObject` / `selectModelIds`); Shift+click toggles (`toggleObject` / `toggleModelId`) in library + viewport
-   - Right-click `PointerActionMenu` (Group / Ungroup) from library rows and viewport; parts Group = empty group under parts root at the **average world origin of the selection** (so Edit gizmo / rotate pivot sits on the limb, not the model floor), then attach selection (world-preserving); parts Ungroup = dissolve groups or lift to parts root; models Group / Ungroup via `$modelGroups` session store (library tree + export units)
+   - Right-click `PointerActionMenu` from library rows and viewport: created-model parts use **Group** / **Ungroup** (plain `createGroup`) and **Make joint** / **Unjoint** (`kind: 'joint'`; Make joint opens a name picker; pivot at average world origin; Unjoint dissolves joints only); Skin builds bones from joints only; models use **Group** / **Ungroup** via `$modelGroups` session store (library tree + export units)
    - No Settings Parent `<select>`; no toolbar Unparent
    - **Joint select on pick (US-27):** Edit raycast on a stamped create part under a `createGroup` ancestor selects the nearest parent group (`resolveJointPickTarget`) so TransformControls pose the limb; Shift+click keeps the mesh (bypass + multi-select); outliner clicks stay exact. No skinned bones on created models — reuse create groups
 9. **Snap (US-25):** when focused model `source === 'created'`, TransformControls use built-in `translationSnap` / `rotationSnap` from `$viewportSettings` (Move = world, Edit = local; scale never). Imported models never quantize. Settings XYZ typing does not auto-snap
@@ -226,22 +226,22 @@ Multi-select **position** (nudge + Settings XYZ delta) moves every selected mode
 
 **Cmd** = meta on macOS; **Ctrl** elsewhere. Letter keys case-insensitive. Transform modes **Q / W / E** = Move / Rotate / Scale; **R** = axes; **B** = bones.
 
-| Command id                           | Chord(s)                     | Label                    | Category  |
-| ------------------------------------ | ---------------------------- | ------------------------ | --------- |
-| `playPause`                          | Space                        | Play / Pause             | Playback  |
-| `toggleAxes`                         | R                            | Toggle world axes        | Viewport  |
-| `toggleBones`                        | B                            | Toggle bones             | Viewport  |
-| `transformMove`                      | Q                            | Move                     | Transform |
-| `transformRotate`                    | W                            | Rotate                   | Transform |
-| `transformScale`                     | E                            | Scale                    | Transform |
-| `nudgeNegX` / `nudgePosX`            | ← / →                        | Nudge −X / +X            | Transform |
-| `nudgePosY` / `nudgeNegY`            | ↑ / ↓                        | Nudge +Y / −Y            | Transform |
-| `nudgePosZ` / `nudgeNegZ`            | Shift+↑ / Shift+↓            | Nudge +Z / −Z            | Transform |
-| `savePending`                        | Cmd/Ctrl+S                   | Commit pending pose      | Animation |
+| Command id                           | Chord(s)                     | Label                             | Category  |
+| ------------------------------------ | ---------------------------- | --------------------------------- | --------- |
+| `playPause`                          | Space                        | Play / Pause                      | Playback  |
+| `toggleAxes`                         | R                            | Toggle world axes                 | Viewport  |
+| `toggleBones`                        | B                            | Toggle bones                      | Viewport  |
+| `transformMove`                      | Q                            | Move                              | Transform |
+| `transformRotate`                    | W                            | Rotate                            | Transform |
+| `transformScale`                     | E                            | Scale                             | Transform |
+| `nudgeNegX` / `nudgePosX`            | ← / →                        | Nudge −X / +X                     | Transform |
+| `nudgePosY` / `nudgeNegY`            | ↑ / ↓                        | Nudge +Y / −Y                     | Transform |
+| `nudgePosZ` / `nudgeNegZ`            | Shift+↑ / Shift+↓            | Nudge +Z / −Z                     | Transform |
+| `savePending`                        | Cmd/Ctrl+S                   | Commit pending pose               | Animation |
 | `copyCreatePart` / `pasteCreatePart` | Cmd/Ctrl+C / V               | Copy / Paste create part or group | Create    |
-| `deleteCreatePart`                   | Delete                       | Delete create part       | Create    |
-| `undo`                               | Cmd/Ctrl+Z                   | Undo                     | History   |
-| `redo`                               | Cmd/Ctrl+Shift+Z, Cmd/Ctrl+Y | Redo                     | History   |
+| `deleteCreatePart`                   | Delete                       | Delete create part                | Create    |
+| `undo`                               | Cmd/Ctrl+Z                   | Undo                              | History   |
+| `redo`                               | Cmd/Ctrl+Shift+Z, Cmd/Ctrl+Y | Redo                              | History   |
 
 **Not bound:** bare C/V; Backspace as Delete; Cut (Cmd/Ctrl+X). Ignore letter chords when Cmd/Ctrl/Alt held (except explicit Cmd/Ctrl rows). Ignore all chords when `isTypingTarget`.
 
@@ -255,11 +255,11 @@ Eligible on focused `source === 'created'` model: stamped create parts (`userDat
 
 ### Undoable command set (v1 snapshots)
 
-| Stack id       | User action                 | Notes                                                                                     |
-| -------------- | --------------------------- | ----------------------------------------------------------------------------------------- |
-| `trimClip`     | Apply trim                  | Before/after `{ clip, trimStart, trimEnd, duration }`; replaces one-shot pre-trim restore |
+| Stack id       | User action                 | Notes                                                                                                                                                                                                                                  |
+| -------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `trimClip`     | Apply trim                  | Before/after `{ clip, trimStart, trimEnd, duration }`; replaces one-shot pre-trim restore                                                                                                                                              |
 | `saveKeyframe` | Auto-commit pose / keyframe | One entry per finished gesture; includes bind-pose scene TRS when no driving clip; created models without an owned ready clip push `sceneNode` / `sceneNodes`; multi-select position commits restore every moved root via `sceneNodes` |
-| `setTimeScale` | Speed slider commit         | Before/after `{ timeScale }`; bake intent for export                                      |
+| `setTimeScale` | Speed slider commit         | Before/after `{ timeScale }`; bake intent for export                                                                                                                                                                                   |
 
 One stack entry = one user commit (coalesce drag/typing with `recordUndo: false` until pointer-up / blur). Snapshot (not patch) clones mutated `AnimationClip`s. Unbounded in-session; cleared on reload. After undo/redo: replace library fields, rebind mixer (`rebindMixersForClips`); `sceneNode`-only entries restore mesh/group TRS + rest pose without clip rebind. Not undoable: transport, viewport chrome, create-part graph membership (add / delete / paste / group / ungroup), blend/retarget/rename/import.
 

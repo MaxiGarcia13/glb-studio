@@ -23,6 +23,7 @@
 
 - [x] **Skin model control** — Library model ⋯ item; wired to `canSkinModel`; busy/disabled states
 - [x] **Copy** — Success silent or one-line; failures explicit
+- [x] **Make joint / Unjoint** — Part context menu alongside Group / Ungroup; joint `userData` kind; Skin bones from joints only; name picker on Make joint; model Group/Ungroup unchanged
 
 ## Clips / export
 

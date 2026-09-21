@@ -23,14 +23,15 @@ As an editor user building a character from parts (or the mesh Block robot), I c
 
 ## Locked product choices (kickoff)
 
-| Choice               | Decision                                                                                                                                                                                     |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Entry point**      | Library model **⋯** → **Skin model** (same menu as Rename / Replace). Not File menu; not create toolbar.                                                                                     |
-| **After skin**       | **Freeze** — hide create toolbar + part outliner; bone outliner + owned clips only. No part-edit paths left live.                                                                            |
-| **No-groups models** | **Disable** with clear reason (e.g. “Add create groups before skinning”). No auto-armature heuristic. House / prop kits stay disabled.                                                       |
-| **`source` flag**    | On success, set **`source: 'imported'`** (same as US-33 skinned kit). No new `skinned-created`. Gate helper/outliner via shared `isSkinnedLibraryModel` that covers imported skinned scenes. |
-| **Clip strategy**    | **Drop** owned clips that target mesh / create-part object paths; leave the model’s owned library empty (or skeletal-ready) for new clips. Do not remap mesh tracks onto bones in MVP.       |
-| **Weights**          | **Rigid only** — weight 1 to parent bone; no paint UI in this US.                                                                                                                            |
+| Choice               | Decision                                                                                                                                                                                                                                                                                  |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Entry point**      | Library model **⋯** → **Skin model** (same menu as Rename / Replace). Not File menu; not create toolbar.                                                                                                                                                                                  |
+| **After skin**       | **Freeze** — hide create toolbar + part outliner; bone outliner + owned clips only. No part-edit paths left live.                                                                                                                                                                         |
+| **No-groups models** | **Disable** with clear reason (e.g. “Add joints before skinning”). No auto-armature heuristic. House / prop kits stay disabled. Plain create groups alone do not enable Skin. |
+| **`source` flag**    | On success, set **`source: 'imported'`** (same as US-33 skinned kit). No new `skinned-created`. Gate helper/outliner via shared `isSkinnedLibraryModel` that covers imported skinned scenes.                                                                                              |
+| **Clip strategy**    | **Drop** owned clips that target mesh / create-part object paths; leave the model’s owned library empty (or skeletal-ready) for new clips. Do not remap mesh tracks onto bones in MVP.                                                                                                    |
+| **Weights**          | **Rigid only** — weight 1 to parent bone; no paint UI in this US.                                                                                                                                                                                                                         |
+| **Joint authoring**  | Created-model part context menu keeps **Group** / **Ungroup** (organizational create groups) **and** **Make joint** / **Unjoint** (skeleton joints). Make joint opens a name picker. Skin builds bones only from **joints** (plus `Armature` container); plain groups stay hierarchy-only. Model library Group / Ungroup unchanged. |
 
 ## Acceptance
 
@@ -45,6 +46,10 @@ As an editor user building a character from parts (or the mesh Block robot), I c
 - [ ] Mesh-only models **without** a group armature: blocked with disabled reason copy
 - [ ] Modern house / prop kits are not required to support Skin (stay disabled via no-groups / prerequisites)
 - [ ] Specs `current/` out-of-scope line “Bones, skinning… on created models” is revised on ship to allow this MVP
+- [ ] Created-model part multi-select (≥2) offers **Group** (organizational) and **Make joint** (name picker → joint stamp)
+- [ ] Created-model part selection offers **Ungroup** (dissolve plain groups / lift) and **Unjoint** (dissolve joints only)
+- [ ] Skin requires ≥1 joint (not merely a plain group); plain groups do not become bones
+- [ ] Model multi-select context menu still says **Group** / **Ungroup** (library model groups)
 
 ## Out of scope (defer)
 

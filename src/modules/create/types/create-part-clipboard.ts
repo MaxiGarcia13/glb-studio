@@ -16,15 +16,19 @@ export interface CreatePartClipboardPartNode extends CreatePartClipboardTrs {
   colorHex: string | null;
 }
 
-/** Create-group subtree in the session clipboard. */
+/** Create-group / joint subtree in the session clipboard. */
 export interface CreatePartClipboardGroupNode extends CreatePartClipboardTrs {
   type: 'group';
+  /** Organizational group vs skeleton joint (default `group` when omitted). */
+  role?: 'group' | 'joint';
+  /** Preserved display name base for joints when pasting. */
+  name?: string;
   children: CreatePartClipboardNode[];
 }
 
-export type CreatePartClipboardNode =
-  | CreatePartClipboardPartNode
-  | CreatePartClipboardGroupNode;
+export type CreatePartClipboardNode
+  = | CreatePartClipboardPartNode
+    | CreatePartClipboardGroupNode;
 
 /**
  * In-session create-part clipboard payload (US-10). Not the OS clipboard.

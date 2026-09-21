@@ -8,7 +8,7 @@ One reliable path: **create-group armature → Bone skeleton + rigid-skinned mes
 
 - Entry: library model **⋯ → Skin model**
 - After skin: freeze create tools; `source → imported`
-- Create toolbar, part outliner, Part inspector, and create Group/Ungroup are gated on `source === 'created'` (automatic after skin). Mesh picks on skinned models use idle Settings focus — not Part tools.
+- Create toolbar, part outliner, Part inspector, and **Group** / **Ungroup** / **Make joint** / **Unjoint** are gated on `source === 'created'` (automatic after skin). Mesh picks on skinned models use idle Settings focus — not Part tools.
 - No groups: disable (no heuristic)
 - Clips: drop mesh-object owned tracks
 - Weights: rigid only
@@ -49,13 +49,14 @@ Avoid hardcoding Mixamo prefixes; bone names come from the user’s create-group
 - Disabled reason string (mirror `getGroupPartsAvailability` pattern)
 - Progress: sync is fine for MVP (robot-scale meshes); if slow, one busy state on the menu item / action
 - After success: short muted note optional — not required; create toolbar disappears because `source !== 'created'`
+- **Group** / **Ungroup** / **Make joint** / **Unjoint** on the selection context menu for created-model parts. Group → plain `createGroup` (`kind: 'group'`). Make joint → modal (suggested names + custom) then `kind: 'joint'`. Ungroup dissolves plain groups / lifts parts; Unjoint dissolves joints only. Skin / `buildBonesFromCreateGroups` / rigid bind use **joints** only (`Armature` name still a non-bone container). Kit armature nodes stamp as joints.
 
 ## Edge cases
 
 | Case                   | Behavior                                        |
 | ---------------------- | ----------------------------------------------- |
 | Already skinned        | Disable “Already skinned”                       |
-| No create groups       | Disable “Add create groups before skinning”     |
+| No joints              | Disable “Add joints before skinning”            |
 | No parts               | Disable with clear reason                       |
 | Parts not under groups | Parent to root bone or skip with warning count  |
 | Multiple roots         | One skeleton from Armature/Hips root; document  |

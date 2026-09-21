@@ -61,7 +61,7 @@ describe('resolve-position-edit-targets', () => {
     expect(result.space).toBe('local');
   });
 
-  it('Settings multi targets ignore Move tool and still move part roots', () => {
+  it('settings multi targets ignore Move tool and still move part roots', () => {
     $editTool.set('move');
     const a = new Object3D();
     const b = new Object3D();

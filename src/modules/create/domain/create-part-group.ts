@@ -1,6 +1,6 @@
 import type { Object3D, Vector3Like } from 'three';
 import { Group, Vector3 } from 'three';
-import { writeCreateGroup } from './group-data';
+import { writeCreateGroup, writeCreateJoint } from './group-data';
 import { nextObjectName } from './object-name';
 
 const _world = new Vector3();
@@ -22,18 +22,32 @@ export function averageWorldPosition(objects: readonly Object3D[]): Vector3 {
   return result.multiplyScalar(1 / objects.length);
 }
 
+export interface CreateEmptyPartGroupOptions {
+  worldPivot?: Vector3Like;
+  /** Name base (defaults to `group` / `joint` by role). */
+  name?: string;
+  /** `group` = organizational; `joint` = skeleton hinge (default `group`). */
+  role?: 'group' | 'joint';
+}
+
 /**
- * Create a stamped empty group under `partsRoot` with a unique `group` name.
- * Optional `worldPivot` sets the group origin in world space (children keep
- * world pose via later `attach`). Default pivot is the parts-root origin.
+ * Create a stamped empty group or joint under `partsRoot` with a unique name.
+ * Optional `worldPivot` sets the origin in world space (children keep world pose
+ * via later `attach`). Default pivot is the parts-root origin.
  */
 export function createEmptyPartGroup(
   partsRoot: Object3D,
-  options?: { worldPivot?: Vector3Like },
+  options?: CreateEmptyPartGroupOptions,
 ): Group {
+  const role = options?.role ?? 'group';
   const group = new Group();
-  group.name = nextObjectName(partsRoot, 'group');
-  writeCreateGroup(group);
+  const baseName = options?.name?.trim() || (role === 'joint' ? 'joint' : 'group');
+  group.name = nextObjectName(partsRoot, baseName);
+  if (role === 'joint') {
+    writeCreateJoint(group);
+  } else {
+    writeCreateGroup(group);
+  }
   partsRoot.add(group);
 
   if (options?.worldPivot) {
@@ -46,13 +60,13 @@ export function createEmptyPartGroup(
 }
 
 /**
- * Create a stamped empty group with an exact name (kit armature nodes).
+ * Create a stamped joint with an exact name (kit armature nodes).
  * Caller owns uniqueness within the kit recipe.
  */
 export function createNamedCreateGroup(parent: Object3D, name: string): Group {
   const group = new Group();
   group.name = name;
-  writeCreateGroup(group);
+  writeCreateJoint(group);
   parent.add(group);
   return group;
 }

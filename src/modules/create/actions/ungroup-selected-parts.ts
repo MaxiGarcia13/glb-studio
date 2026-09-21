@@ -2,7 +2,10 @@ import type { Object3D } from 'three';
 import { findModelEntryForObject } from '@/modules/viewport/domain/model-scene';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { $selection, selectObject } from '@/modules/viewport/stores/selection-store';
-import { isCreateGroup, isCreateHierarchyNode } from '../domain/group-data';
+import {
+  isCreateHierarchyNode,
+  isCreatePlainGroup,
+} from '../domain/group-data';
 import {
   dissolveCreateGroups,
   ungroupPartsToRoot,
@@ -43,7 +46,7 @@ function resolveUngroupPartsContext(): UngroupPartsContext | null {
       continue;
     }
     nodes.push(entry);
-    if (isCreateGroup(entry)) {
+    if (isCreatePlainGroup(entry)) {
       groups.push(entry);
     }
   }
@@ -55,7 +58,7 @@ function resolveUngroupPartsContext(): UngroupPartsContext | null {
   return { nodes, groups, partsRoot: owner.scene };
 }
 
-/** Whether Ungroup is available for the current part selection. */
+/** Whether Ungroup is available (plain groups or nested parts). */
 export function getUngroupPartsAvailability(): UngroupPartsAvailability {
   const { kind, objects } = $selection.get();
 
@@ -100,8 +103,8 @@ export function getUngroupPartsAvailability(): UngroupPartsAvailability {
 }
 
 /**
- * Dissolve selected empty groups, or lift nested parts to the parts root.
- * World transform preserved.
+ * Dissolve selected plain groups, or lift nested parts to the parts root.
+ * Does not dissolve joints — use Unjoint.
  */
 export function ungroupSelectedParts(): boolean {
   const context = resolveUngroupPartsContext();

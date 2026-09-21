@@ -12,7 +12,7 @@ import {
   toHexColor,
 } from '../utils/selected-part';
 import { DUPLICATE_PART_OFFSET } from './duplicate-part';
-import { isCreateGroup, writeCreateGroup } from './group-data';
+import { isCreateGroup, readCreateGroup, writeCreateGroup, writeCreateJoint } from './group-data';
 import { nextObjectName } from './object-name';
 import { readCreatePart } from './part-data';
 import { getPartKind } from './part-kind';
@@ -91,6 +91,8 @@ export function snapshotCreateGroup(
 
   return {
     type: 'group',
+    role: readCreateGroup(source)?.kind ?? 'group',
+    name: source.name || undefined,
     ...readTrs(source),
     children,
   };
@@ -192,9 +194,16 @@ function instantiateGroupNode(
   parent: Object3D,
   offsetX: number,
 ): Group {
+  const role = entry.role === 'joint' ? 'joint' : 'group';
+  const baseName = entry.name?.trim()
+    || (role === 'joint' ? 'joint' : 'group');
   const group = new ThreeGroup();
-  group.name = nextObjectName(sceneRoot, 'group');
-  writeCreateGroup(group);
+  group.name = nextObjectName(sceneRoot, baseName);
+  if (role === 'joint') {
+    writeCreateJoint(group);
+  } else {
+    writeCreateGroup(group);
+  }
   applyTrs(group, entry, offsetX);
   parent.add(group);
 
