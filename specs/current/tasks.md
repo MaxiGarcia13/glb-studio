@@ -258,6 +258,14 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Offline `npm run kits:block-robot` + `public/kits/` contract (T-pose, no demo clips)
 - [x] From kit error path; Modern house + New model unchanged
 
+## US-34 — In-editor skinning for created models
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] `canSkinModel` + `skinCreatedModel` (clone → rigid bind → `source: 'imported'`)
+- [x] `isSkinnedLibraryModel` gates helper + bone outliner
+- [x] Make connector / Unjoint + joint-only Skin bones; freeze create tools after skin
+
 ## US-31 — Bone outliner + skeleton helper
 
 **Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
@@ -295,11 +303,10 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 ## Open deltas
 
-| US                                                | Status                    | Tasks                                       |
-| ------------------------------------------------- | ------------------------- | ------------------------------------------- |
-| **US-34** — In-editor skinning for created models | not started               | [`specs/us-34/tasks.md`](../us-34/tasks.md) |
-| **US-28** — Part color maps (textures)            | not started (after US-23) | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
-| **US-8** — Morph-target editing                   | post-MVP, not started     | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
+| US                                     | Status                    | Tasks                                       |
+| -------------------------------------- | ------------------------- | ------------------------------------------- |
+| **US-28** — Part color maps (textures) | not started (after US-23) | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
+| **US-8** — Morph-target editing        | post-MVP, not started     | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 
 ## Tech debt
 

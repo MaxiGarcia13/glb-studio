@@ -437,6 +437,28 @@ As an editor user with little 3D experience, I can start from a **skinned** Bloc
 - [x] Asset contract documented in [`public/kits/README.md`](../../public/kits/README.md) (T-pose bind, bone names, no demo clips, license)
 - [x] Load failure of the kit GLB shows a clear error in the From kit modal; does not leave a half-empty library entry
 
+### US-34 — In-editor skinning for created models (MVP)
+
+As an editor user building a character from parts (or a mesh kit with joints), I can **skin** my model so limbs bend with a real skeleton, I see bones in the preview, and I can play / export skeletal animations — without leaving the editor for Blender.
+
+**Acceptance**
+
+- [x] Focused **created** model with at least one create-group joint offers **Skin model** on that model’s library **⋯** menu
+- [x] Action is disabled with a clear reason when prerequisites fail (e.g. no joints; no parts; already skinned; not a created model)
+- [x] On success: scene has a usable `SkinnedMesh` + `Skeleton`; `source` is `imported`; SkeletonHelper + bone outliner + skeletal clip validation apply
+- [x] Viewport shows `SkeletonHelper` while the model is previewed (when Show bones is on)
+- [x] Library shows **bone outliner** (bones then owned clips); create toolbar and part outliner are gone for that model
+- [x] User can select bones and use Edit / Hold Pose with an owned clip on that skeleton
+- [x] Export packs a skinned GLB that re-imports as `imported` with bones intact
+- [x] Undo is **not** required (US-10); failed skin leaves the previous created scene intact (transactional: mutate a clone, swap on success)
+- [x] Mesh-only models **without** a joint armature: blocked with disabled reason copy
+- [x] Modern house / prop kits stay disabled via no-joints / prerequisites
+- [x] Created-model part multi-select (≥2) offers **Group** (organizational) and **Make connector** (mark bend points → Connect; 2+ form a branching tree; auto-names)
+- [x] Created-model part selection offers **Ungroup** (dissolve plain groups / lift) and **Unjoint** (dissolve joints only)
+- [x] Skin requires ≥1 joint (not merely a plain group); plain groups do not become bones
+- [x] Model multi-select context menu still says **Group** / **Ungroup** (library model groups)
+- [x] Weights are **rigid only** (each part weight 1 to parent bone); no paint UI
+
 ### US-31 — Bone outliner + skeleton helper (imported)
 
 As an editor user, when I preview an imported character I can see its skeleton in the viewport and browse its bones under that model in the library so I can find and select joints without hunting by raycast alone.
@@ -507,7 +529,6 @@ As an editor user, I can drag-resize the Library and Settings asides and the bot
 
 Not started; do not implement until explicitly kicked off. Full requirements, design, and tasks live only in the delta folders (not duplicated here):
 
-- **US-34** — In-editor skinning for created models (MVP) → [`specs/us-34/`](../us-34/)
 - **US-8** — Morph-target editing → [`specs/us-8/`](../us-8/)
 
 ## Non-functional requirements
@@ -524,7 +545,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 - Kit marketplace / remote download; user-authored kit save/share; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
-- Bones, skinning, Mixamo / retarget on **empty / mesh-kit created** models — planned as [`US-34`](../us-34/) (in-editor skin MVP); skinned **From kit** asset is US-33 (shipped)
+- Weight paint / soft auto-weights / advanced rigging on created-then-skinned models (US-34 MVP is rigid weights + Skin model only); Mixamo / retarget of arbitrary clips onto a new skeleton beyond existing US-6 when names align
 - Server accounts (FBX import via US-16 and optional FBX export convert via US-36 are the allowed server round-trips; no user accounts)
 - Collaborative editing / durable undo across reloads
 - Full NLA strip editorial beyond US-7 blend/cross-fade

@@ -11,7 +11,6 @@
 
 | ID | Summary |
 |----|---------|
-| **US-34** | In-editor skinning for created models (MVP rigid weights) |
 | **US-28** | Part color maps (textures) on created models only |
 | **US-8** | Morph-target editing (post-MVP) |
 
@@ -19,6 +18,7 @@
 
 | ID | Summary |
 |----|---------|
+| **US-34** | In-editor skinning for created models (MVP rigid weights) |
 | **US-36** | Export format GLB \| FBX (modal select + glb-to-fbx convert) |
 | **US-33** | Skinned starter kit (Block robot GLB) — From kit → real bones |
 | **US-35** | Resizable Library / Settings asides + preview bar (localStorage sizes) |
