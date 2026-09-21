@@ -114,10 +114,10 @@ export function useRaycastSelection(): void {
 
       const target = picked
         ? (
-          owner?.source === 'created'
-            ? resolveJointPickTarget(picked, $selection.get().objects)
-            : picked
-        )
+            owner?.source === 'created'
+              ? resolveJointPickTarget(picked, $selection.get().objects)
+              : picked
+          )
         : null;
       if (owner) {
         focusModel(owner.id);

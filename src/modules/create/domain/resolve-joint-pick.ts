@@ -40,9 +40,9 @@ export function resolveJointPickTarget(
   return group;
 }
 
-export type ShiftCreatePartPick =
-  | { type: 'toggle'; object: Object3D }
-  | { type: 'replace'; from: Object3D; to: Object3D };
+export type ShiftCreatePartPick
+  = | { type: 'toggle'; object: Object3D }
+    | { type: 'replace'; from: Object3D; to: Object3D };
 
 /**
  * Shift+click on a stamped create part under a create-group:
