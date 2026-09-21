@@ -1,4 +1,4 @@
-import { Group, Mesh, BoxGeometry, MeshBasicMaterial } from 'three';
+import { BoxGeometry, Group, Mesh, MeshBasicMaterial } from 'three';
 import { describe, expect, it } from 'vitest';
 import {
   applyRestPose,

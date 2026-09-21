@@ -24,6 +24,16 @@
 - [x] **Skin model control** — Library model ⋯ item; wired to `canSkinModel`; busy/disabled states
 - [x] **Copy** — Success silent or one-line; failures explicit
 - [x] **Make joint / Unjoint** — Part context menu alongside Group / Ungroup; joint `userData` kind; Skin bones from joints only; name picker on Make joint; model Group/Ungroup unchanged
+- [x] **Easy Make joint** — Connection pivot (upper/lower extremes); all selected parts under joint; plain modal copy; unit tests
+- [x] **Make joint name default** — Suggest from selection names; no forced Hips; unit tests
+- [x] **Connector picker modal** — Preview selection; New connector vs pick one item; group from choice; UI “connector” copy; unit tests
+- [x] **Multi-connector wizard** — Checkbox mark 1+; label step; nearest parenting; unit tests
+- [x] **Connector naming UX** — Custom name first; bend-point copy; optional Humanoid/Quad presets; unit tests
+- [x] **Build a chain** — Auto hinges from sphere-like parts; nested connectors; modal mode; unit tests _(removed — manual mark only)_
+- [x] **Skip label step** — One-step Connect with auto-names from parts (Skin does not need Mixamo labels)
+- [x] **Manual-only Make connector** — Drop Build a chain; mark bend points → Connect
+- [x] **Nest marked bend points** — 2+ marks nest proximal→distal along selection axis; interval parenting; unit tests
+- [x] **Branching Connect tree** — Shared proximal hinge → both limbs (hips→knees→ankles); same-depth siblings; unit tests
 
 ## Clips / export
 

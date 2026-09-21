@@ -96,7 +96,7 @@ function buildMenuItems(): ActionMenuItem[] {
     },
     {
       id: 'make-joint',
-      label: 'Make joint',
+      label: 'Make connector',
       disabled: !makeJoint.enabled,
       title: makeJoint.reason,
       onSelect: () => {

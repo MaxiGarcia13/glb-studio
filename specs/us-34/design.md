@@ -50,6 +50,7 @@ Avoid hardcoding Mixamo prefixes; bone names come from the user’s create-group
 - Progress: sync is fine for MVP (robot-scale meshes); if slow, one busy state on the menu item / action
 - After success: short muted note optional — not required; create toolbar disappears because `source !== 'created'`
 - **Group** / **Ungroup** / **Make joint** / **Unjoint** on the selection context menu for created-model parts. Group → plain `createGroup` (`kind: 'group'`). Make joint → modal (suggested names + custom) then `kind: 'joint'`. Ungroup dissolves plain groups / lifts parts; Unjoint dissolves joints only. Skin / `buildBonesFromCreateGroups` / rigid bind use **joints** only (`Armature` name still a non-bone container). Kit armature nodes stamp as joints.
+- **Make joint (easy join / connectors):** One-step modal — mark bend points, then **Connect**. Two or more marks form a **branching tree** (shared hips → both knees → ankles; same idea for animals/props). Each hinge parents under the nearest clearly more-proximal hinge; same-depth hinges stay siblings. Segments go to the nearest hinge (proximal tie-break). Auto-names from parts.
 
 ## Edge cases
 

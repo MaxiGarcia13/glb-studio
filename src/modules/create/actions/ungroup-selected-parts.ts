@@ -20,6 +20,8 @@ export interface UngroupPartsAvailability {
 interface UngroupPartsContext {
   nodes: Object3D[];
   groups: Object3D[];
+  /** Parts/joints whose direct parent is a plain create group. */
+  nestedInPlainGroup: Object3D[];
   partsRoot: Object3D;
 }
 
@@ -38,6 +40,7 @@ function resolveUngroupPartsContext(): UngroupPartsContext | null {
 
   const nodes: Object3D[] = [];
   const groups: Object3D[] = [];
+  const nestedInPlainGroup: Object3D[] = [];
   for (const entry of objects) {
     if (!isCreateHierarchyNode(entry)) {
       continue;
@@ -49,16 +52,19 @@ function resolveUngroupPartsContext(): UngroupPartsContext | null {
     if (isCreatePlainGroup(entry)) {
       groups.push(entry);
     }
+    if (entry.parent && isCreatePlainGroup(entry.parent)) {
+      nestedInPlainGroup.push(entry);
+    }
   }
 
   if (nodes.length === 0) {
     return null;
   }
 
-  return { nodes, groups, partsRoot: owner.scene };
+  return { nodes, groups, nestedInPlainGroup, partsRoot: owner.scene };
 }
 
-/** Whether Ungroup is available (plain groups or nested parts). */
+/** Whether Ungroup is available (plain groups or parts inside them). */
 export function getUngroupPartsAvailability(): UngroupPartsAvailability {
   const { kind, objects } = $selection.get();
 
@@ -89,22 +95,22 @@ export function getUngroupPartsAvailability(): UngroupPartsAvailability {
     };
   }
 
-  const nested = context.nodes.some(
-    (node) => node.parent !== context.partsRoot,
-  );
-  if (!nested) {
-    return { enabled: false, reason: 'Selected parts are already at the root' };
+  if (context.nestedInPlainGroup.length > 0) {
+    return {
+      enabled: true,
+      reason: 'Move selected parts out of their group',
+    };
   }
 
   return {
-    enabled: true,
-    reason: 'Move selected parts to the parts root',
+    enabled: false,
+    reason: 'Select a group, or parts inside a group',
   };
 }
 
 /**
- * Dissolve selected plain groups, or lift nested parts to the parts root.
- * Does not dissolve joints — use Unjoint.
+ * Dissolve selected plain groups, or lift parts that sit directly under a
+ * plain group to the parts root. Does not dissolve joints — use Unjoint.
  */
 export function ungroupSelectedParts(): boolean {
   const context = resolveUngroupPartsContext();
@@ -128,7 +134,14 @@ export function ungroupSelectedParts(): boolean {
     return true;
   }
 
-  const moved = ungroupPartsToRoot(context.nodes, context.partsRoot);
+  if (context.nestedInPlainGroup.length === 0) {
+    return false;
+  }
+
+  const moved = ungroupPartsToRoot(
+    context.nestedInPlainGroup,
+    context.partsRoot,
+  );
   if (moved === 0) {
     return false;
   }

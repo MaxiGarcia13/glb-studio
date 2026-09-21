@@ -1,25 +1,30 @@
+import type { Object3D } from 'three';
+
+import type {
+  ConnectorPlanEntry,
+  NamedConnectorInput,
+} from '../domain/make-joint-plan';
 import type { GroupPartsAvailability } from './group-selected-parts';
 import { $selection, selectObject } from '@/modules/viewport/stores/selection-store';
-import {
-  averageWorldPosition,
-  createEmptyPartGroup,
-} from '../domain/create-part-group';
-import { attachAllUnder } from '../domain/parent-part';
+import { createEmptyPartGroup } from '../domain/create-part-group';
+import { resolveMakeConnectorsPlan } from '../domain/make-joint-plan';
+import { nextObjectName } from '../domain/object-name';
+import { attachAllUnder, attachUnder } from '../domain/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { resolveGroupPartsContext } from './group-selected-parts';
 
 export type MakeJointAvailability = GroupPartsAvailability;
 
-/** Whether Make joint is available for the current part multi-selection. */
+/** Whether Make connector is available for the current part multi-selection. */
 export function getMakeJointAvailability(): MakeJointAvailability {
   const { kind, objects } = $selection.get();
 
   if (kind === 'models') {
-    return { enabled: false, reason: 'Use Make joint while parts are selected' };
+    return { enabled: false, reason: 'Use Make connector while parts are selected' };
   }
 
   if (kind !== 'parts') {
-    return { enabled: false, reason: 'Select parts to make a joint' };
+    return { enabled: false, reason: 'Select parts to make a connector' };
   }
 
   if (objects.length < 2) {
@@ -35,46 +40,138 @@ export function getMakeJointAvailability(): MakeJointAvailability {
 
   return {
     enabled: true,
-    reason: 'Create a joint and put the selection under it',
+    reason: 'Mark bend points — Connect builds a branching limb tree',
   };
 }
 
 export interface MakeJointSelectedPartsOptions {
-  /** Joint name base (unique’d in the scene). */
-  name: string;
+  /** Named connectors from the Make connector modal. */
+  connectors: readonly NamedConnectorInput[];
+}
+
+/** Assign `base` to `object`, uniquifying under `root` while ignoring `object` itself. */
+function assignUniqueName(object: Object3D, root: Object3D, base: string): void {
+  const trimmed = base.trim();
+  if (!trimmed || object.name === trimmed) {
+    return;
+  }
+  const previous = object.name;
+  object.name = '';
+  object.name = nextObjectName(root, trimmed);
+  if (!object.name) {
+    object.name = previous;
+  }
+}
+
+function resolveParentJoint(
+  entry: ConnectorPlanEntry,
+  jointParent: Object3D,
+  jointByAnchor: Map<Object3D, Object3D>,
+  nestTree: boolean,
+): Object3D {
+  if (!nestTree || !entry.parentAnchor) {
+    return jointParent;
+  }
+  return jointByAnchor.get(entry.parentAnchor) ?? jointParent;
 }
 
 /**
- * Create a skeleton joint and parent selected create nodes under it.
- * World transforms preserved. Selects the new joint.
+ * Create/reuse skeleton connectors from marked bend points.
+ * Two or more marks form a branching tree (shared hips → both legs, etc.).
  */
 export function makeJointSelectedParts(
   options: MakeJointSelectedPartsOptions,
 ): boolean {
-  const name = options.name.trim();
-  if (!name) {
-    return false;
-  }
-
   const context = resolveGroupPartsContext();
   if (!context) {
     return false;
   }
 
-  context.partsRoot.updateMatrixWorld(true);
-  const worldPivot = averageWorldPosition(context.nodes);
-  const joint = createEmptyPartGroup(context.partsRoot, {
-    worldPivot,
-    name,
-    role: 'joint',
-  });
-  const moved = attachAllUnder(joint, context.nodes, context.partsRoot);
-  if (moved === 0) {
-    joint.removeFromParent();
+  const connectors = options.connectors;
+  if (connectors.length === 0) {
     return false;
   }
 
-  selectObject(joint);
+  const plan = resolveMakeConnectorsPlan(
+    context.nodes,
+    context.partsRoot,
+    connectors,
+  );
+  if (!plan || plan.connectors.length === 0) {
+    return false;
+  }
+
+  const jointByAnchor = new Map<Object3D, Object3D>();
+  let rootJoint: Object3D | null = null;
+  let lastJoint: Object3D | null = null;
+  let didWork = false;
+
+  for (const entry of plan.connectors) {
+    const parentJoint = resolveParentJoint(
+      entry,
+      plan.jointParent,
+      jointByAnchor,
+      plan.nestTree,
+    );
+
+    if (entry.mode === 'reuse') {
+      assignUniqueName(entry.joint, context.partsRoot, entry.name);
+      if (parentJoint !== entry.joint) {
+        attachUnder(entry.joint, parentJoint, context.partsRoot);
+      }
+      const moved = attachAllUnder(entry.joint, entry.children, context.partsRoot);
+      if (moved > 0 || entry.name.trim().length > 0) {
+        didWork = true;
+      }
+      jointByAnchor.set(entry.anchor, entry.joint);
+      lastJoint = entry.joint;
+      if (!entry.parentAnchor) {
+        rootJoint = entry.joint;
+      }
+      continue;
+    }
+
+    const joint = createEmptyPartGroup(context.partsRoot, {
+      worldPivot: entry.worldPivot,
+      name: entry.name,
+      role: 'joint',
+    });
+
+    if (parentJoint !== context.partsRoot) {
+      attachUnder(joint, parentJoint, context.partsRoot);
+    }
+
+    const moved = attachAllUnder(joint, entry.children, context.partsRoot);
+    if (moved === 0) {
+      joint.removeFromParent();
+      continue;
+    }
+
+    didWork = true;
+    jointByAnchor.set(entry.anchor, joint);
+    lastJoint = joint;
+    if (!entry.parentAnchor) {
+      rootJoint ??= joint;
+    }
+  }
+
+  if (plan.looseChildren.length > 0) {
+    const moved = attachAllUnder(
+      plan.jointParent,
+      plan.looseChildren,
+      context.partsRoot,
+    );
+    if (moved > 0) {
+      didWork = true;
+    }
+  }
+
+  if (!didWork || !lastJoint) {
+    return false;
+  }
+
+  // Select a root hinge so the gizmo sits at the top of the new tree.
+  selectObject(rootJoint ?? lastJoint);
   bumpCreatePartsRevision();
   return true;
 }

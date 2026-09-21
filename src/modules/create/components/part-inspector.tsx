@@ -32,7 +32,7 @@ function paramValue(
 
 /**
  * Settings-side size + TRS for a selected created part.
- * Hierarchy is context-menu Group / Ungroup / Make joint / Unjoint; color is on the create toolbar.
+ * Hierarchy is context-menu Group / Ungroup / Make connector / Unjoint; color is on the create toolbar.
  */
 export function PartInspector() {
   const part = useSelectedCreatedPart();

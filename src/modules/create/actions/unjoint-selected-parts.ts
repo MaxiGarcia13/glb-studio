@@ -70,7 +70,7 @@ export function getUnjointPartsAvailability(): UnjointPartsAvailability {
   if (!context) {
     return {
       enabled: false,
-      reason: 'Select a joint (Make joint) to dissolve',
+      reason: 'Select a connector (Make connector) to dissolve',
     };
   }
 
