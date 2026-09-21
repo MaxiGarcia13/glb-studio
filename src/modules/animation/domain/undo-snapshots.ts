@@ -106,6 +106,7 @@ export function snapshotSaveKeyframeSceneNode(
     quaternion: { x: number; y: number; z: number; w: number };
     scale: { x: number; y: number; z: number };
   },
+  parentUuid?: string | null,
 ): SaveKeyframeSceneNode {
   return {
     modelId,
@@ -118,6 +119,7 @@ export function snapshotSaveKeyframeSceneNode(
       trs.quaternion.w,
     ],
     scale: [trs.scale.x, trs.scale.y, trs.scale.z],
+    ...(parentUuid !== undefined ? { parentUuid } : {}),
   };
 }
 

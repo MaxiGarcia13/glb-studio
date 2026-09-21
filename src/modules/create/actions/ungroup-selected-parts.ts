@@ -11,6 +11,10 @@ import {
   ungroupPartsToRoot,
 } from '../domain/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
+import {
+  pushDissolveGroupsUndo,
+  pushReparentUndo,
+} from './push-hierarchy-undo';
 
 export interface UngroupPartsAvailability {
   enabled: boolean;
@@ -18,6 +22,7 @@ export interface UngroupPartsAvailability {
 }
 
 interface UngroupPartsContext {
+  modelId: string;
   nodes: Object3D[];
   groups: Object3D[];
   /** Parts/joints whose direct parent is a plain create group. */
@@ -61,7 +66,13 @@ function resolveUngroupPartsContext(): UngroupPartsContext | null {
     return null;
   }
 
-  return { nodes, groups, nestedInPlainGroup, partsRoot: owner.scene };
+  return {
+    modelId: owner.id,
+    nodes,
+    groups,
+    nestedInPlainGroup,
+    partsRoot: owner.scene,
+  };
 }
 
 /** Whether Ungroup is available (plain groups or parts inside them). */
@@ -119,14 +130,25 @@ export function ungroupSelectedParts(): boolean {
   }
 
   if (context.groups.length > 0) {
-    const childrenBefore = context.groups.flatMap((group) => [...group.children]);
-    const dissolved = dissolveCreateGroups(context.groups, context.partsRoot);
-    if (dissolved === 0) {
+    const childrenBefore = context.groups.flatMap((group) =>
+      [...group.children].filter((child) => isCreateHierarchyNode(child)),
+    );
+    const beforeSelect = context.groups.map((group) => group.uuid);
+    const afterSelect = childrenBefore.map((child) => child.uuid);
+
+    const ok = pushDissolveGroupsUndo({
+      modelId: context.modelId,
+      partsRoot: context.partsRoot,
+      groups: context.groups,
+      beforeSelectUuids: beforeSelect,
+      afterSelectUuids: afterSelect,
+      mutate: () => dissolveCreateGroups(context.groups, context.partsRoot) > 0,
+    });
+    if (!ok) {
       return false;
     }
-    const firstChild = childrenBefore.find((child) =>
-      isCreateHierarchyNode(child),
-    );
+
+    const firstChild = childrenBefore[0];
     if (firstChild) {
       selectObject(firstChild);
     }
@@ -138,11 +160,17 @@ export function ungroupSelectedParts(): boolean {
     return false;
   }
 
-  const moved = ungroupPartsToRoot(
-    context.nestedInPlainGroup,
-    context.partsRoot,
-  );
-  if (moved === 0) {
+  const selectUuids = context.nestedInPlainGroup.map((node) => node.uuid);
+  const ok = pushReparentUndo({
+    modelId: context.modelId,
+    partsRoot: context.partsRoot,
+    nodes: context.nestedInPlainGroup,
+    beforeSelectUuids: selectUuids,
+    afterSelectUuids: selectUuids,
+    mutate: () =>
+      ungroupPartsToRoot(context.nestedInPlainGroup, context.partsRoot) > 0,
+  });
+  if (!ok) {
     return false;
   }
 

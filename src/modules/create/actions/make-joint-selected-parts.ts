@@ -12,6 +12,7 @@ import { nextObjectName } from '../domain/object-name';
 import { attachAllUnder, attachUnder } from '../domain/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { resolveGroupPartsContext } from './group-selected-parts';
+import { pushHierarchyGraphUndo } from './push-hierarchy-undo';
 
 export type MakeJointAvailability = GroupPartsAvailability;
 
@@ -75,30 +76,17 @@ function resolveParentJoint(
   return jointByAnchor.get(entry.parentAnchor) ?? jointParent;
 }
 
-/**
- * Create/reuse skeleton connectors from marked bend points.
- * Two or more marks form a branching tree (shared hips → both legs, etc.).
- */
-export function makeJointSelectedParts(
-  options: MakeJointSelectedPartsOptions,
-): boolean {
-  const context = resolveGroupPartsContext();
-  if (!context) {
-    return false;
-  }
-
-  const connectors = options.connectors;
-  if (connectors.length === 0) {
-    return false;
-  }
-
+function applyMakeJointPlan(
+  context: NonNullable<ReturnType<typeof resolveGroupPartsContext>>,
+  connectors: readonly NamedConnectorInput[],
+): Object3D | null {
   const plan = resolveMakeConnectorsPlan(
     context.nodes,
     context.partsRoot,
     connectors,
   );
   if (!plan || plan.connectors.length === 0) {
-    return false;
+    return null;
   }
 
   const jointByAnchor = new Map<Object3D, Object3D>();
@@ -167,11 +155,47 @@ export function makeJointSelectedParts(
   }
 
   if (!didWork || !lastJoint) {
+    return null;
+  }
+
+  return rootJoint ?? lastJoint;
+}
+
+/**
+ * Create/reuse skeleton connectors from marked bend points.
+ * Two or more marks form a branching tree (shared hips → both legs, etc.).
+ */
+export function makeJointSelectedParts(
+  options: MakeJointSelectedPartsOptions,
+): boolean {
+  const context = resolveGroupPartsContext();
+  if (!context) {
     return false;
   }
 
-  // Select a root hinge so the gizmo sits at the top of the new tree.
-  selectObject(rootJoint ?? lastJoint);
+  const connectors = options.connectors;
+  if (connectors.length === 0) {
+    return false;
+  }
+
+  let selectedJoint: Object3D | null = null;
+  const ok = pushHierarchyGraphUndo({
+    modelId: context.modelId,
+    partsRoot: context.partsRoot,
+    beforeSelectUuids: context.nodes.map((node) => node.uuid),
+    mutate: () => {
+      selectedJoint = applyMakeJointPlan(context, connectors);
+      if (!selectedJoint) {
+        return false;
+      }
+      return { ok: true, selectUuids: [selectedJoint.uuid] };
+    },
+  });
+  if (!ok || !selectedJoint) {
+    return false;
+  }
+
+  selectObject(selectedJoint);
   bumpCreatePartsRevision();
   return true;
 }

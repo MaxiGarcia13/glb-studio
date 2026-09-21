@@ -78,6 +78,13 @@ function findNode(
   return { model, node };
 }
 
+function parentUuidOf(model: ModelEntry, node: Object3D): string | null {
+  if (!node.parent || node.parent === model.scene) {
+    return null;
+  }
+  return node.parent.uuid;
+}
+
 function snapshotNodesAfter(
   nodes: readonly PreEditNodeSnapshot[],
 ): SaveKeyframeSceneNode[] {
@@ -88,7 +95,12 @@ function snapshotNodesAfter(
       continue;
     }
     after.push(
-      snapshotSaveKeyframeSceneNode(entry.modelId, entry.nodeUuid, found.node),
+      snapshotSaveKeyframeSceneNode(
+        entry.modelId,
+        entry.nodeUuid,
+        found.node,
+        parentUuidOf(found.model, found.node),
+      ),
     );
   }
   return after;
@@ -104,7 +116,12 @@ function commitMultiPositionEdit(
   holdToEnd: boolean,
 ): void {
   const beforeNodes = nodes.map((entry) =>
-    snapshotSaveKeyframeSceneNode(entry.modelId, entry.nodeUuid, entry.transform),
+    snapshotSaveKeyframeSceneNode(
+      entry.modelId,
+      entry.nodeUuid,
+      entry.transform,
+      entry.parentUuid,
+    ),
   );
   const afterNodes = snapshotNodesAfter(nodes);
 
@@ -301,6 +318,9 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
     if (!ownedReady) {
       const preEdit = $preEditTransform.get();
       if (preEdit) {
+        const beforeParent
+          = $preEditNodes.get()?.find((entry) => entry.nodeUuid === object.uuid)
+            ?.parentUuid ?? parentUuidOf(model, object);
         pushUndoableCommand({
           id: 'saveKeyframe',
           clipId: model.id,
@@ -310,6 +330,7 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
               model.id,
               object.uuid,
               preEdit,
+              beforeParent,
             ),
           },
           after: {
@@ -318,6 +339,7 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
               model.id,
               object.uuid,
               object,
+              parentUuidOf(model, object),
             ),
           },
         });
@@ -339,12 +361,20 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
       return;
     }
     const nodeName = object.name || object.uuid;
+    const beforeParent
+      = $preEditNodes.get()?.find((entry) => entry.nodeUuid === object.uuid)
+        ?.parentUuid ?? parentUuidOf(model, object);
     const before = {
       ...snapshotSaveKeyframeBindPoseCommit(
         state.clips,
         $bindPoseOverrides.get(),
       ),
-      sceneNode: snapshotSaveKeyframeSceneNode(model.id, object.uuid, preEdit),
+      sceneNode: snapshotSaveKeyframeSceneNode(
+        model.id,
+        object.uuid,
+        preEdit,
+        beforeParent,
+      ),
     };
     if (!commitBindPoseToClips(nodeName)) {
       resumeMixerBindings();
@@ -356,7 +386,12 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
         $clips.get().clips,
         $bindPoseOverrides.get(),
       ),
-      sceneNode: snapshotSaveKeyframeSceneNode(model.id, object.uuid, object),
+      sceneNode: snapshotSaveKeyframeSceneNode(
+        model.id,
+        object.uuid,
+        object,
+        parentUuidOf(model, object),
+      ),
     };
     const clipId
       = targetClipId

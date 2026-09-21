@@ -15,6 +15,7 @@ import {
   setMixerTime,
   setMixerTimeScale,
 } from '@/modules/animation/utils/mixer-session';
+import { applyCreateHierarchySnapshot } from '@/modules/create/domain/create-hierarchy-undo';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { $clips } from '../store';
 import { rebindMixersForClips } from './rebind-mixers-for-clips';
@@ -142,6 +143,16 @@ function applyOneSceneNode(sceneNode: NonNullable<SaveKeyframeSnapshot['sceneNod
     return;
   }
 
+  if (sceneNode.parentUuid !== undefined) {
+    const desiredParent
+      = sceneNode.parentUuid === null
+        ? model.scene
+        : model.scene.getObjectByProperty('uuid', sceneNode.parentUuid) ?? model.scene;
+    if (node.parent !== desiredParent) {
+      desiredParent.add(node);
+    }
+  }
+
   node.position.set(
     sceneNode.position[0],
     sceneNode.position[1],
@@ -187,6 +198,11 @@ export function applyUndoableCommand(
     case 'setTimeScale': {
       const snapshot = direction === 'undo' ? command.before : command.after;
       applyTimeScaleSnapshot(command.clipId, snapshot.timeScale);
+      return;
+    }
+    case 'createHierarchy': {
+      const snapshot = direction === 'undo' ? command.before : command.after;
+      applyCreateHierarchySnapshot(snapshot);
     }
   }
 }

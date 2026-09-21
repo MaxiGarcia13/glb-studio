@@ -492,7 +492,9 @@ As an editor user, I can undo and redo animation edits within the session, and I
 **Acceptance — undo / redo**
 
 - [x] Undo / Redo controls (Edit menu) and standard shortcuts reverse and reapply discrete edit commands
-- [x] Covered operations: trim apply, keyframe save/update (auto-commit pose — including created-part / create-group TRS when no owned ready clip), and speed changes that mutate exported bake intent (`timeScale`) — exact command set in design
+- [x] Covered operations: trim apply, keyframe save/update (auto-commit pose — including created-part / create-group TRS when no owned ready clip), speed changes that mutate exported bake intent (`timeScale`), and create-part **Group / Ungroup / Make connector / Unjoint** hierarchy commits — exact command set in design
+- [x] Undoing Group / Ungroup / Make connector / Unjoint restores parent + local TRS (and recreates / removes group or joint nodes with stable UUIDs) so parts do not jump or disappear
+- [x] Pose undo/redo restores parent as well as local TRS when the snapshot recorded a parent, so a pose commit is safe across intervening hierarchy changes only when those hierarchy ops were themselves undone first (stack order)
 - [x] Stack is per-session (not persisted to disk)
 - [x] Pre-trim recoverability is via undo of `trimClip` (and re-trim from `sourceClip`); one-shot Restore pre-trim chrome superseded
 - [x] Undoing does not leave the mixer bound to a disposed/stale clip

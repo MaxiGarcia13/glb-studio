@@ -3,7 +3,11 @@ import type { AnimationClip } from 'three';
 import type { BindPoseDelta } from '@/modules/animation/domain/bind-pose-rebase';
 
 /** Stack command ids — distinct from catalog hotkey ids (`undo` / `redo`). */
-export type UndoableCommandId = 'trimClip' | 'saveKeyframe' | 'setTimeScale';
+export type UndoableCommandId
+  = | 'trimClip'
+    | 'saveKeyframe'
+    | 'setTimeScale'
+    | 'createHierarchy';
 
 export interface TrimClipSnapshot {
   clip: AnimationClip;
@@ -36,6 +40,40 @@ export interface SaveKeyframeSceneNode {
   position: [number, number, number];
   quaternion: [number, number, number, number];
   scale: [number, number, number];
+  /**
+   * Parent at commit time. `null` = model scene root. Omitted on legacy
+   * mid-session entries — apply leaves parenting unchanged.
+   */
+  parentUuid?: string | null;
+}
+
+/** Create-group / joint identity for hierarchy undo (stable UUID). */
+export interface CreateHierarchyGroupSpec {
+  uuid: string;
+  name: string;
+  role: 'group' | 'joint';
+}
+
+/** One node’s parent + local TRS in a hierarchy snapshot. */
+export interface CreateHierarchyPlacement {
+  nodeUuid: string;
+  /** `null` = model scene root. */
+  parentUuid: string | null;
+  position: [number, number, number];
+  quaternion: [number, number, number, number];
+  scale: [number, number, number];
+}
+
+/**
+ * Create-part parenting commit (Group / Ungroup / Make connector / Unjoint).
+ * Apply order: ensureGroups → placements → removeGroupUuids.
+ */
+export interface CreateHierarchySnapshot {
+  modelId: string;
+  ensureGroups: readonly CreateHierarchyGroupSpec[];
+  removeGroupUuids: readonly string[];
+  placements: readonly CreateHierarchyPlacement[];
+  selectUuids: readonly string[];
 }
 
 export interface SaveKeyframeSnapshot {
@@ -73,4 +111,11 @@ export type UndoableCommand
     clipId: string;
     before: TimeScaleSnapshot;
     after: TimeScaleSnapshot;
+  }
+  | {
+    id: 'createHierarchy';
+    /** Library model whose create graph changed. */
+    modelId: string;
+    before: CreateHierarchySnapshot;
+    after: CreateHierarchySnapshot;
   };

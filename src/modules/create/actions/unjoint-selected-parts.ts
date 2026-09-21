@@ -8,6 +8,7 @@ import {
 } from '../domain/group-data';
 import { dissolveCreateGroups } from '../domain/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
+import { pushDissolveGroupsUndo } from './push-hierarchy-undo';
 
 export interface UnjointPartsAvailability {
   enabled: boolean;
@@ -15,6 +16,7 @@ export interface UnjointPartsAvailability {
 }
 
 interface UnjointPartsContext {
+  modelId: string;
   joints: Object3D[];
   partsRoot: Object3D;
 }
@@ -47,7 +49,7 @@ function resolveUnjointPartsContext(): UnjointPartsContext | null {
     return null;
   }
 
-  return { joints, partsRoot: owner.scene };
+  return { modelId: owner.id, joints, partsRoot: owner.scene };
 }
 
 /** Whether Unjoint is available (selected joints only). */
@@ -90,15 +92,25 @@ export function unjointSelectedParts(): boolean {
     return false;
   }
 
-  const childrenBefore = context.joints.flatMap((joint) => [...joint.children]);
-  const dissolved = dissolveCreateGroups(context.joints, context.partsRoot);
-  if (dissolved === 0) {
+  const childrenBefore = context.joints.flatMap((joint) =>
+    [...joint.children].filter((child) => isCreateHierarchyNode(child)),
+  );
+  const beforeSelect = context.joints.map((joint) => joint.uuid);
+  const afterSelect = childrenBefore.map((child) => child.uuid);
+
+  const ok = pushDissolveGroupsUndo({
+    modelId: context.modelId,
+    partsRoot: context.partsRoot,
+    groups: context.joints,
+    beforeSelectUuids: beforeSelect,
+    afterSelectUuids: afterSelect,
+    mutate: () => dissolveCreateGroups(context.joints, context.partsRoot) > 0,
+  });
+  if (!ok) {
     return false;
   }
 
-  const firstChild = childrenBefore.find((child) =>
-    isCreateHierarchyNode(child),
-  );
+  const firstChild = childrenBefore[0];
   if (firstChild) {
     selectObject(firstChild);
   }

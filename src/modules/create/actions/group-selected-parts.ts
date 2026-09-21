@@ -1,4 +1,5 @@
 import type { Object3D } from 'three';
+import { pushUndoableCommand } from '@/modules/animation/stores/undo-stack-store';
 import { findModelEntryForObject } from '@/modules/viewport/domain/model-scene';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { $selection, selectObject } from '@/modules/viewport/stores/selection-store';
@@ -6,6 +7,10 @@ import {
   averageWorldPosition,
   createEmptyPartGroup,
 } from '../domain/create-part-group';
+import {
+  snapshotHierarchyGroupSpec,
+  snapshotHierarchyPlacement,
+} from '../domain/create-hierarchy-undo';
 import { isCreateHierarchyNode } from '../domain/group-data';
 import { attachAllUnder } from '../domain/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
@@ -16,6 +21,7 @@ export interface GroupPartsAvailability {
 }
 
 interface GroupPartsContext {
+  modelId: string;
   nodes: Object3D[];
   partsRoot: Object3D;
 }
@@ -56,7 +62,7 @@ function resolveMultiPartContext(): GroupPartsContext | null {
     return null;
   }
 
-  return { nodes, partsRoot: owner.scene };
+  return { modelId: owner.id, nodes, partsRoot: owner.scene };
 }
 
 function isDescendant(object: Object3D, ancestor: Object3D): boolean {
@@ -115,6 +121,11 @@ export function groupSelectedParts(): boolean {
     return false;
   }
 
+  const beforeSelect = context.nodes.map((node) => node.uuid);
+  const beforePlacements = context.nodes.map((node) =>
+    snapshotHierarchyPlacement(node, context.partsRoot),
+  );
+
   context.partsRoot.updateMatrixWorld(true);
   const worldPivot = averageWorldPosition(context.nodes);
   const group = createEmptyPartGroup(context.partsRoot, {
@@ -126,6 +137,38 @@ export function groupSelectedParts(): boolean {
     group.removeFromParent();
     return false;
   }
+
+  const groupSpec = snapshotHierarchyGroupSpec(group);
+  if (!groupSpec) {
+    group.removeFromParent();
+    return false;
+  }
+
+  const afterPlacements = [
+    snapshotHierarchyPlacement(group, context.partsRoot),
+    ...context.nodes.map((node) =>
+      snapshotHierarchyPlacement(node, context.partsRoot),
+    ),
+  ];
+
+  pushUndoableCommand({
+    id: 'createHierarchy',
+    modelId: context.modelId,
+    before: {
+      modelId: context.modelId,
+      ensureGroups: [],
+      removeGroupUuids: [group.uuid],
+      placements: beforePlacements,
+      selectUuids: beforeSelect,
+    },
+    after: {
+      modelId: context.modelId,
+      ensureGroups: [groupSpec],
+      removeGroupUuids: [],
+      placements: afterPlacements,
+      selectUuids: [group.uuid],
+    },
+  });
 
   selectObject(group);
   bumpCreatePartsRevision();

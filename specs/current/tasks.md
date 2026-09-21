@@ -292,6 +292,9 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Keymap: Q/W/E transform, R axes, B bones, Space play, arrows nudge, Cmd+S commit, create-part C/V/Delete
 - [x] Pose auto-commit (no Save / Restore chrome); session undo stack for trim / keyframe / timeScale
 - [x] Mixer rebind after undo/redo; pre-trim restore superseded by `trimClip` undo
+- [x] `createHierarchy` undo for Group / Ungroup / Make connector / Unjoint (stable group UUIDs)
+- [x] `sceneNode` snapshots record `parentUuid`; apply restores parent before local TRS
+- [x] Unit tests: group then undo restores parents; pose+group undo does not teleport parts
 
 ## US-35 — Resizable editor chrome
 

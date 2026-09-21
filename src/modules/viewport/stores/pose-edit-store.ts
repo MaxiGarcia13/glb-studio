@@ -1,7 +1,7 @@
 import type { Object3D } from 'three';
 
 import { atom } from 'nanostores';
-import { $activeModel } from './model-store';
+import { $activeModel, $model } from './model-store';
 
 export type PoseEditKind = 'modelRoot' | 'selection';
 
@@ -15,6 +15,8 @@ export interface PreEditNodeSnapshot {
   modelId: string;
   nodeUuid: string;
   transform: PreEditTransform;
+  /** `null` = model scene root. */
+  parentUuid: string | null;
 }
 
 /** True while a gizmo or Settings pose edit is open (commits on gesture end). */
@@ -59,6 +61,14 @@ export function capturePreEditTransform(object: Object3D, kind: PoseEditKind): v
   capturePreEditNodes([{ object, modelId }], kind);
 }
 
+function parentUuidForNode(object: Object3D, modelId: string): string | null {
+  const model = $model.get().models.find((entry) => entry.id === modelId);
+  if (!model || !object.parent || object.parent === model.scene) {
+    return null;
+  }
+  return object.parent.uuid;
+}
+
 export function capturePreEditNodes(
   nodes: readonly { object: Object3D; modelId: string }[],
   kind: PoseEditKind,
@@ -71,6 +81,7 @@ export function capturePreEditNodes(
     modelId: entry.modelId,
     nodeUuid: entry.object.uuid,
     transform: snapshotTransform(entry.object),
+    parentUuid: parentUuidForNode(entry.object, entry.modelId),
   }));
   $preEditNodes.set(snapshots);
   $preEditTransform.set(snapshots[0]?.transform ?? null);
