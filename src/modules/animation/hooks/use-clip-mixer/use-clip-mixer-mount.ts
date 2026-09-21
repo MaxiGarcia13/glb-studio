@@ -4,7 +4,11 @@ import type { AnimationAction, Group } from 'three';
 import { useEffect } from 'react';
 import { AnimationMixer } from 'three';
 
-import { ensureRestPoseCaptured } from '@/modules/animation/domain/rest-pose';
+import { resolveActiveClipIdForModel } from '@/modules/animation/domain/resolve-active-clip';
+import {
+  ensureRestPoseCaptured,
+  syncRestPoseFromScene,
+} from '@/modules/animation/domain/rest-pose';
 import { $clips, syncClipsToSkeleton } from '@/modules/animation/stores/clip-store';
 import {
   registerModelMixer,
@@ -13,7 +17,6 @@ import {
 
 export function useClipMixerMount(
   scene: Group | null,
-  activeClipId: string | null,
   modelId: string,
   mixerRef: RefObject<AnimationMixer | null>,
   actionRef: RefObject<AnimationAction | null>,
@@ -29,15 +32,28 @@ export function useClipMixerMount(
     syncClipsToSkeleton(scene);
 
     const mixer = new AnimationMixer(scene);
-    const active = $clips
-      .get()
-      .clips
-      .find((entry) => entry.id === activeClipId);
+    // Initial scale only — clip switches update via setMixerTimeScale / selectClip.
+    // Do not recreate this mixer when the active clip changes (useClipMixerAction).
+    const clipState = $clips.get();
+    const activeClipId = resolveActiveClipIdForModel(
+      clipState.clips,
+      modelId,
+      clipState.activeClipByModelId,
+      clipState.activeSharedClipId,
+    );
+    const active = activeClipId
+      ? clipState.clips.find((entry) => entry.id === activeClipId)
+      : undefined;
     mixer.timeScale = active?.timeScale ?? 1;
     mixerRef.current = mixer;
     registerModelMixer(modelId, mixer);
 
     return () => {
+      // Eye-toggle unmount with no bound clip: bake live TRS into rest so a later
+      // remount + applyRestPose (e.g. clip rebind) does not snap create parts back.
+      if (!actionRef.current) {
+        syncRestPoseFromScene(scene);
+      }
       mixer.stopAllAction();
       mixer.uncacheRoot(scene);
       mixerRef.current = null;
@@ -45,5 +61,5 @@ export function useClipMixerMount(
       blendActionRef.current = null;
       unregisterModelMixer(modelId);
     };
-  }, [scene, activeClipId, modelId, mixerRef, actionRef, blendActionRef]);
+  }, [scene, modelId, mixerRef, actionRef, blendActionRef]);
 }

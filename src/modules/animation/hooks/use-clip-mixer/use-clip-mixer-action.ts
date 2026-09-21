@@ -45,6 +45,9 @@ export function useClipMixerAction(
     }
 
     const previousTime = mixer.time;
+    // Capture before clearing — eye-toggle remount starts with a null action and
+    // must not applyRestPose (that would wipe create-part moves from a stale map).
+    const hadAction = Boolean(actionRef.current);
 
     if (actionRef.current) {
       const previousClip = actionRef.current.getClip();
@@ -58,7 +61,8 @@ export function useClipMixerAction(
 
     if (!clip) {
       mixer.setTime(0);
-      if (scene) {
+      // Restore T-pose only when leaving a bound clip, not on fresh mixer mount.
+      if (scene && hadAction) {
         applyRestPose(scene);
         syncReadoutIfFocused(modelId, scene);
       }

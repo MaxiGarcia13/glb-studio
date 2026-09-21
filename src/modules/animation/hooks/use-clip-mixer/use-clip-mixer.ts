@@ -60,7 +60,7 @@ export function useClipMixer(scene: Group | null, modelId: string): void {
   const blendEntry = clips.find((item) => item.id === blendClipId);
   const blendClip = isReadyClip(blendEntry) ? blendEntry.clip : null;
 
-  useClipMixerMount(scene, activeClipId, modelId, mixerRef, actionRef, blendActionRef);
+  useClipMixerMount(scene, modelId, mixerRef, actionRef, blendActionRef);
   useClipMixerAction(
     clip,
     rootPosition,

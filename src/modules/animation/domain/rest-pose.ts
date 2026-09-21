@@ -51,6 +51,14 @@ export function ensureRestPoseCaptured(root: Object3D): void {
   restPoses.set(root, captureMap(root));
 }
 
+/**
+ * Replace the rest-pose map with the live scene graph (e.g. eye-toggle hide
+ * while no clip is bound, so create-part moves survive remount + applyRestPose).
+ */
+export function syncRestPoseFromScene(root: Object3D): void {
+  restPoses.set(root, captureMap(root));
+}
+
 /** Keep bind / model-root Saves as the rest pose used by T-pose. */
 export function refreshRestPoseNode(root: Object3D, node: Object3D): void {
   const map = restPoses.get(root) ?? captureMap(root);
