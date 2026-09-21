@@ -1,7 +1,7 @@
 {
   "name": "glb-studio",
   "type": "module",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "GLB Studio — a browser-native GLB character & animation editor. Load or build characters, shape their motion, and ship clean GLBs without leaving the tab.",
   "author": "Maximiliano Garcia Mortigliengo",
   "license": "Apache-2.0",
