@@ -4,13 +4,13 @@ import { findModelEntryForObject } from '@/modules/viewport/domain/model-scene';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { $selection, selectObject } from '@/modules/viewport/stores/selection-store';
 import {
-  averageWorldPosition,
-  createEmptyPartGroup,
-} from '../domain/create-part-group';
-import {
   snapshotHierarchyGroupSpec,
   snapshotHierarchyPlacement,
 } from '../domain/create-hierarchy-undo';
+import {
+  averageWorldPosition,
+  createEmptyPartGroup,
+} from '../domain/create-part-group';
 import { isCreateHierarchyNode } from '../domain/group-data';
 import { attachAllUnder } from '../domain/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';

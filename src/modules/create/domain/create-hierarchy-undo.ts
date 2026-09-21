@@ -1,15 +1,16 @@
 import type { Object3D } from 'three';
-import { Group } from 'three';
-
 import type {
   CreateHierarchyGroupSpec,
   CreateHierarchyPlacement,
   CreateHierarchySnapshot,
 } from '@/modules/animation/types/undo-stack';
+
+import { Group } from 'three';
 import { refreshRestPoseNode } from '@/modules/animation/domain/rest-pose';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
 
+import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import {
   isCreateGroup,
   isCreateHierarchyNode,
@@ -17,7 +18,6 @@ import {
   writeCreateGroup,
   writeCreateJoint,
 } from './group-data';
-import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 
 function readTrs(node: Object3D): Pick<
   CreateHierarchyPlacement,

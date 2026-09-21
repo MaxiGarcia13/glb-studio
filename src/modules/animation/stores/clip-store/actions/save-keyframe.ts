@@ -319,8 +319,7 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
       const preEdit = $preEditTransform.get();
       if (preEdit) {
         const beforeParent
-          = $preEditNodes.get()?.find((entry) => entry.nodeUuid === object.uuid)
-            ?.parentUuid ?? parentUuidOf(model, object);
+          = $preEditNodes.get()?.find((entry) => entry.nodeUuid === object.uuid)?.parentUuid ?? parentUuidOf(model, object);
         pushUndoableCommand({
           id: 'saveKeyframe',
           clipId: model.id,
@@ -362,8 +361,7 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
     }
     const nodeName = object.name || object.uuid;
     const beforeParent
-      = $preEditNodes.get()?.find((entry) => entry.nodeUuid === object.uuid)
-        ?.parentUuid ?? parentUuidOf(model, object);
+      = $preEditNodes.get()?.find((entry) => entry.nodeUuid === object.uuid)?.parentUuid ?? parentUuidOf(model, object);
     const before = {
       ...snapshotSaveKeyframeBindPoseCommit(
         state.clips,
