@@ -297,7 +297,7 @@ No durable undo across reloads; no collaborative OT/CRDT.
 
 ## Viewport
 
-- Full-bleed R3F `Canvas` with lights; orbit / pan / zoom via `OrbitControls`
+- Full-bleed R3F `Canvas` with lights; orbit / pan / zoom via `OrbitControls` (`zoomToCursor` so scroll / pinch zooms toward the pointer)
 - World XYZ axes at the origin with metre rulers on +X/+Y (major `Nm`, minor `0.1` ticks; length from `$viewportSettings.axesSize`; toggle via top **Settings** menu)
 - Dark infinite ground grid at `y = 0` (1 m cells, stronger section lines; `viewport/constants/ground-grid`) plus soft contact shadow under the model (`ContactShadows`)
 - Navigate / Edit / Move tool toggle when a model is loaded (Navigate first; default Edit); TransformControls for selection (Edit) or model root (Move); none in Navigate; translate / rotate / scale via preview toolbar + **Q / W / E** (default translate); Edit uses local space, Move uses world space; dragging pauses playback and suspends mixer bindings so tracks cannot overwrite the pose; drag-end **auto-commits** (US-10)

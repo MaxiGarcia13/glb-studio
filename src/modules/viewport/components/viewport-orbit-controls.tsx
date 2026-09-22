@@ -56,6 +56,7 @@ export function ViewportOrbitControls({ controlsRef }: ViewportOrbitControlsProp
   return (
     <OrbitControls
       enableDamping
+      zoomToCursor
       ref={controlsRef}
       target={[...DEFAULT_CAMERA_TARGET]}
       mouseButtons={isNavigate ? NAVIGATE_MOUSE_BUTTONS : EDIT_MOUSE_BUTTONS}
