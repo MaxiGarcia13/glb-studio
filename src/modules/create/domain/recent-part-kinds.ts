@@ -1,5 +1,6 @@
 import type { PartKindId } from '@/modules/create/types/part';
 import { DEFAULT_PART_SUGGESTION_ORDER } from '@/modules/create/constants/default-part-suggestions';
+import { setStoredString, STORAGE_KEYS } from '@/utils/local-storage';
 
 /** Compact Add-part menu always shows this many kind rows. */
 export const COMPACT_MENU_KIND_COUNT = 5;
@@ -26,4 +27,28 @@ export function resolveCompactMenuKinds(
   }
 
   return result;
+}
+
+/** Prepend `kindId`, drop duplicates, truncate to the compact-menu window. */
+export function prependRecentKind(
+  recent: readonly PartKindId[],
+  kindId: PartKindId,
+): PartKindId[] {
+  return [
+    kindId,
+    ...recent.filter((id) => id !== kindId),
+  ].slice(0, COMPACT_MENU_KIND_COUNT);
+}
+
+/**
+ * Record a used kind as most-recent and persist the MRU window to localStorage.
+ * Returns the updated list (newest first).
+ */
+export function recordRecentKind(
+  recent: readonly PartKindId[],
+  kindId: PartKindId,
+): PartKindId[] {
+  const next = prependRecentKind(recent, kindId);
+  setStoredString(STORAGE_KEYS.recentPartKinds, JSON.stringify(next));
+  return next;
 }

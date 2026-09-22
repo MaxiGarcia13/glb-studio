@@ -9,11 +9,11 @@
 
 ## Data
 
-| Key               | Value                                                                         |
-| ----------------- | ----------------------------------------------------------------------------- |
-| localStorage key  | e.g. `glb-studio:create:recent-part-kinds` (exact string chosen at implement) |
-| Payload           | JSON array of up to 5 `PartKindId` strings, newest first                      |
-| Invalid / missing | Treat as empty → cold-start defaults                                          |
+| Key               | Value                                                                  |
+| ----------------- | ---------------------------------------------------------------------- |
+| localStorage key  | `glb-studio.create.recent-part-kinds` (`STORAGE_KEYS.recentPartKinds`) |
+| Payload           | JSON array of up to 5 `PartKindId` strings, newest first               |
+| Invalid / missing | Treat as empty → cold-start defaults                                   |
 
 ## Menu algorithm (examples)
 
