@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { Button } from '@/components/button';
 import { Modal } from '@/components/modal';
-import { Text } from '@/components/text';
 import { useSelectedCreatedPart } from '../hooks/use-selected-created-part';
+import { findMeshStandardMaterial } from '../utils/selected-part';
+import { TexturePartPreview } from './texture-part-preview';
 
 interface TexturePrepModalProps {
   open: boolean;
@@ -10,12 +11,13 @@ interface TexturePrepModalProps {
 }
 
 /**
- * Prep shell for created-part color maps (US-39). Preview, image pick, crop /
- * wrap / bg-remove land in follow-up tasks; Apply stays disabled until a draft
- * can commit.
+ * Prep shell for created-part color maps (US-39). Image pick, crop / wrap /
+ * bg-remove land in follow-up tasks; Apply stays disabled until a draft can
+ * commit. Preview shows the part with the current map as a read-through draft.
  */
 export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
   const part = useSelectedCreatedPart();
+  const material = part ? findMeshStandardMaterial(part.mesh) : null;
 
   useEffect(() => {
     if (open && !part) {
@@ -41,15 +43,13 @@ export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
           className="min-h-0 flex-1 overflow-hidden rounded-sm border border-border bg-canvas"
           aria-label={`Texture preview for ${kindLabel}`}
         >
-          <div className="flex h-full min-h-48 items-center justify-center p-4">
-            <Text variant="muted" className="text-center">
-              Preview of
-              {' '}
-              {kindLabel}
-              {' '}
-              — choose an image to see the texture here.
-            </Text>
-          </div>
+          <TexturePartPreview
+            key={part.mesh.uuid}
+            kindId={part.record.kind}
+            params={part.record.params}
+            color={material?.color}
+            draftTexture={material?.map ?? null}
+          />
         </div>
 
         <div className="flex shrink-0 justify-end gap-2">
