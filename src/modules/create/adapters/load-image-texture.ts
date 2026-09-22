@@ -63,6 +63,60 @@ function assertBitmapSize(bitmap: ImageBitmap, fileName: string): void {
 }
 
 /**
+ * Decode with EXIF orientation applied so GPU pixels match how `<img>` shows
+ * the file. Falls back when the option is unsupported.
+ */
+async function decodeImageBitmap(file: File): Promise<ImageBitmap> {
+  try {
+    return await createImageBitmap(file, { imageOrientation: 'from-image' });
+  } catch {
+    return createImageBitmap(file);
+  }
+}
+
+/**
+ * Blit a drawable into a canvas. Three.js ignores `flipY` for ImageBitmap, so
+ * color maps must use a canvas (or similar) source for correct orientation.
+ */
+export function canvasFromDrawable(
+  source: CanvasImageSource,
+  width: number,
+  height: number,
+): HTMLCanvasElement {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext('2d');
+  if (!context) {
+    throw new ImageTextureError('Could not prepare this image.');
+  }
+  context.drawImage(source, 0, 0);
+  return canvas;
+}
+
+/** sRGB color-map texture from a canvas so `flipY` is honored on upload. */
+export function colorMapTextureFromCanvas(
+  canvas: HTMLCanvasElement,
+  name: string,
+): Texture {
+  const texture = new Texture(canvas);
+  texture.colorSpace = SRGBColorSpace;
+  texture.needsUpdate = true;
+  texture.flipY = true;
+  texture.name = name;
+  return texture;
+}
+
+/** PNG data-URL thumbnail from the canvas that backs the draft texture. */
+export function dataUrlFromCanvas(canvas: HTMLCanvasElement): string | null {
+  try {
+    return canvas.toDataURL('image/png');
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Decode a local image file into an sRGB `Texture`.
  * Disposes `previous` only after a successful decode so a failed pick cannot
  * leave the part with a black / missing map.
@@ -81,7 +135,7 @@ export async function loadImageTexture(
 
   let bitmap: ImageBitmap;
   try {
-    bitmap = await createImageBitmap(file);
+    bitmap = await decodeImageBitmap(file);
   } catch {
     throw new ImageTextureError(
       `Could not decode "${file.name}". Use a PNG, JPEG, or WebP image.`,
@@ -95,11 +149,16 @@ export async function loadImageTexture(
     throw error;
   }
 
-  const texture = new Texture(bitmap);
-  texture.colorSpace = SRGBColorSpace;
-  texture.needsUpdate = true;
-  texture.flipY = true;
-  texture.name = file.name;
+  let canvas: HTMLCanvasElement;
+  try {
+    canvas = canvasFromDrawable(bitmap, bitmap.width, bitmap.height);
+  } catch (error) {
+    bitmap.close();
+    throw error;
+  }
+  bitmap.close();
+
+  const texture = colorMapTextureFromCanvas(canvas, file.name);
 
   if (previous && previous !== texture) {
     disposeImageTexture(previous);

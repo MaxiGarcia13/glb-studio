@@ -1,8 +1,11 @@
 import type { Texture } from 'three';
 
 export function bitmapSize(
-  texture: Texture,
+  texture: Texture | null | undefined,
 ): { width: number; height: number } | null {
+  if (!texture) {
+    return null;
+  }
   const image = texture.image as { width?: number; height?: number } | undefined;
   if (
     image

@@ -1,5 +1,5 @@
 import { SRGBColorSpace, Texture } from 'three';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   loadImageTexture,
@@ -14,6 +14,27 @@ function imageFile(
   return new File([new Uint8Array(options?.bytes ?? 8)], name, {
     type: options?.type ?? 'image/png',
   });
+}
+
+function stubCanvasDocument() {
+  const context = {
+    drawImage: vi.fn(),
+  };
+  const canvas = {
+    width: 0,
+    height: 0,
+    getContext: vi.fn(() => context),
+    toDataURL: vi.fn(() => 'data:image/png;base64,AAA'),
+  };
+  vi.stubGlobal('document', {
+    createElement: vi.fn((tag: string) => {
+      if (tag === 'canvas') {
+        return canvas;
+      }
+      throw new Error(`Unexpected element: ${tag}`);
+    }),
+  });
+  return { canvas, context };
 }
 
 function stubBitmap(overrides?: {
@@ -34,6 +55,10 @@ function stubBitmap(overrides?: {
 }
 
 describe('loadImageTexture', () => {
+  beforeEach(() => {
+    stubCanvasDocument();
+  });
+
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
@@ -60,6 +85,53 @@ describe('loadImageTexture', () => {
     expect(texture.version).toBeGreaterThan(0);
     expect(texture.flipY).toBe(true);
     expect(texture.name).toBe('photo.JPEG');
+    expect(texture.image).toMatchObject({ width: 16, height: 16 });
+  });
+
+  it('uses a canvas source so Three.js can honor flipY', async () => {
+    const { close } = stubBitmap();
+    const texture = await loadImageTexture(imageFile('box.png'));
+
+    expect(typeof (texture.image as HTMLCanvasElement).getContext).toBe(
+      'function',
+    );
+    expect(close).toHaveBeenCalledOnce();
+  });
+
+  it('decodes with EXIF orientation so pixels match browser image display', async () => {
+    const decode = vi.fn(async () => ({
+      close: vi.fn(),
+      height: 16,
+      width: 16,
+    }));
+    vi.stubGlobal('createImageBitmap', decode);
+
+    await loadImageTexture(imageFile('photo.jpg', { type: 'image/jpeg' }));
+
+    expect(decode).toHaveBeenCalledWith(
+      expect.any(File),
+      { imageOrientation: 'from-image' },
+    );
+  });
+
+  it('falls back to a plain decode when EXIF orientation is unsupported', async () => {
+    const decode = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('bad option'))
+      .mockResolvedValueOnce({
+        close: vi.fn(),
+        height: 16,
+        width: 16,
+      });
+    vi.stubGlobal('createImageBitmap', decode);
+
+    const texture = await loadImageTexture(
+      imageFile('photo.jpg', { type: 'image/jpeg' }),
+    );
+
+    expect(texture).toBeInstanceOf(Texture);
+    expect(decode).toHaveBeenCalledTimes(2);
+    expect(decode).toHaveBeenLastCalledWith(expect.any(File));
   });
 
   it('rejects files over the byte cap without decoding', async () => {

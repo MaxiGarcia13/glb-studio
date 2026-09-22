@@ -5,6 +5,7 @@ import { TexturePartPreview } from './texture-part-preview';
 import { TexturePrepActions } from './texture-prep-actions';
 import { TexturePrepMessages } from './texture-prep-messages';
 import { TexturePrepSourceStrip } from './texture-prep-source-strip';
+import { TexturePrepTransformControls } from './texture-prep-transform-controls';
 import { useTexturePrepDraft } from './use-texture-prep-draft';
 
 interface TexturePrepModalProps {
@@ -13,8 +14,8 @@ interface TexturePrepModalProps {
 }
 
 /**
- * Prep modal for created-part color maps (US-39). Choose / replace uses the
- * US-28 decode path; crop / wrap / bg-remove / Apply commit follow later.
+ * Prep modal for created-part color maps (US-39). Choose / replace + crop /
+ * flip; wrap / bg-remove / Apply commit follow later.
  */
 export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
   const part = useSelectedCreatedPart();
@@ -28,7 +29,11 @@ export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
     error,
     warnings,
     busy,
+    canCropToSquare,
     pickFile,
+    flipX,
+    flipY,
+    cropToSquare,
     close,
   } = useTexturePrepDraft({
     open,
@@ -75,6 +80,20 @@ export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
             busy={busy}
             onPickFile={(file) => {
               void pickFile(file);
+            }}
+          />
+          <TexturePrepTransformControls
+            enabled={hasSource}
+            busy={busy}
+            canCropToSquare={canCropToSquare}
+            onFlipX={() => {
+              void flipX();
+            }}
+            onFlipY={() => {
+              void flipY();
+            }}
+            onCropToSquare={() => {
+              void cropToSquare();
             }}
           />
           <TexturePrepMessages error={error} warnings={warnings} />
