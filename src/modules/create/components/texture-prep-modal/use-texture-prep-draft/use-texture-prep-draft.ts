@@ -1,7 +1,5 @@
 import type { TexturePrepDraft, UseTexturePrepDraftArgs } from './types';
-import { isAlreadySquare } from '@/modules/create/domain/texture-crop';
 import { createApplyDraft } from './apply-draft';
-import { bitmapSize } from './bitmap-size';
 import { createPickFile } from './pick-file';
 import { createRemoveBackground } from './remove-background';
 import { createTransformActions } from './transform-actions';
@@ -28,15 +26,11 @@ export function useTexturePrepDraft({
     owned,
   });
   const pickFile = createPickFile(owned);
-  const { flipX, flipY, cropToSquare } = createTransformActions(owned);
+  const { flipX, flipY, cropToRegion } = createTransformActions(owned);
   const applyWrapPreset = createSetWrapPreset(owned);
   const removeBackground = createRemoveBackground(owned);
   const apply = createApplyDraft(owned, close);
 
-  const previewSize = bitmapSize(owned.draftTexture ?? seededMap);
-  const canCropToSquare = Boolean(
-    previewSize && !isAlreadySquare(previewSize.width, previewSize.height),
-  );
   const canApply = Boolean(owned.draftTexture) && !owned.busy;
 
   return {
@@ -46,13 +40,12 @@ export function useTexturePrepDraft({
     error: owned.error,
     warnings: owned.warnings,
     busy: owned.busy,
-    canCropToSquare,
     canApply,
     wrapPreset: owned.wrapPreset,
     pickFile,
     flipX,
     flipY,
-    cropToSquare,
+    cropToRegion,
     setWrapPreset: applyWrapPreset,
     removeBackground,
     apply,

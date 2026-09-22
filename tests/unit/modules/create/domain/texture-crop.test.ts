@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   centerSquareCrop,
+  clampImageCropRect,
+  cropRectFromCorners,
+  fullImageCrop,
   isAlreadySquare,
+  isFullImageCrop,
 } from '@/modules/create/domain/texture-crop';
 
 describe('centerSquareCrop', () => {
@@ -38,5 +42,41 @@ describe('isAlreadySquare', () => {
     expect(isAlreadySquare(64, 64)).toBe(true);
     expect(isAlreadySquare(64, 32)).toBe(false);
     expect(isAlreadySquare(0, 0)).toBe(false);
+  });
+});
+
+describe('clampImageCropRect', () => {
+  it('keeps a valid rect inside the image', () => {
+    expect(
+      clampImageCropRect({ sx: 10, sy: 20, sw: 30, sh: 40 }, 100, 80),
+    ).toEqual({ sx: 10, sy: 20, sw: 30, sh: 40 });
+  });
+
+  it('pulls overflow back into bounds', () => {
+    expect(
+      clampImageCropRect({ sx: 90, sy: 70, sw: 40, sh: 30 }, 100, 80),
+    ).toEqual({ sx: 60, sy: 50, sw: 40, sh: 30 });
+  });
+});
+
+describe('cropRectFromCorners', () => {
+  it('normalizes drag direction', () => {
+    expect(cropRectFromCorners(80, 60, 20, 10, 100, 80)).toEqual({
+      sx: 20,
+      sy: 10,
+      sw: 60,
+      sh: 50,
+    });
+  });
+});
+
+describe('fullImageCrop / isFullImageCrop', () => {
+  it('describes the whole image', () => {
+    const full = fullImageCrop(64, 32);
+    expect(full).toEqual({ sx: 0, sy: 0, sw: 64, sh: 32 });
+    expect(isFullImageCrop(full, 64, 32)).toBe(true);
+    expect(
+      isFullImageCrop({ sx: 0, sy: 0, sw: 32, sh: 32 }, 64, 32),
+    ).toBe(false);
   });
 });

@@ -4,20 +4,20 @@ import { Text } from '@/components/text';
 interface TexturePrepTransformControlsProps {
   enabled: boolean;
   busy: boolean;
-  canCropToSquare: boolean;
+  canCrop: boolean;
   onFlipX: () => void;
   onFlipY: () => void;
-  onCropToSquare: () => void;
+  onStartCrop: () => void;
 }
 
-/** Flip / center-square crop controls for the draft texture. */
+/** Flip / crop controls for the draft texture. */
 export function TexturePrepTransformControls({
   enabled,
   busy,
-  canCropToSquare,
+  canCrop,
   onFlipX,
   onFlipY,
-  onCropToSquare,
+  onStartCrop,
 }: TexturePrepTransformControlsProps) {
   const disabled = !enabled || busy;
 
@@ -47,16 +47,12 @@ export function TexturePrepTransformControls({
         </Button>
         <Button
           variant="default"
-          disabled={disabled || !canCropToSquare}
+          disabled={disabled || !canCrop}
           className="w-full justify-start"
-          onClick={onCropToSquare}
-          title={
-            canCropToSquare
-              ? 'Crop to a centered square'
-              : 'Image is already square'
-          }
+          onClick={onStartCrop}
+          title="Drag to choose which part of the image to keep"
         >
-          Crop to square
+          Crop…
         </Button>
       </div>
     </div>

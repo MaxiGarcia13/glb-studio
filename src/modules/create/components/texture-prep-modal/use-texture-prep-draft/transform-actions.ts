@@ -1,17 +1,16 @@
 import type { OwnedDraft } from './use-owned-draft';
 import type { ImageTextureTransform } from '@/modules/create/adapters/transform-image-texture';
+import type { ImageCropRect } from '@/modules/create/domain/texture-crop';
 import { ImageTextureError } from '@/modules/create/adapters/load-image-texture';
 import { transformImageTexture } from '@/modules/create/adapters/transform-image-texture';
-import {
-  centerSquareCrop,
-  isAlreadySquare,
-} from '@/modules/create/domain/texture-crop';
+import { isFullImageCrop } from '@/modules/create/domain/texture-crop';
 import { bitmapSize } from './bitmap-size';
 
 export interface TexturePrepTransformActions {
   flipX: () => Promise<void>;
   flipY: () => Promise<void>;
-  cropToSquare: () => Promise<void>;
+  /** @returns true when a crop transform was applied (or selection was full). */
+  cropToRegion: (crop: ImageCropRect) => Promise<boolean>;
 }
 
 /** Crop + flip against the working (draft or seeded) texture. */
@@ -48,18 +47,40 @@ export function createTransformActions(
   return {
     flipX: () => applyTransform({ flipX: true }),
     flipY: () => applyTransform({ flipY: true }),
-    cropToSquare: async () => {
+    cropToRegion: async (crop) => {
       const source = owned.workingTexture();
       if (!source || owned.busy) {
-        return;
+        return false;
       }
       const size = bitmapSize(source);
-      if (!size || isAlreadySquare(size.width, size.height)) {
-        return;
+      if (!size) {
+        return false;
       }
-      await applyTransform({
-        crop: centerSquareCrop(size.width, size.height),
-      });
+      if (isFullImageCrop(crop, size.width, size.height)) {
+        return true;
+      }
+      owned.setBusy(true);
+      owned.setError(null);
+      try {
+        const { texture, thumbUrl: nextThumb } = await transformImageTexture(
+          source,
+          { crop },
+          owned.draftTextureRef.current,
+        );
+        owned.setOwnedDraft(texture, nextThumb, texture.name || null);
+        return true;
+      } catch (cause) {
+        if (cause instanceof ImageTextureError) {
+          owned.setError(cause.message);
+        } else if (cause instanceof Error) {
+          owned.setError(cause.message);
+        } else {
+          owned.setError('Could not transform this image.');
+        }
+        return false;
+      } finally {
+        owned.setBusy(false);
+      }
     },
   };
 }

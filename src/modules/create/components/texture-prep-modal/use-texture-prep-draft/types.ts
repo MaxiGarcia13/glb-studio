@@ -1,4 +1,5 @@
 import type { MeshStandardMaterial, Texture } from 'three';
+import type { ImageCropRect } from '@/modules/create/domain/texture-crop';
 import type { TextureWrapPresetId } from '@/modules/create/domain/texture-wrap-preset';
 
 export interface UseTexturePrepDraftArgs {
@@ -15,13 +16,12 @@ export interface TexturePrepDraft {
   error: string | null;
   warnings: string[];
   busy: boolean;
-  canCropToSquare: boolean;
   canApply: boolean;
   wrapPreset: TextureWrapPresetId;
   pickFile: (file: File | undefined) => Promise<void>;
   flipX: () => Promise<void>;
   flipY: () => Promise<void>;
-  cropToSquare: () => Promise<void>;
+  cropToRegion: (crop: ImageCropRect) => Promise<boolean>;
   setWrapPreset: (preset: TextureWrapPresetId) => void;
   removeBackground: () => Promise<void>;
   /** @returns true when the draft was committed onto the material. */
