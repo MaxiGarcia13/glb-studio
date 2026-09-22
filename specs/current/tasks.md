@@ -289,7 +289,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 **Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
 
 - [x] Command catalog + hotkey dispatcher + Commands modal + Edit menu Undo / Redo
-- [x] Keymap: Q/W/E transform, R axes, B bones, Space play, arrows nudge, Cmd+S commit, create-part C/V/Delete
+- [x] Keymap: Q/W/E transform, R axes, B bones, Space play, arrows nudge, Cmd+S commit, N new model, create-part C/V/Delete
 - [x] Pose auto-commit (no Save / Restore chrome); session undo stack for trim / keyframe / timeScale
 - [x] Mixer rebind after undo/redo; pre-trim restore superseded by `trimClip` undo
 - [x] `createHierarchy` undo for Group / Ungroup / Make connector / Unjoint (stable group UUIDs)

@@ -8,6 +8,7 @@ export { KeyboardCommandIcon } from './keyboard-command-icon';
 export { KeyboardCtrlIcon } from './keyboard-ctrl-icon';
 export { KeyboardDeleteIcon } from './keyboard-delete-icon';
 export { KeyboardEIcon } from './keyboard-e-icon';
+export { KeyboardNIcon } from './keyboard-n-icon';
 export { KeyboardQIcon } from './keyboard-q-icon';
 export { KeyboardRIcon } from './keyboard-r-icon';
 export { KeyboardSIcon } from './keyboard-s-icon';

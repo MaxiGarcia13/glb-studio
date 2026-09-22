@@ -9,7 +9,13 @@ import { DownloadIcon } from '@/components/icons/download-icon';
 import { ManIcon } from '@/components/icons/man-icon';
 import { UploadIcon } from '@/components/icons/upload-icon';
 import { startNewAnimation } from '@/modules/animation/stores/clip-store';
-import { createEmptyModel } from '@/modules/create/actions/create-empty-model';
+import {
+  formatEditorCommandChord,
+  formatEditorCommandChords,
+  getEditorCommand,
+  isMacPlatform,
+  runEditorCommand,
+} from '@/modules/commands';
 import { FromKitModal } from '@/modules/create/components/from-kit-modal';
 import { ExportModal, useExportZip } from '@/modules/export';
 import { importContentFiles } from '@/modules/import/actions/import-content-files';
@@ -28,6 +34,9 @@ export function EditorFileMenu({ open, onOpenChange }: EditorFileMenuProps) {
   const { scene } = useActiveModel();
   const [exportOpen, setExportOpen] = useState(false);
   const [fromKitOpen, setFromKitOpen] = useState(false);
+  const isMac = isMacPlatform();
+  const newModel = getEditorCommand('newModel');
+  const newModelShortcut = newModel.chords[0];
 
   const { open: openImport, fileInput } = useGltfFilePicker({
     multiple: true,
@@ -41,7 +50,11 @@ export function EditorFileMenu({ open, onOpenChange }: EditorFileMenuProps) {
       id: 'new-model',
       label: 'New model',
       icon: <ManIcon />,
-      onSelect: () => createEmptyModel(),
+      shortcut: newModelShortcut
+        ? formatEditorCommandChord(newModelShortcut, isMac)
+        : undefined,
+      title: formatEditorCommandChords(newModel, isMac),
+      onSelect: () => runEditorCommand('newModel'),
     },
     {
       id: 'from-kit',

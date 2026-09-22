@@ -10,6 +10,7 @@ export type KeyboardKeyId
     | 'r'
     | 'b'
     | 's'
+    | 'n'
     | 'c'
     | 'v'
     | 'z'

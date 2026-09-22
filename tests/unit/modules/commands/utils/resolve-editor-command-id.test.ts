@@ -24,6 +24,7 @@ describe('resolveEditorCommandId', () => {
     expect(
       resolveEditorCommandId(event({ key: 's', metaKey: true })),
     ).toBe('savePending');
+    expect(resolveEditorCommandId(event({ key: 'n' }))).toBe('newModel');
     expect(
       resolveEditorCommandId(event({ key: 'ArrowUp', shiftKey: true })),
     ).toBe('nudgePosZ');
@@ -52,6 +53,9 @@ describe('resolveEditorCommandId', () => {
     expect(resolveEditorCommandId(event({ key: ' ', altKey: true }))).toBeNull();
     expect(
       resolveEditorCommandId(event({ key: 'q', metaKey: true })),
+    ).toBeNull();
+    expect(
+      resolveEditorCommandId(event({ key: 'n', metaKey: true })),
     ).toBeNull();
   });
 });

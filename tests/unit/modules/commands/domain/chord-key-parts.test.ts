@@ -7,6 +7,9 @@ describe('chordToKeyboardKeyParts', () => {
     expect(chordToKeyboardKeyParts({ key: 'q' }, true)).toEqual([
       { id: 'q', label: 'Q' },
     ]);
+    expect(chordToKeyboardKeyParts({ key: 'n' }, true)).toEqual([
+      { id: 'n', label: 'N' },
+    ]);
   });
 
   it('maps named keys to icon ids', () => {

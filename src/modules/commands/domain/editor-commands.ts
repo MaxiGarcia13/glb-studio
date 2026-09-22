@@ -90,6 +90,12 @@ export const EDITOR_COMMANDS: readonly EditorCommand[] = [
     category: 'Animation',
   },
   {
+    id: 'newModel',
+    chords: [{ key: 'n' }],
+    label: 'New model',
+    category: 'Create',
+  },
+  {
     id: 'copyCreatePart',
     chords: [{ key: 'c', modifiers: ['mod'] }],
     label: 'Copy create part / group',

@@ -239,12 +239,13 @@ Multi-select **position** (nudge + Settings XYZ delta) moves every selected mode
 | `nudgePosY` / `nudgeNegY`            | ↑ / ↓                        | Nudge +Y / −Y                     | Transform |
 | `nudgePosZ` / `nudgeNegZ`            | Shift+↑ / Shift+↓            | Nudge +Z / −Z                     | Transform |
 | `savePending`                        | Cmd/Ctrl+S                   | Commit pending pose               | Animation |
+| `newModel`                           | N                            | New model                         | Create    |
 | `copyCreatePart` / `pasteCreatePart` | Cmd/Ctrl+C / V               | Copy / Paste create part or group | Create    |
 | `deleteCreatePart`                   | Delete, Backspace            | Delete create part                | Create    |
 | `undo`                               | Cmd/Ctrl+Z                   | Undo                              | History   |
 | `redo`                               | Cmd/Ctrl+Shift+Z, Cmd/Ctrl+Y | Redo                              | History   |
 
-**Not bound:** bare C/V; Cut (Cmd/Ctrl+X). **Delete** and **Backspace** both remove create selection (macOS laptop delete is Backspace). Ignore letter chords when Cmd/Ctrl/Alt held (except explicit Cmd/Ctrl rows). Ignore all chords when `isTypingTarget`.
+**Not bound:** bare C/V; Cut (Cmd/Ctrl+X); plain **Cmd/Ctrl+N** (browser-reserved for new window — New model uses bare **N**). **Delete** and **Backspace** both remove create selection (macOS laptop delete is Backspace). Ignore letter chords when Cmd/Ctrl/Alt held (except explicit Cmd/Ctrl rows). Ignore all chords when `isTypingTarget`.
 
 ### Nudge
 

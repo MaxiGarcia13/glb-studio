@@ -13,6 +13,7 @@ export type EditorCommandId
     | 'nudgePosZ'
     | 'nudgeNegZ'
     | 'savePending'
+    | 'newModel'
     | 'copyCreatePart'
     | 'pasteCreatePart'
     | 'deleteCreatePart'

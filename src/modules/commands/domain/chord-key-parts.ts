@@ -9,6 +9,7 @@ const LETTER_KEY_IDS = new Set<string>([
   'r',
   'b',
   's',
+  'n',
   'c',
   'v',
   'z',

@@ -335,6 +335,7 @@ As an editor user with little or no 3D experience, I can create a new empty mode
 **Acceptance**
 
 - [x] **File → New model** **immediately** creates an empty `source: 'created'` model (no kit picker modal); not on the Models library header
+- [x] **N** is a catalog hotkey for New model (same as File → New model; plain Cmd/Ctrl+N is browser-reserved)
 - [x] New model joins preview and becomes focused (same as a successful import); default name like `New model 1.glb`
 - [x] Created models do **not** require a skinned mesh or skeleton; imported models still do
 - [x] Created models use metres, Y-up; parts sit on the ground when added (`y = 0` as appropriate)
