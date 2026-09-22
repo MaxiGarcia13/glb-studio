@@ -30,3 +30,4 @@ As an editor user, I can apply a simple image texture to a selected part on my c
 - UV unwrap tools
 - Material editing on imported GLBs
 - Server-side texture processing
+- Texture prep modal (crop, wrap presets, client bg-remove, live preview) — **US-39**

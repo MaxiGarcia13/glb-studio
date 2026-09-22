@@ -14,3 +14,5 @@ Real cloth is out of scope. Outfit looks continue to come from **extra kit meshe
 ## Non-goals
 
 No change to the global “no material editing” rule for imported assets; document the created-only exception in `current/` when this US ships.
+
+Crop / wrap presets / client background-remove / prep modal with live preview → **US-39** (do not implement under US-28).

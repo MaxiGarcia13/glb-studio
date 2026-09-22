@@ -1,0 +1,31 @@
+# US-39 — Tasks
+
+**Do not start until explicitly kicked off** (after US-28). Tick only after acceptance.
+
+## Spec / kickoff
+
+- [ ] **Confirm kickoff** — Explicit start after US-28 ships or is far enough along that apply/clear/export are stable
+- [ ] **Fold prep note** — On ship: fold into `current/`, changelog row, delete this folder
+
+## Modal shell
+
+- [ ] **Texture prep modal** — Open from create toolbar Texture; Cancel / Apply; created-part gate
+- [ ] **Live 3D preview** — Draft map on preview of selected part kind / mesh; `ViewportEnvironment`
+- [ ] **Choose / replace image** — US-28 decode path; errors and guidance visible in modal
+
+## Prep controls
+
+- [ ] **Crop + flip** — Client-side; updates draft + preview
+- [ ] **Wrap presets** — Clamp / Tile 2× / Tile 4× (or equivalent) on draft texture
+- [ ] **Remove background** — Opt-in client WASM; busy state; alpha draft
+- [ ] **Material alpha** — Transparent cutouts preview + export when map has alpha
+
+## Lifecycle
+
+- [ ] **Apply commits; Cancel disposes** — Real part unchanged on cancel; no leaked bitmaps/textures
+- [ ] **Imported guard** — Modal never opens for imported focus
+
+## Verify
+
+- [ ] **Box + png** — Guidance, crop, wrap, optional bg-remove, Apply, export, Cancel discard
+- [ ] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md) checked

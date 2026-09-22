@@ -555,6 +555,7 @@ As an editor user, I can drag-resize the Library and Settings asides and the bot
 Full requirements, design, and tasks live only in the delta folders (not duplicated here). Do not implement until explicitly kicked off:
 
 - **US-28** — Part color maps (textures) → [`specs/us-28/`](../us-28/) (in progress; created parts only)
+- **US-39** — Texture prep modal (crop, wrap, client bg-remove, live preview) → [`specs/us-39/`](../us-39/)
 
 ## Post-MVP user stories
 

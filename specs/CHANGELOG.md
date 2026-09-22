@@ -12,6 +12,7 @@
 | ID | Summary |
 |----|---------|
 | **US-28** | Part color maps (textures) on created models only |
+| **US-39** | Texture prep modal — crop, wrap presets, client bg-remove, live preview |
 | **US-8** | Morph-target editing (post-MVP) |
 
 ## Shipped
