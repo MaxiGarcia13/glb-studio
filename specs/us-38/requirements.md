@@ -4,7 +4,7 @@ Delta for a short recent/suggested Add-part menu and a full catalog modal with t
 
 **Depends on:** US-24 (primitive palette + add part).
 
-**Status:** Not started — do not implement until explicitly kicked off.
+**Status:** In progress.
 
 ## Story
 

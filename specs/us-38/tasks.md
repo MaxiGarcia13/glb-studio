@@ -4,12 +4,12 @@
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Explicit go-ahead before code
+- [x] **Confirm kickoff** — Explicit go-ahead before code
 - [ ] **Fold prep note** — On ship: fold acceptance into `current/` (US-24 Add-part section + create toolbar design), changelog row, delete this folder
 
 ## MRU domain + storage
 
-- [ ] **Default suggestion order** — Constant: box, sphere, capsule, dodecahedron, cone
+- [x] **Default suggestion order** — Constant: box, sphere, capsule, dodecahedron, cone
 - [ ] **Resolve compact menu kinds** — Pure helper: MRU + defaults → five unique ids
 - [ ] **Record recent kind** — Prepend, dedupe, truncate to five; persist via localStorage util
 - [ ] **Load recent kinds** — Read/parse on mount; ignore invalid entries; empty → cold start
