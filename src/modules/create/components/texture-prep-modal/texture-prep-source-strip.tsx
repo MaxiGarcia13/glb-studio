@@ -32,7 +32,7 @@ export function TexturePrepSourceStrip({
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex flex-wrap items-center gap-4">
+    <div className="flex flex-col gap-4">
       <input
         ref={inputRef}
         type="file"
@@ -45,33 +45,33 @@ export function TexturePrepSourceStrip({
           onPickFile(file);
         }}
       />
-      {thumbUrl
-        ? (
-            <img
-              src={thumbUrl}
-              alt=""
-              className="size-12 shrink-0 rounded-sm border border-border object-cover bg-control"
-            />
-          )
-        : (
-            <div
-              className="size-12 shrink-0 rounded-sm border border-border bg-control"
-              aria-hidden
-            />
-          )}
-      <div className="min-w-0 flex-1 flex flex-col gap-2">
-        <Text as="p" variant="muted" className="truncate">
+      <div className="flex items-center gap-4">
+        {thumbUrl
+          ? (
+              <img
+                src={thumbUrl}
+                alt=""
+                className="size-12 shrink-0 rounded-sm border border-border object-cover bg-control"
+              />
+            )
+          : (
+              <div
+                className="size-12 shrink-0 rounded-sm border border-border bg-control"
+                aria-hidden
+              />
+            )}
+        <Text as="p" variant="muted" className="min-w-0 flex-1 truncate">
           {displayName ?? 'No image chosen'}
         </Text>
-        <Button
-          variant="default"
-          disabled={busy}
-          className="w-fit"
-          onClick={() => inputRef.current?.click()}
-        >
-          {pickButtonLabel(busy, hasSource)}
-        </Button>
       </div>
+      <Button
+        variant="default"
+        disabled={busy}
+        className="w-full"
+        onClick={() => inputRef.current?.click()}
+      >
+        {pickButtonLabel(busy, hasSource)}
+      </Button>
     </div>
   );
 }

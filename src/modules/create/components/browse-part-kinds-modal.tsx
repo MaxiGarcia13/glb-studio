@@ -41,50 +41,55 @@ export function BrowsePartKindsModal({
       onClose={onClose}
       className="max-w-4xl h-[min(90vh,42rem)]"
     >
-      <div className="flex min-h-0 flex-1 flex-col gap-4 sm:flex-row h-[min(70vh,32rem)]">
-        <div className="flex max-h-48 w-full shrink-0 flex-col gap-4 overflow-y-auto sm:max-h-none sm:w-52 px-1">
-          {groups.map((group) => (
-            <section key={group.id} className="flex flex-col gap-2" aria-label={group.label}>
-              <Text as="h2" variant="section" size="xs">
-                {group.label}
-              </Text>
-              <div className="flex flex-col gap-2" role="listbox" aria-label={group.label}>
-                {group.kinds.map((kind) => {
-                  const selected = selectedKindId === kind.id;
-                  return (
-                    <Button
-                      key={kind.id}
-                      variant="default"
-                      role="option"
-                      aria-selected={selected}
-                      className={
-                        selected
-                          ? 'w-full justify-start px-2 py-2 ring-2 ring-border-strong bg-surface-hover text-left'
-                          : 'w-full justify-start px-2 py-2 ring-1 ring-border-strong/80 text-left'
-                      }
-                      onClick={() => setSelectedKindId(kind.id)}
-                    >
-                      <Text as="span" className="text-current truncate">
-                        {kind.label}
-                      </Text>
-                    </Button>
-                  );
-                })}
-              </div>
-            </section>
-          ))}
-        </div>
+      <div className="flex min-h-0 flex-1 flex-col gap-4">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 sm:flex-row h-[min(70vh,32rem)]">
+          <div className="flex max-h-48 w-full shrink-0 flex-col gap-4 overflow-y-auto sm:max-h-none sm:w-56 px-1">
+            {groups.map((group) => (
+              <section key={group.id} className="flex flex-col gap-2" aria-label={group.label}>
+                <Text as="h2" variant="section" size="xs">
+                  {group.label}
+                </Text>
+                <div className="flex flex-col gap-2" role="listbox" aria-label={group.label}>
+                  {group.kinds.map((kind) => {
+                    const selected = selectedKindId === kind.id;
+                    return (
+                      <Button
+                        key={kind.id}
+                        variant="default"
+                        role="option"
+                        aria-selected={selected}
+                        className={
+                          selected
+                            ? 'w-full justify-start bg-surface-hover text-left'
+                            : 'w-full justify-start text-left'
+                        }
+                        onClick={() => setSelectedKindId(kind.id)}
+                      >
+                        <Text as="span" className="text-current truncate">
+                          {kind.label}
+                        </Text>
+                      </Button>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
+          </div>
 
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
           <div
-            className="min-h-0 flex-1 overflow-hidden rounded-sm border border-border bg-canvas"
+            className="min-h-48 min-w-0 flex-1 overflow-hidden rounded-sm border border-border bg-canvas sm:min-h-0"
             aria-label={`Preview of ${selectedKindId}`}
           >
             <PartKindPreview key={selectedKindId} kindId={selectedKindId} />
           </div>
+        </div>
+
+        <div className="flex shrink-0 justify-end gap-2">
+          <Button variant="default" onClick={onClose}>
+            Cancel
+          </Button>
           <Button
             variant="primary"
-            className="w-full shrink-0"
             onClick={() => onPickKind(selectedKindId)}
           >
             Add part

@@ -59,44 +59,46 @@ export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
       className="max-w-4xl h-[min(90vh,42rem)]"
     >
       <div className="flex min-h-0 flex-1 flex-col gap-4">
-        <div
-          className="min-h-0 flex-1 overflow-hidden rounded-sm border border-border bg-canvas"
-          aria-label={`Texture preview for ${kindLabel}`}
-        >
-          <TexturePartPreview
-            key={part.mesh.uuid}
-            kindId={part.record.kind}
-            params={part.record.params}
-            color={material?.color}
-            draftTexture={previewTexture}
-          />
-        </div>
+        <div className="flex min-h-0 flex-1 flex-col gap-4 sm:flex-row h-[min(70vh,32rem)]">
+          <div className="flex max-h-48 w-full shrink-0 flex-col gap-4 overflow-y-auto sm:max-h-none sm:w-56 px-1">
+            <TexturePrepSourceStrip
+              displayName={displayName}
+              thumbUrl={thumbUrl}
+              hasSource={hasSource}
+              busy={busy}
+              onPickFile={(file) => {
+                void pickFile(file);
+              }}
+            />
+            <TexturePrepTransformControls
+              enabled={hasSource}
+              busy={busy}
+              canCropToSquare={canCropToSquare}
+              onFlipX={() => {
+                void flipX();
+              }}
+              onFlipY={() => {
+                void flipY();
+              }}
+              onCropToSquare={() => {
+                void cropToSquare();
+              }}
+            />
+            <TexturePrepMessages error={error} warnings={warnings} />
+          </div>
 
-        <div className="flex flex-col gap-4 shrink-0">
-          <TexturePrepSourceStrip
-            displayName={displayName}
-            thumbUrl={thumbUrl}
-            hasSource={hasSource}
-            busy={busy}
-            onPickFile={(file) => {
-              void pickFile(file);
-            }}
-          />
-          <TexturePrepTransformControls
-            enabled={hasSource}
-            busy={busy}
-            canCropToSquare={canCropToSquare}
-            onFlipX={() => {
-              void flipX();
-            }}
-            onFlipY={() => {
-              void flipY();
-            }}
-            onCropToSquare={() => {
-              void cropToSquare();
-            }}
-          />
-          <TexturePrepMessages error={error} warnings={warnings} />
+          <div
+            className="min-h-48 min-w-0 flex-1 overflow-hidden rounded-sm border border-border bg-canvas sm:min-h-0"
+            aria-label={`Texture preview for ${kindLabel}`}
+          >
+            <TexturePartPreview
+              key={part.mesh.uuid}
+              kindId={part.record.kind}
+              params={part.record.params}
+              color={material?.color}
+              draftTexture={previewTexture}
+            />
+          </div>
         </div>
 
         <TexturePrepActions onCancel={close} />

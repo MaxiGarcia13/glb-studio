@@ -54,7 +54,7 @@ export function FromKitModal({ open, onClose }: FromKitModalProps) {
             key={kit.id}
             variant="default"
             disabled={busy}
-            className="w-full flex flex-col items-start gap-1 px-4 py-2 ring-1 ring-border-strong/80 text-left h-auto"
+            className="w-full flex flex-col items-start gap-2 px-2 py-2 ring-1 ring-border-strong/80 text-left h-auto"
             onClick={() => {
               setError(null);
               setLoadingKitId(kit.id);
@@ -74,7 +74,7 @@ export function FromKitModal({ open, onClose }: FromKitModalProps) {
                 });
             }}
           >
-            <Text as="span" className="text-current font-semibold">
+            <Text as="span" className="text-current truncate">
               {loadingKitId === kit.id ? `Loading ${kit.label}…` : kit.label}
             </Text>
             <Text as="span" variant="muted" className="text-current whitespace-normal">

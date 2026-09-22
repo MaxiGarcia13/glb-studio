@@ -26,26 +26,29 @@ export function TexturePrepTransformControls({
       <Text as="h2" variant="section" size="xs">
         Adjust
       </Text>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-2">
         <Button
           variant="default"
           disabled={disabled}
+          className="w-full justify-start"
           onClick={onFlipX}
-          title="Flip horizontal"
+          title="Mirror the image left to right"
         >
-          Flip H
+          Flip horizontal
         </Button>
         <Button
           variant="default"
           disabled={disabled}
+          className="w-full justify-start"
           onClick={onFlipY}
-          title="Flip vertical"
+          title="Mirror the image top to bottom"
         >
-          Flip V
+          Flip vertical
         </Button>
         <Button
           variant="default"
           disabled={disabled || !canCropToSquare}
+          className="w-full justify-start"
           onClick={onCropToSquare}
           title={
             canCropToSquare
@@ -53,7 +56,7 @@ export function TexturePrepTransformControls({
               : 'Image is already square'
           }
         >
-          Crop square
+          Crop to square
         </Button>
       </div>
     </div>

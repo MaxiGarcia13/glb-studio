@@ -7,6 +7,7 @@ interface TexturePrepActionsProps {
   onApply?: () => void;
 }
 
+/** Footer actions — same Cancel / primary pattern as export and make-joint. */
 export function TexturePrepActions({
   onCancel,
   canApply = false,
@@ -14,11 +15,11 @@ export function TexturePrepActions({
 }: TexturePrepActionsProps) {
   return (
     <div className="flex shrink-0 justify-end gap-2">
-      <Button variant="ghost" onClick={onCancel}>
+      <Button variant="default" onClick={onCancel}>
         Cancel
       </Button>
       <Button
-        variant="primary"
+        variant={canApply ? 'primary' : 'default'}
         disabled={!canApply}
         title={canApply ? 'Apply texture' : 'Choose an image before applying'}
         onClick={onApply}
