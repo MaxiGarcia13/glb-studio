@@ -22,8 +22,8 @@ interface TexturePrepModalProps {
 }
 
 /**
- * Prep modal for created-part color maps (US-39). Choose / replace, crop /
- * flip, wrap, opt-in background remove; Apply commits, Cancel disposes draft.
+ * Prep modal for created-part color maps (US-39). Created stamped parts only —
+ * imported / non-created focus never yields a part, so the modal stays closed.
  */
 export function TexturePrepModal({
   open,

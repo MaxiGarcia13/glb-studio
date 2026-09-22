@@ -11,8 +11,8 @@ import { ViewportEnvironment } from '@/modules/viewport/components/viewport-envi
 import { DEFAULT_CAMERA_FOV } from '@/modules/viewport/constants/camera';
 import { disposeScene } from '@/modules/viewport/utils/scene-dispose';
 
-/** Closer framing than the editor home view — parts are ~0.2 m. */
-const PREVIEW_CAMERA_POSITION = [0.55, 0.4, 0.7] as const;
+/** Framing for ~0.2 m parts — pulled back so tall kinds (capsule) fit. */
+const PREVIEW_CAMERA_POSITION = [0.95, 0.7, 1.2] as const;
 const PREVIEW_CONTROLS_TARGET = [0, 0.1, 0] as const;
 
 interface TexturePartPreviewProps {
@@ -94,8 +94,8 @@ export function TexturePartPreview({
       <OrbitControls
         enablePan={false}
         target={[...PREVIEW_CONTROLS_TARGET]}
-        minDistance={0.25}
-        maxDistance={2}
+        minDistance={0.4}
+        maxDistance={3}
       />
     </Canvas>
   );
