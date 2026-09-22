@@ -4,10 +4,10 @@ import { OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
+import { getPartKind } from '@/modules/create/domain/part-kind';
 import { ViewportEnvironment } from '@/modules/viewport/components/viewport-environment';
 import { DEFAULT_CAMERA_FOV } from '@/modules/viewport/constants/camera';
 import { disposeScene } from '@/modules/viewport/utils/scene-dispose';
-import { getPartKind } from '../domain/part-kind';
 
 /** Closer framing than the editor home view — parts are ~0.2 m. */
 const PREVIEW_CAMERA_POSITION = [0.55, 0.4, 0.7] as const;

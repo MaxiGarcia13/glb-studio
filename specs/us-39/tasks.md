@@ -11,7 +11,7 @@ Tick only after acceptance.
 
 - [x] **Texture prep modal** — Open from create toolbar Texture; Cancel / Apply; created-part gate
 - [x] **Live 3D preview** — Draft map on preview of selected part kind / mesh; `ViewportEnvironment`
-- [ ] **Choose / replace image** — US-28 decode path; errors and guidance visible in modal
+- [x] **Choose / replace image** — US-28 decode path; errors and guidance visible in modal
 
 ## Prep controls
 
