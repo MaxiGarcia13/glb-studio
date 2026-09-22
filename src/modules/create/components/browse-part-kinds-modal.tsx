@@ -7,8 +7,8 @@ import { listPartKindGroups } from '../domain/part-kind';
 interface BrowsePartKindsModalProps {
   open: boolean;
   onClose: () => void;
-  /** Called when the user picks a kind (add + MRU left to the caller). */
-  onPickKind?: (kindId: PartKindId) => void;
+  /** Called when the user picks a kind — caller adds the part, records MRU, and closes. */
+  onPickKind: (kindId: PartKindId) => void;
 }
 
 /**
@@ -35,7 +35,7 @@ export function BrowsePartKindsModal({
                   key={kind.id}
                   variant="default"
                   className="w-full justify-start px-4 py-2 ring-1 ring-border-strong/80 text-left"
-                  onClick={() => onPickKind?.(kind.id)}
+                  onClick={() => onPickKind(kind.id)}
                 >
                   <Text as="span" className="text-current">
                     {kind.label}

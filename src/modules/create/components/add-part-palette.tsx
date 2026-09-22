@@ -1,3 +1,4 @@
+import type { PartKindId } from '@/modules/create/types/part';
 import { useStore } from '@nanostores/react';
 import { useState } from 'react';
 import { ActionMenu } from '@/components/action-menu';
@@ -28,6 +29,11 @@ export function AddPartPalette() {
   const modelId = activeModel.id;
   const compactIds = resolveCompactMenuKinds(recent);
 
+  const pickKind = (kindId: PartKindId) => {
+    addPart(modelId, kindId);
+    setRecent(recordRecentKind(loadRecentKinds(), kindId));
+  };
+
   return (
     <>
       <ActionMenu
@@ -46,10 +52,7 @@ export function AddPartPalette() {
             return {
               id: kind.id,
               label: kind.label,
-              onSelect: () => {
-                addPart(modelId, kind.id);
-                setRecent(recordRecentKind(loadRecentKinds(), kind.id));
-              },
+              onSelect: () => pickKind(kind.id),
             };
           }),
           {
@@ -62,6 +65,10 @@ export function AddPartPalette() {
       <BrowsePartKindsModal
         open={browseOpen}
         onClose={() => setBrowseOpen(false)}
+        onPickKind={(kindId) => {
+          pickKind(kindId);
+          setBrowseOpen(false);
+        }}
       />
     </>
   );
