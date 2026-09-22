@@ -221,7 +221,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 **Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
 
 - [x] `plane` PartKind + `addPart(modelId, kindId)` (unique names, Edit + select)
-- [x] Add-part palette on created-model create toolbar; hidden for imported focus
+- [x] Add-part palette on created-model create toolbar; hidden for imported focus (superseded by US-38 MRU + See more)
 - [x] Added parts reuse US-23 inspector / duplicate / delete / Save–Restore; export packs scene
 - [x] Extra primitives: cone, torus, triangle, polygon (`sides`), circle, ring, tetrahedron, octahedron, icosahedron, dodecahedron
 
@@ -313,13 +313,20 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `createScene` undo for Add / Paste / Delete (stable UUIDs + parent restore)
 - [x] Delete / Backspace hotkeys; shared `resolveSelectedCreateRoots` + `create-graph-lookup`
 
+## US-38 — Add-part MRU menu + browse modal
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] Compact five-slot MRU + defaults menu; persist via `STORAGE_KEYS.recentPartKinds`
+- [x] **See more** browse modal (Solids / Planar / Polyhedra) + hero 3D preview + confirm
+- [x] Shared `ViewportEnvironment` (lights + ground) for editor and part preview
+
 ## Open deltas
 
-| US                                      | Status                    | Tasks                                       |
-| --------------------------------------- | ------------------------- | ------------------------------------------- |
-| **US-38** — Add-part MRU + browse modal | not started (after US-24) | [`specs/us-38/tasks.md`](../us-38/tasks.md) |
-| **US-28** — Part color maps (textures)  | not started (after US-23) | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
-| **US-8** — Morph-target editing         | post-MVP, not started     | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
+| US                                     | Status                    | Tasks                                       |
+| -------------------------------------- | ------------------------- | ------------------------------------------- |
+| **US-28** — Part color maps (textures) | not started (after US-23) | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
+| **US-8** — Morph-target editing        | post-MVP, not started     | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 
 ## Tech debt
 

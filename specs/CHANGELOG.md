@@ -11,7 +11,6 @@
 
 | ID | Summary |
 |----|---------|
-| **US-38** | Add-part MRU menu (5 slots + See more) + browse modal with type groups + 3D preview |
 | **US-28** | Part color maps (textures) on created models only |
 | **US-8** | Morph-target editing (post-MVP) |
 
@@ -19,6 +18,7 @@
 
 | ID | Summary |
 |----|---------|
+| **US-38** | Add-part MRU menu (5 slots + See more) + browse modal with type groups + 3D preview |
 | **US-37** | Create scene undo — Delete parts/groups/multi; undo Add / Paste / Delete; Backspace delete |
 | **US-34** | In-editor skinning for created models (MVP rigid weights) |
 | **US-36** | Export format GLB \| FBX (modal select + glb-to-fbx convert) |

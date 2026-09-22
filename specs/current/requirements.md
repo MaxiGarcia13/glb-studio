@@ -354,14 +354,30 @@ As an editor user, I can add common primitive shapes to my created model so I ca
 
 **Acceptance**
 
-- [x] When a **created** model is focused, Create UI offers an **Add part** palette: box, sphere, cylinder, capsule, plane, cone, torus, triangle, polygon, circle, ring, tetrahedron, octahedron, icosahedron, dodecahedron
+- [x] When a **created** model is focused, Create UI offers **Add part** for registered kinds: box, sphere, cylinder, capsule, plane, cone, torus, triangle, polygon, circle, ring, tetrahedron, octahedron, icosahedron, dodecahedron (compact MRU menu + browse — US-38)
 - [x] Adding a part spawns it under that model’s scene at the origin (or a small default offset above ground), selects it, and uses kind default params + a default color
 - [x] New parts are named uniquely (`box`, `box_2`, …) so the selection overlay stays readable
 - [x] Added parts support the same inspector, Duplicate, Delete, and Edit auto-commit behavior as kit parts (US-23 / US-10)
-- [x] Palette is hidden or disabled for **imported** models (no accidental mesh editing of uploaded characters in this US)
+- [x] Palette / browse modal are hidden for **imported** models (no accidental mesh editing of uploaded characters)
 - [x] Export still packs the updated scene
 
-**Planned (US-38):** compact five-slot MRU + defaults menu and **See more** browse modal (type groups + 3D preview) — not started; see [`specs/us-38/`](../us-38/).
+### US-38 — Add-part MRU menu + browse modal
+
+As an editor user, when I open **Add part** I see a short list of suggested or recently used shapes so I can add common parts quickly, and I can open **See more** to browse every kind grouped by type with a 3D preview before confirming.
+
+**Acceptance**
+
+- [x] When a **created** model is focused, the Add-part control opens a compact menu of **exactly five** part rows plus a final **See more** row (not a flat list of every kind)
+- [x] **Cold start** (no stored history) shows defaults in order: box, sphere, capsule, dodecahedron, cone, then **See more**
+- [x] Choosing a part from the compact menu adds it as today (US-24) and records it as the most recently used kind
+- [x] Compact menu slots are an **MRU window of five**: newest used kind first; re-picking a kind already in the list moves it to the front with no duplicate; kinds past five drop off the bottom
+- [x] Until five distinct kinds have been used, unused default suggestions still fill the remaining slots (MRU first, then remaining defaults in default order)
+- [x] The ordered list of up to five kind ids persists in **localStorage** (`glb-studio.create.recent-part-kinds`) and restores on reload
+- [x] **See more** opens a modal listing **all** registered part kinds, grouped by type (Solids / Planar / Polyhedra)
+- [x] The modal always has a selected kind (defaults to box on open); click a row to select; a hero **3D preview** (shared viewport lights + ground) shows the selection; **Add part** confirms, updates MRU, and closes
+- [x] Palette / menu / modal remain hidden for **imported** model focus (same gate as US-24)
+
+**Out of scope:** frequency ranking; custom default suggestion list; persisting preview camera/orbit; changing spawn/export behavior for parts
 
 ### US-25 — Grid and rotation snap
 
@@ -538,7 +554,6 @@ As an editor user, I can drag-resize the Library and Settings asides and the bot
 
 Full requirements, design, and tasks live only in the delta folders (not duplicated here). Do not implement until explicitly kicked off:
 
-- **US-38** — Add-part MRU menu + browse modal → [`specs/us-38/`](../us-38/)
 - **US-28** — Part color maps (textures) → [`specs/us-28/`](../us-28/)
 
 ## Post-MVP user stories
