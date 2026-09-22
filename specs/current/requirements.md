@@ -342,7 +342,7 @@ As an editor user with little or no 3D experience, I can create a new empty mode
 - [x] Created models use metres, Y-up; parts sit on the ground when added (`y = 0` as appropriate)
 - [x] Parts are named meshes; selection name overlay shows those names
 - [x] **Edit** tool + TransformControls move / rotate / scale parts; dirty pose **auto-commits** (US-10 / US-15 bind-pose style on the scene graph — no animation keyframes required)
-- [x] When a part is selected on a created model, the create toolbar offers **color** and the Settings inspector shows **size** fields for that part kind; changes update the viewport live
+- [x] When a part is selected on a created model, the create toolbar offers **color** and **texture** and the Settings inspector shows **size** fields for that part kind; changes update the viewport live
 - [x] User can **Duplicate** and **Delete** the selected part from the create toolbar (delete removes the mesh only, not the library model); Delete also removes selected create groups / multi-select roots (US-37)
 - [x] Zip export (US-5 / US-22 path) packs created model scenes as `{model}.glb` like any other model when they have at least one stamped mesh part; empty created models (no parts) are skipped
 - [x] Re-importing an exported created-model GLB (mesh scene, no skeleton) returns it to the model library as `source: 'created'`
@@ -378,6 +378,22 @@ As an editor user, when I open **Add part** I see a short list of suggested or r
 - [x] Palette / menu / modal remain hidden for **imported** model focus (same gate as US-24)
 
 **Out of scope:** frequency ranking; custom default suggestion list; persisting preview camera/orbit; changing spawn/export behavior for parts
+
+### US-28 — Part color maps (textures)
+
+As an editor user, I can apply a simple image texture to a selected part on my created model so props and kit pieces look less flat, and the texture is included when I export a GLB.
+
+**Acceptance**
+
+- [x] Create toolbar on a **created** model offers **Texture** (next to color): choose an image file (png/jpeg/webp as supported by the browser stack); clear returns to flat color (right-click clears when a map is set)
+- [x] Applying a texture sets `MeshStandardMaterial.map` (and marks material for update); part keeps its color as multiplier
+- [x] User can **clear** the texture and return to flat color
+- [x] Primitives keep default UVs; no UV editor in this US
+- [x] Exported GLB includes the texture image for textured parts
+- [x] Imported character materials are not editable through this UI
+- [x] Oversized / failed decodes show a clear error; do not corrupt the part material into a black void without recovery
+
+**Out of scope:** full PBR authoring; texture painting; UV unwrap; server-side texture processing; prep modal (crop / wrap / client bg-remove) — **US-39**
 
 ### US-25 — Grid and rotation snap
 
@@ -554,7 +570,6 @@ As an editor user, I can drag-resize the Library and Settings asides and the bot
 
 Full requirements, design, and tasks live only in the delta folders (not duplicated here). Do not implement until explicitly kicked off:
 
-- **US-28** — Part color maps (textures) → [`specs/us-28/`](../us-28/) (in progress; created parts only)
 - **US-39** — Texture prep modal (crop, wrap, client bg-remove, live preview) → [`specs/us-39/`](../us-39/)
 
 ## Post-MVP user stories
@@ -573,7 +588,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 
 ## Out of scope (still excluded)
 
-- Material / texture editing on **imported** characters (created-model color maps are US-28)
+- Material / texture editing on **imported** characters (created-model color maps are US-28; prep modal is US-39)
 - Kit marketplace / remote download; user-authored kit save/share; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid

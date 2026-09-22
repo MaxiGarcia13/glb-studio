@@ -2,7 +2,7 @@
 
 Delta for a prep modal on created-part color maps (builds on US-28). Parent contract: [`specs/current/requirements.md`](../current/requirements.md).
 
-**Depends on:** US-28 (apply / clear / export color maps on created parts).
+**Depends on:** US-28 (shipped — apply / clear / export color maps on created parts).
 
 **Status:** Not started — do not implement until explicitly kicked off.
 

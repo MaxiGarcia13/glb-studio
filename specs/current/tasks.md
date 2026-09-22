@@ -321,13 +321,20 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] **See more** browse modal (Solids / Planar / Polyhedra) + hero 3D preview + confirm
 - [x] Shared `ViewportEnvironment` (lights + ground) for editor and part preview
 
+## US-28 — Part color maps (textures)
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] `loadImageTexture` + `disposeImageTexture`; apply / clear color map on created parts
+- [x] Create toolbar `PartTextureTool` (choose / replace / right-click clear); imported gated
+- [x] Dispose on part delete / model remove; export embeds maps
+
 ## Open deltas
 
-| US                                     | Status                    | Tasks                                       |
-| -------------------------------------- | ------------------------- | ------------------------------------------- |
-| **US-28** — Part color maps (textures) | in progress               | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
-| **US-39** — Texture prep modal         | not started (after US-28) | [`specs/us-39/tasks.md`](../us-39/tasks.md) |
-| **US-8** — Morph-target editing        | post-MVP, not started     | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
+| US                              | Status                    | Tasks                                       |
+| ------------------------------- | ------------------------- | ------------------------------------------- |
+| **US-39** — Texture prep modal  | not started (after US-28) | [`specs/us-39/tasks.md`](../us-39/tasks.md) |
+| **US-8** — Morph-target editing | post-MVP, not started     | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 
 ## Tech debt
 

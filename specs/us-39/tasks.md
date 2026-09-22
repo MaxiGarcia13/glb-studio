@@ -1,10 +1,10 @@
 # US-39 — Tasks
 
-**Do not start until explicitly kicked off** (after US-28). Tick only after acceptance.
+**Do not start until explicitly kicked off** (US-28 shipped). Tick only after acceptance.
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Explicit start after US-28 ships or is far enough along that apply/clear/export are stable
+- [ ] **Confirm kickoff** — Explicit start (US-28 apply / clear / export is shipped)
 - [ ] **Fold prep note** — On ship: fold into `current/`, changelog row, delete this folder
 
 ## Modal shell
