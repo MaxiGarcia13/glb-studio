@@ -304,11 +304,18 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `ResizableShell` + drag hook; wire Library / Settings (desktop) + preview bar (desktop + mobile)
 - [x] Tracks pane fills bar height; sizes restore from `localStorage` on reload
 
+## US-37 — Create scene undo
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] Delete parts / groups / multi-select roots (aligned with Copy); toolbar enablement
+- [x] `createScene` undo for Add / Paste / Delete (stable UUIDs + parent restore)
+- [x] Delete / Backspace hotkeys; shared `resolveSelectedCreateRoots` + `create-graph-lookup`
+
 ## Open deltas
 
 | US                                     | Status                    | Tasks                                       |
 | -------------------------------------- | ------------------------- | ------------------------------------------- |
-| **US-37** — Create scene undo          | in progress               | [`specs/us-37/tasks.md`](../us-37/tasks.md) |
 | **US-28** — Part color maps (textures) | not started (after US-23) | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
 | **US-8** — Morph-target editing        | post-MVP, not started     | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 
