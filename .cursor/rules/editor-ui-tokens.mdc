@@ -58,7 +58,7 @@ Prefer defaults on shared primitives (`Button` `p-2`, aside/modal `p-4`) over on
 Viewport overlay chrome (Navigate/Edit/Move, transform modes, create tools, aside open chips) uses `FloatingToolbar` from `src/components/floating-toolbar/`:
 
 - Shell: opaque `bg-surface`, `p-2`, `gap-2` (via `floatingToolbarClassName`)
-- Controls: shared `Button` (`ghost` / `primary`) — icon-only; put the name in `aria-label` + `title`
+- Controls: shared `Button` (`ghost` / `primary`) — icon-only; put the name in `aria-label` + `title` (include catalog hotkey + short description when bound)
 - Do not invent ad-hoc `size-8` rails or `bg-control-strong` chips for floating chrome
 
 ```tsx
@@ -69,7 +69,7 @@ Viewport overlay chrome (Navigate/Edit/Move, transform modes, create tools, asid
 
 // ✅ GOOD
 <FloatingToolbar aria-label="Navigate / Edit / Move">
-  <Button variant="ghost" aria-label="Navigate" title="Navigate"><ArrowsHorizontalIcon /></Button>
+  <Button variant="ghost" aria-label="Navigate (1) — Pan through the scene" title="Navigate (1) — Pan through the scene"><ArrowsHorizontalIcon /></Button>
 </FloatingToolbar>
 ```
 

@@ -12,6 +12,7 @@ import { createEmptyModel } from '@/modules/create/actions/create-empty-model';
 import { deleteSelectedPart } from '@/modules/create/actions/delete-selected-part';
 import { pasteCreatePartFromClipboard } from '@/modules/create/actions/paste-create-part-from-clipboard';
 import { nudgeSelection } from '@/modules/viewport/actions/nudge-selection';
+import { setEditTool } from '@/modules/viewport/stores/edit-tool-store';
 import { setTransformMode } from '@/modules/viewport/stores/transform-mode-store';
 import {
   $viewportSettings,
@@ -39,6 +40,9 @@ const HANDLERS: Record<EditorCommandId, () => void> = {
   playPause: togglePlayPause,
   toggleAxes,
   toggleBones,
+  editToolNavigate: () => setEditTool('navigate'),
+  editToolEdit: () => setEditTool('edit'),
+  editToolMove: () => setEditTool('move'),
   transformMove: () => setTransformMode('translate'),
   transformRotate: () => setTransformMode('rotate'),
   transformScale: () => setTransformMode('scale'),

@@ -1,6 +1,9 @@
 import type { KeyboardKeyId } from '../types/keyboard-key-id';
 import type { IconProps } from '@/components/icons/type';
 import {
+  Keyboard1Icon,
+  Keyboard2Icon,
+  Keyboard3Icon,
   KeyboardArrowDownIcon,
   KeyboardArrowLeftIcon,
   KeyboardArrowRightIcon,
@@ -31,6 +34,9 @@ export const KEYBOARD_KEY_ICONS: Record<
   ctrl: KeyboardCtrlIcon,
   shift: KeyboardShiftIcon,
   space: KeyboardSpaceIcon,
+  '1': Keyboard1Icon,
+  '2': Keyboard2Icon,
+  '3': Keyboard3Icon,
   q: KeyboardQIcon,
   w: KeyboardWIcon,
   e: KeyboardEIcon,

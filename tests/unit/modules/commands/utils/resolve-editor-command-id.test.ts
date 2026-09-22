@@ -21,6 +21,9 @@ describe('resolveEditorCommandId', () => {
   it('resolves catalog chords to command ids', () => {
     expect(resolveEditorCommandId(event({ key: ' ' }))).toBe('playPause');
     expect(resolveEditorCommandId(event({ key: 'q' }))).toBe('transformMove');
+    expect(resolveEditorCommandId(event({ key: '1' }))).toBe('editToolNavigate');
+    expect(resolveEditorCommandId(event({ key: '2' }))).toBe('editToolEdit');
+    expect(resolveEditorCommandId(event({ key: '3' }))).toBe('editToolMove');
     expect(
       resolveEditorCommandId(event({ key: 's', metaKey: true })),
     ).toBe('savePending');

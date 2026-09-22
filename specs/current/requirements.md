@@ -237,6 +237,7 @@ As an editor user, I can choose Navigate, Edit, or Move in the preview — orbit
 **Acceptance**
 
 - [x] When a model is loaded, preview chrome shows mutually exclusive **Navigate** (`ArrowsHorizontalIcon`), **Edit** (`CursorIcon`), and **Move** (`MoveIcon`) tool toggles in that order; default tool is **Edit**
+- [x] Catalog hotkeys **1 / 2 / 3** switch Navigate / Edit / Move tool (same as the preview toolbar); tooltips include the hotkey and a short description
 - [x] **Navigate:** OrbitControls only with hand-tool mapping (primary drag **pans** through the world; secondary drag orbits; scroll zooms); no TransformControls; raycast does not select or focus; Q / W / E toolbar is hidden
 - [x] **Edit:** raycast selects a bone or mesh; TransformControls support translate / rotate / scale (**Q / W / E** toolbar when selected — US-10); works with **no** imported / active clip
 - [x] **Move:** TransformControls translate the active model root on **world X / Y / Z** only; transform-mode toolbar hidden here (US-21 adds rotate / scale + **Q / W / E**); raycast does not switch selection away from the root
@@ -507,6 +508,7 @@ As an editor user, I can undo and redo animation edits within the session, and I
 - [x] A pure command catalog is the single source of truth for chords, labels, and categories (hotkeys + Commands modal share it)
 - [x] Shortcuts do not fire when focus is in an input, textarea, select, or contenteditable that owns typing
 - [x] Transform modes: **Q** Move, **W** Rotate, **E** Scale; toolbar labels match the catalog
+- [x] Edit tools: **1** Navigate, **2** Edit, **3** Move tool; preview toolbar tooltips match the catalog chords
 - [x] **R** toggles world axes visibility; **B** toggles skeleton bone lines (`bonesVisible`)
 - [x] **Space** toggles play / pause when a clip can play
 - [x] Arrow keys nudge the current selection on **X** (left/right) and **Y** (down/up); **Shift+↑ / Shift+↓** nudge on **Z**; each step is `0.01` m (same as position TRS inputs), not the snap grid step; part / model multi-select nudges every selected root by that step

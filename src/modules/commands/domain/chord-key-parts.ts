@@ -1,8 +1,11 @@
 import type { EditorCommandChord } from '../types/editor-command';
 import type { KeyboardKeyId } from '../types/keyboard-key-id';
 
-/** Letter keys that have a matching keyboard icon in the chord UI. */
-const LETTER_KEY_IDS = new Set<string>([
+/** Letter / digit keys that have a matching keyboard icon in the chord UI. */
+const ICON_KEY_IDS = new Set<string>([
+  '1',
+  '2',
+  '3',
   'q',
   'w',
   'e',
@@ -53,7 +56,7 @@ function resolveKeyId(
   }
   if (chord.key.length === 1) {
     const letter = chord.key.toLowerCase();
-    if (LETTER_KEY_IDS.has(letter)) {
+    if (ICON_KEY_IDS.has(letter)) {
       return letter as KeyboardKeyId;
     }
   }

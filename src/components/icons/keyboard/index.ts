@@ -1,3 +1,6 @@
+export { Keyboard1Icon } from './keyboard-1-icon';
+export { Keyboard2Icon } from './keyboard-2-icon';
+export { Keyboard3Icon } from './keyboard-3-icon';
 export { KeyboardArrowDownIcon } from './keyboard-arrow-down-icon';
 export { KeyboardArrowLeftIcon } from './keyboard-arrow-left-icon';
 export { KeyboardArrowRightIcon } from './keyboard-arrow-right-icon';

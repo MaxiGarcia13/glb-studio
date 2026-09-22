@@ -194,7 +194,7 @@ Bind-pose / Move / T-pose commit branching: see **Edit / Move tools & bind pose 
 
 ## Edit / Move tools & bind pose (US-15 + US-10)
 
-1. **`$editTool`** (`'navigate' | 'edit' | 'move'`, default `'edit'`) — toolbar in `EditorPreview` when a model is loaded; button order **Navigate** (`ArrowsHorizontalIcon`) → **Edit** (`CursorIcon`) → **Move** (`MoveIcon`)
+1. **`$editTool`** (`'navigate' | 'edit' | 'move'`, default `'edit'`) — toolbar in `EditorPreview` when a model is loaded; button order **Navigate** (`ArrowsHorizontalIcon`) → **Edit** (`CursorIcon`) → **Move** (`MoveIcon`); catalog hotkeys **1 / 2 / 3**
 2. **Navigate** — free camera travel via `OrbitControls` with **hand-tool** mapping (LMB / one-finger **pan**, RMB orbit, scroll / pinch zoom); no TransformControls; no raycast selection or model focus from picks; **Q / W / E** toolbar hidden. Edit / Move keep orbit-first mapping (LMB rotate, RMB pan)
 3. **Edit** — raycast selection + TransformControls in local space; **Q / W / E** when something is selected; works with **no** active clip (T-pose). On created models, pick remaps stamped parts to the nearest create-group when present (US-27 joint select); a second pick while that group is selected drills into the mesh (plain or Shift)
 4. **Move** — attach TransformControls to the active model root in **world** space; mode from `$transformMode` (translate / rotate / scale); show **Q / W / E** toolbar while Move is active; ignore raycast picks so the user stays on the root
@@ -220,18 +220,21 @@ Multi-select **position** (nudge + Settings XYZ delta) moves every selected mode
 
 ### Placement
 
-- Module `commands` — pure catalog `commands/domain/editor-commands.ts` (`{ id, chords, label, category }`); dispatcher `commands/actions/run-editor-command.ts`; hotkeys `commands/hooks/use-editor-command-hotkeys` (replaces `use-transform-mode-hotkeys`); `CommandsModal` + `EditorEditMenu` on `EditorToolbar`
+- Module `commands` — pure catalog `commands/domain/editor-command-catalog.ts` (`{ id, chords, label, category }`); lookup / chord format helpers in `editor-commands.ts`; dispatcher `commands/actions/run-editor-command.ts`; hotkeys `commands/hooks/use-editor-command-hotkeys` (replaces `use-transform-mode-hotkeys`); `CommandsModal` + `EditorEditMenu` on `EditorToolbar`
 - Module `animation` — undo stack next to the clip library: pure `animation/domain/command-stack.ts`; session `animation/stores/undo-stack-store.ts` (`$canUndo` / `$canRedo`); apply via `apply-undoable-command` + mixer rebind
 
 ### Keymap (locked)
 
-**Cmd** = meta on macOS; **Ctrl** elsewhere. Letter keys case-insensitive. Transform modes **Q / W / E** = Move / Rotate / Scale; **R** = axes; **B** = bones.
+**Cmd** = meta on macOS; **Ctrl** elsewhere. Letter keys case-insensitive. Edit tools **1 / 2 / 3** = Navigate / Edit / Move tool; Transform modes **Q / W / E** = Move / Rotate / Scale; **R** = axes; **B** = bones.
 
 | Command id                           | Chord(s)                     | Label                             | Category  |
 | ------------------------------------ | ---------------------------- | --------------------------------- | --------- |
 | `playPause`                          | Space                        | Play / Pause                      | Playback  |
 | `toggleAxes`                         | R                            | Toggle world axes                 | Viewport  |
 | `toggleBones`                        | B                            | Toggle bones                      | Viewport  |
+| `editToolNavigate`                   | 1                            | Navigate                          | Viewport  |
+| `editToolEdit`                       | 2                            | Edit                              | Viewport  |
+| `editToolMove`                       | 3                            | Move tool                         | Viewport  |
 | `transformMove`                      | Q                            | Move                              | Transform |
 | `transformRotate`                    | W                            | Rotate                            | Transform |
 | `transformScale`                     | E                            | Scale                             | Transform |

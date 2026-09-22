@@ -142,6 +142,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Settings General: editable model-root X / Y / Z (clip-scoped when a clip is active)
 - [x] Active Clip **T-pose** option restores rest / bind pose
 - [x] **Navigate** tool (`ArrowsHorizontalIcon`, first button): hand-tool pan travel; no gizmo / pick; default remains Edit
+- [x] Catalog hotkeys **1 / 2 / 3** for Navigate / Edit / Move tool; toolbar tooltips include chord + short description
 
 ## US-7 — Multi-clip blending
 
@@ -289,7 +290,7 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 **Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
 
 - [x] Command catalog + hotkey dispatcher + Commands modal + Edit menu Undo / Redo
-- [x] Keymap: Q/W/E transform, R axes, B bones, Space play, arrows nudge, Cmd+S commit, N new model, create-part C/V/Delete
+- [x] Keymap: Q/W/E transform, 1/2/3 Navigate/Edit/Move tool, R axes, B bones, Space play, arrows nudge, Cmd+S commit, N new model, create-part C/V/Delete
 - [x] Pose auto-commit (no Save / Restore chrome); session undo stack for trim / keyframe / timeScale
 - [x] Mixer rebind after undo/redo; pre-trim restore superseded by `trimClip` undo
 - [x] `createHierarchy` undo for Group / Ungroup / Make connector / Unjoint (stable group UUIDs)

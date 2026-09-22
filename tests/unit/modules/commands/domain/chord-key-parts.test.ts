@@ -10,6 +10,15 @@ describe('chordToKeyboardKeyParts', () => {
     expect(chordToKeyboardKeyParts({ key: 'n' }, true)).toEqual([
       { id: 'n', label: 'N' },
     ]);
+    expect(chordToKeyboardKeyParts({ key: '1' }, true)).toEqual([
+      { id: '1', label: '1' },
+    ]);
+    expect(chordToKeyboardKeyParts({ key: '2' }, false)).toEqual([
+      { id: '2', label: '2' },
+    ]);
+    expect(chordToKeyboardKeyParts({ key: '3' }, true)).toEqual([
+      { id: '3', label: '3' },
+    ]);
   });
 
   it('maps named keys to icon ids', () => {
