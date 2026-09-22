@@ -16,7 +16,7 @@ Tick only after acceptance.
 ## Prep controls
 
 - [x] **Crop + flip** — Client-side; updates draft + preview
-- [ ] **Wrap presets** — Clamp / Tile 2× / Tile 4× (or equivalent) on draft texture
+- [x] **Wrap presets** — Clamp / Tile 2× / Tile 4× (or equivalent) on draft texture
 - [ ] **Remove background** — Opt-in client WASM; busy state; alpha draft
 - [ ] **Material alpha** — Transparent cutouts preview + export when map has alpha
 

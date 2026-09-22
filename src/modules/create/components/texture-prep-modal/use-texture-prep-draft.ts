@@ -1,5 +1,6 @@
 import type { Texture } from 'three';
 import type { ImageTextureTransform } from '@/modules/create/adapters/transform-image-texture';
+import type { TextureWrapPresetId } from '@/modules/create/domain/texture-wrap-preset';
 import { useEffect, useRef, useState } from 'react';
 import {
   dataUrlFromCanvas,
@@ -12,6 +13,10 @@ import {
   isAlreadySquare,
 } from '@/modules/create/domain/texture-crop';
 import { texturePrepSoftWarnings } from '@/modules/create/domain/texture-prep-guidance';
+import {
+  applyTextureWrapPreset,
+  inferTextureWrapPreset,
+} from '@/modules/create/domain/texture-wrap-preset';
 import { disposeImageTexture } from '@/utils/dispose-image-texture';
 import { bitmapSize } from './bitmap-size';
 
@@ -30,10 +35,12 @@ export interface TexturePrepDraft {
   warnings: string[];
   busy: boolean;
   canCropToSquare: boolean;
+  wrapPreset: TextureWrapPresetId;
   pickFile: (file: File | undefined) => Promise<void>;
   flipX: () => Promise<void>;
   flipY: () => Promise<void>;
   cropToSquare: () => Promise<void>;
+  setWrapPreset: (preset: TextureWrapPresetId) => void;
   close: () => void;
 }
 
@@ -62,13 +69,17 @@ export function useTexturePrepDraft({
   const [error, setError] = useState<string | null>(null);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [wrapPreset, setWrapPresetState]
+    = useState<TextureWrapPresetId>('clamp');
 
   const draftTextureRef = useRef<Texture | null>(null);
   const thumbUrlRef = useRef<string | null>(null);
   const seededMapRef = useRef(seededMap);
+  const wrapPresetRef = useRef<TextureWrapPresetId>('clamp');
   draftTextureRef.current = draftTexture;
   thumbUrlRef.current = thumbUrl;
   seededMapRef.current = seededMap;
+  wrapPresetRef.current = wrapPreset;
 
   const workingTexture = (): Texture | null =>
     draftTextureRef.current ?? seededMapRef.current;
@@ -86,6 +97,8 @@ export function useTexturePrepDraft({
     setThumbUrl(null);
     setSourceName(null);
     setWarnings([]);
+    wrapPresetRef.current = 'clamp';
+    setWrapPresetState('clamp');
   };
 
   const close = () => {
@@ -118,6 +131,9 @@ export function useTexturePrepDraft({
     setSourceName(seeded?.name || null);
     const size = seeded ? bitmapSize(seeded) : null;
     setWarnings(size ? texturePrepSoftWarnings(size.width, size.height) : []);
+    const preset = seeded ? inferTextureWrapPreset(seeded) : 'clamp';
+    wrapPresetRef.current = preset;
+    setWrapPresetState(preset);
   }, [open, partId]);
 
   useEffect(() => {
@@ -131,6 +147,7 @@ export function useTexturePrepDraft({
     nextThumbUrl: string | null,
     name: string | null,
   ) => {
+    applyTextureWrapPreset(texture, wrapPresetRef.current);
     draftTextureRef.current = texture;
     setDraftTexture(texture);
     if (name) {
@@ -144,6 +161,24 @@ export function useTexturePrepDraft({
     setWarnings(
       size ? texturePrepSoftWarnings(size.width, size.height) : [],
     );
+  };
+
+  /**
+   * Wrap mutates GPU texture state. Clone a seeded live map first so Cancel
+   * never leaves wrap/repeat changes on the real part.
+   */
+  const ensureOwnedDraft = (): Texture | null => {
+    if (draftTextureRef.current) {
+      return draftTextureRef.current;
+    }
+    const seeded = seededMapRef.current;
+    if (!seeded) {
+      return null;
+    }
+    const clone = seeded.clone();
+    clone.needsUpdate = true;
+    setOwnedDraft(clone, thumbUrlRef.current, clone.name || null);
+    return clone;
   };
 
   const pickFile = async (file: File | undefined) => {
@@ -215,6 +250,19 @@ export function useTexturePrepDraft({
     await applyTransform({ crop: centerSquareCrop(size.width, size.height) });
   };
 
+  const setWrapPreset = (preset: TextureWrapPresetId) => {
+    if (busy) {
+      return;
+    }
+    wrapPresetRef.current = preset;
+    setWrapPresetState(preset);
+    const texture = ensureOwnedDraft();
+    if (!texture) {
+      return;
+    }
+    applyTextureWrapPreset(texture, preset);
+  };
+
   const previewSize = bitmapSize(draftTexture ?? seededMap);
   const canCropToSquare = Boolean(
     previewSize && !isAlreadySquare(previewSize.width, previewSize.height),
@@ -228,10 +276,12 @@ export function useTexturePrepDraft({
     warnings,
     busy,
     canCropToSquare,
+    wrapPreset,
     pickFile,
     flipX,
     flipY,
     cropToSquare,
+    setWrapPreset,
     close,
   };
 }

@@ -6,6 +6,7 @@ import { TexturePrepActions } from './texture-prep-actions';
 import { TexturePrepMessages } from './texture-prep-messages';
 import { TexturePrepSourceStrip } from './texture-prep-source-strip';
 import { TexturePrepTransformControls } from './texture-prep-transform-controls';
+import { TexturePrepWrapControls } from './texture-prep-wrap-controls';
 import { useTexturePrepDraft } from './use-texture-prep-draft';
 
 interface TexturePrepModalProps {
@@ -14,8 +15,8 @@ interface TexturePrepModalProps {
 }
 
 /**
- * Prep modal for created-part color maps (US-39). Choose / replace + crop /
- * flip; wrap / bg-remove / Apply commit follow later.
+ * Prep modal for created-part color maps (US-39). Choose / replace, crop /
+ * flip, and wrap presets; bg-remove / Apply commit follow later.
  */
 export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
   const part = useSelectedCreatedPart();
@@ -30,10 +31,12 @@ export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
     warnings,
     busy,
     canCropToSquare,
+    wrapPreset,
     pickFile,
     flipX,
     flipY,
     cropToSquare,
+    setWrapPreset,
     close,
   } = useTexturePrepDraft({
     open,
@@ -84,6 +87,12 @@ export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
                 void cropToSquare();
               }}
             />
+            <TexturePrepWrapControls
+              enabled={hasSource}
+              busy={busy}
+              value={wrapPreset}
+              onChange={setWrapPreset}
+            />
             <TexturePrepMessages error={error} warnings={warnings} />
           </div>
 
@@ -97,6 +106,7 @@ export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
               params={part.record.params}
               color={material?.color}
               draftTexture={previewTexture}
+              wrapPreset={wrapPreset}
             />
           </div>
         </div>

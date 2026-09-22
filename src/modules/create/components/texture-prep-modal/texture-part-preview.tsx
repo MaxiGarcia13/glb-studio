@@ -1,4 +1,5 @@
 import type { Color, Texture } from 'three';
+import type { TextureWrapPresetId } from '@/modules/create/domain/texture-wrap-preset';
 import type { PartKindId, PartSizeParams } from '@/modules/create/types/part';
 import { OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
@@ -23,6 +24,11 @@ interface TexturePartPreviewProps {
    * component never disposes the texture.
    */
   draftTexture?: Texture | null;
+  /**
+   * Included so wrap/repeat changes on the same texture reference still
+   * refresh the preview material (caller owns applying the preset).
+   */
+  wrapPreset?: TextureWrapPresetId;
 }
 
 /**
@@ -34,6 +40,7 @@ export function TexturePartPreview({
   params,
   color,
   draftTexture = null,
+  wrapPreset = 'clamp',
 }: TexturePartPreviewProps) {
   const paramsKey = JSON.stringify(params);
   const mesh = useMemo(() => {
@@ -56,7 +63,7 @@ export function TexturePartPreview({
       // Detach before mesh dispose so caller-owned drafts are not freed.
       material.map = null;
     };
-  }, [mesh, color, draftTexture]);
+  }, [mesh, color, draftTexture, wrapPreset]);
 
   useEffect(() => {
     return () => {
