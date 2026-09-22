@@ -12,5 +12,5 @@ export const DEFAULT_PART_SUGGESTION_ORDER = [
   'cone',
 ] as const satisfies readonly PartKindId[];
 
-export type DefaultPartSuggestionId =
-  (typeof DEFAULT_PART_SUGGESTION_ORDER)[number];
+export type DefaultPartSuggestionId
+  = (typeof DEFAULT_PART_SUGGESTION_ORDER)[number];
