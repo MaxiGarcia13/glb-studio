@@ -1,15 +1,15 @@
 # US-39 — Tasks
 
-**Do not start until explicitly kicked off** (US-28 shipped). Tick only after acceptance.
+Tick only after acceptance.
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Explicit start (US-28 apply / clear / export is shipped)
+- [x] **Confirm kickoff** — Explicit start (US-28 apply / clear / export is shipped)
 - [ ] **Fold prep note** — On ship: fold into `current/`, changelog row, delete this folder
 
 ## Modal shell
 
-- [ ] **Texture prep modal** — Open from create toolbar Texture; Cancel / Apply; created-part gate
+- [x] **Texture prep modal** — Open from create toolbar Texture; Cancel / Apply; created-part gate
 - [ ] **Live 3D preview** — Draft map on preview of selected part kind / mesh; `ViewportEnvironment`
 - [ ] **Choose / replace image** — US-28 decode path; errors and guidance visible in modal
 

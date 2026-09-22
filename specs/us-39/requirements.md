@@ -4,7 +4,7 @@ Delta for a prep modal on created-part color maps (builds on US-28). Parent cont
 
 **Depends on:** US-28 (shipped — apply / clear / export color maps on created parts).
 
-**Status:** Not started — do not implement until explicitly kicked off.
+**Status:** In progress — kicked off after US-28.
 
 **Note:** Created parts only. Imported character materials stay out of scope. No server-side image pipeline in this US.
 
