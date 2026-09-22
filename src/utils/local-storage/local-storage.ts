@@ -40,22 +40,64 @@ export function removeStored(key: StorageKey): void {
   }
 }
 
+/**
+ * Read a stored string and map it through `parse`. Missing key, thrown parse,
+ * or `null` from parse → `fallback`.
+ */
+export function getStoredParsed<T>(
+  key: StorageKey,
+  parse: (raw: string) => T | null,
+  fallback: T,
+): T {
+  const raw = getStoredString(key);
+  if (raw === null) {
+    return fallback;
+  }
+
+  try {
+    const value = parse(raw);
+    return value === null ? fallback : value;
+  } catch {
+    return fallback;
+  }
+}
+
+/** JSON.parse + optional validate; invalid / missing → `fallback`. */
+export function getStoredJson<T>(
+  key: StorageKey,
+  fallback: T,
+  validate?: (value: unknown) => T | null,
+): T {
+  return getStoredParsed(
+    key,
+    (raw) => {
+      const parsed: unknown = JSON.parse(raw);
+      return validate ? validate(parsed) : (parsed as T);
+    },
+    fallback,
+  );
+}
+
+export function setStoredJson(key: StorageKey, value: unknown): void {
+  setStoredString(key, JSON.stringify(value));
+}
+
 export function getStoredNumber(
   key: StorageKey,
   fallback: number,
   opts?: { min?: number; max?: number },
 ): number {
-  const raw = getStoredString(key);
-  if (raw === null) {
-    return clamp(fallback, opts?.min, opts?.max);
-  }
-
-  const parsed = Number.parseFloat(raw);
-  if (!Number.isFinite(parsed)) {
-    return clamp(fallback, opts?.min, opts?.max);
-  }
-
-  return clamp(parsed, opts?.min, opts?.max);
+  return getStoredParsed(
+    key,
+    (raw) => {
+      const parsed = Number.parseFloat(raw);
+      if (!Number.isFinite(parsed)) {
+        return null;
+      }
+      return clamp(parsed, opts?.min, opts?.max);
+    },
+    clamp(fallback, opts?.min, opts?.max),
+  );
 }
 
 export function setStoredNumber(key: StorageKey, value: number): void {

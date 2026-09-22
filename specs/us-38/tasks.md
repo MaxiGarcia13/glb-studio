@@ -12,7 +12,7 @@
 - [x] **Default suggestion order** — Constant: box, sphere, capsule, dodecahedron, cone
 - [x] **Resolve compact menu kinds** — Pure helper: MRU + defaults → five unique ids
 - [x] **Record recent kind** — Prepend, dedupe, truncate to five; persist via localStorage util
-- [ ] **Load recent kinds** — Read/parse on mount; ignore invalid entries; empty → cold start
+- [x] **Load recent kinds** — Read/parse on mount; ignore invalid entries; empty → cold start
 - [ ] **Unit tests** — Cold start, pad with defaults, promote existing, truncate, invalid storage
 
 ## Compact menu UI

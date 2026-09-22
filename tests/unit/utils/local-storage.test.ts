@@ -2,9 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { STORAGE_KEYS } from '@/utils/local-storage/keys';
 import {
+  getStoredJson,
   getStoredNumber,
+  getStoredParsed,
   getStoredString,
   removeStored,
+  setStoredJson,
   setStoredNumber,
   setStoredString,
 } from '@/utils/local-storage/local-storage';
@@ -53,6 +56,37 @@ describe('local-storage', () => {
 
     setStoredString(STORAGE_KEYS.previewBarHeight, 'not-a-number');
     expect(getStoredNumber(STORAGE_KEYS.previewBarHeight, 224, { min: 160, max: 560 })).toBe(224);
+  });
+
+  it('getStoredParsed falls back on missing, null parse, and throw', () => {
+    expect(getStoredParsed(STORAGE_KEYS.libraryAsideWidth, () => 1, 0)).toBe(0);
+
+    setStoredString(STORAGE_KEYS.libraryAsideWidth, 'x');
+    expect(getStoredParsed(STORAGE_KEYS.libraryAsideWidth, () => null, 0)).toBe(0);
+    expect(
+      getStoredParsed(
+        STORAGE_KEYS.libraryAsideWidth,
+        () => {
+          throw new Error('bad');
+        },
+        0,
+      ),
+    ).toBe(0);
+    expect(getStoredParsed(STORAGE_KEYS.libraryAsideWidth, (raw) => raw.length, 0)).toBe(1);
+  });
+
+  it('round-trips JSON with optional validate', () => {
+    setStoredJson(STORAGE_KEYS.recentPartKinds, ['box', 'sphere']);
+    expect(getStoredJson(STORAGE_KEYS.recentPartKinds, [])).toEqual(['box', 'sphere']);
+
+    setStoredString(STORAGE_KEYS.recentPartKinds, '{');
+    expect(getStoredJson(STORAGE_KEYS.recentPartKinds, ['fallback'])).toEqual(['fallback']);
+
+    setStoredJson(STORAGE_KEYS.recentPartKinds, { nope: true });
+    expect(
+      getStoredJson(STORAGE_KEYS.recentPartKinds, [], (value) =>
+        Array.isArray(value) ? value : null),
+    ).toEqual([]);
   });
 
   it('swallows localStorage failures', () => {

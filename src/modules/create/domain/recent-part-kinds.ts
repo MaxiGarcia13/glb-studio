@@ -1,6 +1,8 @@
 import type { PartKindId } from '@/modules/create/types/part';
 import { DEFAULT_PART_SUGGESTION_ORDER } from '@/modules/create/constants/default-part-suggestions';
-import { setStoredString, STORAGE_KEYS } from '@/utils/local-storage';
+import { getStoredJson, setStoredJson, STORAGE_KEYS } from '@/utils/local-storage';
+
+import { isPartKindId } from './part-data';
 
 /** Compact Add-part menu always shows this many kind rows. */
 export const COMPACT_MENU_KIND_COUNT = 5;
@@ -49,6 +51,37 @@ export function recordRecentKind(
   kindId: PartKindId,
 ): PartKindId[] {
   const next = prependRecentKind(recent, kindId);
-  setStoredString(STORAGE_KEYS.recentPartKinds, JSON.stringify(next));
+  setStoredJson(STORAGE_KEYS.recentPartKinds, next);
   return next;
+}
+
+/** Keep valid unique kind ids, newest-first order, capped at the menu window. */
+export function sanitizeRecentKinds(value: unknown): PartKindId[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const result: PartKindId[] = [];
+  const seen = new Set<PartKindId>();
+
+  for (const entry of value) {
+    if (!isPartKindId(entry) || seen.has(entry)) {
+      continue;
+    }
+    seen.add(entry);
+    result.push(entry);
+    if (result.length === COMPACT_MENU_KIND_COUNT) {
+      break;
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Read the persisted MRU window. Invalid / missing storage → `[]` (cold start).
+ * Drops unknown ids, duplicates, and entries past the compact-menu window.
+ */
+export function loadRecentKinds(): PartKindId[] {
+  return getStoredJson(STORAGE_KEYS.recentPartKinds, [], sanitizeRecentKinds);
 }
