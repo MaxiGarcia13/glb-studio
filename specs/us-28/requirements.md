@@ -4,7 +4,7 @@ Delta for optional image textures on created-model parts. Parent contract: [`spe
 
 **Depends on:** US-23 (part inspector on created models). Improves with US-24 (more parts to texture).
 
-**Status:** Not started — do not implement until explicitly kicked off.
+**Status:** In progress — kicked off.
 
 **Note:** Product-wide “material / texture editing” on imported characters remains out of scope; this US is **created parts only**.
 

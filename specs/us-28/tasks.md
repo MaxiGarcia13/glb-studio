@@ -1,15 +1,15 @@
 # US-28 — Tasks
 
-**Do not start until explicitly kicked off** (after US-23). Tick only after acceptance.
+Tick only after acceptance.
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Explicitly carve the created-only exception to the material/texture out-of-scope rule when shipping
+- [x] **Confirm kickoff** — Explicitly carve the created-only exception to the material/texture out-of-scope rule when shipping
 - [ ] **Fold prep note** — On ship: update `current/` out-of-scope wording, changelog, delete this folder
 
 ## Texture apply
 
-- [ ] **Load image to texture helper** — Client-side only; dispose previous texture on replace; handle decode failures with user-visible error
+- [x] **Load image to texture helper** — Client-side only; dispose previous texture on replace; handle decode failures with user-visible error
 - [ ] **Inspector Texture control** — File picker + Clear; only for selected part on focused created model
 - [ ] **Material update** — Set / unset `map` on `MeshStandardMaterial` without breaking flat-color workflow
 
