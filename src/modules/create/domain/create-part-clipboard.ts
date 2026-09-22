@@ -18,6 +18,26 @@ import { readCreatePart } from './part-data';
 import { getPartKind } from './part-kind';
 import { nextPartName } from './part-name';
 
+export interface SnapshotClipboardOptions {
+  /** Include Object3D.uuid (+ exact name) for undo restore (US-37). */
+  includeIdentity?: boolean;
+}
+
+export interface InstantiateClipboardOptions {
+  /** Local +X on each payload root. Default: paste offset. Pass `0` for undo. */
+  rootOffsetX?: number;
+  /**
+   * Assign recorded uuids and exact names. When false (user paste), mint unique
+   * names and leave Three.js uuids alone.
+   */
+  preserveIdentity?: boolean;
+  /**
+   * Parent for each payload root. Default: always `sceneRoot`.
+   * Index matches `payload.roots`.
+   */
+  resolveRootParent?: (rootIndex: number) => Object3D;
+}
+
 function readTrs(source: Object3D): Pick<
   CreatePartClipboardPartNode,
   'position' | 'quaternion' | 'scale'
@@ -56,6 +76,7 @@ function applyTrs(
 /** Snapshot a stamped create part for the in-session clipboard, or null. */
 export function snapshotCreatePart(
   source: Mesh,
+  options?: SnapshotClipboardOptions,
 ): CreatePartClipboardPartNode | null {
   const record = readCreatePart(source);
   if (!record) {
@@ -64,18 +85,26 @@ export function snapshotCreatePart(
 
   const material = findMeshStandardMaterial(source);
 
-  return {
+  const node: CreatePartClipboardPartNode = {
     type: 'part',
     kind: record.kind,
     params: { ...record.params },
     colorHex: material ? toHexColor(material) : null,
     ...readTrs(source),
   };
+
+  if (options?.includeIdentity) {
+    node.uuid = source.uuid;
+    node.name = source.name || undefined;
+  }
+
+  return node;
 }
 
 /** Snapshot a create group (and stamped descendants), or null. */
 export function snapshotCreateGroup(
   source: Object3D,
+  options?: SnapshotClipboardOptions,
 ): CreatePartClipboardGroupNode | null {
   if (!isCreateGroup(source)) {
     return null;
@@ -83,31 +112,38 @@ export function snapshotCreateGroup(
 
   const children: CreatePartClipboardNode[] = [];
   for (const child of source.children) {
-    const node = snapshotCreateHierarchyNode(child);
+    const node = snapshotCreateHierarchyNode(child, options);
     if (node) {
       children.push(node);
     }
   }
 
-  return {
+  const node: CreatePartClipboardGroupNode = {
     type: 'group',
     role: readCreateGroup(source)?.kind ?? 'group',
     name: source.name || undefined,
     ...readTrs(source),
     children,
   };
+
+  if (options?.includeIdentity) {
+    node.uuid = source.uuid;
+  }
+
+  return node;
 }
 
 /** Snapshot a stamped part or create group, or null. */
 export function snapshotCreateHierarchyNode(
   source: Object3D,
+  options?: SnapshotClipboardOptions,
 ): CreatePartClipboardNode | null {
   if (isCreateGroup(source)) {
-    return snapshotCreateGroup(source);
+    return snapshotCreateGroup(source, options);
   }
   const mesh = source as Mesh;
   if (mesh.isMesh) {
-    return snapshotCreatePart(mesh);
+    return snapshotCreatePart(mesh, options);
   }
   return null;
 }
@@ -152,10 +188,11 @@ export function resolveClipboardRoots(
 /** Build a clipboard payload from hierarchy roots, or null when empty. */
 export function snapshotClipboardFromRoots(
   roots: readonly Object3D[],
+  options?: SnapshotClipboardOptions,
 ): CreatePartClipboardPayload | null {
   const nodes: CreatePartClipboardNode[] = [];
   for (const root of roots) {
-    const node = snapshotCreateHierarchyNode(root);
+    const node = snapshotCreateHierarchyNode(root, options);
     if (node) {
       nodes.push(node);
     }
@@ -166,16 +203,34 @@ export function snapshotClipboardFromRoots(
   return { roots: nodes };
 }
 
+function assignIdentity(target: Object3D, uuid: string | undefined, name: string | undefined): void {
+  if (uuid) {
+    target.uuid = uuid;
+  }
+  if (name !== undefined) {
+    target.name = name;
+  }
+}
+
 function instantiatePartNode(
   entry: CreatePartClipboardPartNode,
   sceneRoot: Object3D,
   parent: Object3D,
   offsetX: number,
+  preserveIdentity: boolean,
 ): Mesh {
   const kind = getPartKind(entry.kind);
   const mesh = kind.createMesh({ ...entry.params });
   applyTrs(mesh, entry, offsetX);
-  mesh.name = nextPartName(sceneRoot, entry.kind);
+
+  if (preserveIdentity) {
+    assignIdentity(mesh, entry.uuid, entry.name);
+    if (!entry.name) {
+      mesh.name = nextPartName(sceneRoot, entry.kind);
+    }
+  } else {
+    mesh.name = nextPartName(sceneRoot, entry.kind);
+  }
 
   if (entry.colorHex) {
     const material = findMeshStandardMaterial(mesh);
@@ -193,12 +248,22 @@ function instantiateGroupNode(
   sceneRoot: Object3D,
   parent: Object3D,
   offsetX: number,
+  preserveIdentity: boolean,
 ): Group {
   const role = entry.role === 'joint' ? 'joint' : 'group';
   const baseName = entry.name?.trim()
     || (role === 'joint' ? 'joint' : 'group');
   const group = new ThreeGroup();
-  group.name = nextObjectName(sceneRoot, baseName);
+
+  if (preserveIdentity) {
+    assignIdentity(group, entry.uuid, entry.name);
+    if (!entry.name) {
+      group.name = nextObjectName(sceneRoot, baseName);
+    }
+  } else {
+    group.name = nextObjectName(sceneRoot, baseName);
+  }
+
   if (role === 'joint') {
     writeCreateJoint(group);
   } else {
@@ -208,7 +273,7 @@ function instantiateGroupNode(
   parent.add(group);
 
   for (const child of entry.children) {
-    instantiateClipboardNode(child, sceneRoot, group, 0);
+    instantiateClipboardNode(child, sceneRoot, group, 0, preserveIdentity);
   }
 
   return group;
@@ -219,23 +284,35 @@ function instantiateClipboardNode(
   sceneRoot: Object3D,
   parent: Object3D,
   offsetX: number,
+  preserveIdentity: boolean,
 ): Object3D {
   if (entry.type === 'group') {
-    return instantiateGroupNode(entry, sceneRoot, parent, offsetX);
+    return instantiateGroupNode(entry, sceneRoot, parent, offsetX, preserveIdentity);
   }
-  return instantiatePartNode(entry, sceneRoot, parent, offsetX);
+  return instantiatePartNode(entry, sceneRoot, parent, offsetX, preserveIdentity);
 }
 
 /**
- * Instantiate a clipboard payload into `sceneRoot`: unique names, slight +X
- * offset on each root so pasted nodes are not stacked on the source pose.
- * Returns the instantiated root objects in payload order.
+ * Instantiate a clipboard payload into `sceneRoot`.
+ * Default (user paste): unique names, slight +X offset on each root.
+ * Undo restore: `preserveIdentity: true`, `rootOffsetX: 0`, custom parents.
  */
 export function instantiateClipboardPayload(
   payload: CreatePartClipboardPayload,
   sceneRoot: Object3D,
+  options?: InstantiateClipboardOptions,
 ): Object3D[] {
-  return payload.roots.map((root) =>
-    instantiateClipboardNode(root, sceneRoot, sceneRoot, DUPLICATE_PART_OFFSET),
+  const offsetX = options?.rootOffsetX ?? DUPLICATE_PART_OFFSET;
+  const preserveIdentity = options?.preserveIdentity ?? false;
+  const resolveParent = options?.resolveRootParent ?? (() => sceneRoot);
+
+  return payload.roots.map((root, index) =>
+    instantiateClipboardNode(
+      root,
+      sceneRoot,
+      resolveParent(index),
+      offsetX,
+      preserveIdentity,
+    ),
   );
 }

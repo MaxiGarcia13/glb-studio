@@ -47,7 +47,7 @@ function resolveKeyId(
   if (chord.key === 'ArrowDown') {
     return 'arrow_down';
   }
-  if (chord.key === 'Delete') {
+  if (chord.key === 'Delete' || chord.key === 'Backspace') {
     return 'delete';
   }
   if (chord.key.length === 1) {

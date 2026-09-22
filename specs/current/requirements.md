@@ -341,7 +341,7 @@ As an editor user with little or no 3D experience, I can create a new empty mode
 - [x] Parts are named meshes; selection name overlay shows those names
 - [x] **Edit** tool + TransformControls move / rotate / scale parts; dirty pose **auto-commits** (US-10 / US-15 bind-pose style on the scene graph — no animation keyframes required)
 - [x] When a part is selected on a created model, the create toolbar offers **color** and the Settings inspector shows **size** fields for that part kind; changes update the viewport live
-- [x] User can **Duplicate** and **Delete** the selected part from the create toolbar (delete removes the mesh only, not the library model)
+- [x] User can **Duplicate** and **Delete** the selected part from the create toolbar (delete removes the mesh only, not the library model); Delete also removes selected create groups / multi-select roots (US-37)
 - [x] Zip export (US-5 / US-22 path) packs created model scenes as `{model}.glb` like any other model when they have at least one stamped mesh part; empty created models (no parts) are skipped
 - [x] Re-importing an exported created-model GLB (mesh scene, no skeleton) returns it to the model library as `source: 'created'`
 - [x] Empty / first-run hint when a created model has no selection: short copy that points users to add / pick a part and use Edit
@@ -492,8 +492,10 @@ As an editor user, I can undo and redo animation edits within the session, and I
 **Acceptance — undo / redo**
 
 - [x] Undo / Redo controls (Edit menu) and standard shortcuts reverse and reapply discrete edit commands
-- [x] Covered operations: trim apply, keyframe save/update (auto-commit pose — including created-part / create-group TRS when no owned ready clip), speed changes that mutate exported bake intent (`timeScale`), and create-part **Group / Ungroup / Make connector / Unjoint** hierarchy commits — exact command set in design
+- [x] Covered operations: trim apply, keyframe save/update (auto-commit pose — including created-part / create-group TRS when no owned ready clip), speed changes that mutate exported bake intent (`timeScale`), create-part **Group / Ungroup / Make connector / Unjoint** hierarchy commits, and create-graph **Add part / Paste / Delete** (`createScene`) — exact command set in design
 - [x] Undoing Group / Ungroup / Make connector / Unjoint restores parent + local TRS (and recreates / removes group or joint nodes with stable UUIDs) so parts do not jump or disappear
+- [x] **Delete** removes stamped create parts, create groups (whole subtree), and multi-select clipboard roots; toolbar Delete enabled whenever that selection is eligible (US-37)
+- [x] Undoing Add / Paste / Delete restores or removes create trees with stable UUIDs at recorded parents (US-37)
 - [x] Pose undo/redo restores parent as well as local TRS when the snapshot recorded a parent, so a pose commit is safe across intervening hierarchy changes only when those hierarchy ops were themselves undone first (stack order)
 - [x] Stack is per-session (not persisted to disk)
 - [x] Pre-trim recoverability is via undo of `trimClip` (and re-trim from `sourceClip`); one-shot Restore pre-trim chrome superseded
@@ -508,7 +510,7 @@ As an editor user, I can undo and redo animation edits within the session, and I
 - [x] **Space** toggles play / pause when a clip can play
 - [x] Arrow keys nudge the current selection on **X** (left/right) and **Y** (down/up); **Shift+↑ / Shift+↓** nudge on **Z**; each step is `0.01` m (same as position TRS inputs), not the snap grid step; part / model multi-select nudges every selected root by that step
 - [x] Pose edits **auto-commit** on gesture end (gizmo drag-end, nudge, Settings blur, tool/selection change, play); **Cmd/Ctrl+S** commits if still dirty; no Save / Restore pose chrome
-- [x] **Cmd/Ctrl+C / V** copy / paste create parts, create groups, and part multi-select (in-session buffer); **Delete** removes the eligible selection (`deleteSelectedPart`)
+- [x] **Cmd/Ctrl+C / V** copy / paste create parts, create groups, and part multi-select (in-session buffer); **Delete** / **Backspace** remove eligible roots (`deleteSelectedPart` — parts, groups, multi-select; US-37)
 - [x] `EditorToolbar` exposes a **Commands** control that opens a modal listing all catalog entries with their chords; **Edit** menu exposes Undo / Redo from the catalog
 - [x] Undo / redo shortcuts are catalog entries: **Cmd/Ctrl+Z**, **Cmd/Ctrl+Shift+Z** (or **Y**)
 

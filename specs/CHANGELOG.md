@@ -11,6 +11,7 @@
 
 | ID | Summary |
 |----|---------|
+| **US-37** | Create scene undo — Delete parts/groups/multi; undo Add / Paste / Delete |
 | **US-28** | Part color maps (textures) on created models only |
 | **US-8** | Morph-target editing (post-MVP) |
 

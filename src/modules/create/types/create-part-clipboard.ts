@@ -14,6 +14,10 @@ export interface CreatePartClipboardPartNode extends CreatePartClipboardTrs {
   params: PartSizeParams;
   /** `#rrggbb` from MeshStandardMaterial when present. */
   colorHex: string | null;
+  /** Stable Object3D.uuid when snapshotting for undo (US-37). */
+  uuid?: string;
+  /** Exact display name when restoring via undo (omit on user Copy). */
+  name?: string;
 }
 
 /** Create-group / joint subtree in the session clipboard. */
@@ -24,6 +28,8 @@ export interface CreatePartClipboardGroupNode extends CreatePartClipboardTrs {
   /** Preserved display name base for joints when pasting. */
   name?: string;
   children: CreatePartClipboardNode[];
+  /** Stable Object3D.uuid when snapshotting for undo (US-37). */
+  uuid?: string;
 }
 
 export type CreatePartClipboardNode

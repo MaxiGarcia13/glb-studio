@@ -240,11 +240,11 @@ Multi-select **position** (nudge + Settings XYZ delta) moves every selected mode
 | `nudgePosZ` / `nudgeNegZ`            | Shift+↑ / Shift+↓            | Nudge +Z / −Z                     | Transform |
 | `savePending`                        | Cmd/Ctrl+S                   | Commit pending pose               | Animation |
 | `copyCreatePart` / `pasteCreatePart` | Cmd/Ctrl+C / V               | Copy / Paste create part or group | Create    |
-| `deleteCreatePart`                   | Delete                       | Delete create part                | Create    |
+| `deleteCreatePart`                   | Delete, Backspace            | Delete create part                | Create    |
 | `undo`                               | Cmd/Ctrl+Z                   | Undo                              | History   |
 | `redo`                               | Cmd/Ctrl+Shift+Z, Cmd/Ctrl+Y | Redo                              | History   |
 
-**Not bound:** bare C/V; Backspace as Delete; Cut (Cmd/Ctrl+X). Ignore letter chords when Cmd/Ctrl/Alt held (except explicit Cmd/Ctrl rows). Ignore all chords when `isTypingTarget`.
+**Not bound:** bare C/V; Cut (Cmd/Ctrl+X). **Delete** and **Backspace** both remove create selection (macOS laptop delete is Backspace). Ignore letter chords when Cmd/Ctrl/Alt held (except explicit Cmd/Ctrl rows). Ignore all chords when `isTypingTarget`.
 
 ### Nudge
 
@@ -252,7 +252,7 @@ Step = `POSITION_EDIT_STEP_METRES` (`0.01` m) — same as Settings / part TRS po
 
 ### Create-part clipboard (MVP limits)
 
-Eligible on focused `source === 'created'` model: stamped create parts (`userData.createPart`), create groups (`userData.createGroup`), and part multi-select (`$selection.objects`). Copy → in-session buffer of root node trees (each part: `{ kind, params, color, local TRS }`; each group: `{ local TRS, children[] }`). Multi-select skips nodes nested under another selected node. Paste → instantiate under the focused created model’s scene root with a slight +X offset on each root; select the pasted root(s). Delete → `deleteSelectedPart` (single selection). Session-only buffer (not OS clipboard). **No-op:** bones, imported meshes, full-model clipboard, Cut. Create-part clipboard ops (copy/paste/delete/add) are **not** on the undo stack in v1; **Group / Ungroup / Make connector / Unjoint** and **pose** auto-commits on created parts/groups **are** undoable (`createHierarchy` / `sceneNode`).
+Eligible on focused `source === 'created'` model: stamped create parts (`userData.createPart`), create groups (`userData.createGroup`), and part multi-select (`$selection.objects`). Copy → in-session buffer of root node trees (each part: `{ kind, params, color, local TRS }`; each group: `{ local TRS, children[] }`). Multi-select skips nodes nested under another selected node. Paste → instantiate under the focused created model’s scene root with a slight +X offset on each root; select the pasted root(s). Delete → `deleteSelectedPart`: same root resolution as Copy; part root removes the mesh; group root removes the group and its create subtree; one undo entry for the whole gesture (US-37). Session-only buffer (not OS clipboard). **No-op:** bones, imported meshes, full-model clipboard, Cut. **Group / Ungroup / Make connector / Unjoint** and **pose** auto-commits remain undoable (`createHierarchy` / `sceneNode`). **Add part / Paste / Delete** are undoable via `createScene` (US-37). Copy is not an undo entry.
 
 ### Undoable command set (v1 snapshots)
 
@@ -262,8 +262,9 @@ Eligible on focused `source === 'created'` model: stamped create parts (`userDat
 | `saveKeyframe`    | Auto-commit pose / keyframe                | One entry per finished gesture; includes bind-pose scene TRS when no driving clip; created models without an owned ready clip push `sceneNode` / `sceneNodes` (TRS + optional `parentUuid`); multi-select position commits restore every moved root via `sceneNodes` |
 | `setTimeScale`    | Speed slider commit                        | Before/after `{ timeScale }`; bake intent for export                                                                                                                                                                                                                 |
 | `createHierarchy` | Group / Ungroup / Make connector / Unjoint | Before/after `{ modelId, ensureGroups, removeGroupUuids, placements, selectUuids }`; recreates dissolved groups/joints with stable UUIDs; apply order: ensure → place → remove; bumps `$createPartsRevision` + rest-pose refresh                                     |
+| `createScene`     | Add part / Paste / Delete (US-37)          | Before/after `{ modelId, ensureTrees, removeRootUuids, selectUuids }`; trees carry stable UUIDs + parent; apply order: ensure → remove → select; bumps `$createPartsRevision` + rest-pose refresh                                                                         |
 
-One stack entry = one user commit (coalesce drag/typing with `recordUndo: false` until pointer-up / blur). Snapshot (not patch) clones mutated `AnimationClip`s. Unbounded in-session; cleared on reload. After undo/redo: replace library fields, rebind mixer (`rebindMixersForClips`); `sceneNode`-only entries restore mesh/group parent (when recorded) + TRS + rest pose without clip rebind; `createHierarchy` restores create-part parenting. Not undoable: transport, viewport chrome, create-part add / delete / paste, blend/retarget/rename/import.
+One stack entry = one user commit (coalesce drag/typing with `recordUndo: false` until pointer-up / blur). Snapshot (not patch) clones mutated `AnimationClip`s. Unbounded in-session; cleared on reload. After undo/redo: replace library fields, rebind mixer (`rebindMixersForClips`); `sceneNode`-only entries restore mesh/group parent (when recorded) + TRS + rest pose without clip rebind; `createHierarchy` restores create-part parenting; `createScene` restores / removes create trees. Not undoable: transport, viewport chrome, Copy, kit / New model create, blend/retarget/rename/import.
 
 ### Non-goals
 

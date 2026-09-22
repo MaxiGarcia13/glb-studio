@@ -19,6 +19,9 @@ describe('chordToKeyboardKeyParts', () => {
     expect(chordToKeyboardKeyParts({ key: 'Delete' }, false)).toEqual([
       { id: 'delete', label: 'Delete' },
     ]);
+    expect(chordToKeyboardKeyParts({ key: 'Backspace' }, true)).toEqual([
+      { id: 'delete', label: 'Delete' },
+    ]);
   });
 
   it('orders mod then shift then key, with platform-specific mod', () => {

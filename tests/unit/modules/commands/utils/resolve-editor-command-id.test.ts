@@ -29,6 +29,15 @@ describe('resolveEditorCommandId', () => {
     ).toBe('nudgePosZ');
   });
 
+  it('resolves delete via Delete or Backspace (macOS delete key)', () => {
+    expect(resolveEditorCommandId(event({ key: 'Delete' }))).toBe(
+      'deleteCreatePart',
+    );
+    expect(resolveEditorCommandId(event({ key: 'Backspace' }))).toBe(
+      'deleteCreatePart',
+    );
+  });
+
   it('resolves redo via either catalog chord', () => {
     expect(
       resolveEditorCommandId(event({ key: 'z', metaKey: true, shiftKey: true })),

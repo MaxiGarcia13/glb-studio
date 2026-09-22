@@ -8,9 +8,13 @@ import type {
 import { Group } from 'three';
 import { refreshRestPoseNode } from '@/modules/animation/domain/rest-pose';
 import { $model } from '@/modules/viewport/stores/model-store';
-import { $selection } from '@/modules/viewport/stores/selection-store';
-
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
+import {
+  findUnderRoot,
+  hierarchyParentUuid,
+  resolveHierarchyParent,
+  restoreCreateSelection,
+} from './create-graph-lookup';
 import {
   isCreateGroup,
   isCreateHierarchyNode,
@@ -18,6 +22,8 @@ import {
   writeCreateGroup,
   writeCreateJoint,
 } from './group-data';
+
+export { hierarchyParentUuid } from './create-graph-lookup';
 
 function readTrs(node: Object3D): Pick<
   CreateHierarchyPlacement,
@@ -47,17 +53,6 @@ function writeTrs(
     trs.quaternion[3],
   );
   node.scale.set(trs.scale[0], trs.scale[1], trs.scale[2]);
-}
-
-/** Parent uuid for undo: `null` when under the model scene root. */
-export function hierarchyParentUuid(
-  node: Object3D,
-  partsRoot: Object3D,
-): string | null {
-  if (!node.parent || node.parent === partsRoot) {
-    return null;
-  }
-  return node.parent.uuid;
 }
 
 export function snapshotHierarchyPlacement(
@@ -130,13 +125,6 @@ export function captureCreateHierarchySnapshot(
   };
 }
 
-function findUnderRoot(partsRoot: Object3D, uuid: string): Object3D | null {
-  if (partsRoot.uuid === uuid) {
-    return partsRoot;
-  }
-  return partsRoot.getObjectByProperty('uuid', uuid) ?? null;
-}
-
 function ensureGroup(
   partsRoot: Object3D,
   spec: CreateHierarchyGroupSpec,
@@ -164,16 +152,6 @@ function ensureGroup(
   return group;
 }
 
-function resolveParent(
-  partsRoot: Object3D,
-  parentUuid: string | null,
-): Object3D {
-  if (parentUuid === null) {
-    return partsRoot;
-  }
-  return findUnderRoot(partsRoot, parentUuid) ?? partsRoot;
-}
-
 function applyPlacement(
   partsRoot: Object3D,
   placement: CreateHierarchyPlacement,
@@ -183,7 +161,7 @@ function applyPlacement(
     return null;
   }
 
-  const parent = resolveParent(partsRoot, placement.parentUuid);
+  const parent = resolveHierarchyParent(partsRoot, placement.parentUuid);
   if (node.parent !== parent) {
     parent.add(node);
   }
@@ -206,33 +184,6 @@ function removeGroup(partsRoot: Object3D, uuid: string): void {
     }
   }
   group.removeFromParent();
-}
-
-function restoreSelection(
-  partsRoot: Object3D,
-  selectUuids: readonly string[],
-): void {
-  const nodes = selectUuids
-    .map((uuid) => findUnderRoot(partsRoot, uuid))
-    .filter((node): node is Object3D => node !== null && isCreateHierarchyNode(node));
-
-  if (nodes.length === 0) {
-    $selection.set({
-      object: null,
-      objects: [],
-      modelIds: [],
-      kind: 'none',
-    });
-    return;
-  }
-
-  // Set selection directly — avoid selectObject’s pose flush mid-undo/redo.
-  $selection.set({
-    object: nodes[nodes.length - 1]!,
-    objects: nodes,
-    modelIds: [],
-    kind: 'parts',
-  });
 }
 
 /** Apply a create-hierarchy undo/redo snapshot onto the live model scene. */
@@ -286,6 +237,6 @@ export function applyCreateHierarchySnapshot(
   }
 
   partsRoot.updateMatrixWorld(true);
-  restoreSelection(partsRoot, snapshot.selectUuids);
+  restoreCreateSelection(partsRoot, snapshot.selectUuids);
   bumpCreatePartsRevision();
 }

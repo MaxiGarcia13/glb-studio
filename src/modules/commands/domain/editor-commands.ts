@@ -103,7 +103,7 @@ export const EDITOR_COMMANDS: readonly EditorCommand[] = [
   },
   {
     id: 'deleteCreatePart',
-    chords: [{ key: 'Delete' }],
+    chords: [{ key: 'Delete' }, { key: 'Backspace' }],
     label: 'Delete create part',
     category: 'Create',
   },
@@ -143,6 +143,7 @@ const KEY_LABELS: Record<string, string> = {
   'ArrowUp': '↑',
   'ArrowDown': '↓',
   'Delete': 'Delete',
+  'Backspace': 'Backspace',
 };
 
 /** Human-readable chord for docs / Commands modal (`isMac` picks ⌘ vs Ctrl). */

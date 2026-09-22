@@ -1,13 +1,15 @@
 import type { AnimationClip } from 'three';
 
 import type { BindPoseDelta } from '@/modules/animation/domain/bind-pose-rebase';
+import type { CreatePartClipboardNode } from '@/modules/create/types/create-part-clipboard';
 
 /** Stack command ids — distinct from catalog hotkey ids (`undo` / `redo`). */
 export type UndoableCommandId
   = | 'trimClip'
     | 'saveKeyframe'
     | 'setTimeScale'
-    | 'createHierarchy';
+    | 'createHierarchy'
+    | 'createScene';
 
 export interface TrimClipSnapshot {
   clip: AnimationClip;
@@ -76,6 +78,24 @@ export interface CreateHierarchySnapshot {
   selectUuids: readonly string[];
 }
 
+/** One create tree root for Add / Paste / Delete undo (US-37). */
+export interface CreateSceneTreeRoot {
+  /** `null` = model scene root. */
+  parentUuid: string | null;
+  node: CreatePartClipboardNode;
+}
+
+/**
+ * Create-graph insert/remove commit (Add part / Paste / Delete).
+ * Apply order: ensureTrees → removeRootUuids → select.
+ */
+export interface CreateSceneSnapshot {
+  modelId: string;
+  ensureTrees: readonly CreateSceneTreeRoot[];
+  removeRootUuids: readonly string[];
+  selectUuids: readonly string[];
+}
+
 export interface SaveKeyframeSnapshot {
   /** One keyframe write, or every clip touched by a bind-pose rebase. */
   clips: readonly SaveKeyframeClipSlice[];
@@ -118,4 +138,10 @@ export type UndoableCommand
     modelId: string;
     before: CreateHierarchySnapshot;
     after: CreateHierarchySnapshot;
+  }
+  | {
+    id: 'createScene';
+    modelId: string;
+    before: CreateSceneSnapshot;
+    after: CreateSceneSnapshot;
   };
