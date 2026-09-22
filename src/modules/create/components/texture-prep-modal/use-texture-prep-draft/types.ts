@@ -1,0 +1,26 @@
+import type { Texture } from 'three';
+import type { TextureWrapPresetId } from '@/modules/create/domain/texture-wrap-preset';
+
+export interface UseTexturePrepDraftArgs {
+  open: boolean;
+  partId: string | null;
+  seededMap: Texture | null;
+  onClose: () => void;
+}
+
+export interface TexturePrepDraft {
+  draftTexture: Texture | null;
+  sourceName: string | null;
+  thumbUrl: string | null;
+  error: string | null;
+  warnings: string[];
+  busy: boolean;
+  canCropToSquare: boolean;
+  wrapPreset: TextureWrapPresetId;
+  pickFile: (file: File | undefined) => Promise<void>;
+  flipX: () => Promise<void>;
+  flipY: () => Promise<void>;
+  cropToSquare: () => Promise<void>;
+  setWrapPreset: (preset: TextureWrapPresetId) => void;
+  close: () => void;
+}
