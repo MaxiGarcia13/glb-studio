@@ -6,6 +6,7 @@ import { Canvas } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
 import { getPartKind } from '@/modules/create/domain/part-kind';
+import { syncMaterialMapAlpha } from '@/modules/create/domain/texture-map-alpha';
 import { ViewportEnvironment } from '@/modules/viewport/components/viewport-environment';
 import { DEFAULT_CAMERA_FOV } from '@/modules/viewport/constants/camera';
 import { disposeScene } from '@/modules/viewport/utils/scene-dispose';
@@ -57,6 +58,10 @@ export function TexturePartPreview({
       material.color.copy(color);
     }
     material.map = draftTexture;
+    if (draftTexture) {
+      draftTexture.needsUpdate = true;
+    }
+    syncMaterialMapAlpha(material, draftTexture);
     material.needsUpdate = true;
 
     return () => {
@@ -70,6 +75,7 @@ export function TexturePartPreview({
       const material = mesh.material;
       if (material instanceof MeshStandardMaterial) {
         material.map = null;
+        syncMaterialMapAlpha(material, null);
       }
       disposeScene(mesh);
     };

@@ -22,5 +22,6 @@ export interface TexturePrepDraft {
   flipY: () => Promise<void>;
   cropToSquare: () => Promise<void>;
   setWrapPreset: (preset: TextureWrapPresetId) => void;
+  removeBackground: () => Promise<void>;
   close: () => void;
 }

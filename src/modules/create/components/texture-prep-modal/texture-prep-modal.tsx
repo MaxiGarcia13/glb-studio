@@ -3,6 +3,7 @@ import { useSelectedCreatedPart } from '@/modules/create/hooks/use-selected-crea
 import { findMeshStandardMaterial } from '@/modules/create/utils/selected-part';
 import { TexturePartPreview } from './texture-part-preview';
 import { TexturePrepActions } from './texture-prep-actions';
+import { TexturePrepBgRemove } from './texture-prep-bg-remove';
 import { TexturePrepMessages } from './texture-prep-messages';
 import { TexturePrepSourceStrip } from './texture-prep-source-strip';
 import { TexturePrepTransformControls } from './texture-prep-transform-controls';
@@ -16,7 +17,8 @@ interface TexturePrepModalProps {
 
 /**
  * Prep modal for created-part color maps (US-39). Choose / replace, crop /
- * flip, and wrap presets; bg-remove / Apply commit follow later.
+ * flip, wrap, and opt-in background remove (alpha cutouts in preview);
+ * Apply commit follows later.
  */
 export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
   const part = useSelectedCreatedPart();
@@ -37,6 +39,7 @@ export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
     flipY,
     cropToSquare,
     setWrapPreset,
+    removeBackground,
     close,
   } = useTexturePrepDraft({
     open,
@@ -92,6 +95,13 @@ export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
               busy={busy}
               value={wrapPreset}
               onChange={setWrapPreset}
+            />
+            <TexturePrepBgRemove
+              enabled={hasSource}
+              busy={busy}
+              onRemoveBackground={() => {
+                void removeBackground();
+              }}
             />
             <TexturePrepMessages error={error} warnings={warnings} />
           </div>
