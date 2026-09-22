@@ -17,8 +17,8 @@
 
 ## Compact menu UI
 
-- [ ] **AddPartPalette → five + See more** — Replace flat full-kind list; created-model gate unchanged
-- [ ] **Select from compact row** — `addPart` + record recent; menu updates on next open
+- [x] **AddPartPalette → five + See more** — Replace flat full-kind list; created-model gate unchanged
+- [x] **Select from compact row** — `addPart` + record recent; menu updates on next open
 
 ## See more modal
 
