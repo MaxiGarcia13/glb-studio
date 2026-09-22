@@ -22,7 +22,7 @@
 
 ## See more modal
 
-- [ ] **Browse modal shell** — Opens from See more; lists all kinds grouped Solids / Planar / Polyhedra
+- [x] **Browse modal shell** — Opens from See more; lists all kinds grouped Solids / Planar / Polyhedra
 - [ ] **Pick from modal** — `addPart` + record recent + close
 - [ ] **Small 3D preview** — Shows focused/hovered kind default mesh; dispose on change/unmount
 

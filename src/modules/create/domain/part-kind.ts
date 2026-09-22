@@ -5,6 +5,7 @@ import type {
   PartSizeParamKey,
   PartSizeParams,
 } from '@/modules/create/types/part';
+import { PART_KIND_GROUPS } from '@/modules/create/constants/part-kind-groups';
 
 import { PART_KINDS } from '../constants/part-kinds';
 import { readCreatePart, writeCreatePart } from './part-data';
@@ -19,6 +20,21 @@ export function getPartKind<K extends PartKindId>(id: K): PartKind<K> {
 
 export function listPartKinds(): PartKind[] {
   return Object.values(PART_KINDS) as PartKind[];
+}
+
+export interface PartKindGroup {
+  id: string;
+  label: string;
+  kinds: PartKind[];
+}
+
+/** All registered kinds sectioned for the Add-part browse modal. */
+export function listPartKindGroups(): PartKindGroup[] {
+  return PART_KIND_GROUPS.map((group) => ({
+    id: group.id,
+    label: group.label,
+    kinds: group.kindIds.map((id) => getPartKind(id)),
+  }));
 }
 
 /**

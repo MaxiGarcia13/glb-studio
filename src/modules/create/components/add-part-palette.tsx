@@ -10,6 +10,7 @@ import {
   recordRecentKind,
   resolveCompactMenuKinds,
 } from '../domain/recent-part-kinds';
+import { BrowsePartKindsModal } from './browse-part-kinds-modal';
 
 /**
  * Compact Add-part menu for the create rail: five MRU/suggested kinds + See more.
@@ -18,6 +19,7 @@ import {
 export function AddPartPalette() {
   const activeModel = useStore($activeModel);
   const [recent, setRecent] = useState(loadRecentKinds);
+  const [browseOpen, setBrowseOpen] = useState(false);
 
   if (!activeModel || activeModel.source !== 'created') {
     return null;
@@ -27,35 +29,40 @@ export function AddPartPalette() {
   const compactIds = resolveCompactMenuKinds(recent);
 
   return (
-    <ActionMenu
-      aria-label="Add part"
-      side="top"
-      align="start"
-      icon={<BlocksIcon aria-hidden />}
-      onOpenChange={(open) => {
-        if (open) {
-          setRecent(loadRecentKinds());
-        }
-      }}
-      items={[
-        ...compactIds.map((id) => {
-          const kind = getPartKind(id);
-          return {
-            id: kind.id,
-            label: kind.label,
-            onSelect: () => {
-              addPart(modelId, kind.id);
-              setRecent(recordRecentKind(loadRecentKinds(), kind.id));
-            },
-          };
-        }),
-        {
-          id: 'see-more',
-          label: 'See more',
-          // Browse modal — US-38 See more tasks.
-          onSelect: () => undefined,
-        },
-      ]}
-    />
+    <>
+      <ActionMenu
+        aria-label="Add part"
+        side="top"
+        align="start"
+        icon={<BlocksIcon aria-hidden />}
+        onOpenChange={(open) => {
+          if (open) {
+            setRecent(loadRecentKinds());
+          }
+        }}
+        items={[
+          ...compactIds.map((id) => {
+            const kind = getPartKind(id);
+            return {
+              id: kind.id,
+              label: kind.label,
+              onSelect: () => {
+                addPart(modelId, kind.id);
+                setRecent(recordRecentKind(loadRecentKinds(), kind.id));
+              },
+            };
+          }),
+          {
+            id: 'see-more',
+            label: 'See more',
+            onSelect: () => setBrowseOpen(true),
+          },
+        ]}
+      />
+      <BrowsePartKindsModal
+        open={browseOpen}
+        onClose={() => setBrowseOpen(false)}
+      />
+    </>
   );
 }
