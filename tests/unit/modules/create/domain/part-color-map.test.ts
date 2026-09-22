@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   applyPartColorMap,
   clearPartColorMap,
+  commitPartColorMapDraft,
 } from '@/modules/create/domain/part-color-map';
 import { markTextureMapHasAlpha } from '@/modules/create/domain/texture-map-alpha';
 
@@ -31,6 +32,40 @@ describe('applyPartColorMap', () => {
 
     expect(material.transparent).toBe(true);
     expect(material.alphaTest).toBe(0.5);
+  });
+});
+
+describe('commitPartColorMapDraft', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('assigns the draft and disposes a different previous map', () => {
+    const material = new MeshStandardMaterial();
+    const previous = new Texture();
+    const close = vi.fn();
+    previous.image = { close };
+    const dispose = vi.spyOn(previous, 'dispose');
+    material.map = previous;
+    const draft = new Texture();
+
+    commitPartColorMapDraft(material, draft);
+
+    expect(material.map).toBe(draft);
+    expect(dispose).toHaveBeenCalledOnce();
+    expect(close).toHaveBeenCalledOnce();
+  });
+
+  it('does not dispose when the draft is already the live map', () => {
+    const material = new MeshStandardMaterial();
+    const draft = new Texture();
+    const dispose = vi.spyOn(draft, 'dispose');
+    material.map = draft;
+
+    commitPartColorMapDraft(material, draft);
+
+    expect(material.map).toBe(draft);
+    expect(dispose).not.toHaveBeenCalled();
   });
 });
 

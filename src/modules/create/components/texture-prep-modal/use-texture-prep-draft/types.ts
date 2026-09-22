@@ -1,4 +1,4 @@
-import type { Texture } from 'three';
+import type { MeshStandardMaterial, Texture } from 'three';
 import type { TextureWrapPresetId } from '@/modules/create/domain/texture-wrap-preset';
 
 export interface UseTexturePrepDraftArgs {
@@ -16,6 +16,7 @@ export interface TexturePrepDraft {
   warnings: string[];
   busy: boolean;
   canCropToSquare: boolean;
+  canApply: boolean;
   wrapPreset: TextureWrapPresetId;
   pickFile: (file: File | undefined) => Promise<void>;
   flipX: () => Promise<void>;
@@ -23,5 +24,7 @@ export interface TexturePrepDraft {
   cropToSquare: () => Promise<void>;
   setWrapPreset: (preset: TextureWrapPresetId) => void;
   removeBackground: () => Promise<void>;
+  /** @returns true when the draft was committed onto the material. */
+  apply: (material: MeshStandardMaterial) => boolean;
   close: () => void;
 }

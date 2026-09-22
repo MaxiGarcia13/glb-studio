@@ -13,14 +13,19 @@ import { useTexturePrepDraft } from './use-texture-prep-draft';
 interface TexturePrepModalProps {
   open: boolean;
   onClose: () => void;
+  /** Fired after a draft is committed to the live part material. */
+  onApplied?: () => void;
 }
 
 /**
  * Prep modal for created-part color maps (US-39). Choose / replace, crop /
- * flip, wrap, and opt-in background remove (alpha cutouts in preview);
- * Apply commit follows later.
+ * flip, wrap, opt-in background remove; Apply commits, Cancel disposes draft.
  */
-export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
+export function TexturePrepModal({
+  open,
+  onClose,
+  onApplied,
+}: TexturePrepModalProps) {
   const part = useSelectedCreatedPart();
   const material = part ? findMeshStandardMaterial(part.mesh) : null;
   const partId = part?.mesh.uuid ?? null;
@@ -33,6 +38,7 @@ export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
     warnings,
     busy,
     canCropToSquare,
+    canApply,
     wrapPreset,
     pickFile,
     flipX,
@@ -40,6 +46,7 @@ export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
     cropToSquare,
     setWrapPreset,
     removeBackground,
+    apply,
     close,
   } = useTexturePrepDraft({
     open,
@@ -121,7 +128,18 @@ export function TexturePrepModal({ open, onClose }: TexturePrepModalProps) {
           </div>
         </div>
 
-        <TexturePrepActions onCancel={close} />
+        <TexturePrepActions
+          onCancel={close}
+          canApply={canApply && Boolean(material)}
+          onApply={() => {
+            if (!material) {
+              return;
+            }
+            if (apply(material)) {
+              onApplied?.();
+            }
+          }}
+        />
       </div>
     </Modal>
   );

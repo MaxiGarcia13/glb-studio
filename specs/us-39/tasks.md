@@ -22,7 +22,7 @@ Tick only after acceptance.
 
 ## Lifecycle
 
-- [ ] **Apply commits; Cancel disposes** — Real part unchanged on cancel; no leaked bitmaps/textures
+- [x] **Apply commits; Cancel disposes** — Real part unchanged on cancel; no leaked bitmaps/textures
 - [ ] **Imported guard** — Modal never opens for imported focus
 
 ## Verify

@@ -19,6 +19,21 @@ export function applyPartColorMap(
 }
 
 /**
+ * Commit a prep-modal draft onto the live part material and free the previous
+ * map when it is a different texture instance.
+ */
+export function commitPartColorMapDraft(
+  material: MeshStandardMaterial,
+  draft: Texture,
+): void {
+  const previous = material.map;
+  applyPartColorMap(material, draft);
+  if (previous && previous !== draft) {
+    disposeImageTexture(previous);
+  }
+}
+
+/**
  * Remove the color map and free its GPU / ImageBitmap resources.
  * Flat `color` is unchanged. Clears cutout / transparent mode.
  */
