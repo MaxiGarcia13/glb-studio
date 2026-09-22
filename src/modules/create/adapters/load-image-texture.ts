@@ -1,5 +1,7 @@
 import { SRGBColorSpace, Texture } from 'three';
 
+import { disposeImageTexture } from '../utils/dispose-image-texture';
+
 /** Client-side cap so a huge dump cannot stall the tab or fill GPU memory. */
 export const MAX_PART_COLOR_MAP_BYTES = 16 * 1024 * 1024;
 export const MAX_PART_COLOR_MAP_EDGE = 8192;
@@ -21,10 +23,6 @@ export class ImageTextureError extends Error {
     super(message);
     this.name = 'ImageTextureError';
   }
-}
-
-interface CloseableImage {
-  close?: () => void;
 }
 
 function fileExtension(name: string): string {
@@ -64,18 +62,7 @@ function assertBitmapSize(bitmap: ImageBitmap, fileName: string): void {
   }
 }
 
-/**
- * Free a color-map texture and close its ImageBitmap when present.
- * Safe to call with null / already-disposed textures.
- */
-export function disposeImageTexture(texture: Texture | null | undefined): void {
-  if (!texture) {
-    return;
-  }
-  const image = texture.image as CloseableImage | undefined;
-  texture.dispose();
-  image?.close?.();
-}
+export { disposeImageTexture } from '../utils/dispose-image-texture';
 
 /**
  * Decode a local image file into an sRGB `Texture`.

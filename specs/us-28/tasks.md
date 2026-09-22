@@ -10,14 +10,14 @@ Tick only after acceptance.
 ## Texture apply
 
 - [x] **Load image to texture helper** — Client-side only; dispose previous texture on replace; handle decode failures with user-visible error
-- [ ] **Inspector Texture control** — File picker + Clear; only for selected part on focused created model
-- [ ] **Material update** — Set / unset `map` on `MeshStandardMaterial` without breaking flat-color workflow
+- [x] **Inspector Texture control** — File picker + Clear; only for selected part on focused created model
+- [x] **Material update** — Set / unset `map` on `MeshStandardMaterial` without breaking flat-color workflow
 
 ## Lifecycle / export
 
 - [ ] **Dispose on part delete / model remove** — No leaked blob URLs or GPU textures
 - [ ] **Export embeds maps** — Zip / GLB from created textured part shows the image in an external viewer
-- [ ] **Imported guard** — No texture controls when focusing an imported model
+- [x] **Imported guard** — No texture controls when focusing an imported model
 
 ## Verify
 

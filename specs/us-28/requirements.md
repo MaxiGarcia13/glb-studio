@@ -14,13 +14,13 @@ As an editor user, I can apply a simple image texture to a selected part on my c
 
 ## Acceptance
 
-- [ ] Part inspector on a **created** model offers **Texture**: choose an image file (png/jpeg/webp as supported by the browser stack)
-- [ ] Applying a texture sets `MeshStandardMaterial.map` (and marks material for update); part keeps its color as multiplier unless design defines “replace color”
-- [ ] User can **clear** the texture and return to flat color
-- [ ] Primitives keep default UVs; no UV editor in this US
+- [x] Part inspector on a **created** model offers **Texture**: choose an image file (png/jpeg/webp as supported by the browser stack)
+- [x] Applying a texture sets `MeshStandardMaterial.map` (and marks material for update); part keeps its color as multiplier unless design defines “replace color”
+- [x] User can **clear** the texture and return to flat color
+- [x] Primitives keep default UVs; no UV editor in this US
 - [ ] Exported GLB includes the texture image for textured parts
-- [ ] Imported character materials are not editable through this UI
-- [ ] Oversized / failed decodes show a clear error; do not corrupt the part material into a black void without recovery
+- [x] Imported character materials are not editable through this UI
+- [x] Oversized / failed decodes show a clear error; do not corrupt the part material into a black void without recovery
 
 ## Out of scope
 
