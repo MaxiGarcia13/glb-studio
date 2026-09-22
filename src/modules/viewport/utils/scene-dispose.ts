@@ -1,9 +1,11 @@
 import type { Material, Mesh, Object3D, Texture } from 'three';
 
+import { disposeImageTexture } from '@/utils/dispose-image-texture';
+
 function disposeMaterialTextures(material: Material): void {
   for (const value of Object.values(material)) {
     if (value && (value as Texture).isTexture) {
-      (value as Texture).dispose();
+      disposeImageTexture(value as Texture);
     }
   }
 }

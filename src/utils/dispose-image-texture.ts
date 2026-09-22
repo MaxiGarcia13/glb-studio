@@ -5,7 +5,7 @@ interface CloseableImage {
 }
 
 /**
- * Free a color-map texture and close its ImageBitmap when present.
+ * Free a GPU texture and close its ImageBitmap when present.
  * Safe to call with null / already-disposed textures.
  */
 export function disposeImageTexture(texture: Texture | null | undefined): void {

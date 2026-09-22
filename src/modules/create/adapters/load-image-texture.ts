@@ -1,6 +1,6 @@
 import { SRGBColorSpace, Texture } from 'three';
 
-import { disposeImageTexture } from '../utils/dispose-image-texture';
+import { disposeImageTexture } from '@/utils/dispose-image-texture';
 
 /** Client-side cap so a huge dump cannot stall the tab or fill GPU memory. */
 export const MAX_PART_COLOR_MAP_BYTES = 16 * 1024 * 1024;
@@ -61,8 +61,6 @@ function assertBitmapSize(bitmap: ImageBitmap, fileName: string): void {
     );
   }
 }
-
-export { disposeImageTexture } from '../utils/dispose-image-texture';
 
 /**
  * Decode a local image file into an sRGB `Texture`.

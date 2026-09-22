@@ -323,10 +323,10 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 ## Open deltas
 
-| US                                     | Status                    | Tasks                                       |
-| -------------------------------------- | ------------------------- | ------------------------------------------- |
-| **US-28** — Part color maps (textures) | in progress | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
-| **US-8** — Morph-target editing        | post-MVP, not started     | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
+| US                                     | Status                | Tasks                                       |
+| -------------------------------------- | --------------------- | ------------------------------------------- |
+| **US-28** — Part color maps (textures) | in progress           | [`specs/us-28/tasks.md`](../us-28/tasks.md) |
+| **US-8** — Morph-target editing        | post-MVP, not started | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 
 ## Tech debt
 

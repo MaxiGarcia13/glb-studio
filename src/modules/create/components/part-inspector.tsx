@@ -5,8 +5,6 @@ import { Text } from '@/components/text';
 import { readCreatePart } from '../domain/part-data';
 import { setPartSizeParam } from '../domain/part-kind';
 import { useSelectedCreatedPart } from '../hooks/use-selected-created-part';
-import { findMeshStandardMaterial } from '../utils/selected-part';
-import { PartTextureControl } from './part-texture-control';
 import { PartTransformFields } from './part-transform-fields';
 
 function formatSize(value: number, integer?: boolean): string {
@@ -33,13 +31,13 @@ function paramValue(
 }
 
 /**
- * Settings-side size + TRS + texture for a selected created part.
- * Hierarchy is context-menu Group / Ungroup / Make connector / Unjoint; color is on the create toolbar.
+ * Settings-side size + TRS for a selected created part.
+ * Hierarchy is context-menu Group / Ungroup / Make connector / Unjoint;
+ * color + texture are on the create toolbar.
  */
 export function PartInspector() {
   const part = useSelectedCreatedPart();
   const meshId = part?.mesh.uuid ?? null;
-  const material = findMeshStandardMaterial(part?.mesh ?? null);
   const [draft, setDraft] = useState<Partial<Record<PartSizeParamKey, string>>>({});
 
   useEffect(() => {
@@ -119,10 +117,6 @@ export function PartInspector() {
           ))}
         </div>
       </div>
-
-      {material && meshId && (
-        <PartTextureControl material={material} meshId={meshId} />
-      )}
     </div>
   );
 }

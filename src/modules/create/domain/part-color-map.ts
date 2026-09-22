@@ -1,6 +1,6 @@
 import type { MeshStandardMaterial, Texture } from 'three';
 
-import { disposeImageTexture } from '../utils/dispose-image-texture';
+import { disposeImageTexture } from '@/utils/dispose-image-texture';
 
 /**
  * Assign a color map on a create-part material. Leaves `color` alone so it
