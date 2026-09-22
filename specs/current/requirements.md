@@ -361,6 +361,8 @@ As an editor user, I can add common primitive shapes to my created model so I ca
 - [x] Palette is hidden or disabled for **imported** models (no accidental mesh editing of uploaded characters in this US)
 - [x] Export still packs the updated scene
 
+**Planned (US-38):** compact five-slot MRU + defaults menu and **See more** browse modal (type groups + 3D preview) — not started; see [`specs/us-38/`](../us-38/).
+
 ### US-25 — Grid and rotation snap
 
 As an editor user, I can snap part moves and rotations to the grid so wheels, walls, and limbs line up without careful freehand nudging.
@@ -531,6 +533,13 @@ As an editor user, I can drag-resize the Library and Settings asides and the bot
 - [x] Shared `ResizableShell` owns drag + size; callers do not reimplement pointer math
 
 **Out of scope:** persisting snap / axes / other Settings toggles (session-only); aside open/closed state; double-click reset-to-default
+
+## Open deltas (not started)
+
+Full requirements, design, and tasks live only in the delta folders (not duplicated here). Do not implement until explicitly kicked off:
+
+- **US-38** — Add-part MRU menu + browse modal → [`specs/us-38/`](../us-38/)
+- **US-28** — Part color maps (textures) → [`specs/us-28/`](../us-28/)
 
 ## Post-MVP user stories
 

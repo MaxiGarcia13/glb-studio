@@ -11,6 +11,7 @@
 
 | ID | Summary |
 |----|---------|
+| **US-38** | Add-part MRU menu (5 slots + See more) + browse modal with type groups + 3D preview |
 | **US-28** | Part color maps (textures) on created models only |
 | **US-8** | Morph-target editing (post-MVP) |
 
