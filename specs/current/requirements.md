@@ -577,6 +577,12 @@ Full requirements, design, and tasks live only in the delta folders (not duplica
 Not started; do not implement until explicitly kicked off. Full requirements, design, and tasks live only in the delta folders (not duplicated here):
 
 - **US-8** — Morph-target editing → [`specs/us-8/`](../us-8/)
+- **Figure craft series** (created models; do not start until explicit kickoff per US):
+  - **US-41** — Mesh craft foundation (bake + geometry undo) → [`specs/us-41/`](../us-41/)
+  - **US-42** — Craft brushes + sanding → [`specs/us-42/`](../us-42/)
+  - **US-43** — Round corners (parametric bevel) → [`specs/us-43/`](../us-43/)
+  - **US-44** — Cut holes (boolean subtract) → [`specs/us-44/`](../us-44/)
+  - **US-45** — Fuse / join parts (boolean union) → [`specs/us-45/`](../us-45/)
 
 ## Non-functional requirements
 

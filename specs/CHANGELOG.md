@@ -11,6 +11,11 @@
 
 | ID | Summary |
 |----|---------|
+| **US-45** | Fuse / join created parts (boolean union) — planned, not kicked off |
+| **US-44** | Cut holes on created parts (boolean subtract) — planned, not kicked off |
+| **US-43** | Round corners (parametric bevel on box) — planned, not kicked off |
+| **US-42** | Craft brushes + sanding (push/pull, smooth, inflate) — planned, not kicked off |
+| **US-41** | Mesh craft foundation (bake + geometry undo/clipboard) — planned, not kicked off |
 | **US-40** | Albedo maps on skinned (imported) models — planned, not kicked off |
 | **US-39** | Texture prep modal — crop, wrap presets, client bg-remove, live preview |
 | **US-8** | Morph-target editing (post-MVP) |
