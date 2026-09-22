@@ -18,7 +18,7 @@ As an editor user, I can apply a simple image texture to a selected part on my c
 - [x] Applying a texture sets `MeshStandardMaterial.map` (and marks material for update); part keeps its color as multiplier unless design defines “replace color”
 - [x] User can **clear** the texture and return to flat color
 - [x] Primitives keep default UVs; no UV editor in this US
-- [ ] Exported GLB includes the texture image for textured parts
+- [x] Exported GLB includes the texture image for textured parts
 - [x] Imported character materials are not editable through this UI
 - [x] Oversized / failed decodes show a clear error; do not corrupt the part material into a black void without recovery
 

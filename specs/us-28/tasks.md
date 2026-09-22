@@ -16,10 +16,10 @@ Tick only after acceptance.
 ## Lifecycle / export
 
 - [x] **Dispose on part delete / model remove** — No leaked blob URLs or GPU textures
-- [ ] **Export embeds maps** — Zip / GLB from created textured part shows the image in an external viewer
+- [x] **Export embeds maps** — Zip / GLB from created textured part shows the image in an external viewer
 - [x] **Imported guard** — No texture controls when focusing an imported model
 
 ## Verify
 
 - [ ] **Box + png** — Apply, clear, re-apply, export
-- [ ] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md) checked
+- [x] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md) checked
