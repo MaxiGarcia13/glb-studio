@@ -19,8 +19,8 @@ As an editor user, when I open **Add part** I see a short list of suggested or r
 - [ ] Until five distinct kinds have been used, unused default suggestions still fill the remaining slots (MRU first, then remaining defaults in default order)
 - [ ] The ordered list of up to five kind ids persists in **localStorage** and restores on reload
 - [ ] **See more** opens a modal listing **all** registered part kinds, grouped by type (Solids / Planar / Polyhedra, matching the existing kind folders)
-- [ ] The modal shows a **small 3D preview** of the focused/hovered (or selected) kind so the user can see the shape before adding
-- [ ] Choosing a kind in the modal adds the part, updates MRU, and closes the modal
+- [ ] The modal shows a **small 3D preview** of the **selected** kind (click a row to select) so the user can see the shape before adding; an **Add part** confirm button adds the selected kind, updates MRU, and closes
+- [ ] Choosing a kind from the compact menu (or confirming in **See more**) adds the part, updates MRU, and closes the modal when applicable
 - [ ] Palette / menu / modal remain hidden for **imported** model focus (same gate as US-24)
 
 ## Out of scope

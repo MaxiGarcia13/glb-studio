@@ -6,13 +6,13 @@ import {
   DEFAULT_CAMERA_FOV,
   DEFAULT_CAMERA_POSITION,
 } from '../constants/camera';
-import { GroundGrid } from './ground-grid';
 import { ModelFraming } from './model-framing';
 import { ModelViewer } from './model-viewer';
 import { SelectionDriver } from './selection-driver';
 import { SelectionHighlight } from './selection-highlight';
 import { TransformControlsDriver } from './transform-controls-driver';
 import { TransformReadoutDriver } from './transform-readout-driver';
+import { ViewportEnvironment } from './viewport-environment';
 import { ViewportOrbitControls } from './viewport-orbit-controls';
 import { WorldAxes } from './world-axes';
 
@@ -27,9 +27,7 @@ export function ViewportCanvas() {
       }}
       className="h-full w-full"
     >
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 5, 5]} intensity={1} />
-      <GroundGrid />
+      <ViewportEnvironment />
 
       <WorldAxes />
 

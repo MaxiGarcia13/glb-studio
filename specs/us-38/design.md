@@ -4,8 +4,8 @@
 
 1. **Compact menu** — Replace the flat `AddPartPalette` kind list with five dynamic rows + **See more**. Reuse `ActionMenu` (or equivalent) on the create toolbar; keep the created-model focus gate.
 2. **MRU + defaults** — Pure domain helper: given stored MRU ids + default suggestion order `[box, sphere, capsule, dodecahedron, cone]`, return five unique kind ids (MRU first, then unused defaults). On add: prepend kind, dedupe, truncate to five, write localStorage via the existing `src/utils/local-storage` helpers.
-3. **See more modal** — Shared `Modal` listing all kinds from `PART_KINDS` / `listPartKinds`, sectioned by registry folders: Solids (`solids.ts`), Planar (`planar.ts`), Polyhedra (`polyhedra.ts`). Selecting a row calls the same `addPart` path as the compact menu, then records MRU and closes.
-4. **3D preview** — Small R3F (or lightweight Three) canvas beside/above the list showing the focused kind’s default mesh (`createMesh` / default params). Dispose geometry/material on kind change and unmount. No editor scene coupling.
+3. **See more modal** — Shared `Modal` listing all kinds from `PART_KINDS` / `listPartKinds`, sectioned by registry folders: Solids (`solids.ts`), Planar (`planar.ts`), Polyhedra (`polyhedra.ts`). Clicking a row **selects** it for preview; **Add part** confirms, calls the same `addPart` path as the compact menu, records MRU, and closes.
+4. **3D preview** — Small R3F canvas beside the list showing the **selected** kind’s default mesh (`createMesh` / default params). Dispose geometry/material on kind change and unmount. No editor scene coupling.
 
 ## Data
 
