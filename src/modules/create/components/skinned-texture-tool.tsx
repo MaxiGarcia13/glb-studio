@@ -1,8 +1,8 @@
 import { useStore } from '@nanostores/react';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/button';
-import { Text } from '@/components/text';
 import { TextureIcon } from '@/components/icons/texture-icon';
+import { Text } from '@/components/text';
 import { $selection } from '@/modules/viewport/stores/selection-store';
 import {
   ImageTextureError,
