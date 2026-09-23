@@ -4,10 +4,10 @@ import type {
   CreateHierarchyPlacement,
   CreateHierarchySnapshot,
 } from '@/modules/animation/types/undo-stack';
+import type { ModelEntry } from '@/modules/viewport/types/model';
 
 import { Group } from 'three';
 import { refreshRestPoseNode } from '@/modules/animation/domain/rest-pose';
-import { $model } from '@/modules/viewport/stores/model-store';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import {
   findUnderRoot,
@@ -189,8 +189,9 @@ function removeGroup(partsRoot: Object3D, uuid: string): void {
 /** Apply a create-hierarchy undo/redo snapshot onto the live model scene. */
 export function applyCreateHierarchySnapshot(
   snapshot: CreateHierarchySnapshot,
+  models: readonly ModelEntry[],
 ): void {
-  const model = $model.get().models.find((entry) => entry.id === snapshot.modelId);
+  const model = models.find((entry) => entry.id === snapshot.modelId);
   if (!model || model.source !== 'created') {
     return;
   }

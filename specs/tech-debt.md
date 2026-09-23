@@ -56,7 +56,7 @@ Same class of smell as the finished export store-free pack work. Prefer doing th
 
 - [ ] Create domain that reads / writes nanostores — pass models / selection in from actions (or return selection patches):
   - [x] `selected-create-roots` — store-free; actions pass `$activeModel` / `$selection` snapshots
-  - [ ] `material-color-map-undo`, `create-scene-undo`, `create-hierarchy-undo` — resolve model from passed `models[]`
+  - [x] `material-color-map-undo`, `create-scene-undo`, `create-hierarchy-undo` — resolve model from passed `models[]`
   - [ ] `create-graph-lookup` (`restoreCreateSelection`) — stop writing `$selection` from domain
 - [ ] `material-color-map-undo.ts` (~300) — split dispose / clone / apply / stack-ownership helpers if the next skins undo change mixes concerns further
 - [ ] `create-part-clipboard.ts` (~318) — after hierarchy-roots extract, split snapshot vs instantiate only if clipboard paste / hierarchy work grows further

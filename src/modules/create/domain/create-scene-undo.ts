@@ -3,9 +3,9 @@ import type {
   CreateSceneSnapshot,
   CreateSceneTreeRoot,
 } from '@/modules/animation/types/undo-stack';
+import type { ModelEntry } from '@/modules/viewport/types/model';
 
 import { refreshRestPoseNode } from '@/modules/animation/domain/rest-pose';
-import { $model } from '@/modules/viewport/stores/model-store';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import {
   findUnderRoot,
@@ -73,8 +73,11 @@ function removeRoot(partsRoot: Object3D, uuid: string): void {
 }
 
 /** Apply a createScene undo/redo snapshot onto the live model scene. */
-export function applyCreateSceneSnapshot(snapshot: CreateSceneSnapshot): void {
-  const model = $model.get().models.find((entry) => entry.id === snapshot.modelId);
+export function applyCreateSceneSnapshot(
+  snapshot: CreateSceneSnapshot,
+  models: readonly ModelEntry[],
+): void {
+  const model = models.find((entry) => entry.id === snapshot.modelId);
   if (!model || model.source !== 'created') {
     return;
   }

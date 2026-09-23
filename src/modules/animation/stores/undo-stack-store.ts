@@ -10,6 +10,7 @@ import {
   undoCommand,
 } from '@/modules/animation/domain/command-stack';
 import { disposeUndoableCommandResources } from '@/modules/create/domain/material-color-map-undo';
+import { $model } from '@/modules/viewport/stores/model-store';
 
 /** Session-only undo stack; cleared on reload. */
 export const $commandStack = atom(EMPTY_COMMAND_STACK);
@@ -19,8 +20,9 @@ export const $canUndo = computed($commandStack, stackCanUndo);
 export const $canRedo = computed($commandStack, stackCanRedo);
 
 function disposeCommands(commands: readonly UndoableCommand[]): void {
+  const models = $model.get().models;
   for (const command of commands) {
-    disposeUndoableCommandResources(command);
+    disposeUndoableCommandResources(command, models);
   }
 }
 

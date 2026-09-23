@@ -183,6 +183,7 @@ export function applyUndoableCommand(
   command: UndoableCommand,
   direction: 'undo' | 'redo',
 ): void {
+  const models = $model.get().models;
   switch (command.id) {
     case 'trimClip': {
       const snapshot = direction === 'undo' ? command.before : command.after;
@@ -204,16 +205,16 @@ export function applyUndoableCommand(
     }
     case 'createHierarchy': {
       const snapshot = direction === 'undo' ? command.before : command.after;
-      applyCreateHierarchySnapshot(snapshot);
+      applyCreateHierarchySnapshot(snapshot, models);
       return;
     }
     case 'createScene': {
       const snapshot = direction === 'undo' ? command.before : command.after;
-      applyCreateSceneSnapshot(snapshot);
+      applyCreateSceneSnapshot(snapshot, models);
       return;
     }
     case 'materialColorMap': {
-      applyMaterialColorMapCommand(command, direction);
+      applyMaterialColorMapCommand(command, direction, models);
     }
   }
 }

@@ -3,9 +3,9 @@ import type {
   MaterialColorMapSnapshot,
   UndoableCommand,
 } from '@/modules/animation/types/undo-stack';
+import type { ModelEntry } from '@/modules/viewport/types/model';
 import { Texture } from 'three';
 
-import { $model } from '@/modules/viewport/stores/model-store';
 import { disposeImageTexture } from '@/utils/dispose-image-texture';
 import { bumpMaterialMapsRevision } from '../stores/material-maps-revision-store';
 import {
@@ -147,8 +147,11 @@ export function restoreMaterialColorMap(
  * If the live material still references a stack-owned map, give it a private
  * clone so the stack entry can be disposed without blacking the viewport.
  */
-function adoptLiveStackMapsIfNeeded(command: MaterialColorMapCommand): void {
-  const model = $model.get().models.find((entry) => entry.id === command.modelId);
+function adoptLiveStackMapsIfNeeded(
+  command: MaterialColorMapCommand,
+  models: readonly ModelEntry[],
+): void {
+  const model = models.find((entry) => entry.id === command.modelId);
   if (!model) {
     return;
   }
@@ -173,15 +176,19 @@ function adoptLiveStackMapsIfNeeded(command: MaterialColorMapCommand): void {
  */
 export function disposeMaterialColorMapCommandSafely(
   command: MaterialColorMapCommand,
+  models: readonly ModelEntry[],
 ): void {
-  adoptLiveStackMapsIfNeeded(command);
+  adoptLiveStackMapsIfNeeded(command, models);
   disposeMaterialColorMapCommand(command);
 }
 
 /** Dispose GPU resources owned by a stack entry when it leaves the session stack. */
-export function disposeUndoableCommandResources(command: UndoableCommand): void {
+export function disposeUndoableCommandResources(
+  command: UndoableCommand,
+  models: readonly ModelEntry[],
+): void {
   if (command.id === 'materialColorMap') {
-    disposeMaterialColorMapCommandSafely(command);
+    disposeMaterialColorMapCommandSafely(command, models);
   }
 }
 
@@ -244,8 +251,9 @@ export function assignMaterialColorMapLive(
 export function applyMaterialColorMapCommand(
   command: MaterialColorMapCommand,
   direction: 'undo' | 'redo',
+  models: readonly ModelEntry[],
 ): void {
-  const model = $model.get().models.find((entry) => entry.id === command.modelId);
+  const model = models.find((entry) => entry.id === command.modelId);
   if (!model) {
     return;
   }
