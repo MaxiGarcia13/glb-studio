@@ -44,7 +44,9 @@ export function pasteCreatePartFromClipboard(): void {
     return;
   }
 
-  const beforeSelectUuids = selectedCreateHierarchyUuids();
+  const beforeSelectUuids = selectedCreateHierarchyUuids(
+    $selection.get().objects,
+  );
 
   const roots = instantiateClipboardPayload(payload, activeModel.scene);
   selectPastedRoots(roots);

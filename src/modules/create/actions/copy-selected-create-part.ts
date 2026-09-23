@@ -1,3 +1,5 @@
+import { $activeModel } from '@/modules/viewport/stores/model-store';
+import { $selection } from '@/modules/viewport/stores/selection-store';
 import { snapshotClipboardFromRoots } from '../domain/create-part-clipboard';
 import { resolveSelectedCreateRoots } from '../domain/selected-create-roots';
 import { setCreatePartClipboard } from '../stores/create-part-clipboard-store';
@@ -8,7 +10,10 @@ import { setCreatePartClipboard } from '../stores/create-part-clipboard-store';
  * selection has no eligible hierarchy nodes on the focused created model.
  */
 export function copySelectedCreatePart(): void {
-  const context = resolveSelectedCreateRoots();
+  const context = resolveSelectedCreateRoots(
+    $activeModel.get(),
+    $selection.get(),
+  );
   if (!context) {
     return;
   }

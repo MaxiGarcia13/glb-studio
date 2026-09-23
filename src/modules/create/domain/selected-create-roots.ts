@@ -1,14 +1,18 @@
 import type { Object3D } from 'three';
+import type { ModelEntry } from '@/modules/viewport/types/model';
+import type { SelectionState } from '@/modules/viewport/types/selection';
 
-import { $activeModel } from '@/modules/viewport/stores/model-store';
-import { $selection } from '@/modules/viewport/stores/selection-store';
 import { isInActiveModelScene } from '../utils/selected-part';
 import { resolveClipboardRoots } from './create-part-clipboard';
 import { isCreateHierarchyNode } from './group-data';
 
-/** UUIDs of create hierarchy nodes in the current part selection. */
-export function selectedCreateHierarchyUuids(): string[] {
-  return $selection.get().objects.filter((object) => isCreateHierarchyNode(object)).map((object) => object.uuid);
+/** UUIDs of create hierarchy nodes among `objects`. */
+export function selectedCreateHierarchyUuids(
+  objects: readonly Object3D[],
+): string[] {
+  return objects
+    .filter((object) => isCreateHierarchyNode(object))
+    .map((object) => object.uuid);
 }
 
 export interface SelectedCreateRoots {
@@ -21,13 +25,13 @@ export interface SelectedCreateRoots {
 }
 
 /**
- * Eligible create-part / create-group clipboard roots on the focused created
- * model. Shared by Copy and Delete.
+ * Eligible create-part / create-group clipboard roots on a focused created
+ * model. Shared by Copy and Delete. Store-free — actions pass snapshots.
  */
-export function resolveSelectedCreateRoots(): SelectedCreateRoots | null {
-  const activeModel = $activeModel.get();
-  const selection = $selection.get();
-
+export function resolveSelectedCreateRoots(
+  activeModel: ModelEntry | null | undefined,
+  selection: SelectionState,
+): SelectedCreateRoots | null {
   if (
     !activeModel
     || activeModel.source !== 'created'

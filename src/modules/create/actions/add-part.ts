@@ -3,7 +3,10 @@ import type { PartKindId } from '@/modules/create/types/part';
 
 import { setEditTool } from '@/modules/viewport/stores/edit-tool-store';
 import { $model } from '@/modules/viewport/stores/model-store';
-import { selectObject } from '@/modules/viewport/stores/selection-store';
+import {
+  $selection,
+  selectObject,
+} from '@/modules/viewport/stores/selection-store';
 import { selectedCreateHierarchyUuids } from '../domain/selected-create-roots';
 import { spawnPart } from '../domain/spawn-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
@@ -20,7 +23,9 @@ export function addPart(modelId: string, kindId: PartKindId): Mesh | null {
     return null;
   }
 
-  const beforeSelectUuids = selectedCreateHierarchyUuids();
+  const beforeSelectUuids = selectedCreateHierarchyUuids(
+    $selection.get().objects,
+  );
 
   const mesh = spawnPart(model.scene, kindId);
   // Move tool gizmo is the model root — force Edit so only this part transforms.

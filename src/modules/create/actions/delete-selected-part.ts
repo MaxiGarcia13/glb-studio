@@ -1,4 +1,8 @@
-import { clearSelection } from '@/modules/viewport/stores/selection-store';
+import { $activeModel } from '@/modules/viewport/stores/model-store';
+import {
+  $selection,
+  clearSelection,
+} from '@/modules/viewport/stores/selection-store';
 import { resolveSelectedCreateRoots } from '../domain/selected-create-roots';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { pushCreateSceneDeleteUndo } from './push-create-scene-undo';
@@ -10,7 +14,10 @@ export interface DeleteSelectedPartAvailability {
 
 /** Whether Delete would remove at least one create hierarchy root. */
 export function getDeleteSelectedPartAvailability(): DeleteSelectedPartAvailability {
-  const context = resolveSelectedCreateRoots();
+  const context = resolveSelectedCreateRoots(
+    $activeModel.get(),
+    $selection.get(),
+  );
   if (!context) {
     return {
       enabled: false,
@@ -31,7 +38,10 @@ export function getDeleteSelectedPartAvailability(): DeleteSelectedPartAvailabil
  * Pushes one createScene undo entry.
  */
 export function deleteSelectedPart(): void {
-  const context = resolveSelectedCreateRoots();
+  const context = resolveSelectedCreateRoots(
+    $activeModel.get(),
+    $selection.get(),
+  );
   if (!context) {
     return;
   }
