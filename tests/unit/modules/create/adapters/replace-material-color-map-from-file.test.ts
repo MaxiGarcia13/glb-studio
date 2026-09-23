@@ -1,7 +1,10 @@
 import { MeshStandardMaterial, Texture } from 'three';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { replaceMaterialColorMapFromFile } from '@/modules/create/adapters/replace-material-color-map-from-file';
+import {
+  loadSkinnedColorMapFromFile,
+  replaceMaterialColorMapFromFile,
+} from '@/modules/create/adapters/replace-material-color-map-from-file';
 
 function imageFile(name: string): File {
   return new File([new Uint8Array(8)], name, { type: 'image/png' });
@@ -24,6 +27,43 @@ function stubCanvasDocument() {
     }),
   });
 }
+
+describe('loadSkinnedColorMapFromFile', () => {
+  beforeEach(() => {
+    stubCanvasDocument();
+    vi.stubGlobal(
+      'createImageBitmap',
+      vi.fn(async () => ({
+        close: vi.fn(),
+        height: 16,
+        width: 16,
+      })),
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it('decodes with flipY false without assigning', async () => {
+    const texture = await loadSkinnedColorMapFromFile(imageFile('skin.png'));
+    expect(texture.flipY).toBe(false);
+    expect(texture.name).toBe('skin.png');
+  });
+
+  it('throws without side effects when decode fails', async () => {
+    vi.stubGlobal(
+      'createImageBitmap',
+      vi.fn(async () => {
+        throw new Error('corrupt');
+      }),
+    );
+    await expect(
+      loadSkinnedColorMapFromFile(imageFile('broken.png')),
+    ).rejects.toMatchObject({ name: 'ImageTextureError' });
+  });
+});
 
 describe('replaceMaterialColorMapFromFile', () => {
   beforeEach(() => {

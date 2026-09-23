@@ -17,6 +17,7 @@ export function useTexturePrepDraft({
   partId,
   seededMap,
   onClose,
+  resolveApplyTarget,
 }: UseTexturePrepDraftArgs): TexturePrepDraft {
   const owned = useOwnedDraft(seededMap);
   const { close } = useTexturePrepLifecycle({
@@ -29,7 +30,7 @@ export function useTexturePrepDraft({
   const { flipX, flipY, cropToRegion } = createTransformActions(owned);
   const applyWrapPreset = createSetWrapPreset(owned);
   const removeBackground = createRemoveBackground(owned);
-  const apply = createApplyDraft(owned, close);
+  const apply = createApplyDraft(owned, close, resolveApplyTarget);
 
   const canApply = Boolean(owned.draftTexture) && !owned.busy;
 

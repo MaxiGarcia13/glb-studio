@@ -2,8 +2,9 @@ import { useStore } from '@nanostores/react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/button';
 import { TextureIcon } from '@/components/icons/texture-icon';
+import { $activeModel } from '@/modules/viewport/stores/model-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
-import { clearColorMap } from '../domain/material-color-map';
+import { commitMaterialColorMapChange } from '../actions/commit-material-color-map';
 import {
   useCanOpenTexturePrep,
   useSelectedCreatedPart,
@@ -23,6 +24,7 @@ function toolTitle(enabled: boolean, hasMap: boolean): string {
 
 export function PartTextureTool() {
   const part = useSelectedCreatedPart();
+  const activeModel = useStore($activeModel);
   const canOpen = useCanOpenTexturePrep();
   const material = part ? findMeshStandardMaterial(part.mesh) : null;
   const { object: selected } = useStore($selection, { keys: ['object'] });
@@ -40,10 +42,15 @@ export function PartTextureTool() {
   }, [material, selected, enabled]);
 
   const handleClear = () => {
-    if (!material?.map) {
+    if (!material?.map || !part || !activeModel) {
       return;
     }
-    clearColorMap(material);
+    commitMaterialColorMapChange({
+      modelId: activeModel.id,
+      meshUuid: part.mesh.uuid,
+      material,
+      next: null,
+    });
     setHasMap(false);
   };
 

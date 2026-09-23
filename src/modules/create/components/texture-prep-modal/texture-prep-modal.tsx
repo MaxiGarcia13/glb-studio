@@ -1,7 +1,9 @@
+import { useStore } from '@nanostores/react';
 import { useEffect, useState } from 'react';
 import { Modal } from '@/components/modal';
 import { useSelectedCreatedPart } from '@/modules/create/hooks/use-selected-created-part';
 import { findMeshStandardMaterial } from '@/modules/create/utils/selected-part';
+import { $activeModel } from '@/modules/viewport/stores/model-store';
 import { TexturePartPreview } from './texture-part-preview';
 import { TexturePrepActions } from './texture-prep-actions';
 import { TexturePrepBgRemove } from './texture-prep-bg-remove';
@@ -31,6 +33,7 @@ export function TexturePrepModal({
   onApplied,
 }: TexturePrepModalProps) {
   const part = useSelectedCreatedPart();
+  const activeModel = useStore($activeModel);
   const material = part ? findMeshStandardMaterial(part.mesh) : null;
   const partId = part?.mesh.uuid ?? null;
   const [cropMode, setCropMode] = useState(false);
@@ -57,6 +60,12 @@ export function TexturePrepModal({
     partId,
     seededMap: material?.map ?? null,
     onClose,
+    resolveApplyTarget: () => {
+      if (!activeModel || !part) {
+        return null;
+      }
+      return { modelId: activeModel.id, meshUuid: part.mesh.uuid };
+    },
   });
 
   useEffect(() => {

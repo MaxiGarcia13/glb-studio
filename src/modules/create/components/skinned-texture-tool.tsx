@@ -3,13 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/button';
 import { TextureIcon } from '@/components/icons/texture-icon';
 import { Text } from '@/components/text';
+import { $activeModel } from '@/modules/viewport/stores/model-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
+import { commitMaterialColorMapChange } from '../actions/commit-material-color-map';
 import {
   ImageTextureError,
   PART_COLOR_MAP_ACCEPT,
 } from '../adapters/load-image-texture';
-import { replaceMaterialColorMapFromFile } from '../adapters/replace-material-color-map-from-file';
-import { clearColorMap } from '../domain/material-color-map';
+import { loadSkinnedColorMapFromFile } from '../adapters/replace-material-color-map-from-file';
 import { useSkinnedTextureAvailability } from '../hooks/use-skinned-texture';
 
 function toolTitle(
@@ -36,7 +37,9 @@ function toolTitle(
 
 export function SkinnedTextureTool() {
   const availability = useSkinnedTextureAvailability();
-  const material = availability.target?.material ?? null;
+  const activeModel = useStore($activeModel);
+  const target = availability.target;
+  const material = target?.material ?? null;
   const { object: selected } = useStore($selection, { keys: ['object'] });
   const inputRef = useRef<HTMLInputElement>(null);
   const [hasMap, setHasMap] = useState(false);
@@ -47,13 +50,18 @@ export function SkinnedTextureTool() {
   useEffect(() => {
     setHasMap(Boolean(material?.map));
     setError(null);
-  }, [material, selected, availability.target?.mesh]);
+  }, [material, selected, target?.mesh]);
 
   const handleClear = () => {
-    if (!material?.map || busy) {
+    if (!material?.map || !target || !activeModel || busy) {
       return;
     }
-    clearColorMap(material);
+    commitMaterialColorMapChange({
+      modelId: activeModel.id,
+      meshUuid: target.mesh.uuid,
+      material,
+      next: null,
+    });
     setHasMap(false);
     setError(null);
   };
@@ -63,14 +71,20 @@ export function SkinnedTextureTool() {
   ) => {
     const file = event.target.files?.[0];
     event.target.value = '';
-    if (!file || !material || busy) {
+    if (!file || !material || !target || !activeModel || busy) {
       return;
     }
 
     setBusy(true);
     setError(null);
     try {
-      await replaceMaterialColorMapFromFile(material, file);
+      const texture = await loadSkinnedColorMapFromFile(file);
+      commitMaterialColorMapChange({
+        modelId: activeModel.id,
+        meshUuid: target.mesh.uuid,
+        material,
+        next: texture,
+      });
       setHasMap(true);
     } catch (cause) {
       if (cause instanceof ImageTextureError) {

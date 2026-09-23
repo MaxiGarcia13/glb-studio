@@ -1,19 +1,26 @@
 import type { MeshStandardMaterial } from 'three';
 import type { OwnedDraft } from './use-owned-draft';
-import { replaceColorMap } from '@/modules/create/domain/material-color-map';
+import { commitMaterialColorMapChange } from '@/modules/create/actions/commit-material-color-map';
 import { revokeThumbUrl } from './revoke-thumb-url';
 
+export interface ApplyDraftTarget {
+  modelId: string;
+  meshUuid: string;
+}
+
 /**
- * Relinquish draft ownership (without disposing), commit onto the live part,
- * then close. Cancel/close paths still dispose any remaining owned draft.
+ * Relinquish draft ownership (without disposing), commit onto the live part
+ * with undo, then close. Cancel/close paths still dispose any remaining owned draft.
  */
 export function createApplyDraft(
   owned: OwnedDraft,
   close: () => void,
+  resolveTarget: () => ApplyDraftTarget | null,
 ): (material: MeshStandardMaterial) => boolean {
   return (material) => {
     const draft = owned.draftTextureRef.current;
-    if (!draft || owned.busy) {
+    const target = resolveTarget();
+    if (!draft || owned.busy || !target) {
       return false;
     }
 
@@ -24,7 +31,12 @@ export function createApplyDraft(
     owned.thumbUrlRef.current = null;
     owned.setThumbUrl(null);
 
-    replaceColorMap(material, draft);
+    commitMaterialColorMapChange({
+      modelId: target.modelId,
+      meshUuid: target.meshUuid,
+      material,
+      next: draft,
+    });
     close();
     return true;
   };

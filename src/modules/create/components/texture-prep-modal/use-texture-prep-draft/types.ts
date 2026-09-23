@@ -1,4 +1,5 @@
 import type { MeshStandardMaterial, Texture } from 'three';
+import type { ApplyDraftTarget } from './apply-draft';
 import type { ImageCropRect } from '@/modules/create/domain/texture-crop';
 import type { TextureWrapPresetId } from '@/modules/create/domain/texture-wrap-preset';
 
@@ -7,6 +8,8 @@ export interface UseTexturePrepDraftArgs {
   partId: string | null;
   seededMap: Texture | null;
   onClose: () => void;
+  /** Model + mesh for undoable apply (US-46). */
+  resolveApplyTarget: () => ApplyDraftTarget | null;
 }
 
 export interface TexturePrepDraft {
