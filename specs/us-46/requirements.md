@@ -4,7 +4,7 @@ Delta: session undo/redo for albedo apply / replace / clear, and library UI to s
 
 **Depends on:** US-10 (undo stack), US-28 / US-39 (created maps), **US-40** (shipped — skinned albedo apply).
 
-**Status:** Planned — not kicked off.
+**Status:** In progress — kicked off.
 
 **Note:** Albedo (`.map`) only. Does not add prep modal on skinned materials. Does not make undo durable across reloads.
 

@@ -11,7 +11,7 @@
 
 | ID | Summary |
 |----|---------|
-| **US-46** | Color-map undo + skinned Library texture rows — planned, not kicked off |
+| **US-46** | Color-map undo + skinned Library texture rows — in progress |
 | **US-45** | Fuse / join created parts (boolean union) — planned, not kicked off |
 | **US-44** | Cut holes on created parts (boolean subtract) — planned, not kicked off |
 | **US-43** | Round corners (parametric bevel on box) — planned, not kicked off |

@@ -432,7 +432,7 @@ As an editor user, when I focus a skinned model (imported character, skinned kit
 - [x] Created (non-skinned) models stay on US-28 / US-39 path only
 - [x] Skinned apply uses `flipY: false` so glTF / UV atlas skins (e.g. Kenney) orient correctly
 
-**Out of scope:** texture prep modal on imported / skinned materials; full PBR maps; UV unwrap / painting; Kenney auto skin picker; session undo / Library texture rows (US-46); editing materials on non-skinned imported mesh-only scenes beyond the created path
+**Out of scope:** texture prep modal on imported / skinned materials; full PBR maps; UV unwrap / painting; Kenney auto skin picker; editing materials on non-skinned imported mesh-only scenes beyond the created path. Session undo for maps + Library texture rows are **US-46** (in progress) — see [`specs/us-46/`](../us-46/)
 
 ### US-25 — Grid and rotation snap
 
@@ -627,7 +627,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 
 ## Out of scope (still excluded)
 
-- Full material / texture editing on **imported** characters beyond albedo on skinned meshes (PBR maps, prep modal, painting, mesh-only non-skinned imports beyond the created path). Created-model color maps + prep remain US-28 / US-39. Skinned albedo apply / clear is **US-40** (shipped). Session undo + Library texture rows → [`specs/us-46/`](../us-46/)
+- Full material / texture editing on **imported** characters beyond albedo on skinned meshes (PBR maps, prep modal, painting, mesh-only non-skinned imports beyond the created path). Created-model color maps + prep remain US-28 / US-39. Skinned albedo apply / clear is **US-40** (shipped). **Exception (US-46, in progress):** session undo/redo for albedo apply/replace/clear (created + skinned) and Library texture rows under skinned models — see [`specs/us-46/`](../us-46/). Prep modal on skinned, full PBR, and durable undo across reloads stay out
 - Kit marketplace / remote download; user-authored kit save/share; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
