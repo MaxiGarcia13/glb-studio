@@ -45,6 +45,7 @@ Not copy-pasted files. Extract only if the helper stays small.
 - Kit registry is live (US-27 shipped); optional clothed block kit is deferred content-only if ever wanted
 - `part-kind.ts` and kit recipe files (`simple-building`, `block-robot`) are large data registries — split only if editing becomes painful
 - `mixer-session.ts` / `transform-readout-store.ts` — medium size; split when next touching blend vs transport or readout vs apply
+- Export files under ~150 lines (`download-export-zip`, `model-glb`, modal pieces) — do not split by line count; cognitive load is the format×layout×unit matrix (see Export sections above)
 
 ## Complex splits
 
@@ -52,6 +53,46 @@ Extract only when the next edit would otherwise be painful. Prefer one concern p
 
 - [x] Split keyframe domain into `keyframe-hold.ts` / `keyframe-crud.ts` / `keyframe-interpolation.ts` (+ shared `keyframe-sample.ts`); callers import deep paths — no barrel
 - [x] Thin `save-keyframe.ts` / `retarget-clip.ts` (~332 each): move pure bind-pose commit shaping and retarget scale/hips failure helpers into `domain/`; leave store wiring in actions
+
+## Export — priority cleanup
+
+Product surface is already large (format × layout × unit × imported/created × clips × skins). Prefer store-free packers and one naming helper before the next skins/export US. No product behavior change; keep US-49 / US-36 acceptance green.
+
+### Dead / redundant export symbols
+
+- [ ] Drop unused `EXPORT_ZIP_FILE_NAME` in `src/modules/export/utils/file-name.ts` (nothing imports it; callers use `defaultExportZipFileName`)
+- [ ] Drop or un-export `resolveGlbFileName` — production uses `resolveExportFileName`; if kept, it is tests-only and should not be a public alias
+- [ ] Collapse `collectImportedModelAnimations` / `collectCreatedModelAnimations` in `model-glb.ts` — both only map `collectModelExportClips` → `bakeTimeScale`; created vs imported difference already lives in `collectModelExportClips`
+
+### Store-free pack orchestration
+
+- [ ] Treat `downloadExportZip` as an action/orchestrator: pass `models`, `clips`, `groups`, active model (skeleton fallback), and zip options in — stop reading `$model` / `$clips` / `$modelGroups` / `$activeModel` from domain
+- [ ] Keep pack helpers store-free: `packFolderModelEntries` and `attachSessionSkinsForExport` take wardrobe (or skin list) as arguments instead of calling `getSessionSkinWardrobe`; hook / thin action resolves store → args
+- [ ] Update `useExportZip` (and any direct callers) to gather store snapshot then call the orchestrator; unit tests pass fixtures without nanostores
+
+### Shared unique-name helper
+
+- [ ] One small `uniqueTakenName` (or equivalent) for the `-2` / `-3` suffix loop shared by `uniqueFileName`, `uniquePathSegment`, and `uniqueClipName` in `merge-namespace.ts` — keep public wrappers if call sites stay clearer
+- [ ] Prefer `stripExportExtension` at export call sites that still use `stripGlbExtension` for basenames (modal defaults, merge prefix, pack file names); keep `stripGlbExtension` only where GLB-only is intentional, or fold into the export-aware helper
+
+### Defensive zip naming
+
+- [ ] Decide and document: either rely on orchestrator uniquify **or** `buildZipArchive` uniquify — not both silently. Prefer single owner + assertion/test that collisions are resolved before zip; drop the second pass if redundant
+
+## Export — when next touching
+
+Do **not** start these for neatness. Extract when the next export/skins US would otherwise make `download-export-zip` / folder pack painful.
+
+- [ ] Flat vs folders layout strategy (or two small packers) so group/single path rules are not re-implemented in the orchestrator — only when adding another layout or skin packing rule
+- [ ] Revisit export ↔ create coupling (`attachSessionSkinsForExport`, folder PNG skins) when US-47 (Skin editor) or further wardrobe export rules land; keep contract in `specs/current/design.md` Export section
+
+## Create — when next touching
+
+Large but owned. Split only when the next edit would otherwise be painful (same rule as Complex splits).
+
+- [ ] `material-color-map-undo.ts` (~300) — split dispose / clone / apply / stack-ownership helpers if the next skins undo change mixes concerns further
+- [ ] `create-part-clipboard.ts` (~318) — split snapshot vs instantiate if clipboard paste / hierarchy work grows
+- [ ] Texture prep modal pieces (`texture-prep-crop-editor`, modal shell) — already folder-split for draft hook; further split only if crop UI vs apply lifecycle collide in one PR
 
 ## Unit tests
 
