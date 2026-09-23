@@ -3,7 +3,7 @@ import { Group, Texture } from 'three';
 import { describe, expect, it, vi } from 'vitest';
 
 import { deletePart } from '@/modules/create/domain/delete-part';
-import { applyPartColorMap } from '@/modules/create/domain/part-color-map';
+import { applyColorMap } from '@/modules/create/domain/material-color-map';
 import { spawnPart } from '@/modules/create/domain/spawn-part';
 
 describe('deletePart texture dispose', () => {
@@ -15,7 +15,7 @@ describe('deletePart texture dispose', () => {
     const close = vi.fn();
     texture.image = { close };
     const dispose = vi.spyOn(texture, 'dispose');
-    applyPartColorMap(material, texture);
+    applyColorMap(material, texture);
 
     expect(deletePart(mesh)).toBe(true);
     expect(mesh.parent).toBeNull();

@@ -119,7 +119,7 @@ export function dataUrlFromCanvas(canvas: HTMLCanvasElement): string | null {
 /**
  * Decode a local image file into an sRGB `Texture`.
  * Disposes `previous` only after a successful decode so a failed pick cannot
- * leave the part with a black / missing map.
+ * leave the material with a black / missing map.
  */
 export async function loadImageTexture(
   file: File,

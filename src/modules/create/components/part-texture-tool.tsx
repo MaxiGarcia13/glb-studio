@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/button';
 import { TextureIcon } from '@/components/icons/texture-icon';
 import { $selection } from '@/modules/viewport/stores/selection-store';
-import { clearPartColorMap } from '../domain/part-color-map';
+import { clearColorMap } from '../domain/material-color-map';
 import {
   useCanOpenTexturePrep,
   useSelectedCreatedPart,
@@ -43,7 +43,7 @@ export function PartTextureTool() {
     if (!material?.map) {
       return;
     }
-    clearPartColorMap(material);
+    clearColorMap(material);
     setHasMap(false);
   };
 

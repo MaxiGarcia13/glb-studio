@@ -1,6 +1,6 @@
 import type { MeshStandardMaterial } from 'three';
 import type { OwnedDraft } from './use-owned-draft';
-import { commitPartColorMapDraft } from '@/modules/create/domain/part-color-map';
+import { replaceColorMap } from '@/modules/create/domain/material-color-map';
 import { revokeThumbUrl } from './revoke-thumb-url';
 
 /**
@@ -24,7 +24,7 @@ export function createApplyDraft(
     owned.thumbUrlRef.current = null;
     owned.setThumbUrl(null);
 
-    commitPartColorMapDraft(material, draft);
+    replaceColorMap(material, draft);
     close();
     return true;
   };

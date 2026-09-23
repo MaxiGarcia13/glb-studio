@@ -12,7 +12,7 @@ Tick only after acceptance.
 ## Domain
 
 - [x] **Resolve skinned texture target** — Selected SkinnedMesh or sole skinned mesh; unit tests
-- [ ] **Shared apply / clear** — Reuse or lift US-28 map helpers so create + skinned share dispose / alpha sync
+- [x] **Shared apply / clear** — Reuse or lift US-28 map helpers so create + skinned share dispose / alpha sync
 
 ## UI
 

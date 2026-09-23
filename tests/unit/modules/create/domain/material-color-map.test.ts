@@ -2,20 +2,20 @@ import { MeshStandardMaterial, Texture } from 'three';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  applyPartColorMap,
-  clearPartColorMap,
-  commitPartColorMapDraft,
-} from '@/modules/create/domain/part-color-map';
+  applyColorMap,
+  clearColorMap,
+  replaceColorMap,
+} from '@/modules/create/domain/material-color-map';
 import { markTextureMapHasAlpha } from '@/modules/create/domain/texture-map-alpha';
 
-describe('applyPartColorMap', () => {
+describe('applyColorMap', () => {
   it('sets map and marks the material for update without changing color', () => {
     const material = new MeshStandardMaterial({ color: 0xFF0000 });
     const texture = new Texture();
     texture.name = 'box.png';
     const versionBefore = material.version;
 
-    applyPartColorMap(material, texture);
+    applyColorMap(material, texture);
 
     expect(material.map).toBe(texture);
     expect(material.version).toBeGreaterThan(versionBefore);
@@ -28,48 +28,48 @@ describe('applyPartColorMap', () => {
     const texture = new Texture();
     markTextureMapHasAlpha(texture, true);
 
-    applyPartColorMap(material, texture);
+    applyColorMap(material, texture);
 
     expect(material.transparent).toBe(true);
     expect(material.alphaTest).toBe(0.5);
   });
 });
 
-describe('commitPartColorMapDraft', () => {
+describe('replaceColorMap', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it('assigns the draft and disposes a different previous map', () => {
+  it('assigns the texture and disposes a different previous map', () => {
     const material = new MeshStandardMaterial();
     const previous = new Texture();
     const close = vi.fn();
     previous.image = { close };
     const dispose = vi.spyOn(previous, 'dispose');
     material.map = previous;
-    const draft = new Texture();
+    const next = new Texture();
 
-    commitPartColorMapDraft(material, draft);
+    replaceColorMap(material, next);
 
-    expect(material.map).toBe(draft);
+    expect(material.map).toBe(next);
     expect(dispose).toHaveBeenCalledOnce();
     expect(close).toHaveBeenCalledOnce();
   });
 
-  it('does not dispose when the draft is already the live map', () => {
+  it('does not dispose when the texture is already the live map', () => {
     const material = new MeshStandardMaterial();
-    const draft = new Texture();
-    const dispose = vi.spyOn(draft, 'dispose');
-    material.map = draft;
+    const texture = new Texture();
+    const dispose = vi.spyOn(texture, 'dispose');
+    material.map = texture;
 
-    commitPartColorMapDraft(material, draft);
+    replaceColorMap(material, texture);
 
-    expect(material.map).toBe(draft);
+    expect(material.map).toBe(texture);
     expect(dispose).not.toHaveBeenCalled();
   });
 });
 
-describe('clearPartColorMap', () => {
+describe('clearColorMap', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -85,7 +85,7 @@ describe('clearPartColorMap', () => {
     material.alphaTest = 0.5;
     const versionBefore = material.version;
 
-    clearPartColorMap(material);
+    clearColorMap(material);
 
     expect(material.map).toBeNull();
     expect(material.version).toBeGreaterThan(versionBefore);
@@ -99,7 +99,7 @@ describe('clearPartColorMap', () => {
   it('is safe when there is no map', () => {
     const material = new MeshStandardMaterial();
     const versionBefore = material.version;
-    expect(() => clearPartColorMap(material)).not.toThrow();
+    expect(() => clearColorMap(material)).not.toThrow();
     expect(material.map).toBeNull();
     expect(material.version).toBeGreaterThan(versionBefore);
   });

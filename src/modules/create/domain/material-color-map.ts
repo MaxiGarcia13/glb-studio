@@ -4,12 +4,12 @@ import { disposeImageTexture } from '@/utils/dispose-image-texture';
 import { syncMaterialMapAlpha } from './texture-map-alpha';
 
 /**
- * Assign a color map on a create-part material. Leaves `color` alone so it
- * continues to multiply the map. Caller is responsible for disposing any
- * previous map (e.g. via `loadImageTexture(..., material.map)`).
+ * Assign a color map on a MeshStandardMaterial (created parts + skinned meshes).
+ * Leaves `color` alone so it continues to multiply the map. Caller is responsible
+ * for disposing any previous map unless using `replaceColorMap`.
  * Enables transparent cutouts when the map has alpha.
  */
-export function applyPartColorMap(
+export function applyColorMap(
   material: MeshStandardMaterial,
   texture: Texture,
 ): void {
@@ -19,16 +19,16 @@ export function applyPartColorMap(
 }
 
 /**
- * Commit a prep-modal draft onto the live part material and free the previous
- * map when it is a different texture instance.
+ * Assign a color map and free the previous map when it is a different texture
+ * instance. Shared by US-39 prep Apply and US-40 skinned replace.
  */
-export function commitPartColorMapDraft(
+export function replaceColorMap(
   material: MeshStandardMaterial,
-  draft: Texture,
+  texture: Texture,
 ): void {
   const previous = material.map;
-  applyPartColorMap(material, draft);
-  if (previous && previous !== draft) {
+  applyColorMap(material, texture);
+  if (previous && previous !== texture) {
     disposeImageTexture(previous);
   }
 }
@@ -37,7 +37,7 @@ export function commitPartColorMapDraft(
  * Remove the color map and free its GPU / ImageBitmap resources.
  * Flat `color` is unchanged. Clears cutout / transparent mode.
  */
-export function clearPartColorMap(material: MeshStandardMaterial): void {
+export function clearColorMap(material: MeshStandardMaterial): void {
   const previous = material.map;
   material.map = null;
   syncMaterialMapAlpha(material, null);

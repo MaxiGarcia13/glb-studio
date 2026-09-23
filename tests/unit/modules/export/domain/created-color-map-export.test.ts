@@ -9,7 +9,7 @@ import {
 } from 'three';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { applyPartColorMap } from '@/modules/create/domain/part-color-map';
+import { applyColorMap } from '@/modules/create/domain/material-color-map';
 import { spawnPart } from '@/modules/create/domain/spawn-part';
 import { packModelGlb } from '@/modules/export/domain/model-glb';
 
@@ -207,7 +207,7 @@ describe('created model color map export (US-28)', () => {
     const mesh = spawnPart(scene, 'box');
     const material = mesh.material as MeshStandardMaterial;
     material.color.set(0x4080C0);
-    applyPartColorMap(material, solidColorMap());
+    applyColorMap(material, solidColorMap());
 
     const packed = await packModelGlb(
       {
