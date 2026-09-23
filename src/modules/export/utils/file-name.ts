@@ -13,14 +13,19 @@ export function stripExportExtension(fileName: string): string {
   return stripAssetExtension(fileName);
 }
 
-export function uniqueFileName(fileName: string, taken: Set<string>): string {
-  if (!taken.has(fileName)) {
-    return fileName;
+/**
+ * Return `base` (+ optional extension) or `base-2`, `base-3`, … until free in
+ * `taken`. Does not mutate `taken`.
+ */
+export function uniqueTakenName(
+  base: string,
+  taken: Set<string>,
+  extension = '',
+): string {
+  const first = `${base}${extension}`;
+  if (!taken.has(first)) {
+    return first;
   }
-
-  const dotIndex = fileName.lastIndexOf('.');
-  const base = dotIndex > 0 ? fileName.slice(0, dotIndex) : fileName;
-  const extension = dotIndex > 0 ? fileName.slice(dotIndex) : '';
 
   let index = 2;
   let candidate = `${base}-${index}${extension}`;
@@ -29,6 +34,13 @@ export function uniqueFileName(fileName: string, taken: Set<string>): string {
     candidate = `${base}-${index}${extension}`;
   }
   return candidate;
+}
+
+export function uniqueFileName(fileName: string, taken: Set<string>): string {
+  const dotIndex = fileName.lastIndexOf('.');
+  const base = dotIndex > 0 ? fileName.slice(0, dotIndex) : fileName;
+  const extension = dotIndex > 0 ? fileName.slice(dotIndex) : '';
+  return uniqueTakenName(base, taken, extension);
 }
 
 /** Strip path separators / control chars; trim. Empty → null. */

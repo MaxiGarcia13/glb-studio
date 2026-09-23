@@ -72,7 +72,7 @@ Product surface is already large (format × layout × unit × imported/created �
 
 ### Shared unique-name helper
 
-- [ ] One small `uniqueTakenName` (or equivalent) for the `-2` / `-3` suffix loop shared by `uniqueFileName`, `uniquePathSegment`, and `uniqueClipName` in `merge-namespace.ts` — keep public wrappers if call sites stay clearer
+- [x] One small `uniqueTakenName` (or equivalent) for the `-2` / `-3` suffix loop shared by `uniqueFileName`, `uniquePathSegment`, and `uniqueClipName` in `merge-namespace.ts` — keep public wrappers if call sites stay clearer
 - [ ] Prefer `stripExportExtension` at export call sites that still use `stripGlbExtension` for basenames (modal defaults, merge prefix, pack file names); keep `stripGlbExtension` only where GLB-only is intentional, or fold into the export-aware helper
 
 ### Defensive zip naming

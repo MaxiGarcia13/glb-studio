@@ -1,4 +1,4 @@
-import { sanitizeBaseName } from '@/modules/export/utils/file-name';
+import { sanitizeBaseName, uniqueTakenName } from '@/modules/export/utils/file-name';
 
 /** Join sanitized zip path segments with `/` (JSZip nested entries). */
 export function joinZipPath(...segments: string[]): string {
@@ -18,17 +18,7 @@ export function joinZipPath(...segments: string[]): string {
 /** Unique folder / path segment (no extension); mutates `taken`. */
 export function uniquePathSegment(base: string, taken: Set<string>): string {
   const sanitized = sanitizeBaseName(base) ?? 'export';
-  if (!taken.has(sanitized)) {
-    taken.add(sanitized);
-    return sanitized;
-  }
-
-  let index = 2;
-  let candidate = `${sanitized}-${index}`;
-  while (taken.has(candidate)) {
-    index++;
-    candidate = `${sanitized}-${index}`;
-  }
-  taken.add(candidate);
-  return candidate;
+  const unique = uniqueTakenName(sanitized, taken);
+  taken.add(unique);
+  return unique;
 }

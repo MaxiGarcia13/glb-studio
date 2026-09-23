@@ -9,6 +9,7 @@ import {
   stripExportExtension,
   stripGlbExtension,
   uniqueFileName,
+  uniqueTakenName,
 } from '@/modules/export/utils/file-name';
 
 describe('stripGlbExtension', () => {
@@ -38,6 +39,22 @@ describe('sanitizeBaseName', () => {
     expect(sanitizeBaseName('')).toBeNull();
     expect(sanitizeBaseName('   ')).toBeNull();
     expect(sanitizeBaseName('???')).toBe('---');
+  });
+});
+
+describe('uniqueTakenName', () => {
+  it('returns the base when free', () => {
+    expect(uniqueTakenName('Idle', new Set())).toBe('Idle');
+  });
+
+  it('appends -2, -3, … until free', () => {
+    const taken = new Set(['Idle', 'Idle-2']);
+    expect(uniqueTakenName('Idle', taken)).toBe('Idle-3');
+  });
+
+  it('keeps an extension after the suffix', () => {
+    const taken = new Set(['a.glb']);
+    expect(uniqueTakenName('a', taken, '.glb')).toBe('a-2.glb');
   });
 });
 

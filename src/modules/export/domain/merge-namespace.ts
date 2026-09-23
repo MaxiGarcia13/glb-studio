@@ -5,7 +5,7 @@ import type { ModelEntry } from '@/modules/viewport/types/model';
 
 import { bakeTimeScale } from '@/modules/animation/domain/clip-bake';
 import { remapClipTracks } from '@/modules/animation/domain/clip-remap';
-import { sanitizeBaseName, stripGlbExtension } from '../utils/file-name';
+import { sanitizeBaseName, stripGlbExtension, uniqueTakenName } from '../utils/file-name';
 
 export interface ModelNamespace {
   modelId: string;
@@ -65,18 +65,9 @@ export function namespaceSceneGraph(
 }
 
 function uniqueClipName(name: string, taken: Set<string>): string {
-  if (!taken.has(name)) {
-    taken.add(name);
-    return name;
-  }
-  let index = 2;
-  let candidate = `${name}-${index}`;
-  while (taken.has(candidate)) {
-    index++;
-    candidate = `${name}-${index}`;
-  }
-  taken.add(candidate);
-  return candidate;
+  const unique = uniqueTakenName(name, taken);
+  taken.add(unique);
+  return unique;
 }
 
 function rewriteClipForNamespace(
