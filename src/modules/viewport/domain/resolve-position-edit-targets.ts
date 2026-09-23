@@ -1,6 +1,8 @@
 import type { Object3D } from 'three';
 
 import type { PoseEditKind } from '../stores/pose-edit-store';
+
+import { isStrictDescendantOf } from '@/modules/create/domain/parent-part';
 import { $editTool } from '../stores/edit-tool-store';
 import { $model } from '../stores/model-store';
 import { $selection } from '../stores/selection-store';
@@ -18,17 +20,6 @@ export interface PositionEditTargets {
   primary: Object3D | null;
   space: PositionEditSpace;
   poseKind: PoseEditKind;
-}
-
-function isStrictDescendantOf(object: Object3D, ancestor: Object3D): boolean {
-  let current: Object3D | null = object.parent;
-  while (current) {
-    if (current === ancestor) {
-      return true;
-    }
-    current = current.parent;
-  }
-  return false;
 }
 
 /**

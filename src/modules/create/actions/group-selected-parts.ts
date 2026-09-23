@@ -12,7 +12,7 @@ import {
   createEmptyPartGroup,
 } from '../domain/create-part-group';
 import { isCreateHierarchyNode } from '../domain/group-data';
-import { attachAllUnder } from '../domain/parent-part';
+import { attachAllUnder, isStrictDescendantOf } from '../domain/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 
 export interface GroupPartsAvailability {
@@ -50,7 +50,7 @@ function resolveMultiPartContext(): GroupPartsContext | null {
     const nestedUnderSelection = objects.some(
       (other) =>
         other !== entry
-        && (entry.parent === other || isDescendant(entry, other)),
+        && (entry.parent === other || isStrictDescendantOf(entry, other)),
     );
     if (nestedUnderSelection) {
       continue;
@@ -63,17 +63,6 @@ function resolveMultiPartContext(): GroupPartsContext | null {
   }
 
   return { modelId: owner.id, nodes, partsRoot: owner.scene };
-}
-
-function isDescendant(object: Object3D, ancestor: Object3D): boolean {
-  let current: Object3D | null = object.parent;
-  while (current) {
-    if (current === ancestor) {
-      return true;
-    }
-    current = current.parent;
-  }
-  return false;
 }
 
 /** Shared by Group and Make joint (≥2 create nodes on one created model). */

@@ -14,6 +14,7 @@ import {
 import { DUPLICATE_PART_OFFSET } from './duplicate-part';
 import { isCreateGroup, readCreateGroup, writeCreateGroup, writeCreateJoint } from './group-data';
 import { nextObjectName } from './object-name';
+import { isStrictDescendantOf } from './parent-part';
 import { readCreatePart } from './part-data';
 import { getPartKind } from './part-kind';
 import { nextPartName } from './part-name';
@@ -146,21 +147,6 @@ export function snapshotCreateHierarchyNode(
     return snapshotCreatePart(mesh, options);
   }
   return null;
-}
-
-/** True when `object` is a descendant of `ancestor` (not equal). */
-export function isStrictDescendantOf(
-  object: Object3D,
-  ancestor: Object3D,
-): boolean {
-  let current: Object3D | null = object.parent;
-  while (current) {
-    if (current === ancestor) {
-      return true;
-    }
-    current = current.parent;
-  }
-  return false;
 }
 
 /**
