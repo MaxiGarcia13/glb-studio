@@ -10,7 +10,7 @@
 
 2. **Skinned models — session wardrobe**
    - Store keyed by `modelId`: `{ id, label, texture }[]` + `activeSkinId: string | null`.
-   - Add on successful US-40 load; clone or take ownership so undo snapshots stay consistent with US-46 (snapshot owns clones; dispose only when safe).
+   - Add on successful US-40 load (**always append** a new list entry + set active; never overwrite the previous active entry in place). Clone or take ownership so undo snapshots stay consistent with US-46 (snapshot owns clones; dispose only when safe).
    - Pick active → commit that texture onto the resolved target; pick none → commit `next: null`.
    - Remove entry → drop from store + dispose; if active, clear live map in the **same** undo command (not remove-then-clear as two stack entries).
    - Replace US-46 “row iff mesh has `.map`” for skinned Library chrome with this list. Toolbar apply still works; it feeds the list.
@@ -40,6 +40,6 @@
 | Topic | Decision |
 |-------|----------|
 | Undo on **remove active** | **One command** — drop list entry + clear live map together; one undo restores both. Avoids a confusing half-state (row back / map still cleared or the reverse). |
-| File apply | *Open* — append vs replace-in-place (recommend: **append**) |
+| File apply | **Always append** — successful US-40 / toolbar / file apply adds a new `skins[]` entry and makes it active; earlier entries remain until the user removes them. No in-place replace of the active entry. |
 | None UI | *Open* — explicit “No skin” row vs deselect-all |
 | Import seed | *Open* — seed from existing `.map` vs empty until first apply (recommend: **seed**) |

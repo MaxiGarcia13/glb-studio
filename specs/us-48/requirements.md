@@ -25,7 +25,7 @@ As an editor user, when I apply a texture to a created part or a skinned model, 
 ### Skinned models — session skin list
 
 - [ ] Each skinned library model has a session list: `skins[]` + `activeSkinId | null` (not GLB extras; not durable across reload)
-- [ ] Applying a new image (US-40 file path) **adds** a list entry and makes it active; previous entries stay unless the user removes them
+- [ ] Applying a new image (US-40 file path) **always appends** a list entry and makes it active; previous entries stay unless the user removes them (no replace-in-place of the active entry)
 - [ ] Library under the model shows **one row per list entry** (not only meshes that currently have `.map`)
 - [ ] Selecting a row applies that skin to the resolved US-40 target (`commitMaterialColorMapChange`); selecting **none** / deselect clears the live map
 - [ ] Removing a list entry disposes that session texture; if it was active, live map clears as **one** undoable command (remove entry + clear map; one undo restores both)
