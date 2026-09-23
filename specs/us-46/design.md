@@ -21,7 +21,7 @@ Add a session stack id next to `createScene` / `saveKeyframe`:
 4. Clone the new live map into `after` (or `null` on clear).
 5. `pushUndoableCommand({ id: 'materialColorMap', … })`.
 
-**Undo / redo:** resolve mesh by uuid under `modelId`’s scene; assign from snapshot with `replaceColorMap` / `clearColorMap` **without** disposing the texture still owned by the stack entry. Dispose clones only when the stack entry is dropped (prune / superseded redo).
+**Undo / redo:** resolve mesh by uuid under `modelId`’s scene; assign from snapshot with `restoreMaterialColorMap` **without** disposing stack-owned textures. Dispose clones only when the stack entry is dropped (`pushUndoableCommand` clears redo → `disposeUndoableCommandResources`; `clearUndoStack` same). If the live material still shows a stack clone, **adopt** a private clone first. Live commits use `assignMaterialColorMapLive` + `releaseOrphanColorMap` (skip dispose when the previous map is still on the stack).
 
 **Wire call sites:** US-39 prep Apply, `PartTextureTool` clear, `SkinnedTextureTool` apply/clear, and Library clear (this US).
 

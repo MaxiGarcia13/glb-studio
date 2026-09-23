@@ -10,47 +10,29 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { applyUndoableCommand } from '@/modules/animation/stores/clip-store/actions/apply-undoable-command';
 import {
+  $commandStack,
   clearUndoStack,
   pushUndoableCommand,
   takeRedoCommand,
   takeUndoCommand,
 } from '@/modules/animation/stores/undo-stack-store';
+import { applyColorMap } from '@/modules/create/domain/material-color-map';
 import {
-  applyColorMap,
-  clearColorMap,
-  replaceColorMap,
-} from '@/modules/create/domain/material-color-map';
-import {
+  assignMaterialColorMapLive,
   cloneColorMapTexture,
-  disposeMaterialColorMapCommand,
+  collectStackOwnedColorMaps,
+  releaseOrphanColorMap,
   snapshotMaterialColorMap,
 } from '@/modules/create/domain/material-color-map-undo';
 import { markTextureMapHasAlpha } from '@/modules/create/domain/texture-map-alpha';
 import { $model } from '@/modules/viewport/stores/model-store';
 
-function stubCanvasDocument() {
-  const context = { drawImage: vi.fn() };
-  const canvas = {
-    width: 0,
-    height: 0,
-    getContext: vi.fn(() => context),
-  };
-  vi.stubGlobal('document', {
-    createElement: vi.fn((tag: string) => {
-      if (tag === 'canvas') {
-        return canvas;
-      }
-      throw new Error(`Unexpected element: ${tag}`);
-    }),
-  });
-  return { canvas, context };
-}
-
 function canvasTexture(name: string): Texture {
-  const canvas = document.createElement('canvas') as unknown as HTMLCanvasElement;
-  canvas.width = 8;
-  canvas.height = 8;
-  const texture = new Texture(canvas);
+  const texture = new Texture({
+    width: 8,
+    height: 8,
+    data: new Uint8ClampedArray(8 * 8 * 4),
+  } as never);
   texture.name = name;
   texture.flipY = false;
   texture.needsUpdate = true;
@@ -84,11 +66,8 @@ function pushMapCommand(
   const material = mesh.material as MeshStandardMaterial;
   material.map = beforeLive;
   const before = snapshotMaterialColorMap(material);
-  if (afterLive) {
-    replaceColorMap(material, afterLive);
-  } else {
-    clearColorMap(material);
-  }
+  const previous = assignMaterialColorMapLive(material, afterLive);
+  releaseOrphanColorMap(previous, collectStackOwnedColorMaps($commandStack.get()));
   const after = snapshotMaterialColorMap(material);
   const command: MaterialColorMapCommand = {
     id: 'materialColorMap',
@@ -115,7 +94,6 @@ function redoOnce(): void {
 
 describe('materialColorMap undo (US-46)', () => {
   beforeEach(() => {
-    stubCanvasDocument();
     clearUndoStack();
     $model.set({
       models: [],
@@ -127,7 +105,6 @@ describe('materialColorMap undo (US-46)', () => {
   });
 
   afterEach(() => {
-    vi.unstubAllGlobals();
     vi.restoreAllMocks();
     clearUndoStack();
   });
@@ -172,8 +149,7 @@ describe('materialColorMap undo (US-46)', () => {
     expect((mesh.material as MeshStandardMaterial).map).toBeNull();
 
     const beforeDispose = vi.spyOn(command.before.map!, 'dispose');
-    const afterWasNull = command.after.map;
-    expect(afterWasNull).toBeNull();
+    expect(command.after.map).toBeNull();
 
     undoOnce();
     expect((mesh.material as MeshStandardMaterial).map?.name).toBe('keep.png');
@@ -182,8 +158,6 @@ describe('materialColorMap undo (US-46)', () => {
     redoOnce();
     expect((mesh.material as MeshStandardMaterial).map).toBeNull();
     expect(beforeDispose).not.toHaveBeenCalled();
-
-    disposeMaterialColorMapCommand(command);
   });
 
   it('restores alpha cutout flags from the snapshot map', () => {
@@ -201,5 +175,49 @@ describe('materialColorMap undo (US-46)', () => {
     expect(material.map?.name).toBe('cutout.png');
     expect(material.transparent).toBe(true);
     expect(material.alphaTest).toBe(0.5);
+  });
+
+  it('push after undo disposes the pruned redo branch without blacking the live map', () => {
+    const mesh = new Mesh(new BoxGeometry(1, 1, 1), new MeshStandardMaterial());
+    setModel(mesh);
+    const beforeTex = canvasTexture('before.png');
+    const afterTex = canvasTexture('after.png');
+    applyColorMap(mesh.material as MeshStandardMaterial, beforeTex);
+
+    const first = pushMapCommand(mesh, beforeTex, afterTex);
+    undoOnce();
+    expect((mesh.material as MeshStandardMaterial).map).toBe(first.before.map);
+
+    const beforeDispose = vi.spyOn(first.before.map!, 'dispose');
+    const afterDispose = vi.spyOn(first.after.map!, 'dispose');
+
+    const next = canvasTexture('next.png');
+    pushMapCommand(mesh, first.before.map, next);
+
+    expect(beforeDispose).toHaveBeenCalledOnce();
+    expect(afterDispose).toHaveBeenCalledOnce();
+    const live = (mesh.material as MeshStandardMaterial).map;
+    expect(live?.name).toBe('next.png');
+    expect(live).not.toBe(first.before.map);
+    expect(live).not.toBe(first.after.map);
+  });
+
+  it('clearUndoStack adopts a live stack map then frees clones', () => {
+    const mesh = new Mesh(new BoxGeometry(1, 1, 1), new MeshStandardMaterial());
+    setModel(mesh);
+    const beforeTex = canvasTexture('keep.png');
+    applyColorMap(mesh.material as MeshStandardMaterial, beforeTex);
+
+    const command = pushMapCommand(mesh, beforeTex, null);
+    undoOnce();
+    expect((mesh.material as MeshStandardMaterial).map).toBe(command.before.map);
+
+    const beforeDispose = vi.spyOn(command.before.map!, 'dispose');
+    clearUndoStack();
+
+    expect(beforeDispose).toHaveBeenCalledOnce();
+    const live = (mesh.material as MeshStandardMaterial).map;
+    expect(live?.name).toBe('keep.png');
+    expect(live).not.toBe(command.before.map);
   });
 });

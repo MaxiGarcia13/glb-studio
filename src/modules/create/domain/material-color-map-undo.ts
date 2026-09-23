@@ -137,6 +137,103 @@ export function restoreMaterialColorMap(
   }
 }
 
+/**
+ * If the live material still references a stack-owned map, give it a private
+ * clone so the stack entry can be disposed without blacking the viewport.
+ */
+function adoptLiveStackMapsIfNeeded(command: MaterialColorMapCommand): void {
+  const model = $model.get().models.find((entry) => entry.id === command.modelId);
+  if (!model) {
+    return;
+  }
+
+  const mesh = model.scene.getObjectByProperty('uuid', command.meshUuid);
+  const material = findMeshStandardMaterial(mesh ?? null);
+  if (!material?.map) {
+    return;
+  }
+
+  const live = material.map;
+  if (live !== command.before.map && live !== command.after.map) {
+    return;
+  }
+
+  applyColorMap(material, cloneColorMapTexture(live));
+}
+
+/**
+ * Free stack-owned map clones for a pruned / cleared entry.
+ * Adopts onto the live material first when the viewport still shows a clone.
+ */
+export function disposeMaterialColorMapCommandSafely(
+  command: MaterialColorMapCommand,
+): void {
+  adoptLiveStackMapsIfNeeded(command);
+  disposeMaterialColorMapCommand(command);
+}
+
+/** Dispose GPU resources owned by a stack entry when it leaves the session stack. */
+export function disposeUndoableCommandResources(command: UndoableCommand): void {
+  if (command.id === 'materialColorMap') {
+    disposeMaterialColorMapCommandSafely(command);
+  }
+}
+
+/** Textures still referenced by undo stack snapshots (must not dispose as orphans). */
+export function collectStackOwnedColorMaps(
+  stack: {
+    past: readonly UndoableCommand[];
+    future: readonly UndoableCommand[];
+  },
+): Texture[] {
+  const owned: Texture[] = [];
+  for (const command of [...stack.past, ...stack.future]) {
+    if (command.id !== 'materialColorMap') {
+      continue;
+    }
+    if (command.before.map) {
+      owned.push(command.before.map);
+    }
+    if (command.after.map) {
+      owned.push(command.after.map);
+    }
+  }
+  return owned;
+}
+
+/**
+ * Dispose a replaced live map only when it is not owned by the session stack.
+ * Call after assigning the new map and before pushing the new undo entry.
+ */
+export function releaseOrphanColorMap(
+  texture: Texture | null | undefined,
+  stackOwned: readonly (Texture | null | undefined)[],
+): void {
+  if (!texture || stackOwned.includes(texture)) {
+    return;
+  }
+  disposeImageTexture(texture);
+}
+
+/**
+ * Assign a live map without disposing. Pair with `releaseOrphanColorMap` so
+ * stack-owned undo clones survive until pruned.
+ */
+export function assignMaterialColorMapLive(
+  material: MeshStandardMaterial,
+  next: Texture | null,
+): Texture | null {
+  const previous = material.map;
+  if (next) {
+    applyColorMap(material, next);
+  } else {
+    material.map = null;
+    syncMaterialMapAlpha(material, null);
+    material.needsUpdate = true;
+  }
+  return previous;
+}
+
 /** Apply undo/redo for a materialColorMap stack entry onto the live model. */
 export function applyMaterialColorMapCommand(
   command: MaterialColorMapCommand,
