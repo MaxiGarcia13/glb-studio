@@ -41,7 +41,7 @@ Same “is strict descendant” walk and “roots among selection (skip nodes ne
 
 - [x] One shared `isStrictDescendantOf` — today duplicated in `create/domain/parent-part.ts` (exported), `create/domain/create-part-clipboard.ts` (exported), private copy in `viewport/domain/resolve-position-edit-targets.ts`, and private `isDescendant` in `create/actions/group-selected-parts.ts`. Prefer `parent-part` (or a tiny `create/domain` / shared util) as the single owner; viewport may import create domain for this pure helper, or lift to `src/utils/` if cross-module ownership feels wrong
 - [x] One shared `resolveHierarchyRoots(objects)` (or equivalent) used by `resolveClipboardRoots`, `resolveSelectionRoots`, and the nest filter inside `resolveMultiPartContext` / `group-selected-parts` — same algorithm, three call sites
-- [ ] Unit tests for descendant + roots (parent+child multi-select drops child; unrelated siblings kept); update existing group / clipboard / pose-target tests if they assert behavior
+- [x] Unit tests for descendant + roots (parent+child multi-select drops child; unrelated siblings kept); update existing group / clipboard / pose-target tests if they assert behavior
 
 ## Export — small leftovers
 

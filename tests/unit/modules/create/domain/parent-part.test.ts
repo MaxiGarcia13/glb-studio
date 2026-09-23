@@ -2,7 +2,11 @@ import { BoxGeometry, Group, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { describe, expect, it } from 'vitest';
 
 import { writeCreateGroup } from '@/modules/create/domain/group-data';
-import { canAttachUnder } from '@/modules/create/domain/parent-part';
+import {
+  canAttachUnder,
+  isStrictDescendantOf,
+  resolveHierarchyRoots,
+} from '@/modules/create/domain/parent-part';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 
 function createPart(name: string): Mesh {
@@ -21,6 +25,66 @@ function createGroup(name: string): Group {
   writeCreateGroup(group);
   return group;
 }
+
+describe('isStrictDescendantOf', () => {
+  it('is true for a direct child and a deeper descendant', () => {
+    const parent = new Object3D();
+    const child = new Object3D();
+    const grandchild = new Object3D();
+    parent.add(child);
+    child.add(grandchild);
+
+    expect(isStrictDescendantOf(child, parent)).toBe(true);
+    expect(isStrictDescendantOf(grandchild, parent)).toBe(true);
+  });
+
+  it('is false for self, an ancestor, or an unrelated node', () => {
+    const parent = new Object3D();
+    const child = new Object3D();
+    const sibling = new Object3D();
+    parent.add(child);
+    parent.add(sibling);
+
+    expect(isStrictDescendantOf(parent, parent)).toBe(false);
+    expect(isStrictDescendantOf(parent, child)).toBe(false);
+    expect(isStrictDescendantOf(sibling, child)).toBe(false);
+  });
+});
+
+describe('resolveHierarchyRoots', () => {
+  it('drops the child when parent and child are both selected', () => {
+    const parent = new Object3D();
+    const child = new Object3D();
+    parent.add(child);
+
+    expect(resolveHierarchyRoots([parent, child])).toEqual([parent]);
+  });
+
+  it('keeps unrelated siblings', () => {
+    const root = new Object3D();
+    const a = new Object3D();
+    const b = new Object3D();
+    root.add(a, b);
+
+    expect(resolveHierarchyRoots([a, b])).toEqual([a, b]);
+  });
+
+  it('drops a deep descendant when an ancestor is selected', () => {
+    const parent = new Object3D();
+    const mid = new Object3D();
+    const leaf = new Object3D();
+    parent.add(mid);
+    mid.add(leaf);
+
+    expect(resolveHierarchyRoots([parent, leaf])).toEqual([parent]);
+  });
+
+  it('returns a single node and an empty selection unchanged', () => {
+    const alone = new Object3D();
+    expect(resolveHierarchyRoots([alone])).toEqual([alone]);
+    expect(resolveHierarchyRoots([])).toEqual([]);
+  });
+});
 
 describe('canAttachUnder', () => {
   it('allows attaching a part under the parts root', () => {
