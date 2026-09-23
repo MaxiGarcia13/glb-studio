@@ -6,16 +6,13 @@ import { AssetEntry } from '@/components/asset-entry';
 import { TextureIcon } from '@/components/icons/texture-icon';
 import { Text } from '@/components/text';
 import { $selection } from '@/modules/viewport/stores/selection-store';
-import { applySkinnedSessionSkinFromFile } from '../actions/apply-skinned-session-skin';
+import { applySkinnedSessionSkinsFromFiles } from '../actions/apply-skinned-session-skin';
 import {
   pickNoSessionSkin,
   pickSessionSkin,
 } from '../actions/pick-session-skin';
 import { removeSessionSkin } from '../actions/remove-session-skin';
-import {
-  ImageTextureError,
-  PART_COLOR_MAP_ACCEPT,
-} from '../adapters/load-image-texture';
+import { PART_COLOR_MAP_ACCEPT } from '../adapters/load-image-texture';
 import { resolveSkinnedTextureTarget } from '../domain/resolve-skinned-texture-target';
 import { $materialMapsRevision } from '../stores/material-maps-revision-store';
 import {
@@ -29,10 +26,20 @@ interface SkinnedTextureRowsProps {
   className?: string;
 }
 
+function summarizeApplyErrors(errors: readonly string[]): string | null {
+  if (errors.length === 0) {
+    return null;
+  }
+  if (errors.length === 1) {
+    return errors[0]!;
+  }
+  return `${errors[0]} (+${errors.length - 1} more)`;
+}
+
 /**
  * Library session skin rows for a skinned model (US-48).
  * One row per wardrobe entry (selected = active) plus an explicit “No skin” row.
- * File replace / apply still appends via the US-40 path.
+ * File apply supports multi-select append.
  */
 export function SkinnedTextureRows({
   modelId,
@@ -87,29 +94,23 @@ export function SkinnedTextureRows({
   }
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
+    // Snapshot before clearing — FileList is live and empties when value is reset.
+    const files = Array.from(event.target.files ?? []);
     event.target.value = '';
-    if (!file || !target) {
+    if (files.length === 0 || !target) {
       return;
     }
 
     setBusy(true);
     setError(null);
     try {
-      await applySkinnedSessionSkinFromFile({
+      const result = await applySkinnedSessionSkinsFromFiles({
         modelId,
         meshUuid: target.mesh.uuid,
         material: target.material,
-        file,
+        files,
       });
-    } catch (cause) {
-      if (cause instanceof ImageTextureError) {
-        setError(cause.message);
-      } else if (cause instanceof Error) {
-        setError(cause.message);
-      } else {
-        setError(`Could not load “${file.name}”.`);
-      }
+      setError(summarizeApplyErrors(result.errors));
     } finally {
       setBusy(false);
     }
@@ -121,6 +122,7 @@ export function SkinnedTextureRows({
         ref={inputRef}
         type="file"
         accept={PART_COLOR_MAP_ACCEPT}
+        multiple
         aria-hidden
         tabIndex={-1}
         className="sr-only"

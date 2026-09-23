@@ -5,12 +5,9 @@ import { TextureIcon } from '@/components/icons/texture-icon';
 import { Text } from '@/components/text';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
-import { applySkinnedSessionSkinFromFile } from '../actions/apply-skinned-session-skin';
+import { applySkinnedSessionSkinsFromFiles } from '../actions/apply-skinned-session-skin';
 import { pickNoSessionSkin } from '../actions/pick-session-skin';
-import {
-  ImageTextureError,
-  PART_COLOR_MAP_ACCEPT,
-} from '../adapters/load-image-texture';
+import { PART_COLOR_MAP_ACCEPT } from '../adapters/load-image-texture';
 import { useSkinnedTextureAvailability } from '../hooks/use-skinned-texture';
 import { $materialMapsRevision } from '../stores/material-maps-revision-store';
 
@@ -31,9 +28,19 @@ function toolTitle(
     return reason;
   }
   if (hasMap) {
-    return `${reason} — click to replace, right-click to clear`;
+    return `${reason} — click to add skins (multi-select), right-click to clear`;
   }
-  return reason;
+  return `${reason} — click to add skins (multi-select)`;
+}
+
+function summarizeApplyErrors(errors: readonly string[]): string | null {
+  if (errors.length === 0) {
+    return null;
+  }
+  if (errors.length === 1) {
+    return errors[0]!;
+  }
+  return `${errors[0]} (+${errors.length - 1} more)`;
 }
 
 export function SkinnedTextureTool() {
@@ -70,30 +77,26 @@ export function SkinnedTextureTool() {
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const file = event.target.files?.[0];
+    // Snapshot before clearing — FileList is live and empties when value is reset.
+    const files = Array.from(event.target.files ?? []);
     event.target.value = '';
-    if (!file || !material || !target || !activeModel || busy) {
+    if (files.length === 0 || !material || !target || !activeModel || busy) {
       return;
     }
 
     setBusy(true);
     setError(null);
     try {
-      await applySkinnedSessionSkinFromFile({
+      const result = await applySkinnedSessionSkinsFromFiles({
         modelId: activeModel.id,
         meshUuid: target.mesh.uuid,
         material,
-        file,
+        files,
       });
-      setHasMap(true);
-    } catch (cause) {
-      if (cause instanceof ImageTextureError) {
-        setError(cause.message);
-      } else if (cause instanceof Error) {
-        setError(cause.message);
-      } else {
-        setError(`Could not load “${file.name}”.`);
+      if (result.entries.length > 0) {
+        setHasMap(true);
       }
+      setError(summarizeApplyErrors(result.errors));
     } finally {
       setBusy(false);
     }
@@ -113,6 +116,7 @@ export function SkinnedTextureTool() {
         ref={inputRef}
         type="file"
         accept={PART_COLOR_MAP_ACCEPT}
+        multiple
         aria-hidden
         tabIndex={-1}
         className="sr-only"
@@ -123,7 +127,7 @@ export function SkinnedTextureTool() {
         variant={hasMap ? 'primary' : 'ghost'}
         disabled={!enabled}
         title={title}
-        aria-label={hasMap ? 'Replace or clear model texture' : 'Model texture'}
+        aria-label={hasMap ? 'Add or clear model skins' : 'Add model skins'}
         aria-pressed={hasMap}
         aria-busy={busy || undefined}
         onClick={() => {
