@@ -12,7 +12,7 @@ import {
   createEmptyPartGroup,
 } from '../domain/create-part-group';
 import { isCreateHierarchyNode } from '../domain/group-data';
-import { attachAllUnder, isStrictDescendantOf } from '../domain/parent-part';
+import { attachAllUnder, resolveHierarchyRoots } from '../domain/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 
 export interface GroupPartsAvailability {
@@ -39,24 +39,11 @@ function resolveMultiPartContext(): GroupPartsContext | null {
     return null;
   }
 
-  const nodes: Object3D[] = [];
-  for (const entry of objects) {
-    if (!isCreateHierarchyNode(entry)) {
-      continue;
-    }
-    if (findModelEntryForObject(entry, models)?.id !== owner.id) {
-      continue;
-    }
-    const nestedUnderSelection = objects.some(
-      (other) =>
-        other !== entry
-        && (entry.parent === other || isStrictDescendantOf(entry, other)),
-    );
-    if (nestedUnderSelection) {
-      continue;
-    }
-    nodes.push(entry);
-  }
+  const nodes = resolveHierarchyRoots(objects).filter(
+    (entry) =>
+      isCreateHierarchyNode(entry)
+      && findModelEntryForObject(entry, models)?.id === owner.id,
+  );
 
   if (nodes.length < 2) {
     return null;

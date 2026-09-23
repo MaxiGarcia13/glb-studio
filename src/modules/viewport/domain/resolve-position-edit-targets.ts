@@ -2,7 +2,7 @@ import type { Object3D } from 'three';
 
 import type { PoseEditKind } from '../stores/pose-edit-store';
 
-import { isStrictDescendantOf } from '@/modules/create/domain/parent-part';
+import { resolveHierarchyRoots } from '@/modules/create/domain/parent-part';
 import { $editTool } from '../stores/edit-tool-store';
 import { $model } from '../stores/model-store';
 import { $selection } from '../stores/selection-store';
@@ -28,19 +28,7 @@ export interface PositionEditTargets {
  * double-apply the delta to the child.
  */
 export function resolveSelectionRoots(objects: readonly Object3D[]): Object3D[] {
-  const roots: Object3D[] = [];
-  for (const entry of objects) {
-    const nestedUnderSelection = objects.some(
-      (other) =>
-        other !== entry
-        && (entry.parent === other || isStrictDescendantOf(entry, other)),
-    );
-    if (nestedUnderSelection) {
-      continue;
-    }
-    roots.push(entry);
-  }
-  return roots;
+  return resolveHierarchyRoots(objects);
 }
 
 function modelIdForObject(object: Object3D): string | null {

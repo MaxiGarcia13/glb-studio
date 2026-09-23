@@ -14,7 +14,7 @@ import {
 import { DUPLICATE_PART_OFFSET } from './duplicate-part';
 import { isCreateGroup, readCreateGroup, writeCreateGroup, writeCreateJoint } from './group-data';
 import { nextObjectName } from './object-name';
-import { isStrictDescendantOf } from './parent-part';
+import { resolveHierarchyRoots } from './parent-part';
 import { readCreatePart } from './part-data';
 import { getPartKind } from './part-kind';
 import { nextPartName } from './part-name';
@@ -156,19 +156,7 @@ export function snapshotCreateHierarchyNode(
 export function resolveClipboardRoots(
   objects: readonly Object3D[],
 ): Object3D[] {
-  const roots: Object3D[] = [];
-  for (const entry of objects) {
-    const nestedUnderSelection = objects.some(
-      (other) =>
-        other !== entry
-        && (entry.parent === other || isStrictDescendantOf(entry, other)),
-    );
-    if (nestedUnderSelection) {
-      continue;
-    }
-    roots.push(entry);
-  }
-  return roots;
+  return resolveHierarchyRoots(objects);
 }
 
 /** Build a clipboard payload from hierarchy roots, or null when empty. */

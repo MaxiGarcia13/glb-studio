@@ -13,6 +13,26 @@ export function isStrictDescendantOf(object: Object3D, ancestor: Object3D): bool
   return false;
 }
 
+/**
+ * Roots among `objects`: skip nodes nested under another entry in the list
+ * (parent+child multi-select keeps the parent only).
+ */
+export function resolveHierarchyRoots(objects: readonly Object3D[]): Object3D[] {
+  const roots: Object3D[] = [];
+  for (const entry of objects) {
+    const nestedUnderSelection = objects.some(
+      (other) =>
+        other !== entry
+        && (entry.parent === other || isStrictDescendantOf(entry, other)),
+    );
+    if (nestedUnderSelection) {
+      continue;
+    }
+    roots.push(entry);
+  }
+  return roots;
+}
+
 function isUnderPartsRoot(object: Object3D, partsRoot: Object3D): boolean {
   return object === partsRoot || isStrictDescendantOf(object, partsRoot);
 }
