@@ -64,12 +64,6 @@ export function namespaceSceneGraph(
   return nameMap;
 }
 
-function uniqueClipName(name: string, taken: Set<string>): string {
-  const unique = uniqueTakenName(name, taken);
-  taken.add(unique);
-  return unique;
-}
-
 function rewriteClipForNamespace(
   entry: ClipEntry,
   nameMap: Map<string, string>,
@@ -102,7 +96,8 @@ export function buildMergeExportClips(
       if (!rewritten) {
         continue;
       }
-      const exportName = uniqueClipName(entry.name, takenNames);
+      const exportName = uniqueTakenName(entry.name, takenNames);
+      takenNames.add(exportName);
       rewritten.name = exportName;
       records.push({
         modelId: ns.modelId,
