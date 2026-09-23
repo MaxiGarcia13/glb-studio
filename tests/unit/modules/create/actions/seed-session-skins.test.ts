@@ -1,3 +1,4 @@
+import type { ModelEntry } from '@/modules/viewport/types/model';
 import {
   Bone,
   BoxGeometry,
@@ -7,14 +8,13 @@ import {
   SkinnedMesh,
   Texture,
 } from 'three';
-import { afterEach, describe, expect, it } from 'vitest';
 
+import { afterEach, describe, expect, it } from 'vitest';
 import { seedSessionSkinsFromModel } from '@/modules/create/actions/seed-session-skins';
 import {
   getSessionSkinWardrobe,
   resetSessionSkinsStoreForTests,
 } from '@/modules/create/stores/session-skins-store';
-import type { ModelEntry } from '@/modules/viewport/types/model';
 
 function namedTexture(name: string): Texture {
   const texture = new Texture();
