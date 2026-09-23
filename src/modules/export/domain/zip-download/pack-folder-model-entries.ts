@@ -1,9 +1,9 @@
 import type { ClipEntry } from '@/modules/animation/types/clip';
+import type { SessionSkinWardrobe } from '@/modules/create/types/session-skins';
 import type { ZipEntry } from '@/modules/export/adapters/zip';
 import type { ExportFormat } from '@/modules/export/utils/file-name';
 import type { ModelEntry } from '@/modules/viewport/types/model';
 
-import { getSessionSkinWardrobe } from '@/modules/create/stores/session-skins-store';
 import { pngArrayBufferFromTexture } from '@/modules/export/adapters/png-from-texture';
 import {
   resolveExportFileName,
@@ -31,6 +31,8 @@ export async function packFolderModelEntries(options: {
   modelFileName?: string;
   takenNames: Set<string>;
   takenFolderBases: Set<string>;
+  /** Session wardrobe for PNG sidecars. Caller resolves from store. */
+  sessionWardrobe?: SessionSkinWardrobe;
 }): Promise<PackFolderModelResult> {
   const {
     model,
@@ -39,6 +41,7 @@ export async function packFolderModelEntries(options: {
     modelFileName,
     takenNames,
     takenFolderBases,
+    sessionWardrobe,
   } = options;
 
   const fallbackBase = stripExportExtension(model.fileName) || 'model';
@@ -82,8 +85,8 @@ export async function packFolderModelEntries(options: {
     }
   }
 
-  const wardrobe = getSessionSkinWardrobe(model.id);
-  for (const skin of wardrobe.skins) {
+  const skins = sessionWardrobe?.skins ?? [];
+  for (const skin of skins) {
     const arrayBuffer = await pngArrayBufferFromTexture(skin.texture);
     const skinBase = stripExportExtension(skin.label) || 'skin';
     const fileName = uniqueFileName(

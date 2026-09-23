@@ -1,10 +1,13 @@
 import type { ExportZipOptions } from '../domain/zip-download';
+
 import { useStore } from '@nanostores/react';
 import { useState } from 'react';
+
 import { $clips } from '@/modules/animation/stores/clip-store';
 import { $createPartsRevision } from '@/modules/create/stores/create-parts-revision-store';
+import { $sessionSkinsByModel } from '@/modules/create/stores/session-skins-store';
 import { $modelGroups } from '@/modules/viewport/stores/model-group-store';
-import { $model } from '@/modules/viewport/stores/model-store';
+import { $activeModel, $model } from '@/modules/viewport/stores/model-store';
 import { downloadExportZip, resolveExportUnits } from '../domain/zip-download';
 
 export function useExportZip() {
@@ -13,6 +16,8 @@ export function useExportZip() {
   });
   const { groups } = useStore($modelGroups, { keys: ['groups'] });
   const { clips } = useStore($clips, { keys: ['clips'] });
+  const sessionSkinsByModel = useStore($sessionSkinsByModel);
+  const activeModel = useStore($activeModel);
   useStore($createPartsRevision);
 
   const [busy, setBusy] = useState(false);
@@ -31,7 +36,14 @@ export function useExportZip() {
     setBusy(true);
     setError(null);
     try {
-      await downloadExportZip(options);
+      await downloadExportZip({
+        models,
+        clips,
+        groups,
+        activeModel,
+        sessionSkinsByModel,
+        options,
+      });
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Export failed');
       throw cause;

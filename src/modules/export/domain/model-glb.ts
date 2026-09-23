@@ -1,6 +1,7 @@
 import type { AnimationClip } from 'three';
 
 import type { ClipEntry } from '@/modules/animation/types/clip';
+import type { SessionSkinWardrobe } from '@/modules/create/types/session-skins';
 import type { ModelEntry } from '@/modules/viewport/types/model';
 
 import { bakeTimeScale } from '@/modules/animation/domain/clip-bake';
@@ -28,6 +29,8 @@ export interface PackModelGlbOptions {
    * temporary helper meshes (flat zip). Folder layout passes false (PNG sidecars).
    */
   embedSessionSkins?: boolean;
+  /** Wardrobe to embed when `embedSessionSkins` is true. Caller resolves from store. */
+  sessionWardrobe?: SessionSkinWardrobe;
 }
 
 /** Bake time scale for every clip that packs with this model. */
@@ -106,9 +109,11 @@ export async function packModelGlb(
     ? collectModelExportAnimations(model, clips)
     : [];
 
-  const detachSkins = embedSessionSkins
-    ? attachSessionSkinsForExport(model.scene, model.id)
-    : () => {};
+  const wardrobe = options.sessionWardrobe;
+  const detachSkins
+    = embedSessionSkins && wardrobe
+      ? attachSessionSkinsForExport(model.scene, wardrobe)
+      : () => {};
 
   try {
     const arrayBuffer = await exportGlbBinary(model.scene, animations);

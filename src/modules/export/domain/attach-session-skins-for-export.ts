@@ -1,4 +1,5 @@
 import type { Object3D } from 'three';
+import type { SessionSkinWardrobe } from '@/modules/create/types/session-skins';
 
 import { Mesh, MeshBasicMaterial, PlaneGeometry } from 'three';
 
@@ -7,7 +8,6 @@ import {
   SESSION_SKINS_MANIFEST_KEY,
   SESSION_SKINS_MANIFEST_VERSION,
 } from '@/modules/create/domain/session-skins-manifest';
-import { getSessionSkinWardrobe } from '@/modules/create/stores/session-skins-store';
 
 /**
  * Temporarily parent invisible meshes whose materials reference every session
@@ -17,9 +17,8 @@ import { getSessionSkinWardrobe } from '@/modules/create/stores/session-skins-st
  */
 export function attachSessionSkinsForExport(
   scene: Object3D,
-  modelId: string,
+  wardrobe: SessionSkinWardrobe,
 ): () => void {
-  const wardrobe = getSessionSkinWardrobe(modelId);
   if (wardrobe.skins.length === 0) {
     return () => {};
   }

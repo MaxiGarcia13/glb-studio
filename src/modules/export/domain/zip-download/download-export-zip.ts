@@ -1,8 +1,7 @@
-import type { ExportZipOptions } from './types';
+import type { DownloadExportZipInput } from './types';
 import type { ZipEntry } from '@/modules/export/adapters/zip';
 
 import type { ExportFormat } from '@/modules/export/utils/file-name';
-import { $clips } from '@/modules/animation/stores/clip-store';
 import { downloadBlob } from '@/modules/export/adapters/download';
 import { buildZipArchive } from '@/modules/export/adapters/zip';
 import {
@@ -12,8 +11,6 @@ import {
   stripExportExtension,
   uniqueFileName,
 } from '@/modules/export/utils/file-name';
-import { $modelGroups } from '@/modules/viewport/stores/model-group-store';
-import { $activeModel, $model } from '@/modules/viewport/stores/model-store';
 import { packClipGlb } from '../clip-glb';
 import { packMergedModelsGlb } from '../merged-glb';
 import { packModelGlb } from '../model-glb';
@@ -24,22 +21,21 @@ import { sharedAnimationOnlyClips } from './shared-clips';
 import { resolveSkeletonFallback } from './skeleton-fallback';
 import { joinZipPath, uniquePathSegment } from './zip-path';
 
+const EMPTY_WARDROBE = { skins: [], activeSkinId: null } as const;
+
 export async function downloadExportZip(
-  options: ExportZipOptions = {},
+  input: DownloadExportZipInput,
 ): Promise<void> {
+  const options = input.options ?? {};
   const format: ExportFormat = options.format ?? 'glb';
   const layout = options.layout ?? 'flat';
-  const modelState = $model.get();
-  const clipState = $clips.get();
-  const groups = $modelGroups.get().groups;
-
-  const models = modelState.models;
+  const { models, clips, groups, activeModel, sessionSkinsByModel } = input;
 
   const modelFileNames = options.modelFileNames ?? {};
   const groupFileNames = options.groupFileNames ?? {};
-  const skeletonFallback = resolveSkeletonFallback(models, $activeModel.get());
+  const skeletonFallback = resolveSkeletonFallback(models, activeModel);
   const units = resolveExportUnits(models, groups);
-  const hasSharedClips = sharedAnimationOnlyClips(clipState.clips).length > 0;
+  const hasSharedClips = sharedAnimationOnlyClips(clips).length > 0;
 
   if (units.length === 0 && !hasSharedClips) {
     throw new Error('Nothing to pack');
@@ -52,7 +48,7 @@ export async function downloadExportZip(
 
   for (const unit of units) {
     if (unit.kind === 'group' && unit.group) {
-      const packed = await packMergedModelsGlb(unit.models, clipState.clips, {
+      const packed = await packMergedModelsGlb(unit.models, clips, {
         rootName: unit.group.name,
       });
       const fallback = `${unit.group.name}.${format}`;
@@ -86,14 +82,18 @@ export async function downloadExportZip(
       continue;
     }
 
+    const sessionWardrobe
+      = sessionSkinsByModel[model.id] ?? EMPTY_WARDROBE;
+
     if (layout === 'folders') {
       const folderPack = await packFolderModelEntries({
         model,
-        clips: clipState.clips,
+        clips,
         format,
         modelFileName: modelFileNames[model.id],
         takenNames,
         takenFolderBases,
+        sessionWardrobe,
       });
       entries.push(...folderPack.entries);
       for (const id of folderPack.packedSharedClipIds) {
@@ -102,7 +102,7 @@ export async function downloadExportZip(
       continue;
     }
 
-    const packed = await packModelGlb(model, clipState.clips);
+    const packed = await packModelGlb(model, clips, { sessionWardrobe });
     const fallback = `${stripExportExtension(model.fileName)}.${format}`;
     const fileName = uniqueFileName(
       resolveExportFileName(modelFileNames[model.id], fallback, format),
@@ -112,7 +112,7 @@ export async function downloadExportZip(
     entries.push({ arrayBuffer: packed.arrayBuffer, fileName });
   }
 
-  for (const entry of sharedAnimationOnlyClips(clipState.clips)) {
+  for (const entry of sharedAnimationOnlyClips(clips)) {
     // Already written under a model’s animations/ folder.
     if (layout === 'folders' && packedSharedClipIds.has(entry.id)) {
       continue;

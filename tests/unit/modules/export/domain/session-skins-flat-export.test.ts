@@ -232,7 +232,8 @@ describe('flat export embeds all session skins', () => {
     appendSessionSkin(model.id, { texture: blue, label: 'Blue', id: 'skin-blue' });
     setActiveSessionSkinId(model.id, 'skin-red');
 
-    const detach = attachSessionSkinsForExport(model.scene, model.id);
+    const wardrobe = getSessionSkinWardrobe(model.id);
+    const detach = attachSessionSkinsForExport(model.scene, wardrobe);
     let helperCount = 0;
     model.scene.traverse((object) => {
       if (object.userData[SESSION_SKIN_NODE_KEY]) {
@@ -251,9 +252,9 @@ describe('flat export embeds all session skins', () => {
     // Simulate a fresh session after import: clear store, keep stamped scene.
     resetSessionSkinsStoreForTests();
     expect(restoreSessionSkinsFromScene(model)).toBe(true);
-    const wardrobe = getSessionSkinWardrobe(model.id);
-    expect(wardrobe.skins.map((entry) => entry.label)).toEqual(['Red', 'Blue']);
-    expect(wardrobe.activeSkinId).toBe('skin-red');
+    const restored = getSessionSkinWardrobe(model.id);
+    expect(restored.skins.map((entry) => entry.label)).toEqual(['Red', 'Blue']);
+    expect(restored.activeSkinId).toBe('skin-red');
     expect(model.scene.userData[SESSION_SKINS_MANIFEST_KEY]).toBeUndefined();
 
     helperCount = 0;
@@ -273,7 +274,9 @@ describe('flat export embeds all session skins', () => {
     appendSessionSkin(model.id, { texture: red, label: 'Red', id: 'skin-red' });
     appendSessionSkin(model.id, { texture: blue, label: 'Blue', id: 'skin-blue' });
 
-    const packed = await packModelGlb(model, []);
+    const packed = await packModelGlb(model, [], {
+      sessionWardrobe: getSessionSkinWardrobe(model.id),
+    });
     const json = parseGlbJson(packed.arrayBuffer);
 
     expect(json.images?.length).toBeGreaterThanOrEqual(2);
@@ -318,7 +321,7 @@ describe('flat export embeds all session skins', () => {
     const model = makeSkinnedModel(red);
     appendSessionSkin(model.id, { texture: red, label: 'Red', id: 'skin-red' });
     appendSessionSkin(model.id, { texture: blue, label: 'Blue', id: 'skin-blue' });
-    attachSessionSkinsForExport(model.scene, model.id);
+    attachSessionSkinsForExport(model.scene, getSessionSkinWardrobe(model.id));
     // Leave helpers attached as if just loaded from GLB.
     resetSessionSkinsStoreForTests();
 

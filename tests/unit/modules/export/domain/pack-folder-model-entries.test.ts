@@ -3,9 +3,8 @@ import type { SessionSkinEntry } from '@/modules/create/types/session-skins';
 import type { ModelEntry } from '@/modules/viewport/types/model';
 
 import { AnimationClip, Group, Texture } from 'three';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import { getSessionSkinWardrobe } from '@/modules/create/stores/session-skins-store';
 import { packFolderModelEntries } from '@/modules/export/domain/zip-download/pack-folder-model-entries';
 
 vi.mock('@/modules/export/domain/model-glb', async () => {
@@ -32,10 +31,6 @@ vi.mock('@/modules/export/adapters/png-from-texture', () => ({
   pngArrayBufferFromTexture: vi.fn(async () => new Uint8Array([3]).buffer),
 }));
 
-vi.mock('@/modules/create/stores/session-skins-store', () => ({
-  getSessionSkinWardrobe: vi.fn(),
-}));
-
 function model(id: string): ModelEntry {
   return {
     id,
@@ -55,17 +50,10 @@ function clip(id: string, name: string, ownerModelId: string | null): ClipEntry 
     trimIn: 0,
     trimOut: 1,
     clip: new AnimationClip(name, 1, []),
-  } as ClipEntry;
+  } as unknown as ClipEntry;
 }
 
 describe('packFolderModelEntries', () => {
-  beforeEach(() => {
-    vi.mocked(getSessionSkinWardrobe).mockReturnValue({
-      skins: [],
-      activeSkinId: null,
-    });
-  });
-
   it('packs mesh + owned clip under Base/ and animations/', async () => {
     const entry = model('hero');
     const owned = clip('c1', 'Idle', 'hero');
@@ -90,10 +78,6 @@ describe('packFolderModelEntries', () => {
       { id: 's1', label: 'Red', texture },
       { id: 's2', label: 'Blue', texture },
     ];
-    vi.mocked(getSessionSkinWardrobe).mockReturnValue({
-      skins,
-      activeSkinId: 's1',
-    });
 
     const result = await packFolderModelEntries({
       model: model('hero'),
@@ -102,6 +86,7 @@ describe('packFolderModelEntries', () => {
       modelFileName: 'Captain',
       takenNames: new Set(),
       takenFolderBases: new Set(),
+      sessionWardrobe: { skins, activeSkinId: 's1' },
     });
 
     expect(result.entries.map((item) => item.fileName)).toEqual([

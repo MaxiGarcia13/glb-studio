@@ -1,4 +1,8 @@
+import type { ClipEntry } from '@/modules/animation/types/clip';
+import type { SessionSkinsByModel } from '@/modules/create/types/session-skins';
 import type { ExportFormat } from '@/modules/export/utils/file-name';
+import type { ModelEntry } from '@/modules/viewport/types/model';
+import type { ModelGroup } from '@/modules/viewport/types/model-group';
 
 /** Zip entry layout. `folders` nests each ungrouped model (US-49). */
 export type ExportZipLayout = 'flat' | 'folders';
@@ -14,4 +18,16 @@ export interface ExportZipOptions {
   format?: ExportFormat;
   /** Default `flat`. `folders` → `{Base}/{Base}.{ext}` + animations/ + skins/. */
   layout?: ExportZipLayout;
+}
+
+/** Store-free pack input. Hook / action resolves nanostores → this snapshot. */
+export interface DownloadExportZipInput {
+  models: readonly ModelEntry[];
+  clips: readonly ClipEntry[];
+  groups: readonly ModelGroup[];
+  /** Active model for shared-clip skeleton fallback. */
+  activeModel: ModelEntry | null;
+  /** Session wardrobes keyed by model id (empty object when none). */
+  sessionSkinsByModel: SessionSkinsByModel;
+  options?: ExportZipOptions;
 }
