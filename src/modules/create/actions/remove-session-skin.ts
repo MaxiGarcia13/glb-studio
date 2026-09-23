@@ -1,18 +1,27 @@
 import type { Object3D } from 'three';
 
+import { $commandStack, pushUndoableCommand } from '@/modules/animation/stores/undo-stack-store';
 import { collectLiveColorMaps } from '../domain/collect-live-color-maps';
-import { resolveSkinnedTextureTarget } from '../domain/resolve-skinned-texture-target';
 import {
+  assignMaterialColorMapLive,
+  collectStackOwnedColorMaps,
+  releaseOrphanColorMap,
+  snapshotMaterialColorMap,
+} from '../domain/material-color-map-undo';
+import { resolveSkinnedTextureTarget } from '../domain/resolve-skinned-texture-target';
+import { bumpMaterialMapsRevision } from '../stores/material-maps-revision-store';
+import {
+  collectSessionSkinTextures,
   getSessionSkin,
   getSessionSkinWardrobe,
   removeSessionSkinEntry,
   setActiveSessionSkinId,
 } from '../stores/session-skins-store';
-import { commitMaterialColorMapChange } from './commit-material-color-map';
 
 /**
- * Drop a wardrobe entry. If it was active, clear the live map in the same
- * undoable material commit, then dispose the entry (US-48 remove-active).
+ * Drop a wardrobe entry. If it was active, clear the live map and drop the
+ * entry in **one** `materialColorMap` undo command (US-48): one undo restores
+ * both the list entry and the map.
  */
 export function removeSessionSkin(options: {
   modelId: string;
@@ -28,19 +37,37 @@ export function removeSessionSkin(options: {
 
   const wardrobe = getSessionSkinWardrobe(modelId);
   const wasActive = wardrobe.activeSkinId === skinId;
+  const index = wardrobe.skins.findIndex((skin) => skin.id === skinId);
   const liveMaps = collectLiveColorMaps(scene);
   const target = resolveSkinnedTextureTarget(scene, selected);
 
-  if (wasActive && target) {
+  if (wasActive && target && index >= 0) {
+    const { material, mesh } = target;
+    const before = snapshotMaterialColorMap(material);
     setActiveSessionSkinId(modelId, null);
-    commitMaterialColorMapChange({
+    const previous = assignMaterialColorMapLive(material, null);
+    // Drop list entry but keep texture until orphan release (stack owns a clone).
+    removeSessionSkinEntry(modelId, skinId, { dispose: false });
+    releaseOrphanColorMap(previous, [
+      ...collectStackOwnedColorMaps($commandStack.get()),
+      ...collectSessionSkinTextures(modelId),
+      before.map,
+    ]);
+    const after = snapshotMaterialColorMap(material);
+
+    pushUndoableCommand({
+      id: 'materialColorMap',
       modelId,
-      meshUuid: target.mesh.uuid,
-      material: target.material,
-      next: null,
+      meshUuid: mesh.uuid,
+      before,
+      after,
+      sessionSkinRemoval: {
+        skinId: entry.id,
+        label: entry.label,
+        index,
+      },
     });
-    // Live map cleared — safe to dispose wardrobe texture.
-    removeSessionSkinEntry(modelId, skinId);
+    bumpMaterialMapsRevision();
     return true;
   }
 

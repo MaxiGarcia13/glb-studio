@@ -104,11 +104,15 @@ export function setActiveSessionSkinId(
 /**
  * Drop one wardrobe entry and dispose its texture when safe.
  * Does not clear the live material (caller / later Remove-entry path).
+ * Pass `dispose: false` when the stack (or caller) retains ownership.
  */
 export function removeSessionSkinEntry(
   modelId: string,
   skinId: string,
-  options: { liveMaps?: ReadonlySet<Texture> } = {},
+  options: {
+    liveMaps?: ReadonlySet<Texture>;
+    dispose?: boolean;
+  } = {},
 ): SessionSkinEntry | null {
   const all = $sessionSkinsByModel.get();
   const wardrobe = all[modelId];
@@ -137,12 +141,44 @@ export function removeSessionSkinEntry(
     });
   }
 
+  const shouldDispose = options.dispose !== false;
   const liveMaps = options.liveMaps;
-  if (!liveMaps || !liveMaps.has(removed.texture)) {
+  if (
+    shouldDispose
+    && (!liveMaps || !liveMaps.has(removed.texture))
+  ) {
     disposeImageTexture(removed.texture);
   }
 
   return removed;
+}
+
+/**
+ * Re-insert a wardrobe entry at a stable index (undo of remove-active).
+ * Sets `activeSkinId` to the entry id.
+ */
+export function insertSessionSkinAt(
+  modelId: string,
+  entry: SessionSkinEntry,
+  index: number,
+): void {
+  const all = $sessionSkinsByModel.get();
+  const previous = all[modelId] ?? EMPTY_WARDROBE;
+  if (previous.skins.some((skin) => skin.id === entry.id)) {
+    setActiveSessionSkinId(modelId, entry.id);
+    return;
+  }
+
+  const skins = [...previous.skins];
+  const at = Math.max(0, Math.min(index, skins.length));
+  skins.splice(at, 0, entry);
+  $sessionSkinsByModel.set({
+    ...all,
+    [modelId]: {
+      skins,
+      activeSkinId: entry.id,
+    },
+  });
 }
 
 /**

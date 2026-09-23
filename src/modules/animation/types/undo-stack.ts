@@ -160,4 +160,14 @@ export type UndoableCommand
     meshUuid: string;
     before: MaterialColorMapSnapshot;
     after: MaterialColorMapSnapshot;
+    /**
+     * US-48 remove-active: one undo restores wardrobe entry + live map.
+     * Texture pixels live on `before.map` (stack-owned clone).
+     */
+    sessionSkinRemoval?: {
+      skinId: string;
+      label: string;
+      /** Index in `skins[]` before removal. */
+      index: number;
+    };
   };

@@ -8,6 +8,11 @@ import { Texture } from 'three';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { disposeImageTexture } from '@/utils/dispose-image-texture';
 import { bumpMaterialMapsRevision } from '../stores/material-maps-revision-store';
+import {
+  insertSessionSkinAt,
+  removeSessionSkinEntry,
+  setActiveSessionSkinId,
+} from '../stores/session-skins-store';
 import { findMeshStandardMaterial } from '../utils/selected-part';
 import { applyColorMap } from './material-color-map';
 import { syncMaterialMapAlpha } from './texture-map-alpha';
@@ -248,6 +253,41 @@ export function applyMaterialColorMapCommand(
   const mesh = model.scene.getObjectByProperty('uuid', command.meshUuid);
   const material = findMeshStandardMaterial(mesh ?? null);
   if (!material) {
+    return;
+  }
+
+  const removal = command.sessionSkinRemoval;
+
+  if (removal && direction === 'undo' && command.before.map) {
+    // Wardrobe + live share one clone so export / pick stay consistent.
+    const texture = cloneColorMapTexture(command.before.map);
+    insertSessionSkinAt(
+      command.modelId,
+      {
+        id: removal.skinId,
+        label: removal.label,
+        texture,
+      },
+      removal.index,
+    );
+    restoreMaterialColorMap(material, { map: texture }, [
+      command.before.map,
+      command.after.map,
+      texture,
+    ]);
+    bumpMaterialMapsRevision();
+    return;
+  }
+
+  if (removal && direction === 'redo') {
+    setActiveSessionSkinId(command.modelId, null);
+    const previous = assignMaterialColorMapLive(material, null);
+    removeSessionSkinEntry(command.modelId, removal.skinId, { dispose: false });
+    releaseOrphanColorMap(previous, [
+      command.before.map,
+      command.after.map,
+    ]);
+    bumpMaterialMapsRevision();
     return;
   }
 

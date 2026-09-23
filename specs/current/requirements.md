@@ -479,7 +479,7 @@ As an editor user, when I apply a texture to a created part or a skinned model, 
 - [x] Applying a new image (US-40 file path) **always appends** a list entry and makes it active; previous entries stay unless the user removes them (no replace-in-place of the active entry)
 - [x] Library under the model shows **one row per list entry** (not only meshes that currently have `.map`)
 - [x] Selecting a skin row applies that skin to the resolved US-40 target (`commitMaterialColorMapChange`); an explicit **“No skin”** row clears the live map and sets `activeSkinId` to `null` (deselect-all is not the primary none path)
-- [ ] Removing a list entry disposes that session texture; if it was active, live map clears as **one** undoable command (remove entry + clear map; one undo restores both)
+- [x] Removing a list entry disposes that session texture; if it was active, live map clears as **one** undoable command (remove entry + clear map; one undo restores both)
 - [x] Multi-mesh: apply still follows `resolveSkinnedTextureTarget` (selected skinned mesh, else sole mesh); list is **per model**, not one independent wardrobe per mesh
 - [x] Rows update after apply / pick / clear / undo / redo; empty list when the model has no session skins
 - [x] Model remove / replace / unload disposes remaining list textures (no GPU leak)

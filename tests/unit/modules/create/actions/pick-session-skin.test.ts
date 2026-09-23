@@ -9,7 +9,11 @@ import {
 } from 'three';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { clearUndoStack } from '@/modules/animation/stores/undo-stack-store';
+import { applyUndoableCommand } from '@/modules/animation/stores/clip-store/actions/apply-undoable-command';
+import {
+  clearUndoStack,
+  takeUndoCommand,
+} from '@/modules/animation/stores/undo-stack-store';
 import { applySkinnedSessionSkinTexture } from '@/modules/create/actions/apply-skinned-session-skin';
 import {
   pickNoSessionSkin,
@@ -63,7 +67,7 @@ describe('pickSessionSkin / pickNoSessionSkin', () => {
         {
           id: 'model-1',
           fileName: 'char.glb',
-          blobUrl: null,
+          blobUrl: undefined,
           scene,
           source: 'imported',
         },
@@ -157,5 +161,42 @@ describe('pickSessionSkin / pickNoSessionSkin', () => {
     expect(material.map).toBeNull();
     expect(getSessionSkinWardrobe('model-1').skins).toHaveLength(0);
     expect(second.dispose).toHaveBeenCalled();
+  });
+
+  it('undo of remove-active restores wardrobe entry and live map', () => {
+    const texture = namedTexture('a.png');
+    applySkinnedSessionSkinTexture({
+      modelId: 'model-1',
+      meshUuid: mesh.uuid,
+      material,
+      texture,
+    });
+    const skinId = getSessionSkinWardrobe('model-1').skins[0]!.id;
+
+    expect(removeSessionSkin({
+      modelId: 'model-1',
+      skinId,
+      scene,
+    })).toBe(true);
+    expect(material.map).toBeNull();
+    expect(getSessionSkinWardrobe('model-1').skins).toHaveLength(0);
+
+    const command = takeUndoCommand();
+    expect(command?.id).toBe('materialColorMap');
+    if (!command || command.id !== 'materialColorMap') {
+      return;
+    }
+    expect(command.sessionSkinRemoval?.skinId).toBe(skinId);
+
+    applyUndoableCommand(command, 'undo');
+    const restored = getSessionSkinWardrobe('model-1');
+    expect(restored.skins).toHaveLength(1);
+    expect(restored.skins[0]?.id).toBe(skinId);
+    expect(restored.activeSkinId).toBe(skinId);
+    expect(material.map).toBe(restored.skins[0]?.texture);
+
+    applyUndoableCommand(command, 'redo');
+    expect(material.map).toBeNull();
+    expect(getSessionSkinWardrobe('model-1').skins).toHaveLength(0);
   });
 });
