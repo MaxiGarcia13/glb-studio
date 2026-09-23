@@ -45,4 +45,5 @@ See [`.cursor/rules/plan-before-implementing.mdc`](.cursor/rules/plan-before-imp
 
 - Post-MVP story **US-8** (morphs) lives under `specs/us-8/` — do not start unless explicitly kicked off
 - Planned (not kicked off): **US-47** skinned atlas Skin editor — see [`specs/us-47/`](specs/us-47/)
+- Planned (not kicked off): **US-48** session skin list + Library texture rows — see [`specs/us-48/`](specs/us-48/)
 - Still excluded: full material/texture editing on **imported** characters beyond shipped albedo (PBR / unwrap; skinned albedo apply is US-40; session map undo + Library rows are US-46; Skin editor is US-47 when kicked off), server accounts, collab — see [`specs/current/requirements.md`](specs/current/requirements.md)
