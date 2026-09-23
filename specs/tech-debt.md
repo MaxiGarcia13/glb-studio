@@ -83,7 +83,7 @@ Product surface is already large (format × layout × unit × imported/created �
 
 Do **not** start these for neatness. Extract when the next export/skins US would otherwise make `download-export-zip` / folder pack painful.
 
-- [ ] Flat vs folders layout strategy (or two small packers) so group/single path rules are not re-implemented in the orchestrator — only when adding another layout or skin packing rule
+- [x] Flat vs folders layout strategy (or two small packers) so group/single path rules are not re-implemented in the orchestrator — only when adding another layout or skin packing rule
 - [ ] Revisit export ↔ create coupling (`attachSessionSkinsForExport`, folder PNG skins) when US-47 (Skin editor) or further wardrobe export rules land; keep contract in `specs/current/design.md` Export section
 
 ## Create — when next touching
