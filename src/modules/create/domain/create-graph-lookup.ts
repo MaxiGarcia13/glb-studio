@@ -1,6 +1,7 @@
 import type { Object3D } from 'three';
+import type { SelectionState } from '@/modules/viewport/types/selection';
 
-import { $selection } from '@/modules/viewport/stores/selection-store';
+import { EMPTY_SELECTION } from '@/modules/viewport/types/selection';
 import { isCreateHierarchyNode } from './group-data';
 
 /** Find a node by uuid under `partsRoot` (includes the root itself). */
@@ -37,32 +38,26 @@ export function resolveHierarchyParent(
 }
 
 /**
- * Restore part selection from uuids under `partsRoot`.
- * Sets `$selection` directly — avoid `selectObject` pose flush mid-undo/redo.
+ * Build part selection from uuids under `partsRoot`.
+ * Callers set `$selection` directly — avoid `selectObject` pose flush mid-undo/redo.
  */
-export function restoreCreateSelection(
+export function resolveCreateSelection(
   partsRoot: Object3D,
   selectUuids: readonly string[],
-): void {
+): SelectionState {
   const nodes = selectUuids
     .map((uuid) => findUnderRoot(partsRoot, uuid))
     .filter((node): node is Object3D =>
       node !== null && isCreateHierarchyNode(node));
 
   if (nodes.length === 0) {
-    $selection.set({
-      object: null,
-      objects: [],
-      modelIds: [],
-      kind: 'none',
-    });
-    return;
+    return { ...EMPTY_SELECTION };
   }
 
-  $selection.set({
+  return {
     object: nodes[nodes.length - 1]!,
     objects: nodes,
     modelIds: [],
     kind: 'parts',
-  });
+  };
 }

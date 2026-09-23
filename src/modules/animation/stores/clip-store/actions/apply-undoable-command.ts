@@ -19,6 +19,7 @@ import { applyCreateHierarchySnapshot } from '@/modules/create/domain/create-hie
 import { applyCreateSceneSnapshot } from '@/modules/create/domain/create-scene-undo';
 import { applyMaterialColorMapCommand } from '@/modules/create/domain/material-color-map-undo';
 import { $model } from '@/modules/viewport/stores/model-store';
+import { $selection } from '@/modules/viewport/stores/selection-store';
 import { $clips } from '../store';
 import { rebindMixersForClips } from './rebind-mixers-for-clips';
 
@@ -205,12 +206,18 @@ export function applyUndoableCommand(
     }
     case 'createHierarchy': {
       const snapshot = direction === 'undo' ? command.before : command.after;
-      applyCreateHierarchySnapshot(snapshot, models);
+      const selection = applyCreateHierarchySnapshot(snapshot, models);
+      if (selection) {
+        $selection.set(selection);
+      }
       return;
     }
     case 'createScene': {
       const snapshot = direction === 'undo' ? command.before : command.after;
-      applyCreateSceneSnapshot(snapshot, models);
+      const selection = applyCreateSceneSnapshot(snapshot, models);
+      if (selection) {
+        $selection.set(selection);
+      }
       return;
     }
     case 'materialColorMap': {

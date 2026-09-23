@@ -5,6 +5,7 @@ import type {
   CreateHierarchySnapshot,
 } from '@/modules/animation/types/undo-stack';
 import type { ModelEntry } from '@/modules/viewport/types/model';
+import type { SelectionState } from '@/modules/viewport/types/selection';
 
 import { Group } from 'three';
 import { refreshRestPoseNode } from '@/modules/animation/domain/rest-pose';
@@ -12,8 +13,8 @@ import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import {
   findUnderRoot,
   hierarchyParentUuid,
+  resolveCreateSelection,
   resolveHierarchyParent,
-  restoreCreateSelection,
 } from './create-graph-lookup';
 import {
   isCreateGroup,
@@ -190,10 +191,10 @@ function removeGroup(partsRoot: Object3D, uuid: string): void {
 export function applyCreateHierarchySnapshot(
   snapshot: CreateHierarchySnapshot,
   models: readonly ModelEntry[],
-): void {
+): SelectionState | null {
   const model = models.find((entry) => entry.id === snapshot.modelId);
   if (!model || model.source !== 'created') {
-    return;
+    return null;
   }
 
   const partsRoot = model.scene;
@@ -238,6 +239,6 @@ export function applyCreateHierarchySnapshot(
   }
 
   partsRoot.updateMatrixWorld(true);
-  restoreCreateSelection(partsRoot, snapshot.selectUuids);
   bumpCreatePartsRevision();
+  return resolveCreateSelection(partsRoot, snapshot.selectUuids);
 }

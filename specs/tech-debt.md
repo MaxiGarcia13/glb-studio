@@ -54,10 +54,10 @@ Follow-ups after the priority export cleanup (below). No product behavior change
 
 Same class of smell as the finished export store-free pack work. Prefer doing these when that area is already open; starting for cleanup is OK if scoped.
 
-- [ ] Create domain that reads / writes nanostores — pass models / selection in from actions (or return selection patches):
+- [x] Create domain that reads / writes nanostores — pass models / selection in from actions (or return selection patches):
   - [x] `selected-create-roots` — store-free; actions pass `$activeModel` / `$selection` snapshots
   - [x] `material-color-map-undo`, `create-scene-undo`, `create-hierarchy-undo` — resolve model from passed `models[]`
-  - [ ] `create-graph-lookup` (`restoreCreateSelection`) — stop writing `$selection` from domain
+  - [x] `create-graph-lookup` (`resolveCreateSelection`) — returns `SelectionState`; apply undo action sets `$selection`
 - [ ] `material-color-map-undo.ts` (~300) — split dispose / clone / apply / stack-ownership helpers if the next skins undo change mixes concerns further
 - [ ] `create-part-clipboard.ts` (~318) — after hierarchy-roots extract, split snapshot vs instantiate only if clipboard paste / hierarchy work grows further
 - [ ] Texture prep modal pieces (`texture-prep-crop-editor`, modal shell) — already folder-split for draft hook; further split only if crop UI vs apply lifecycle collide in one PR

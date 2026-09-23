@@ -4,14 +4,15 @@ import type {
   CreateSceneTreeRoot,
 } from '@/modules/animation/types/undo-stack';
 import type { ModelEntry } from '@/modules/viewport/types/model';
+import type { SelectionState } from '@/modules/viewport/types/selection';
 
 import { refreshRestPoseNode } from '@/modules/animation/domain/rest-pose';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import {
   findUnderRoot,
   hierarchyParentUuid,
+  resolveCreateSelection,
   resolveHierarchyParent,
-  restoreCreateSelection,
 } from './create-graph-lookup';
 import {
   instantiateClipboardPayload,
@@ -76,10 +77,10 @@ function removeRoot(partsRoot: Object3D, uuid: string): void {
 export function applyCreateSceneSnapshot(
   snapshot: CreateSceneSnapshot,
   models: readonly ModelEntry[],
-): void {
+): SelectionState | null {
   const model = models.find((entry) => entry.id === snapshot.modelId);
   if (!model || model.source !== 'created') {
-    return;
+    return null;
   }
 
   const partsRoot = model.scene;
@@ -101,6 +102,6 @@ export function applyCreateSceneSnapshot(
   }
 
   partsRoot.updateMatrixWorld(true);
-  restoreCreateSelection(partsRoot, snapshot.selectUuids);
   bumpCreatePartsRevision();
+  return resolveCreateSelection(partsRoot, snapshot.selectUuids);
 }
