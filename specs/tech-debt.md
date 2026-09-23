@@ -61,7 +61,7 @@ Product surface is already large (format × layout × unit × imported/created �
 ### Dead / redundant export symbols
 
 - [x] Drop unused `EXPORT_ZIP_FILE_NAME` in `src/modules/export/utils/file-name.ts` (nothing imports it; callers use `defaultExportZipFileName`)
-- [ ] Drop or un-export `resolveGlbFileName` — production uses `resolveExportFileName`; if kept, it is tests-only and should not be a public alias
+- [x] Drop or un-export `resolveGlbFileName` — production uses `resolveExportFileName`; if kept, it is tests-only and should not be a public alias
 - [ ] Collapse `collectImportedModelAnimations` / `collectCreatedModelAnimations` in `model-glb.ts` — both only map `collectModelExportClips` → `bakeTimeScale`; created vs imported difference already lives in `collectModelExportClips`
 
 ### Store-free pack orchestration

@@ -4,7 +4,6 @@ import {
   defaultExportZipFileName,
   defaultZipBaseName,
   resolveExportFileName,
-  resolveGlbFileName,
   resolveZipFileName,
   sanitizeBaseName,
   stripExportExtension,
@@ -81,20 +80,14 @@ describe('resolveExportFileName', () => {
     );
     expect(resolveExportFileName(undefined, '', 'glb')).toBe('export.glb');
   });
-});
 
-describe('resolveGlbFileName', () => {
-  it('ensures a .glb name from raw or fallback', () => {
-    expect(resolveGlbFileName('hero.gltf', 'export.glb')).toBe('hero.glb');
-    expect(resolveGlbFileName('hero', 'export.glb')).toBe('hero.glb');
-    expect(resolveGlbFileName(undefined, 'fallback.glb')).toBe('fallback.glb');
-    expect(resolveGlbFileName('???', 'fallback.glb')).toBe('---.glb');
-    expect(resolveGlbFileName(undefined, '')).toBe('export.glb');
-    expect(resolveGlbFileName('', '')).toBe('export.glb');
-  });
-
-  it('sanitizes path-like raw names', () => {
-    expect(resolveGlbFileName('path/to/model.glb', 'x.glb')).toBe(
+  it('falls back and sanitizes when raw is empty or invalid', () => {
+    expect(resolveExportFileName(undefined, 'fallback.glb', 'glb')).toBe(
+      'fallback.glb',
+    );
+    expect(resolveExportFileName('???', 'fallback.glb', 'glb')).toBe('---.glb');
+    expect(resolveExportFileName('', '', 'glb')).toBe('export.glb');
+    expect(resolveExportFileName('path/to/model.glb', 'x.glb', 'glb')).toBe(
       'path-to-model.glb',
     );
   });

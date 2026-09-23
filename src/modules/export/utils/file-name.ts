@@ -62,14 +62,6 @@ export function resolveExportFileName(
   return `${base}.${format}`;
 }
 
-/** Ensure a `.glb` basename; falls back to `fallback` when empty/invalid. */
-export function resolveGlbFileName(
-  raw: string | undefined,
-  fallback: string,
-): string {
-  return resolveExportFileName(raw, fallback, 'glb');
-}
-
 /** Ensure a `.zip` download name; falls back to `fallback` when empty/invalid. */
 export function resolveZipFileName(
   raw: string | undefined,
