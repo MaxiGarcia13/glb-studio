@@ -4,7 +4,7 @@ Delta: replace / clear color maps on skinned library models. Parent: [`specs/cur
 
 **Depends on:** US-28 (shipped — decode / apply / clear / export helpers).
 
-**Status:** Planned — not kicked off.
+**Status:** In progress — kicked off.
 
 **Note:** Albedo (`.map`) only. No prep modal (crop / wrap / bg-remove — stays US-39 on created parts). Full PBR stays out.
 

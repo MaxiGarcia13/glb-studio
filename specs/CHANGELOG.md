@@ -16,7 +16,7 @@
 | **US-43** | Round corners (parametric bevel on box) — planned, not kicked off |
 | **US-42** | Craft brushes + sanding (push/pull, smooth, inflate) — planned, not kicked off |
 | **US-41** | Mesh craft foundation (bake + geometry undo/clipboard) — planned, not kicked off |
-| **US-40** | Albedo maps on skinned (imported) models — planned, not kicked off |
+| **US-40** | Albedo maps on skinned (imported) models — in progress |
 | **US-8** | Morph-target editing (post-MVP) |
 
 ## Shipped

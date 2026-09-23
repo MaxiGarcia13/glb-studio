@@ -1,12 +1,12 @@
 # US-40 — Tasks
 
-Tick only after acceptance. **Not kicked off** — do not implement until explicit start.
+Tick only after acceptance.
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Explicit start
+- [x] **Confirm kickoff** — Explicit start
 - [x] **Changelog Open row** — Add US-40 to `specs/CHANGELOG.md` Open
-- [ ] **Carve scope in current** — Soften / footnote “imported character materials” out-of-scope to allow albedo-only on skinned library models
+- [x] **Carve scope in current** — Soften / footnote “imported character materials” out-of-scope to allow albedo-only on skinned library models
 - [ ] **Fold on ship** — Fold into `current/`, changelog Shipped row, delete this folder
 
 ## Domain

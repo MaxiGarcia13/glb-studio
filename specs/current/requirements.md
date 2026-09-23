@@ -414,7 +414,7 @@ As an editor user, when I texture a created part I can open a prep modal, see a 
 - [x] Imported / non-created focus never opens this modal
 - [x] No Sharp / server texture endpoint in this US
 
-**Out of scope:** server-side Sharp / resize / normalize API; full UV unwrap or projection painting; full PBR map authoring; auto bg-remove on every upload; texture prep on imported GLB materials; texture painting
+**Out of scope:** server-side Sharp / resize / normalize API; full UV unwrap or projection painting; full PBR map authoring; auto bg-remove on every upload; texture prep on imported / skinned materials (crop / wrap / bg-remove stay created-only); texture painting. Albedo (`.map`) apply / clear on skinned library models is **US-40** — not this modal.
 
 ### US-25 — Grid and rotation snap
 
@@ -609,7 +609,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 
 ## Out of scope (still excluded)
 
-- Material / texture editing on **imported** characters (created-model color maps + prep are US-28 / US-39; skinned albedo is US-40)
+- Full material / texture editing on **imported** characters (PBR maps, prep modal, painting, mesh-only non-skinned imports beyond the created path). Created-model color maps + prep remain US-28 / US-39. **Exception (US-40, in progress):** albedo (`.map`) apply / replace / clear on skinned library models (`isSkinnedLibraryModel`) — see [`specs/us-40/`](../us-40/)
 - Kit marketplace / remote download; user-authored kit save/share; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid

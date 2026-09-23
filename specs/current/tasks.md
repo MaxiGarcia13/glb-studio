@@ -338,9 +338,9 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 ## Open deltas
 
-| US                              | Status                | Tasks                                       |
-| ------------------------------- | --------------------- | ------------------------------------------- |
-| **US-8** — Morph-target editing | post-MVP, not started | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
+| US                              | Status                | Tasks                                     |
+| ------------------------------- | --------------------- | ----------------------------------------- |
+| **US-8** — Morph-target editing | post-MVP, not started | [`specs/us-8/tasks.md`](../us-8/tasks.md) |
 
 ## Tech debt
 

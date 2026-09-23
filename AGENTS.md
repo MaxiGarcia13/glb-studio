@@ -44,4 +44,4 @@ See [`.cursor/rules/plan-before-implementing.mdc`](.cursor/rules/plan-before-imp
 ## Post-MVP / still excluded
 
 - Post-MVP story **US-8** (morphs) lives under `specs/us-8/` — do not start unless explicitly kicked off
-- Still excluded: material/texture editing on **imported** characters, server accounts, collab — see [`specs/current/requirements.md`](specs/current/requirements.md)
+- Still excluded: full material/texture editing on **imported** characters (PBR / prep / painting; albedo-only on skinned is US-40), server accounts, collab — see [`specs/current/requirements.md`](specs/current/requirements.md)
