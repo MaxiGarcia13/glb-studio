@@ -9,6 +9,10 @@ import {
   importClipsFromAnimations,
   removeClipsByOwner,
 } from '@/modules/animation/stores/clip-store';
+import {
+  disposeAllSessionSkins,
+  disposeSessionSkinsForModel,
+} from '@/modules/create/stores/session-skins-store';
 import { preserveGltfExtension } from '@/utils/glb-parse';
 import { loadModelFromFile } from '../adapters/model-loader';
 import { disposeScene } from '../utils/scene-dispose';
@@ -198,6 +202,7 @@ export function removeModel(id: string): void {
   }
 
   const removed = state.models[index];
+  disposeSessionSkinsForModel(id, removed.scene);
   disposeEntry(removed);
   clearBindPoseOverrides(id);
   removeClipsByOwner(id);
@@ -221,6 +226,7 @@ export function removeModel(id: string): void {
 
   if (models.length === 0) {
     clearAllBindPoseOverrides();
+    disposeAllSessionSkins();
   }
 }
 
@@ -243,6 +249,7 @@ export async function replaceModel(id: string, file: File): Promise<void> {
     }
 
     const previous = state.models[currentIndex];
+    disposeSessionSkinsForModel(id, previous.scene);
     disposeEntry(previous);
     clearBindPoseOverrides(id);
 
