@@ -7,18 +7,9 @@ import {
   resolveZipFileName,
   sanitizeBaseName,
   stripExportExtension,
-  stripGlbExtension,
   uniqueFileName,
   uniqueTakenName,
 } from '@/modules/export/utils/file-name';
-
-describe('stripGlbExtension', () => {
-  it('strips .glb / .gltf case-insensitively', () => {
-    expect(stripGlbExtension('hero.glb')).toBe('hero');
-    expect(stripGlbExtension('Hero.GLTF')).toBe('Hero');
-    expect(stripGlbExtension('plain')).toBe('plain');
-  });
-});
 
 describe('stripExportExtension', () => {
   it('strips .glb / .gltf / .fbx case-insensitively', () => {

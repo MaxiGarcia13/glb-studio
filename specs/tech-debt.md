@@ -47,7 +47,7 @@ Same “is strict descendant” walk and “roots among selection (skip nodes ne
 
 Follow-ups after the priority export cleanup (below). No product behavior change.
 
-- [ ] Drop `stripGlbExtension` from `export/utils/file-name.ts` (and its unit tests) — production uses `stripExportExtension` / `stripAssetExtension` only; GLB-only strip is unused outside tests
+- [x] Drop `stripGlbExtension` from `export/utils/file-name.ts` (and its unit tests) — production uses `stripExportExtension` / `stripAssetExtension` only; GLB-only strip is unused outside tests
 - [ ] Inline or align `uniqueClipName` in `merge-namespace.ts` with `uniqueTakenName` call-site convention (wrapper also mutates `taken`; `uniqueFileName` leaves mutation to the caller) — pick one style when next touching merge export
 
 ## Create — when next touching

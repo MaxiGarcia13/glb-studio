@@ -1,13 +1,6 @@
-import {
-  GLTF_EXTENSION_PATTERN,
-  stripAssetExtension,
-} from '@/utils/glb-parse';
+import { stripAssetExtension } from '@/utils/glb-parse';
 
 export type ExportFormat = 'glb' | 'fbx';
-
-export function stripGlbExtension(fileName: string): string {
-  return fileName.replace(GLTF_EXTENSION_PATTERN, '');
-}
 
 export function stripExportExtension(fileName: string): string {
   return stripAssetExtension(fileName);
