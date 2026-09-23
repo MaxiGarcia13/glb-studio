@@ -30,18 +30,8 @@ export interface PackModelGlbOptions {
   embedSessionSkins?: boolean;
 }
 
-/** Collect clips that belong in an imported model GLB (owned + matching shared). */
-function collectImportedModelAnimations(
-  model: ModelEntry,
-  clips: readonly ClipEntry[],
-): AnimationClip[] {
-  return collectModelExportClips(model, clips).map((entry) =>
-    bakeTimeScale(entry.clip!, entry.timeScale),
-  );
-}
-
-/** Collect owned ready clips for a created model (mesh animation, no shared pack). */
-function collectCreatedModelAnimations(
+/** Bake time scale for every clip that packs with this model. */
+function collectModelExportAnimations(
   model: ModelEntry,
   clips: readonly ClipEntry[],
 ): AnimationClip[] {
@@ -113,9 +103,7 @@ export async function packModelGlb(
   const includeClips = options.includeClips !== false;
   const embedSessionSkins = options.embedSessionSkins !== false;
   const animations = includeClips
-    ? model.source === 'created'
-      ? collectCreatedModelAnimations(model, clips)
-      : collectImportedModelAnimations(model, clips)
+    ? collectModelExportAnimations(model, clips)
     : [];
 
   const detachSkins = embedSessionSkins
