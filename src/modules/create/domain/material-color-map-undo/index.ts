@@ -3,10 +3,6 @@ export {
   assignMaterialColorMapLive,
   restoreMaterialColorMap,
 } from './apply';
-/**
- * Material color-map undo helpers (US-46 / US-48).
- * Implementation is split by concern; this module re-exports the public surface.
- */
 export {
   cloneColorMapTexture,
   snapshotMaterialColorMap,
