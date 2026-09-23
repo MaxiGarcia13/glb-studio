@@ -7,9 +7,9 @@ import type {
 import type { GroupPartsAvailability } from './group-selected-parts';
 import { $selection, selectObject } from '@/modules/viewport/stores/selection-store';
 import { createEmptyPartGroup } from '../domain/hierarchy/create-part-group';
+import { attachAllUnder, attachUnder } from '../domain/hierarchy/parent-part';
 import { resolveMakeConnectorsPlan } from '../domain/make-joint-plan';
 import { nextObjectName } from '../domain/object-name';
-import { attachAllUnder, attachUnder } from '../domain/hierarchy/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { resolveGroupPartsContext } from './group-selected-parts';
 import { pushHierarchyGraphUndo } from './push-hierarchy-undo';

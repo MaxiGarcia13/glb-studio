@@ -61,7 +61,7 @@ Domain folders (grouping only): `hierarchy/` (clipboard, parent, group-data, sce
   - [x] `material-color-map-undo`, `create-scene-undo`, `create-hierarchy-undo` — resolve model from passed `models[]`
   - [x] `create-graph-lookup` (`resolveCreateSelection`) — returns `SelectionState`; apply undo action sets `$selection`
 - [x] `color-map/material-color-map-undo/` — split dispose / clone / apply / stack-ownership (`clone` / `stack` / `apply` + `index` barrel)
-- [ ] `hierarchy/create-part-clipboard.ts` (~318) — after hierarchy-roots extract, split snapshot vs instantiate only if clipboard paste / hierarchy work grows further
+- [x] `hierarchy/create-part-clipboard/` — split snapshot vs instantiate (`snapshot` / `instantiate` / `trs` + `index` barrel)
 - [ ] Texture prep modal pieces (`texture-prep-crop-editor`, modal shell) — already folder-split for draft hook; further split only if crop UI vs apply lifecycle collide in one PR
 - [ ] Revisit export ↔ create skins coupling (`attachSessionSkinsForExport`, folder PNG skins) when US-47 (Skin editor) or further wardrobe export rules land; keep contract in `specs/current/design.md` Export section
 

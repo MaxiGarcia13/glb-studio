@@ -7,7 +7,7 @@ import type { ModelEntry } from '@/modules/viewport/types/model';
 import type { SelectionState } from '@/modules/viewport/types/selection';
 
 import { refreshRestPoseNode } from '@/modules/animation/domain/rest-pose';
-import { bumpCreatePartsRevision } from '../../stores/create-parts-revision-store';
+import { bumpCreatePartsRevision } from '@/modules/create/stores/create-parts-revision-store';
 import {
   findUnderRoot,
   hierarchyParentUuid,

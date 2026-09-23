@@ -2,8 +2,8 @@ import type { MeshStandardMaterial } from 'three';
 import { Group, Texture } from 'three';
 import { describe, expect, it, vi } from 'vitest';
 
-import { deletePart } from '@/modules/create/domain/hierarchy/delete-part';
 import { applyColorMap } from '@/modules/create/domain/color-map/material-color-map';
+import { deletePart } from '@/modules/create/domain/hierarchy/delete-part';
 import { spawnPart } from '@/modules/create/domain/spawn-part';
 
 describe('deletePart texture dispose', () => {

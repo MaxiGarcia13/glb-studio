@@ -46,13 +46,13 @@ Created parts are parametric: `setPartSizeParam` disposes geometry and calls `ki
 
 ## Module map
 
-| Concern                                         | Layer                                                       |
-| ----------------------------------------------- | ----------------------------------------------------------- |
-| Bake, reset, density policy, read/write crafted | `create/domain/`                                            |
-| Clipboard geometry fields                       | `create/types` + `create/domain/hierarchy/create-part-clipboard`      |
-| Undo command type + apply                       | `animation/types/undo-stack` + `create/domain` apply helper |
-| Inspector crafted UI                            | `create/components/part-inspector`                          |
-| Revision bump                                   | existing `$createPartsRevision`                             |
+| Concern                                         | Layer                                                            |
+| ----------------------------------------------- | ---------------------------------------------------------------- |
+| Bake, reset, density policy, read/write crafted | `create/domain/`                                                 |
+| Clipboard geometry fields                       | `create/types` + `create/domain/hierarchy/create-part-clipboard` |
+| Undo command type + apply                       | `animation/types/undo-stack` + `create/domain` apply helper      |
+| Inspector crafted UI                            | `create/components/part-inspector`                               |
+| Revision bump                                   | existing `$createPartsRevision`                                  |
 
 ## Non-goals
 

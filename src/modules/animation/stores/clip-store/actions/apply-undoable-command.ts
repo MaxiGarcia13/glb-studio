@@ -15,9 +15,9 @@ import {
   setMixerTime,
   setMixerTimeScale,
 } from '@/modules/animation/utils/mixer-session';
+import { applyMaterialColorMapCommand } from '@/modules/create/domain/color-map/material-color-map-undo';
 import { applyCreateHierarchySnapshot } from '@/modules/create/domain/hierarchy/create-hierarchy-undo';
 import { applyCreateSceneSnapshot } from '@/modules/create/domain/hierarchy/create-scene-undo';
-import { applyMaterialColorMapCommand } from '@/modules/create/domain/color-map/material-color-map-undo';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
 import { $clips } from '../store';

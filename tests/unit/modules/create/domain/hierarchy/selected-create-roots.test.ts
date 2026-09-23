@@ -4,11 +4,11 @@ import { BoxGeometry, Group, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { describe, expect, it } from 'vitest';
 
 import { writeCreateGroup } from '@/modules/create/domain/hierarchy/group-data';
-import { writeCreatePart } from '@/modules/create/domain/part-data';
 import {
   resolveSelectedCreateRoots,
   selectedCreateHierarchyUuids,
 } from '@/modules/create/domain/hierarchy/selected-create-roots';
+import { writeCreatePart } from '@/modules/create/domain/part-data';
 import { EMPTY_SELECTION } from '@/modules/viewport/types/selection';
 
 function createPart(name: string): Mesh {

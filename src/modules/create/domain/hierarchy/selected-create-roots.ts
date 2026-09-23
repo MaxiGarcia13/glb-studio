@@ -2,7 +2,7 @@ import type { Object3D } from 'three';
 import type { ModelEntry } from '@/modules/viewport/types/model';
 import type { SelectionState } from '@/modules/viewport/types/selection';
 
-import { isInActiveModelScene } from '../../utils/selected-part';
+import { isInActiveModelScene } from '@/modules/create/utils/selected-part';
 import { resolveClipboardRoots } from './create-part-clipboard';
 import { isCreateHierarchyNode } from './group-data';
 
