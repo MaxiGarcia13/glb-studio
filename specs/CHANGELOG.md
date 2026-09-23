@@ -11,6 +11,7 @@
 
 | ID | Summary |
 |----|---------|
+| **US-47** | Skinned atlas skin editor (build + live preview, model-adaptive) — planned, not kicked off |
 | **US-45** | Fuse / join created parts (boolean union) — planned, not kicked off |
 | **US-44** | Cut holes on created parts (boolean subtract) — planned, not kicked off |
 | **US-43** | Round corners (parametric bevel on box) — planned, not kicked off |

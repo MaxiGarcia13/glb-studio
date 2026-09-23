@@ -648,7 +648,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 
 ## Out of scope (still excluded)
 
-- Full material / texture editing on **imported** characters beyond albedo on skinned meshes (PBR maps, prep modal, painting, mesh-only non-skinned imports beyond the created path). Created-model color maps + prep remain US-28 / US-39. Skinned albedo apply / clear is **US-40** (shipped). Session undo/redo for albedo apply/replace/clear (created + skinned) and Library texture rows under skinned models are **US-46** (shipped). Prep modal on skinned, full PBR, and durable undo across reloads stay out
+- Full material / texture editing on **imported** characters beyond albedo on skinned meshes (PBR maps, prep modal, painting, mesh-only non-skinned imports beyond the created path). Created-model color maps + prep remain US-28 / US-39. Skinned albedo apply / clear is **US-40** (shipped). Session undo/redo for albedo apply/replace/clear (created + skinned) and Library texture rows under skinned models are **US-46** (shipped). A beginner **atlas Skin editor** (templated stamps / fill + live preview, model-adaptive size/layout; vendor-agnostic templates) is planned as **US-47** — not kicked off. Until US-47 ships: no skin-builder modal on skinned. Full PBR, UV unwrap, and durable undo across reloads stay out
 - Kit marketplace / remote download; user-authored kit save/share; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
