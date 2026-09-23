@@ -23,9 +23,9 @@ Tick only after acceptance.
 
 ## UI
 
-- [ ] **Library texture rows** — Under each skinned `LibraryModel`, nested row(s) when maps exist; clear control; multi-mesh naming; chevron / `hasNested` updated
-- [ ] **Clear from Library** — Same undoable clear as toolbar; no US-39 prep modal
-- [ ] **Created path** — No regression on PartTextureTool / prep; created Library chrome unchanged unless a minimal affordance is accepted in kickoff
+- [x] **Library texture rows** — Under each skinned `LibraryModel`, nested row(s) when maps exist; clear control; multi-mesh naming; chevron / `hasNested` updated
+- [x] **Clear from Library** — Same undoable clear as toolbar; no US-39 prep modal
+- [x] **Created path** — No regression on PartTextureTool / prep; created Library chrome unchanged unless a minimal affordance is accepted in kickoff
 
 ## Verify
 
