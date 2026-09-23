@@ -5,7 +5,7 @@ import type { ModelGroup } from '@/modules/viewport/types/model-group';
 import { Input } from '@/components/input/input';
 import { Select } from '@/components/select';
 import { Text } from '@/components/text';
-import { stripGlbExtension } from '@/modules/export/utils/file-name';
+import { stripExportExtension } from '@/modules/export/utils/file-name';
 
 interface ExportUnitLike {
   kind: 'group' | 'single';
@@ -119,9 +119,9 @@ export function ExportFileNames({
           return (
             <Input
               key={model.id}
-              label={stripGlbExtension(model.fileName)}
+              label={stripExportExtension(model.fileName)}
               value={
-                modelBaseNames[model.id] ?? stripGlbExtension(model.fileName)
+                modelBaseNames[model.id] ?? stripExportExtension(model.fileName)
               }
               onChange={(event) => {
                 onModelBaseNameChange(model.id, event.target.value);

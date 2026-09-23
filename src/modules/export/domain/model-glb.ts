@@ -10,7 +10,7 @@ import {
   validateClipAgainstSkeleton,
 } from '@/modules/animation/domain/clip-validate';
 import { exportGlbBinary } from '../adapters/gltf-exporter';
-import { stripGlbExtension } from '../utils/file-name';
+import { stripExportExtension } from '../utils/file-name';
 import { attachSessionSkinsForExport } from './attach-session-skins-for-export';
 
 export interface ModelGlbResult {
@@ -117,7 +117,7 @@ export async function packModelGlb(
 
   try {
     const arrayBuffer = await exportGlbBinary(model.scene, animations);
-    return { arrayBuffer, fileName: `${stripGlbExtension(model.fileName)}.glb` };
+    return { arrayBuffer, fileName: `${stripExportExtension(model.fileName)}.glb` };
   } finally {
     detachSkins();
   }

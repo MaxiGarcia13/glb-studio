@@ -5,7 +5,7 @@ import type { ModelEntry } from '@/modules/viewport/types/model';
 
 import { bakeTimeScale } from '@/modules/animation/domain/clip-bake';
 import { remapClipTracks } from '@/modules/animation/domain/clip-remap';
-import { sanitizeBaseName, stripGlbExtension, uniqueTakenName } from '../utils/file-name';
+import { sanitizeBaseName, stripExportExtension, uniqueTakenName } from '../utils/file-name';
 
 export interface ModelNamespace {
   modelId: string;
@@ -32,7 +32,7 @@ export function buildUniqueModelPrefix(
   model: ModelEntry,
   taken: Set<string>,
 ): string {
-  const raw = sanitizeBaseName(stripGlbExtension(model.fileName)) ?? 'model';
+  const raw = sanitizeBaseName(stripExportExtension(model.fileName)) ?? 'model';
   const slug = raw.replace(/\s+/g, '_');
   let candidate = slug;
   let index = 2;

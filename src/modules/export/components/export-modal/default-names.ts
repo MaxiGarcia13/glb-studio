@@ -1,4 +1,4 @@
-import { defaultZipBaseName, stripGlbExtension } from '@/modules/export/utils/file-name';
+import { defaultZipBaseName, stripExportExtension } from '@/modules/export/utils/file-name';
 
 export function isDefaultZipBaseName(value: string): boolean {
   return (
@@ -21,7 +21,7 @@ export function defaultModelNames(
 ): Record<string, string> {
   const next: Record<string, string> = {};
   for (const model of models) {
-    next[model.id] = stripGlbExtension(model.fileName);
+    next[model.id] = stripExportExtension(model.fileName);
   }
   return next;
 }

@@ -7,7 +7,7 @@ import { Bone, Group, Object3D } from 'three';
 import { bakeTimeScale } from '@/modules/animation/domain/clip-bake';
 import { splitTrackName } from '@/modules/animation/domain/clip-validate';
 import { exportGlbBinary } from '../adapters/gltf-exporter';
-import { stripGlbExtension } from '../utils/file-name';
+import { stripExportExtension } from '../utils/file-name';
 
 export interface ClipGlbResult {
   arrayBuffer: ArrayBuffer;
@@ -94,5 +94,5 @@ export async function packClipGlb(
   addTrackTargetPlaceholders(scene, clip);
 
   const arrayBuffer = await exportGlbBinary(scene, [clip]);
-  return { arrayBuffer, fileName: `${stripGlbExtension(entry.name)}.glb` };
+  return { arrayBuffer, fileName: `${stripExportExtension(entry.name)}.glb` };
 }
