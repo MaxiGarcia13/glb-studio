@@ -4,7 +4,7 @@ Delta: Library shows and clears applied color maps on **created parts** and **sk
 
 **Depends on:** **US-40** / **US-46** (skinned albedo apply / clear / session undo + Library texture rows) — already shipped in `current/`.
 
-**Status:** Planned — not kicked off. Do not implement until explicit start.
+**Status:** Kicked off — kickoff decisions in progress; implement after carve into `current/`.
 
 Independent of **US-47** (atlas Skin editor). When US-47 ships, Apply should add or replace an entry in this list rather than invent a second material stack.
 
@@ -28,7 +28,7 @@ As an editor user, when I apply a texture to a created part or a skinned model, 
 - [ ] Applying a new image (US-40 file path) **adds** a list entry and makes it active; previous entries stay unless the user removes them
 - [ ] Library under the model shows **one row per list entry** (not only meshes that currently have `.map`)
 - [ ] Selecting a row applies that skin to the resolved US-40 target (`commitMaterialColorMapChange`); selecting **none** / deselect clears the live map
-- [ ] Removing a list entry disposes that session texture; if it was active, live map clears (one undo-friendly path — document at kickoff: single undo for “remove active” vs two steps)
+- [ ] Removing a list entry disposes that session texture; if it was active, live map clears as **one** undoable command (remove entry + clear map; one undo restores both)
 - [ ] Multi-mesh: apply still follows `resolveSkinnedTextureTarget` (selected skinned mesh, else sole mesh); list is **per model**, not one independent wardrobe per mesh unless kickoff explicitly splits
 - [ ] Rows update after apply / pick / clear / undo / redo; empty list when the model has no session skins
 - [ ] Model remove / replace / unload disposes remaining list textures (no GPU leak)

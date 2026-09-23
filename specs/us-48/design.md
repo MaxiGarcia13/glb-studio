@@ -12,7 +12,7 @@
    - Store keyed by `modelId`: `{ id, label, texture }[]` + `activeSkinId: string | null`.
    - Add on successful US-40 load; clone or take ownership so undo snapshots stay consistent with US-46 (snapshot owns clones; dispose only when safe).
    - Pick active → commit that texture onto the resolved target; pick none → commit `next: null`.
-   - Remove entry → drop from store + dispose; if active, clear live map.
+   - Remove entry → drop from store + dispose; if active, clear live map in the **same** undo command (not remove-then-clear as two stack entries).
    - Replace US-46 “row iff mesh has `.map`” for skinned Library chrome with this list. Toolbar apply still works; it feeds the list.
 
 3. **Target / apply**
@@ -35,9 +35,11 @@
 - Per-mesh wardrobes.
 - Shipping US-47 in the same PR.
 
-## Open kickoff decisions
+## Kickoff decisions
 
-- Undo granularity when removing the **active** skin (one command vs remove-then-clear).
-- Whether replace-from-file updates the active entry in place or always appends (recommend: **append**, keep previous).
-- None-picker: explicit “No skin” row vs deselect-all.
-- If a model already has a baked `.map` on import, seed one list entry from it or wait until first apply (recommend: **seed from existing map** so Library matches viewport).
+| Topic | Decision |
+|-------|----------|
+| Undo on **remove active** | **One command** — drop list entry + clear live map together; one undo restores both. Avoids a confusing half-state (row back / map still cleared or the reverse). |
+| File apply | *Open* — append vs replace-in-place (recommend: **append**) |
+| None UI | *Open* — explicit “No skin” row vs deselect-all |
+| Import seed | *Open* — seed from existing `.map` vs empty until first apply (recommend: **seed**) |

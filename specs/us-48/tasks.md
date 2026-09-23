@@ -1,14 +1,14 @@
 # US-48 — Tasks
 
-Tick only after acceptance. **Not kicked off** — do not implement until explicit start.
+Tick only after acceptance. **Kicked off** — implement only tasks that are decided / carved.
 
 Depends on shipped US-40 / US-46. Independent of US-47; do not start US-47 in this US.
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Explicit start from product owner / session
+- [x] **Confirm kickoff** — Explicit start from product owner / session
 - [x] **Changelog Open row** — Add US-48 to `specs/CHANGELOG.md` Open
-- [ ] **Decide undo on remove-active** — One command vs two
+- [x] **Decide undo on remove-active** — **One command**: remove list entry + clear live map when it was active (single undo restores both)
 - [ ] **Decide file apply** — Always append vs replace-in-place for the active entry (recommend append)
 - [ ] **Decide none UI** — Explicit “No skin” row vs deselect
 - [ ] **Decide import seed** — Seed list from existing `.map` vs empty until first apply (recommend seed)
