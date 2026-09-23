@@ -11,7 +11,7 @@ Tick only after acceptance.
 
 ## Domain — undo
 
-- [ ] **`materialColorMap` command type** — Extend `UndoableCommand` / apply-undoable-command; before/after map snapshots (clone or null); unit tests for apply undo + redo
+- [x] **`materialColorMap` command type** — Extend `UndoableCommand` / apply-undoable-command; before/after map snapshots (clone or null); unit tests for apply undo + redo
 - [ ] **Safe dispose policy** — Live replace may dispose the previous _live_ map; stack clones survive until the entry is pruned; no black/disposed material after undo
 - [ ] **Wire create apply / clear** — US-39 prep Apply + `PartTextureTool` clear push undo; failed decode still pushes nothing
 - [ ] **Wire skinned apply / clear** — `SkinnedTextureTool` (and shared replace/clear helpers used by Library) push the same command

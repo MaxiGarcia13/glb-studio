@@ -1,4 +1,4 @@
-import type { AnimationClip } from 'three';
+import type { AnimationClip, Texture } from 'three';
 
 import type { BindPoseDelta } from '@/modules/animation/domain/bind-pose-rebase';
 import type { CreatePartClipboardNode } from '@/modules/create/types/create-part-clipboard';
@@ -9,7 +9,8 @@ export type UndoableCommandId
     | 'saveKeyframe'
     | 'setTimeScale'
     | 'createHierarchy'
-    | 'createScene';
+    | 'createScene'
+    | 'materialColorMap';
 
 export interface TrimClipSnapshot {
   clip: AnimationClip;
@@ -111,6 +112,14 @@ export interface TimeScaleSnapshot {
   timeScale: number;
 }
 
+/**
+ * Color-map commit snapshot (US-46). `map` is a stack-owned clone (or null).
+ * Dispose only when the stack entry is pruned — not on undo/redo assign.
+ */
+export interface MaterialColorMapSnapshot {
+  map: Texture | null;
+}
+
 /** One committed edit on the session stack. */
 export type UndoableCommand
   = | {
@@ -144,4 +153,11 @@ export type UndoableCommand
     modelId: string;
     before: CreateSceneSnapshot;
     after: CreateSceneSnapshot;
+  }
+  | {
+    id: 'materialColorMap';
+    modelId: string;
+    meshUuid: string;
+    before: MaterialColorMapSnapshot;
+    after: MaterialColorMapSnapshot;
   };
