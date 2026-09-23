@@ -329,11 +329,17 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Create toolbar `PartTextureTool` (choose / replace / right-click clear); imported gated
 - [x] Dispose on part delete / model remove; export embeds maps
 
+## US-39 — Texture prep modal
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] `TexturePrepModal` — live preview, choose/replace, guidance, crop/flip, wrap presets, client bg-remove
+- [x] Apply commits draft; Cancel disposes; created-part gate; no server image pipeline
+
 ## Open deltas
 
 | US                              | Status                | Tasks                                       |
 | ------------------------------- | --------------------- | ------------------------------------------- |
-| **US-39** — Texture prep modal  | in progress           | [`specs/us-39/tasks.md`](../us-39/tasks.md) |
 | **US-8** — Morph-target editing | post-MVP, not started | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 
 ## Tech debt

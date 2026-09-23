@@ -393,7 +393,28 @@ As an editor user, I can apply a simple image texture to a selected part on my c
 - [x] Imported character materials are not editable through this UI
 - [x] Oversized / failed decodes show a clear error; do not corrupt the part material into a black void without recovery
 
-**Out of scope:** full PBR authoring; texture painting; UV unwrap; server-side texture processing; prep modal (crop / wrap / client bg-remove) — **US-39**
+**Out of scope:** full PBR authoring; texture painting; UV unwrap; server-side texture processing (prep/crop/wrap/bg-remove is US-39)
+
+### US-39 — Texture prep modal (crop, wrap, bg remove)
+
+As an editor user, when I texture a created part I can open a prep modal, see a live 3D preview of how the image will look, crop and wrap it, optionally remove the background in the browser, and get clear guidance so I upload a good image — then Apply commits the map or Cancel discards the draft.
+
+**Acceptance**
+
+- [x] Create toolbar **Texture** on a selected created part opens a **Texture** prep modal (not a silent file-only apply); right-click / Clear still removes the map without opening the modal when appropriate
+- [x] Modal shows a **live 3D preview** of the selected part with the draft texture (reuse `ViewportEnvironment` lights + ground; same spirit as browse-part-kinds preview)
+- [x] User can **choose / replace** the source image (png/jpeg/webp per US-28 caps); decode / size failures show **in the modal** (not only a toolbar tooltip)
+- [x] Modal shows short **upload guidance** (prefer square or part-friendly aspect; PNG for transparency; aim ≤ 2048px on the long edge under hard caps; flat logos / patterns work better than busy photos)
+- [x] Soft **warnings** for non-square-ish or very large (but still under hard max) images; hard rejects keep US-28 limits
+- [x] User can **crop** and **flip** the draft image before Apply
+- [x] User can pick **wrap presets** that drive Three texture wrap/repeat (at least: Clamp / stretch default, Tile 2×, Tile 4×) — no UV unwrap editor
+- [x] Optional **Remove background** runs **client-side** (e.g. `@imgly/background-removal` or equivalent WASM); opt-in button with busy state; copy notes it runs in the browser; not auto-run on every pick
+- [x] Transparent maps preview and export correctly enough for cutouts (`transparent` / `alphaTest` or equivalent on the part material when alpha is present)
+- [x] **Apply** commits the draft to the real part material (US-28 apply path); **Cancel** / close discards the draft and frees GPU / ImageBitmap resources — library part unchanged on cancel
+- [x] Imported / non-created focus never opens this modal
+- [x] No Sharp / server texture endpoint in this US
+
+**Out of scope:** server-side Sharp / resize / normalize API; full UV unwrap or projection painting; full PBR map authoring; auto bg-remove on every upload; texture prep on imported GLB materials; texture painting
 
 ### US-25 — Grid and rotation snap
 
@@ -566,12 +587,6 @@ As an editor user, I can drag-resize the Library and Settings asides and the bot
 
 **Out of scope:** persisting snap / axes / other Settings toggles (session-only); aside open/closed state; double-click reset-to-default
 
-## Open deltas (not started)
-
-Full requirements, design, and tasks live only in the delta folders (not duplicated here). Do not implement until explicitly kicked off:
-
-- **US-39** — Texture prep modal (crop, wrap, client bg-remove, live preview) → [`specs/us-39/`](../us-39/)
-
 ## Post-MVP user stories
 
 Not started; do not implement until explicitly kicked off. Full requirements, design, and tasks live only in the delta folders (not duplicated here):
@@ -594,7 +609,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 
 ## Out of scope (still excluded)
 
-- Material / texture editing on **imported** characters (created-model color maps are US-28; prep modal is US-39)
+- Material / texture editing on **imported** characters (created-model color maps + prep are US-28 / US-39; skinned albedo is US-40)
 - Kit marketplace / remote download; user-authored kit save/share; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
