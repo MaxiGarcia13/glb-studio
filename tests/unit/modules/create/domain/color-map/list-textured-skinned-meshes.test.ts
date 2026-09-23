@@ -12,7 +12,7 @@ import { describe, expect, it } from 'vitest';
 import {
   labelForTexturedSkinnedMesh,
   listTexturedSkinnedMeshes,
-} from '@/modules/create/domain/list-textured-skinned-meshes';
+} from '@/modules/create/domain/color-map/list-textured-skinned-meshes';
 
 function namedTexture(name: string): Texture {
   const texture = new Texture();

@@ -1,7 +1,7 @@
 import type { Object3D } from 'three';
 import { Box3, Vector3 } from 'three';
 
-import { isCreateHierarchyNode, isCreateJoint } from './group-data';
+import { isCreateHierarchyNode, isCreateJoint } from './hierarchy/group-data';
 
 const Y_TIE_EPSILON = 1e-4;
 const AXIS_EPSILON = 1e-6;

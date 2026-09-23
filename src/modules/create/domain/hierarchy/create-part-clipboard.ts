@@ -4,20 +4,20 @@ import type {
   CreatePartClipboardNode,
   CreatePartClipboardPartNode,
   CreatePartClipboardPayload,
-} from '../types/create-part-clipboard';
+} from '../../types/create-part-clipboard';
 
 import { Group as ThreeGroup } from 'three';
 import {
   findMeshStandardMaterial,
   toHexColor,
-} from '../utils/selected-part';
-import { DUPLICATE_PART_OFFSET } from './duplicate-part';
+} from '../../utils/selected-part';
+import { DUPLICATE_PART_OFFSET } from '../duplicate-part';
 import { isCreateGroup, readCreateGroup, writeCreateGroup, writeCreateJoint } from './group-data';
-import { nextObjectName } from './object-name';
+import { nextObjectName } from '../object-name';
 import { resolveHierarchyRoots } from './parent-part';
-import { readCreatePart } from './part-data';
-import { getPartKind } from './part-kind';
-import { nextPartName } from './part-name';
+import { readCreatePart } from '../part-data';
+import { getPartKind } from '../part-kind';
+import { nextPartName } from '../part-name';
 
 export interface SnapshotClipboardOptions {
   /** Include Object3D.uuid (+ exact name) for undo restore (US-37). */

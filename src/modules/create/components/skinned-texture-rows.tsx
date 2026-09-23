@@ -13,7 +13,7 @@ import {
 } from '../actions/pick-session-skin';
 import { removeSessionSkin } from '../actions/remove-session-skin';
 import { PART_COLOR_MAP_ACCEPT } from '../adapters/load-image-texture';
-import { resolveSkinnedTextureTarget } from '../domain/resolve-skinned-texture-target';
+import { resolveSkinnedTextureTarget } from '../domain/color-map/resolve-skinned-texture-target';
 import { $materialMapsRevision } from '../stores/material-maps-revision-store';
 import {
   $sessionSkinsByModel,

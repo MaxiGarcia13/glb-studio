@@ -17,7 +17,7 @@ import {
   takeUndoCommand,
 } from '@/modules/animation/stores/undo-stack-store';
 import { commitMaterialColorMapChange } from '@/modules/create/actions/commit-material-color-map';
-import { applyColorMap } from '@/modules/create/domain/material-color-map';
+import { applyColorMap } from '@/modules/create/domain/color-map/material-color-map';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import {
   $materialMapsRevision,

@@ -9,7 +9,7 @@ import {
   canUndo as stackCanUndo,
   undoCommand,
 } from '@/modules/animation/domain/command-stack';
-import { disposeUndoableCommandResources } from '@/modules/create/domain/material-color-map-undo';
+import { disposeUndoableCommandResources } from '@/modules/create/domain/color-map/material-color-map-undo';
 import { $model } from '@/modules/viewport/stores/model-store';
 
 /** Session-only undo stack; cleared on reload. */

@@ -1,8 +1,8 @@
 import type { Group, Mesh, Object3D } from 'three';
 import type { MeshKit } from '@/modules/create/types/kit';
 import { MeshStandardMaterial } from 'three';
-import { createNamedCreateGroup } from './create-part-group';
-import { attachUnder } from './parent-part';
+import { createNamedCreateGroup } from './hierarchy/create-part-group';
+import { attachUnder } from './hierarchy/parent-part';
 import { getPartKind } from './part-kind';
 
 /**

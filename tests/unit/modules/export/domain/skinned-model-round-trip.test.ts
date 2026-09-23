@@ -8,7 +8,7 @@ import {
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { writeCreateJoint } from '@/modules/create/domain/group-data';
+import { writeCreateJoint } from '@/modules/create/domain/hierarchy/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import { convertCreatedSceneToSkinned } from '@/modules/create/domain/skinning/convert-created-scene-to-skinned';
 import { packModelGlb } from '@/modules/export/domain/model-glb';

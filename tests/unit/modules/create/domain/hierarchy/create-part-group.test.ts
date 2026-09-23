@@ -4,12 +4,12 @@ import { describe, expect, it } from 'vitest';
 import {
   averageWorldPosition,
   createEmptyPartGroup,
-} from '@/modules/create/domain/create-part-group';
+} from '@/modules/create/domain/hierarchy/create-part-group';
 import {
   isCreateJoint,
   isCreatePlainGroup,
-} from '@/modules/create/domain/group-data';
-import { attachAllUnder } from '@/modules/create/domain/parent-part';
+} from '@/modules/create/domain/hierarchy/group-data';
+import { attachAllUnder } from '@/modules/create/domain/hierarchy/parent-part';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 
 function createPart(name: string): Mesh {

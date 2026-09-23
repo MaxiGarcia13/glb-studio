@@ -15,8 +15,8 @@ Do not start post-MVP stories (US-8) from this file.
 - [x] Remove unused `pickObjectAtPointer` in `src/modules/viewport/domain/object-pick.ts` — callers use `pickObjectAcrossRoots` only
 - [x] Remove unused `computeModelFraming` in `src/modules/viewport/domain/model-framing.ts` — callers use `computeScenesFraming` only
 - [x] Remove unused `getBlendWeight` in `src/modules/animation/utils/mixer-session.ts` (`setBlendWeight` stays)
-- [x] Remove deprecated create-parent aliases with no callers: `canParentPart`, `parentPart`, `groupPartsUnder` in `src/modules/create/domain/parent-part.ts` (live paths: `canAttachUnder` / `attachUnder` / `attachAllUnder`)
-- [x] Remove unused `removeEmptyPartGroup` in `src/modules/create/domain/create-part-group.ts` — ungroup uses `dissolveCreateGroups`
+- [x] Remove deprecated create-parent aliases with no callers: `canParentPart`, `parentPart`, `groupPartsUnder` in `src/modules/create/domain/hierarchy/parent-part.ts` (live paths: `canAttachUnder` / `attachUnder` / `attachAllUnder`)
+- [x] Remove unused `removeEmptyPartGroup` in `src/modules/create/domain/hierarchy/create-part-group.ts` — ungroup uses `dissolveCreateGroups`
 - [x] Un-export internals only used in-file: `listKits` → private to `kit.ts` (`listStarterKits` stays public); `resolveInsertKeyTime` → non-export in `keyframe-crud.ts`
 
 ## Unused public barrels
@@ -39,7 +39,7 @@ Not copy-pasted files. Extract only if the helper stays small.
 
 Same “is strict descendant” walk and “roots among selection (skip nodes nested under another selected node)” filter are copy-pasted. One shared pair; keep call-site names if clearer.
 
-- [x] One shared `isStrictDescendantOf` — today duplicated in `create/domain/parent-part.ts` (exported), `create/domain/create-part-clipboard.ts` (exported), private copy in `viewport/domain/resolve-position-edit-targets.ts`, and private `isDescendant` in `create/actions/group-selected-parts.ts`. Prefer `parent-part` (or a tiny `create/domain` / shared util) as the single owner; viewport may import create domain for this pure helper, or lift to `src/utils/` if cross-module ownership feels wrong
+- [x] One shared `isStrictDescendantOf` — today duplicated in `create/domain/hierarchy/parent-part.ts` (exported), `create/domain/hierarchy/create-part-clipboard.ts` (exported), private copy in `viewport/domain/resolve-position-edit-targets.ts`, and private `isDescendant` in `create/actions/group-selected-parts.ts`. Prefer `parent-part` (or a tiny `create/domain` / shared util) as the single owner; viewport may import create domain for this pure helper, or lift to `src/utils/` if cross-module ownership feels wrong
 - [x] One shared `resolveHierarchyRoots(objects)` (or equivalent) used by `resolveClipboardRoots`, `resolveSelectionRoots`, and the nest filter inside `resolveMultiPartContext` / `group-selected-parts` — same algorithm, three call sites
 - [x] Unit tests for descendant + roots (parent+child multi-select drops child; unrelated siblings kept); update existing group / clipboard / pose-target tests if they assert behavior
 
@@ -54,12 +54,14 @@ Follow-ups after the priority export cleanup (below). No product behavior change
 
 Same class of smell as the finished export store-free pack work. Prefer doing these when that area is already open; starting for cleanup is OK if scoped.
 
+Domain folders (grouping only): `hierarchy/` (clipboard, parent, group-data, scene/hierarchy undo, …), `color-map/` (live maps, texture prep helpers, `material-color-map-undo/`), plus existing `kits/` and `skinning/`.
+
 - [x] Create domain that reads / writes nanostores — pass models / selection in from actions (or return selection patches):
   - [x] `selected-create-roots` — store-free; actions pass `$activeModel` / `$selection` snapshots
   - [x] `material-color-map-undo`, `create-scene-undo`, `create-hierarchy-undo` — resolve model from passed `models[]`
   - [x] `create-graph-lookup` (`resolveCreateSelection`) — returns `SelectionState`; apply undo action sets `$selection`
-- [x] `material-color-map-undo/` — split dispose / clone / apply / stack-ownership (`clone` / `stack` / `apply` + `index` barrel)
-- [ ] `create-part-clipboard.ts` (~318) — after hierarchy-roots extract, split snapshot vs instantiate only if clipboard paste / hierarchy work grows further
+- [x] `color-map/material-color-map-undo/` — split dispose / clone / apply / stack-ownership (`clone` / `stack` / `apply` + `index` barrel)
+- [ ] `hierarchy/create-part-clipboard.ts` (~318) — after hierarchy-roots extract, split snapshot vs instantiate only if clipboard paste / hierarchy work grows further
 - [ ] Texture prep modal pieces (`texture-prep-crop-editor`, modal shell) — already folder-split for draft hook; further split only if crop UI vs apply lifecycle collide in one PR
 - [ ] Revisit export ↔ create skins coupling (`attachSessionSkinsForExport`, folder PNG skins) when US-47 (Skin editor) or further wardrobe export rules land; keep contract in `specs/current/design.md` Export section
 

@@ -1,5 +1,5 @@
 import type { Object3D } from 'three';
-import { isCreateGroup } from '@/modules/create/domain/group-data';
+import { isCreateGroup } from '@/modules/create/domain/hierarchy/group-data';
 import { $activeModel, $model } from '../stores/model-store';
 import { $selection } from '../stores/selection-store';
 

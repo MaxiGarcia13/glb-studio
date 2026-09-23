@@ -7,8 +7,8 @@ import type {
 
 import { atom } from 'nanostores';
 import { disposeImageTexture } from '@/utils/dispose-image-texture';
-import { collectLiveColorMaps } from '../domain/collect-live-color-maps';
-import { labelForColorMap } from '../domain/color-map-label';
+import { collectLiveColorMaps } from '../domain/color-map/collect-live-color-maps';
+import { labelForColorMap } from '../domain/color-map/color-map-label';
 
 const EMPTY_WARDROBE: SessionSkinWardrobe = {
   skins: [],

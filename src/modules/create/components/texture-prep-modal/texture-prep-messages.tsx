@@ -1,5 +1,5 @@
 import { Text } from '@/components/text';
-import { TEXTURE_PREP_GUIDANCE } from '@/modules/create/domain/texture-prep-guidance';
+import { TEXTURE_PREP_GUIDANCE } from '@/modules/create/domain/color-map/texture-prep-guidance';
 
 interface TexturePrepMessagesProps {
   error: string | null;

@@ -1,5 +1,5 @@
 import type { Texture } from 'three';
-import type { ImageCropRect } from '@/modules/create/domain/texture-crop';
+import type { ImageCropRect } from '@/modules/create/domain/color-map/texture-crop';
 
 import { disposeImageTexture } from '@/utils/dispose-image-texture';
 import {

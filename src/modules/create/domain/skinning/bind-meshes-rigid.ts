@@ -6,7 +6,7 @@ import {
   Uint16BufferAttribute,
 } from 'three';
 
-import { isCreateJoint } from '../group-data';
+import { isCreateJoint } from '../hierarchy/group-data';
 import { listCreatedParts } from '../list-created-parts';
 import { ARMATURE_GROUP_NAME } from './build-bones-from-create-groups';
 

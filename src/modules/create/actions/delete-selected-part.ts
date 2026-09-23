@@ -3,7 +3,7 @@ import {
   $selection,
   clearSelection,
 } from '@/modules/viewport/stores/selection-store';
-import { resolveSelectedCreateRoots } from '../domain/selected-create-roots';
+import { resolveSelectedCreateRoots } from '../domain/hierarchy/selected-create-roots';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { pushCreateSceneDeleteUndo } from './push-create-scene-undo';
 

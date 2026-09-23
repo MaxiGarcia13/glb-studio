@@ -1,9 +1,9 @@
 import type { OwnedDraft } from './use-owned-draft';
 import type { ImageTextureTransform } from '@/modules/create/adapters/transform-image-texture';
-import type { ImageCropRect } from '@/modules/create/domain/texture-crop';
+import type { ImageCropRect } from '@/modules/create/domain/color-map/texture-crop';
 import { ImageTextureError } from '@/modules/create/adapters/load-image-texture';
 import { transformImageTexture } from '@/modules/create/adapters/transform-image-texture';
-import { isFullImageCrop } from '@/modules/create/domain/texture-crop';
+import { isFullImageCrop } from '@/modules/create/domain/color-map/texture-crop';
 import { bitmapSize } from './bitmap-size';
 
 export interface TexturePrepTransformActions {

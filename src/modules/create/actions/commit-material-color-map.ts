@@ -6,7 +6,7 @@ import {
   collectStackOwnedColorMaps,
   releaseOrphanColorMap,
   snapshotMaterialColorMap,
-} from '../domain/material-color-map-undo';
+} from '../domain/color-map/material-color-map-undo';
 import { bumpMaterialMapsRevision } from '../stores/material-maps-revision-store';
 import { collectSessionSkinTextures } from '../stores/session-skins-store';
 

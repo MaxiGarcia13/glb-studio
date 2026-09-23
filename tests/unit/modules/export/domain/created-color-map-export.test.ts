@@ -9,7 +9,7 @@ import {
 } from 'three';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { applyColorMap } from '@/modules/create/domain/material-color-map';
+import { applyColorMap } from '@/modules/create/domain/color-map/material-color-map';
 import { spawnPart } from '@/modules/create/domain/spawn-part';
 import { packModelGlb } from '@/modules/export/domain/model-glb';
 

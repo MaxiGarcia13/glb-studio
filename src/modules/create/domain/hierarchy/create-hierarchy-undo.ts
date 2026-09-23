@@ -9,7 +9,7 @@ import type { SelectionState } from '@/modules/viewport/types/selection';
 
 import { Group } from 'three';
 import { refreshRestPoseNode } from '@/modules/animation/domain/rest-pose';
-import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
+import { bumpCreatePartsRevision } from '../../stores/create-parts-revision-store';
 import {
   findUnderRoot,
   hierarchyParentUuid,

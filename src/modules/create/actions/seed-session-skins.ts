@@ -1,7 +1,7 @@
 import type { ModelEntry } from '@/modules/viewport/types/model';
 
 import { isSkinnedLibraryModel } from '@/modules/import/domain/model-scene-kind';
-import { resolveSkinnedTextureTarget } from '../domain/resolve-skinned-texture-target';
+import { resolveSkinnedTextureTarget } from '../domain/color-map/resolve-skinned-texture-target';
 import { restoreSessionSkinsFromScene } from '../domain/restore-session-skins-from-scene';
 import {
   appendSessionSkin,

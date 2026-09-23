@@ -7,9 +7,9 @@ import {
 } from 'three';
 import { describe, expect, it } from 'vitest';
 
-import { labelForColorMap } from '@/modules/create/domain/color-map-label';
+import { labelForColorMap } from '@/modules/create/domain/color-map/color-map-label';
 import { CREATE_PART_USER_DATA_KEY } from '@/modules/create/domain/part-data';
-import { readPartColorMapEntry } from '@/modules/create/domain/read-part-color-map';
+import { readPartColorMapEntry } from '@/modules/create/domain/color-map/read-part-color-map';
 
 function namedTexture(name: string): Texture {
   const texture = new Texture();

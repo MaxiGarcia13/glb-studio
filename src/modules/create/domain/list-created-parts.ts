@@ -1,6 +1,6 @@
 import type { Mesh, Object3D } from 'three';
 
-import { isCreateGroup, isCreateHierarchyNode } from './group-data';
+import { isCreateGroup, isCreateHierarchyNode } from './hierarchy/group-data';
 import { readCreatePart } from './part-data';
 
 function asCreatePartMesh(object: Object3D): Mesh | null {

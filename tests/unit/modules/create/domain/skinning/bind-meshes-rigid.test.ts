@@ -9,7 +9,7 @@ import {
 } from 'three';
 import { describe, expect, it } from 'vitest';
 
-import { writeCreateJoint } from '@/modules/create/domain/group-data';
+import { writeCreateJoint } from '@/modules/create/domain/hierarchy/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import { bindMeshesRigid } from '@/modules/create/domain/skinning/bind-meshes-rigid';
 import { buildBonesFromCreateGroups } from '@/modules/create/domain/skinning/build-bones-from-create-groups';

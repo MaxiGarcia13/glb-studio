@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   TEXTURE_PREP_SOFT_EDGE_PX,
   texturePrepSoftWarnings,
-} from '@/modules/create/domain/texture-prep-guidance';
+} from '@/modules/create/domain/color-map/texture-prep-guidance';
 
 describe('texturePrepSoftWarnings', () => {
   it('returns no warnings for a modest square image', () => {

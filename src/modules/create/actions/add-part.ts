@@ -7,7 +7,7 @@ import {
   $selection,
   selectObject,
 } from '@/modules/viewport/stores/selection-store';
-import { selectedCreateHierarchyUuids } from '../domain/selected-create-roots';
+import { selectedCreateHierarchyUuids } from '../domain/hierarchy/selected-create-roots';
 import { spawnPart } from '../domain/spawn-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { pushCreateSceneInsertUndo } from './push-create-scene-undo';

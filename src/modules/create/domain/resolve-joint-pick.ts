@@ -1,5 +1,5 @@
 import type { Object3D } from 'three';
-import { isCreateGroup } from './group-data';
+import { isCreateGroup } from './hierarchy/group-data';
 import { readCreatePart } from './part-data';
 
 /** Nearest create-group ancestor, or null. */

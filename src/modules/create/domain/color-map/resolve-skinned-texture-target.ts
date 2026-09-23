@@ -5,11 +5,11 @@ import type {
 } from 'three';
 import type { ModelEntry } from '@/modules/viewport/types/model';
 
-import { isSkinnedLibraryModel } from '@/modules/import/domain/model-scene-kind';
 import {
   findMeshStandardMaterial,
   isInActiveModelScene,
-} from '../utils/selected-part';
+} from '@/modules/create/utils/selected-part';
+import { isSkinnedLibraryModel } from '@/modules/import/domain/model-scene-kind';
 
 export interface SkinnedTextureTarget {
   mesh: SkinnedMesh;

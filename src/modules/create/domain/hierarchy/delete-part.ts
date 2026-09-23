@@ -2,7 +2,7 @@ import type { Material, Mesh, Object3D, Texture } from 'three';
 
 import { disposeImageTexture } from '@/utils/dispose-image-texture';
 import { isCreateGroup, isCreateHierarchyNode } from './group-data';
-import { readCreatePart } from './part-data';
+import { readCreatePart } from '../part-data';
 
 function disposeMaterial(material: Material): void {
   for (const value of Object.values(material)) {

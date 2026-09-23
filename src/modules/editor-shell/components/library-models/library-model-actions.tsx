@@ -14,7 +14,7 @@ import { openRetargetForModel } from '@/modules/animation/stores/retarget-ui-sto
 import { applySkinnedSessionSkinsFromFiles } from '@/modules/create/actions/apply-skinned-session-skin';
 import { skinCreatedModel } from '@/modules/create/actions/skin-created-model';
 import { PART_COLOR_MAP_ACCEPT } from '@/modules/create/adapters/load-image-texture';
-import { getSkinnedTextureAvailability } from '@/modules/create/domain/resolve-skinned-texture-target';
+import { getSkinnedTextureAvailability } from '@/modules/create/domain/color-map/resolve-skinned-texture-target';
 import { canSkinModel } from '@/modules/create/domain/skinning/can-skin-model';
 import { $createPartsRevision } from '@/modules/create/stores/create-parts-revision-store';
 import { isSkinnedLibraryModel } from '@/modules/import/domain/model-scene-kind';

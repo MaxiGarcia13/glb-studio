@@ -1,12 +1,12 @@
 import { BoxGeometry, Group, Mesh, MeshStandardMaterial, Object3D } from 'three';
 import { describe, expect, it } from 'vitest';
 
-import { writeCreateGroup } from '@/modules/create/domain/group-data';
+import { writeCreateGroup } from '@/modules/create/domain/hierarchy/group-data';
 import {
   canAttachUnder,
   isStrictDescendantOf,
   resolveHierarchyRoots,
-} from '@/modules/create/domain/parent-part';
+} from '@/modules/create/domain/hierarchy/parent-part';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 
 function createPart(name: string): Mesh {

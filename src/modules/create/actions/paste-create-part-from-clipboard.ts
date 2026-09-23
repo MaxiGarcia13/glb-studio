@@ -6,8 +6,8 @@ import {
   $selection,
   selectObject,
 } from '@/modules/viewport/stores/selection-store';
-import { instantiateClipboardPayload } from '../domain/create-part-clipboard';
-import { selectedCreateHierarchyUuids } from '../domain/selected-create-roots';
+import { instantiateClipboardPayload } from '../domain/hierarchy/create-part-clipboard';
+import { selectedCreateHierarchyUuids } from '../domain/hierarchy/selected-create-roots';
 import { $createPartClipboard } from '../stores/create-part-clipboard-store';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { pushCreateSceneInsertUndo } from './push-create-scene-undo';

@@ -1,14 +1,14 @@
 import type { Object3D } from 'three';
 
 import { $commandStack, pushUndoableCommand } from '@/modules/animation/stores/undo-stack-store';
-import { collectLiveColorMaps } from '../domain/collect-live-color-maps';
+import { collectLiveColorMaps } from '../domain/color-map/collect-live-color-maps';
 import {
   assignMaterialColorMapLive,
   collectStackOwnedColorMaps,
   releaseOrphanColorMap,
   snapshotMaterialColorMap,
-} from '../domain/material-color-map-undo';
-import { resolveSkinnedTextureTarget } from '../domain/resolve-skinned-texture-target';
+} from '../domain/color-map/material-color-map-undo';
+import { resolveSkinnedTextureTarget } from '../domain/color-map/resolve-skinned-texture-target';
 import { bumpMaterialMapsRevision } from '../stores/material-maps-revision-store';
 import {
   collectSessionSkinTextures,

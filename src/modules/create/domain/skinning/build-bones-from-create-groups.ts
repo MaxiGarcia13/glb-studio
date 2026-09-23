@@ -1,7 +1,7 @@
 import type { Object3D } from 'three';
 import { Bone, Group } from 'three';
 
-import { isCreateGroup, isCreateJoint } from '../group-data';
+import { isCreateGroup, isCreateJoint } from '../hierarchy/group-data';
 import { listCreatedPartEntries } from '../list-created-parts';
 
 /** Matches offline kit skinning — container, not a Skeleton bone. */

@@ -8,8 +8,8 @@ import {
   listCreateGroups,
   snapshotHierarchyGroupSpec,
   snapshotHierarchyPlacement,
-} from '../domain/create-hierarchy-undo';
-import { isCreateHierarchyNode } from '../domain/group-data';
+} from '../domain/hierarchy/create-hierarchy-undo';
+import { isCreateHierarchyNode } from '../domain/hierarchy/group-data';
 
 /**
  * Push a createHierarchy undo entry from full before/after graph captures.

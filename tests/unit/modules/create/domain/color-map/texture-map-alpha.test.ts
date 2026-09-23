@@ -4,7 +4,7 @@ import {
   markTextureMapHasAlpha,
   syncMaterialMapAlpha,
   textureMapHasAlpha,
-} from '@/modules/create/domain/texture-map-alpha';
+} from '@/modules/create/domain/color-map/texture-map-alpha';
 
 describe('textureMapHasAlpha', () => {
   it('respects the userdata flag without sampling', () => {

@@ -1,6 +1,6 @@
 import type { OwnedDraft } from './use-owned-draft';
-import type { TextureWrapPresetId } from '@/modules/create/domain/texture-wrap-preset';
-import { applyTextureWrapPreset } from '@/modules/create/domain/texture-wrap-preset';
+import type { TextureWrapPresetId } from '@/modules/create/domain/color-map/texture-wrap-preset';
+import { applyTextureWrapPreset } from '@/modules/create/domain/color-map/texture-wrap-preset';
 
 /** Clamp / Tile presets on an owned draft (clones seeded maps first). */
 export function createSetWrapPreset(

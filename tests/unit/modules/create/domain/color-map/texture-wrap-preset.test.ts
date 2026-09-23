@@ -4,7 +4,7 @@ import {
   applyTextureWrapPreset,
   inferTextureWrapPreset,
   TEXTURE_WRAP_PRESETS,
-} from '@/modules/create/domain/texture-wrap-preset';
+} from '@/modules/create/domain/color-map/texture-wrap-preset';
 
 describe('tEXTURE_WRAP_PRESETS', () => {
   it('exposes Clamp, Tile 2×, and Tile 4×', () => {

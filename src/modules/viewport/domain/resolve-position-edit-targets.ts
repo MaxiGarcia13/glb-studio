@@ -2,7 +2,7 @@ import type { Object3D } from 'three';
 
 import type { PoseEditKind } from '../stores/pose-edit-store';
 
-import { resolveHierarchyRoots } from '@/modules/create/domain/parent-part';
+import { resolveHierarchyRoots } from '@/modules/create/domain/hierarchy/parent-part';
 import { $editTool } from '../stores/edit-tool-store';
 import { $model } from '../stores/model-store';
 import { $selection } from '../stores/selection-store';

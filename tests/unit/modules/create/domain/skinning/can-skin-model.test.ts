@@ -13,7 +13,7 @@ import { describe, expect, it } from 'vitest';
 import {
   writeCreateGroup,
   writeCreateJoint,
-} from '@/modules/create/domain/group-data';
+} from '@/modules/create/domain/hierarchy/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import { canSkinModel } from '@/modules/create/domain/skinning/can-skin-model';
 

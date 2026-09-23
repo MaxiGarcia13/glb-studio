@@ -1,8 +1,7 @@
 import type { Mesh, MeshStandardMaterial, Object3D } from 'three';
-
-import { findMeshStandardMaterial } from '../utils/selected-part';
+import { readCreatePart } from '@/modules/create/domain/part-data';
+import { findMeshStandardMaterial } from '@/modules/create/utils/selected-part';
 import { labelForColorMap } from './color-map-label';
-import { readCreatePart } from './part-data';
 
 export interface PartColorMapEntry {
   mesh: Mesh;

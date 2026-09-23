@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   findUnderRoot,
   resolveCreateSelection,
-} from '@/modules/create/domain/create-graph-lookup';
+} from '@/modules/create/domain/hierarchy/create-graph-lookup';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import { EMPTY_SELECTION } from '@/modules/viewport/types/selection';
 

@@ -6,13 +6,13 @@ import { $selection, selectObject } from '@/modules/viewport/stores/selection-st
 import {
   snapshotHierarchyGroupSpec,
   snapshotHierarchyPlacement,
-} from '../domain/create-hierarchy-undo';
+} from '../domain/hierarchy/create-hierarchy-undo';
 import {
   averageWorldPosition,
   createEmptyPartGroup,
-} from '../domain/create-part-group';
-import { isCreateHierarchyNode } from '../domain/group-data';
-import { attachAllUnder, resolveHierarchyRoots } from '../domain/parent-part';
+} from '../domain/hierarchy/create-part-group';
+import { isCreateHierarchyNode } from '../domain/hierarchy/group-data';
+import { attachAllUnder, resolveHierarchyRoots } from '../domain/hierarchy/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 
 export interface GroupPartsAvailability {

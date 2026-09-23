@@ -1,6 +1,6 @@
 import type { MeshStandardMaterial, Object3D } from 'three';
 
-import { resolveSkinnedTextureTarget } from '../domain/resolve-skinned-texture-target';
+import { resolveSkinnedTextureTarget } from '../domain/color-map/resolve-skinned-texture-target';
 import {
   getSessionSkin,
   getSessionSkinWardrobe,

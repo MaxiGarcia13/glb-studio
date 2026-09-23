@@ -7,7 +7,7 @@ import {
 } from 'three';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { collectLiveColorMaps } from '@/modules/create/domain/collect-live-color-maps';
+import { collectLiveColorMaps } from '@/modules/create/domain/color-map/collect-live-color-maps';
 import {
   $sessionSkinsByModel,
   appendSessionSkin,

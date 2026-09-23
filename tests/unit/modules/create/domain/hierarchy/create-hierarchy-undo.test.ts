@@ -11,8 +11,8 @@ import {
 import { groupSelectedParts } from '@/modules/create/actions/group-selected-parts';
 import { makeJointSelectedParts } from '@/modules/create/actions/make-joint-selected-parts';
 import { ungroupSelectedParts } from '@/modules/create/actions/ungroup-selected-parts';
-import { createEmptyPartGroup } from '@/modules/create/domain/create-part-group';
-import { isCreateJoint, isCreatePlainGroup } from '@/modules/create/domain/group-data';
+import { createEmptyPartGroup } from '@/modules/create/domain/hierarchy/create-part-group';
+import { isCreateJoint, isCreatePlainGroup } from '@/modules/create/domain/hierarchy/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import { $model } from '@/modules/viewport/stores/model-store';
 import {

@@ -1,6 +1,6 @@
 import type { Texture } from 'three';
 
-import { markTextureMapHasAlpha } from '@/modules/create/domain/texture-map-alpha';
+import { markTextureMapHasAlpha } from '@/modules/create/domain/color-map/texture-map-alpha';
 import { disposeImageTexture } from '@/utils/dispose-image-texture';
 import {
   canvasFromDrawable,

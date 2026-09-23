@@ -7,7 +7,7 @@ import { Modal } from '@/components/modal';
 import { Text } from '@/components/text';
 import { resolveGroupPartsContext } from '@/modules/create/actions/group-selected-parts';
 import { makeJointSelectedParts } from '@/modules/create/actions/make-joint-selected-parts';
-import { isCreateJoint } from '@/modules/create/domain/group-data';
+import { isCreateJoint } from '@/modules/create/domain/hierarchy/group-data';
 import {
   $makeJointUi,
   closeMakeJointModal,

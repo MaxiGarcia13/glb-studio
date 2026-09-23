@@ -1,7 +1,7 @@
 import type { OwnedDraft } from './use-owned-draft';
 import { useEffect, useRef } from 'react';
-import { texturePrepSoftWarnings } from '@/modules/create/domain/texture-prep-guidance';
-import { inferTextureWrapPreset } from '@/modules/create/domain/texture-wrap-preset';
+import { texturePrepSoftWarnings } from '@/modules/create/domain/color-map/texture-prep-guidance';
+import { inferTextureWrapPreset } from '@/modules/create/domain/color-map/texture-wrap-preset';
 import { bitmapSize } from './bitmap-size';
 
 interface UseTexturePrepLifecycleArgs {

@@ -9,8 +9,8 @@ import {
 } from '@/modules/animation/stores/undo-stack-store';
 import { addPart } from '@/modules/create/actions/add-part';
 import { deleteSelectedPart } from '@/modules/create/actions/delete-selected-part';
-import { createEmptyPartGroup } from '@/modules/create/domain/create-part-group';
-import { isCreateGroup } from '@/modules/create/domain/group-data';
+import { createEmptyPartGroup } from '@/modules/create/domain/hierarchy/create-part-group';
+import { isCreateGroup } from '@/modules/create/domain/hierarchy/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import { $model } from '@/modules/viewport/stores/model-store';
 import {

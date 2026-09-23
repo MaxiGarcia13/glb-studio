@@ -1,8 +1,8 @@
 import type { Object3D } from 'three';
 
 import { pushUndoableCommand } from '@/modules/animation/stores/undo-stack-store';
-import { snapshotCreateSceneTrees } from '../domain/create-scene-undo';
-import { deleteCreateHierarchyRoots } from '../domain/delete-part';
+import { snapshotCreateSceneTrees } from '../domain/hierarchy/create-scene-undo';
+import { deleteCreateHierarchyRoots } from '../domain/hierarchy/delete-part';
 
 /**
  * Push a createScene undo entry around inserting live roots (Add / Paste).

@@ -5,8 +5,8 @@ import {
   applyColorMap,
   clearColorMap,
   replaceColorMap,
-} from '@/modules/create/domain/material-color-map';
-import { markTextureMapHasAlpha } from '@/modules/create/domain/texture-map-alpha';
+} from '@/modules/create/domain/color-map/material-color-map';
+import { markTextureMapHasAlpha } from '@/modules/create/domain/color-map/texture-map-alpha';
 
 describe('applyColorMap', () => {
   it('sets map and marks the material for update without changing color', () => {

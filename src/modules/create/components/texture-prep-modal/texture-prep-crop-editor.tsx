@@ -1,4 +1,4 @@
-import type { ImageCropRect } from '@/modules/create/domain/texture-crop';
+import type { ImageCropRect } from '@/modules/create/domain/color-map/texture-crop';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/button';
 import { Text } from '@/components/text';
@@ -7,7 +7,7 @@ import {
   clampImageCropRect,
   cropRectFromCorners,
   fullImageCrop,
-} from '@/modules/create/domain/texture-crop';
+} from '@/modules/create/domain/color-map/texture-crop';
 
 interface TexturePrepCropEditorProps {
   imageUrl: string;

@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { $clips } from '@/modules/animation/stores/clip-store';
 import { skinCreatedModel } from '@/modules/create/actions/skin-created-model';
-import { writeCreateJoint } from '@/modules/create/domain/group-data';
+import { writeCreateJoint } from '@/modules/create/domain/hierarchy/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import * as convertModule from '@/modules/create/domain/skinning/convert-created-scene-to-skinned';
 import { isUsableSkinnedModelScene } from '@/modules/import/domain/model-scene-kind';

@@ -1,7 +1,7 @@
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
-import { snapshotClipboardFromRoots } from '../domain/create-part-clipboard';
-import { resolveSelectedCreateRoots } from '../domain/selected-create-roots';
+import { snapshotClipboardFromRoots } from '../domain/hierarchy/create-part-clipboard';
+import { resolveSelectedCreateRoots } from '../domain/hierarchy/selected-create-roots';
 import { setCreatePartClipboard } from '../stores/create-part-clipboard-store';
 
 /**

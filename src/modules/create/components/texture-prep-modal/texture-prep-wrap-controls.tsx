@@ -1,10 +1,10 @@
-import type { TextureWrapPresetId } from '@/modules/create/domain/texture-wrap-preset';
+import type { TextureWrapPresetId } from '@/modules/create/domain/color-map/texture-wrap-preset';
 import { Button } from '@/components/button';
 import { Text } from '@/components/text';
 import {
   TEXTURE_WRAP_PRESETS,
 
-} from '@/modules/create/domain/texture-wrap-preset';
+} from '@/modules/create/domain/color-map/texture-wrap-preset';
 
 interface TexturePrepWrapControlsProps {
   enabled: boolean;

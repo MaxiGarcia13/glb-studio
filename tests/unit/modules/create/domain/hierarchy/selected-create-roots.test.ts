@@ -3,12 +3,12 @@ import type { SelectionState } from '@/modules/viewport/types/selection';
 import { BoxGeometry, Group, Mesh, MeshStandardMaterial, Object3D } from 'three';
 import { describe, expect, it } from 'vitest';
 
-import { writeCreateGroup } from '@/modules/create/domain/group-data';
+import { writeCreateGroup } from '@/modules/create/domain/hierarchy/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import {
   resolveSelectedCreateRoots,
   selectedCreateHierarchyUuids,
-} from '@/modules/create/domain/selected-create-roots';
+} from '@/modules/create/domain/hierarchy/selected-create-roots';
 import { EMPTY_SELECTION } from '@/modules/viewport/types/selection';
 
 function createPart(name: string): Mesh {

@@ -6,7 +6,7 @@ import {
   fullImageCrop,
   isAlreadySquare,
   isFullImageCrop,
-} from '@/modules/create/domain/texture-crop';
+} from '@/modules/create/domain/color-map/texture-crop';
 
 describe('centerSquareCrop', () => {
   it('returns the full image when already square', () => {

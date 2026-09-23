@@ -5,7 +5,7 @@ import type {
   Texture,
 } from 'three';
 
-import { findMeshStandardMaterial } from '../utils/selected-part';
+import { findMeshStandardMaterial } from '@/modules/create/utils/selected-part';
 import { labelForColorMap } from './color-map-label';
 import { listSkinnedMeshes } from './resolve-skinned-texture-target';
 

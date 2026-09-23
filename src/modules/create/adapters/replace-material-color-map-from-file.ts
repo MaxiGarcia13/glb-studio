@@ -1,6 +1,6 @@
 import type { MeshStandardMaterial, Texture } from 'three';
 
-import { replaceColorMap } from '../domain/material-color-map';
+import { replaceColorMap } from '../domain/color-map/material-color-map';
 import { loadImageTexture } from './load-image-texture';
 
 /**

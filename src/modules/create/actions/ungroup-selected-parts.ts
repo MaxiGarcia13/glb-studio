@@ -5,11 +5,11 @@ import { $selection, selectObject } from '@/modules/viewport/stores/selection-st
 import {
   isCreateHierarchyNode,
   isCreatePlainGroup,
-} from '../domain/group-data';
+} from '../domain/hierarchy/group-data';
 import {
   dissolveCreateGroups,
   ungroupPartsToRoot,
-} from '../domain/parent-part';
+} from '../domain/hierarchy/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import {
   pushDissolveGroupsUndo,

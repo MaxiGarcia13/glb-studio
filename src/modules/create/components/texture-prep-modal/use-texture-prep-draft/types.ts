@@ -1,7 +1,7 @@
 import type { MeshStandardMaterial, Texture } from 'three';
 import type { ApplyDraftTarget } from './apply-draft';
-import type { ImageCropRect } from '@/modules/create/domain/texture-crop';
-import type { TextureWrapPresetId } from '@/modules/create/domain/texture-wrap-preset';
+import type { ImageCropRect } from '@/modules/create/domain/color-map/texture-crop';
+import type { TextureWrapPresetId } from '@/modules/create/domain/color-map/texture-wrap-preset';
 
 export interface UseTexturePrepDraftArgs {
   open: boolean;

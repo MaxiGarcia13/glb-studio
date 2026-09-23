@@ -1,12 +1,12 @@
 import type { Color, Texture } from 'three';
-import type { TextureWrapPresetId } from '@/modules/create/domain/texture-wrap-preset';
+import type { TextureWrapPresetId } from '@/modules/create/domain/color-map/texture-wrap-preset';
 import type { PartKindId, PartSizeParams } from '@/modules/create/types/part';
 import { OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
 import { getPartKind } from '@/modules/create/domain/part-kind';
-import { syncMaterialMapAlpha } from '@/modules/create/domain/texture-map-alpha';
+import { syncMaterialMapAlpha } from '@/modules/create/domain/color-map/texture-map-alpha';
 import { ViewportEnvironment } from '@/modules/viewport/components/viewport-environment';
 import { DEFAULT_CAMERA_FOV } from '@/modules/viewport/constants/camera';
 import { disposeScene } from '@/modules/viewport/utils/scene-dispose';

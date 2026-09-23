@@ -5,8 +5,8 @@ import { $selection, selectObject } from '@/modules/viewport/stores/selection-st
 import {
   isCreateHierarchyNode,
   isCreateJoint,
-} from '../domain/group-data';
-import { dissolveCreateGroups } from '../domain/parent-part';
+} from '../domain/hierarchy/group-data';
+import { dissolveCreateGroups } from '../domain/hierarchy/parent-part';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
 import { pushDissolveGroupsUndo } from './push-hierarchy-undo';
 

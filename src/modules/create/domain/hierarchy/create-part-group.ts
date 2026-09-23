@@ -1,7 +1,7 @@
 import type { Object3D, Vector3Like } from 'three';
 import { Group, Vector3 } from 'three';
 import { writeCreateGroup, writeCreateJoint } from './group-data';
-import { nextObjectName } from './object-name';
+import { nextObjectName } from '../object-name';
 
 const _world = new Vector3();
 

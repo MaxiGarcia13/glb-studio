@@ -1,7 +1,7 @@
 import { BoxGeometry, Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 
-import { createEmptyPartGroup } from '@/modules/create/domain/create-part-group';
+import { createEmptyPartGroup } from '@/modules/create/domain/hierarchy/create-part-group';
 import {
   assignPartsToChainIntervals,
   assignPartsToNearestConnector,

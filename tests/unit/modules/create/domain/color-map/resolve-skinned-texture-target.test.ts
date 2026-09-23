@@ -16,7 +16,7 @@ import {
   listSkinnedMeshes,
   resolveSkinnedTextureMesh,
   resolveSkinnedTextureTarget,
-} from '@/modules/create/domain/resolve-skinned-texture-target';
+} from '@/modules/create/domain/color-map/resolve-skinned-texture-target';
 
 function model(
   source: ModelEntry['source'],

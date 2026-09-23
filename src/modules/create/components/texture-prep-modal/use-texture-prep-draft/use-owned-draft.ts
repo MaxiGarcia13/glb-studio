@@ -1,9 +1,9 @@
 import type { MutableRefObject } from 'react';
 import type { Texture } from 'three';
-import type { TextureWrapPresetId } from '@/modules/create/domain/texture-wrap-preset';
+import type { TextureWrapPresetId } from '@/modules/create/domain/color-map/texture-wrap-preset';
 import { useRef, useState } from 'react';
-import { texturePrepSoftWarnings } from '@/modules/create/domain/texture-prep-guidance';
-import { applyTextureWrapPreset } from '@/modules/create/domain/texture-wrap-preset';
+import { texturePrepSoftWarnings } from '@/modules/create/domain/color-map/texture-prep-guidance';
+import { applyTextureWrapPreset } from '@/modules/create/domain/color-map/texture-wrap-preset';
 import { disposeImageTexture } from '@/utils/dispose-image-texture';
 import { bitmapSize } from './bitmap-size';
 import { revokeThumbUrl } from './revoke-thumb-url';

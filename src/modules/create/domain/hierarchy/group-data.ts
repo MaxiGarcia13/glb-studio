@@ -1,5 +1,5 @@
 import type { Object3D } from 'three';
-import { readCreatePart } from './part-data';
+import { readCreatePart } from '../part-data';
 
 /** Empty group / joint node `userData` key (no mesh). */
 export const CREATE_GROUP_USER_DATA_KEY = 'createGroup';

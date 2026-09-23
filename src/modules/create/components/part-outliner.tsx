@@ -12,9 +12,9 @@ import {
   selectObject,
   toggleObject,
 } from '@/modules/viewport/stores/selection-store';
-import { isCreateHierarchyNode } from '../domain/group-data';
+import { isCreateHierarchyNode } from '../domain/hierarchy/group-data';
 import { listCreatedPartEntries } from '../domain/list-created-parts';
-import { readPartColorMapEntry } from '../domain/read-part-color-map';
+import { readPartColorMapEntry } from '../domain/color-map/read-part-color-map';
 import { $createPartsRevision } from '../stores/create-parts-revision-store';
 import { $materialMapsRevision } from '../stores/material-maps-revision-store';
 import { PartTextureRow } from './part-texture-row';

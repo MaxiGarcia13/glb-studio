@@ -1,4 +1,4 @@
-import type { MaterialColorMapCommand } from '@/modules/create/domain/material-color-map-undo';
+import type { MaterialColorMapCommand } from '@/modules/create/domain/color-map/material-color-map-undo';
 import {
   BoxGeometry,
   Group,
@@ -16,15 +16,15 @@ import {
   takeRedoCommand,
   takeUndoCommand,
 } from '@/modules/animation/stores/undo-stack-store';
-import { applyColorMap } from '@/modules/create/domain/material-color-map';
+import { applyColorMap } from '@/modules/create/domain/color-map/material-color-map';
 import {
   assignMaterialColorMapLive,
   cloneColorMapTexture,
   collectStackOwnedColorMaps,
   releaseOrphanColorMap,
   snapshotMaterialColorMap,
-} from '@/modules/create/domain/material-color-map-undo';
-import { markTextureMapHasAlpha } from '@/modules/create/domain/texture-map-alpha';
+} from '@/modules/create/domain/color-map/material-color-map-undo';
+import { markTextureMapHasAlpha } from '@/modules/create/domain/color-map/texture-map-alpha';
 import { $model } from '@/modules/viewport/stores/model-store';
 
 function canvasTexture(name: string): Texture {

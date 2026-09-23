@@ -5,7 +5,7 @@ import {
   getUngroupPartsAvailability,
   ungroupSelectedParts,
 } from '@/modules/create/actions/ungroup-selected-parts';
-import { createEmptyPartGroup } from '@/modules/create/domain/create-part-group';
+import { createEmptyPartGroup } from '@/modules/create/domain/hierarchy/create-part-group';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import { $model } from '@/modules/viewport/stores/model-store';
 import { $selection, clearSelection, selectObject } from '@/modules/viewport/stores/selection-store';
