@@ -12,7 +12,7 @@ Depends on shipped US-40 / US-46. Independent of US-47; do not start US-47 in th
 - [x] **Decide file apply** — **Always append**: new file apply adds a list entry and sets it active; previous entries stay (no replace-in-place)
 - [x] **Decide none UI** — **Explicit “No skin” row** under the model (not deselect-only); selecting it clears the live map and leaves `activeSkinId` null
 - [x] **Decide import seed** — **Seed** from existing imported `.map` as the first list entry (active); empty list only when no map on load
-- [ ] **Carve scope in current** — Library texture rows for created parts; skinned session list + pick/none; keep US-47 atlas editor separate
+- [x] **Carve scope in current** — Library texture rows for created parts; skinned session list + pick/none; keep US-47 atlas editor separate
 - [ ] **Fold on ship** — Fold into `current/`, changelog Shipped row, delete this folder
 
 ## Created parts — Library

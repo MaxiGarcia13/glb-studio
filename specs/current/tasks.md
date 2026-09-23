@@ -350,11 +350,17 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `materialColorMap` undo command + safe dispose / `$materialMapsRevision`
 - [x] Wire create + skinned apply/clear; Library `SkinnedTextureRows` under skinned models
 
+## US-48 — Session skin list + Library texture rows
+
+**Kicked off** — scope carved into `current/`. Work queue: [`specs/us-48/tasks.md`](../us-48/tasks.md). Independent of US-47.
+
 ## Open deltas
 
-| US                              | Status                | Tasks                                     |
-| ------------------------------- | --------------------- | ----------------------------------------- |
-| **US-8** — Morph-target editing | post-MVP, not started | [`specs/us-8/tasks.md`](../us-8/tasks.md) |
+| US                                                   | Status                          | Tasks                                       |
+| ---------------------------------------------------- | ------------------------------- | ------------------------------------------- |
+| **US-48** — Session skin list + Library texture rows | kicked off, carved into current | [`specs/us-48/tasks.md`](../us-48/tasks.md) |
+| **US-47** — Skinned atlas skin editor                | planned, not kicked off         | [`specs/us-47/tasks.md`](../us-47/tasks.md) |
+| **US-8** — Morph-target editing                      | post-MVP, not started           | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 
 ## Tech debt
 

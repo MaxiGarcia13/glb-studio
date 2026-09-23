@@ -4,7 +4,7 @@ Delta: Library shows and clears applied color maps on **created parts** and **sk
 
 **Depends on:** **US-40** / **US-46** (skinned albedo apply / clear / session undo + Library texture rows) — already shipped in `current/`.
 
-**Status:** Kicked off — kickoff decisions in progress; implement after carve into `current/`.
+**Status:** Kicked off — scoped in [`specs/current/`](../current/); implement against `current/` + this delta’s tasks.
 
 Independent of **US-47** (atlas Skin editor). When US-47 ships, Apply should add or replace an entry in this list rather than invent a second material stack.
 

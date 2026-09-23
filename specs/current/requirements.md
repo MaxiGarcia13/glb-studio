@@ -432,7 +432,7 @@ As an editor user, when I focus a skinned model (imported character, skinned kit
 - [x] Created (non-skinned) models stay on US-28 / US-39 path only
 - [x] Skinned apply uses `flipY: false` so glTF / UV atlas skins (e.g. Kenney) orient correctly
 
-**Out of scope:** texture prep modal on imported / skinned materials; full PBR maps; UV unwrap / painting; Kenney auto skin picker; editing materials on non-skinned imported mesh-only scenes beyond the created path. Session undo for maps + Library texture rows are **US-46**.
+**Out of scope:** texture prep modal on imported / skinned materials; full PBR maps; UV unwrap / painting; Kenney auto skin picker; editing materials on non-skinned imported mesh-only scenes beyond the created path. Session undo for maps + Library texture rows are **US-46**. Session skin list + created-part Library texture rows are **US-48**.
 
 ### US-46 — Color-map undo + library texture rows
 
@@ -453,7 +453,45 @@ As an editor user, when I apply, replace, or clear a color map on a created part
 - [x] Rows update after apply / clear / undo / redo (`$materialMapsRevision`)
 - [x] No texture row when the model has no maps; created models keep existing part toolbar / prep clear
 
-**Out of scope:** texture prep modal on skinned / imported materials; full PBR maps; UV unwrap / painting; undo for color-only edits (`material.color` without map); durable undo across reloads; Kenney kit auto-picker; drag-and-drop texture onto library rows.
+**Out of scope:** texture prep modal on skinned / imported materials; full PBR maps; UV unwrap / painting; undo for color-only edits (`material.color` without map); durable undo across reloads; Kenney kit auto-picker; drag-and-drop texture onto library rows. **Superseded / extended by US-48:** skinned Library chrome becomes a session skin list (pick / none / multi-entry); created parts gain nested Library texture rows.
+
+### US-48 — Session skin list + Library texture rows (created + skinned)
+
+As an editor user, when I apply a texture to a created part or a skinned model, I can see it under that asset in the Library and remove it there. On a skinned model I can keep **more than one** skin in the session, pick which one is live, or pick **none**.
+
+**Depends on:** US-40 / US-46 (shipped). **Independent of US-47** (atlas Skin editor — keep separate; when US-47 ships, Apply should feed this list).
+
+**Status:** Kicked off — see [`specs/us-48/`](../us-48/).
+
+**Acceptance**
+
+#### Created parts (Library rows)
+
+- [ ] After Apply from the US-39 prep modal (or equivalent created color-map commit), the focused created model’s Library entry shows a nested texture row **under that part**
+- [ ] Row label prefers `texture.name` / file name; fallback “Texture”
+- [ ] Row offers **clear** (and optionally replace) without requiring the prep modal; uses the same `materialColorMap` undo path as existing created apply/clear
+- [ ] No texture row when the part has no `.map`; rows update after apply / clear / undo / redo (`$materialMapsRevision` or equivalent)
+- [ ] Created parts do **not** get a multi-skin candidate list in this US (current map only)
+
+#### Skinned models — session skin list
+
+- [ ] Each skinned library model has a session list: `skins[]` + `activeSkinId | null` (not GLB extras; not durable across reload)
+- [ ] Applying a new image (US-40 file path) **always appends** a list entry and makes it active; previous entries stay unless the user removes them (no replace-in-place of the active entry)
+- [ ] Library under the model shows **one row per list entry** (not only meshes that currently have `.map`)
+- [ ] Selecting a skin row applies that skin to the resolved US-40 target (`commitMaterialColorMapChange`); an explicit **“No skin”** row clears the live map and sets `activeSkinId` to `null` (deselect-all is not the primary none path)
+- [ ] Removing a list entry disposes that session texture; if it was active, live map clears as **one** undoable command (remove entry + clear map; one undo restores both)
+- [ ] Multi-mesh: apply still follows `resolveSkinnedTextureTarget` (selected skinned mesh, else sole mesh); list is **per model**, not one independent wardrobe per mesh
+- [ ] Rows update after apply / pick / clear / undo / redo; empty list when the model has no session skins
+- [ ] Model remove / replace / unload disposes remaining list textures (no GPU leak)
+- [ ] On skinned model add / replace / load, if the resolved US-40 target already has a `.map`, **seed** one list entry from it (active; label from `texture.name` / fallback “Texture”); otherwise the list stays empty until first apply
+
+#### Shared
+
+- [ ] Failed decode / rejected file does not add a list entry and does not push undo
+- [ ] Export GLB includes only the **active** map on the material; inactive skins are session-only
+- [ ] Prep modal remains the authoring path for created parts; skinned still has no US-39 prep (US-47 is the atlas editor)
+
+**Out of scope:** US-47 Skin editor UI; full PBR maps; UV unwrap / painting; durable skins across reload; Kenney / vendor auto-picker; drag-and-drop onto Library rows; multi-skin candidate list on every created part; one independent skin list per skinned mesh (MVP: one list per model).
 
 ### US-25 — Grid and rotation snap
 
@@ -648,7 +686,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 
 ## Out of scope (still excluded)
 
-- Full material / texture editing on **imported** characters beyond albedo on skinned meshes (PBR maps, prep modal, painting, mesh-only non-skinned imports beyond the created path). Created-model color maps + prep remain US-28 / US-39. Skinned albedo apply / clear is **US-40** (shipped). Session undo/redo for albedo apply/replace/clear (created + skinned) and Library texture rows under skinned models are **US-46** (shipped). A beginner **atlas Skin editor** (templated stamps / fill + live preview, model-adaptive size/layout; vendor-agnostic templates) is planned as **US-47** — not kicked off. Until US-47 ships: no skin-builder modal on skinned. Full PBR, UV unwrap, and durable undo across reloads stay out
+- Full material / texture editing on **imported** characters beyond albedo on skinned meshes (PBR maps, prep modal, painting, mesh-only non-skinned imports beyond the created path). Created-model color maps + prep remain US-28 / US-39. Skinned albedo apply / clear is **US-40** (shipped). Session undo/redo for albedo apply/replace/clear (created + skinned) and Library texture rows under skinned models are **US-46** (shipped). **US-48** (kicked off) extends that with created-part Library texture rows and a skinned **session skin list** (append / pick / explicit “No skin” / seed-from-import) — see [`specs/us-48/`](../us-48/) and the US-48 section above. A beginner **atlas Skin editor** (templated stamps / fill + live preview, model-adaptive size/layout; vendor-agnostic templates) is planned as **US-47** — not kicked off; keep separate from US-48. Until US-47 ships: no skin-builder modal on skinned. Full PBR, UV unwrap, and durable undo across reloads stay out
 - Kit marketplace / remote download; user-authored kit save/share; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid
