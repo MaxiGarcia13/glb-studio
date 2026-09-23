@@ -11,7 +11,7 @@ Depends on shipped US-40 / US-46. Independent of US-47; do not start US-47 in th
 - [x] **Decide undo on remove-active** — **One command**: remove list entry + clear live map when it was active (single undo restores both)
 - [x] **Decide file apply** — **Always append**: new file apply adds a list entry and sets it active; previous entries stay (no replace-in-place)
 - [x] **Decide none UI** — **Explicit “No skin” row** under the model (not deselect-only); selecting it clears the live map and leaves `activeSkinId` null
-- [ ] **Decide import seed** — Seed list from existing `.map` vs empty until first apply (recommend seed)
+- [x] **Decide import seed** — **Seed** from existing imported `.map` as the first list entry (active); empty list only when no map on load
 - [ ] **Carve scope in current** — Library texture rows for created parts; skinned session list + pick/none; keep US-47 atlas editor separate
 - [ ] **Fold on ship** — Fold into `current/`, changelog Shipped row, delete this folder
 
@@ -28,7 +28,7 @@ Depends on shipped US-40 / US-46. Independent of US-47; do not start US-47 in th
 - [ ] **Pick / none** — Commit via `commitMaterialColorMapChange`; export only active
 - [ ] **Remove entry** — Dispose; clear live map if it was active
 - [ ] **Library rows** — One row per list entry; selected = active
-- [ ] **Seed (if kickoff yes)** — Existing imported `.map` becomes the first entry
+- [ ] **Seed** — Existing imported `.map` becomes the first entry (active) on add / replace / load
 - [ ] **Unit tests** — Append keeps previous; pick none clears material; remove active; dispose on unload; failed decode adds nothing
 
 ## Verify

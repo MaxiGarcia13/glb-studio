@@ -14,6 +14,7 @@
    - Pick active → commit that texture onto the resolved target; pick none → commit `next: null`.
    - Remove entry → drop from store + dispose; if active, clear live map in the **same** undo command (not remove-then-clear as two stack entries).
    - Replace US-46 “row iff mesh has `.map`” for skinned Library chrome with this list. Toolbar apply still works; it feeds the list.
+   - **Seed on load:** when a skinned model is added / replaced / loaded and the resolved target already has `.map`, create the first list entry from that texture (active). No map → empty list.
 
 3. **Target / apply**
    - Reuse `resolveSkinnedTextureTarget` / availability helpers. Do not apply to every skinned mesh unless kickoff says so.
@@ -42,4 +43,4 @@
 | Undo on **remove active** | **One command** — drop list entry + clear live map together; one undo restores both. Avoids a confusing half-state (row back / map still cleared or the reverse). |
 | File apply | **Always append** — successful US-40 / toolbar / file apply adds a new `skins[]` entry and makes it active; earlier entries remain until the user removes them. No in-place replace of the active entry. |
 | None UI | **Explicit “No skin” row** — always shown under a skinned model that has (or can have) session skins; selecting it clears the live map and sets `activeSkinId` to `null`. Deselect-all alone is not the primary affordance (too easy to miss). |
-| Import seed | *Open* — seed from existing `.map` vs empty until first apply (recommend: **seed**) |
+| Import seed | **Seed from existing `.map`** — on skinned model add / replace / load, if the resolved US-40 target already has a color map, add one list entry (label from `texture.name` / fallback “Texture”), set it active, and take ownership consistent with US-46. No map → empty list until first apply. |
