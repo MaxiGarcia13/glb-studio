@@ -66,9 +66,9 @@ Product surface is already large (format × layout × unit × imported/created �
 
 ### Store-free pack orchestration
 
-- [ ] Treat `downloadExportZip` as an action/orchestrator: pass `models`, `clips`, `groups`, active model (skeleton fallback), and zip options in — stop reading `$model` / `$clips` / `$modelGroups` / `$activeModel` from domain
-- [ ] Keep pack helpers store-free: `packFolderModelEntries` and `attachSessionSkinsForExport` take wardrobe (or skin list) as arguments instead of calling `getSessionSkinWardrobe`; hook / thin action resolves store → args
-- [ ] Update `useExportZip` (and any direct callers) to gather store snapshot then call the orchestrator; unit tests pass fixtures without nanostores
+- [x] Treat `downloadExportZip` as an action/orchestrator: pass `models`, `clips`, `groups`, active model (skeleton fallback), and zip options in — stop reading `$model` / `$clips` / `$modelGroups` / `$activeModel` from domain
+- [x] Keep pack helpers store-free: `packFolderModelEntries` and `attachSessionSkinsForExport` take wardrobe (or skin list) as arguments instead of calling `getSessionSkinWardrobe`; hook / thin action resolves store → args
+- [x] Update `useExportZip` (and any direct callers) to gather store snapshot then call the orchestrator; unit tests pass fixtures without nanostores
 
 ### Shared unique-name helper
 
