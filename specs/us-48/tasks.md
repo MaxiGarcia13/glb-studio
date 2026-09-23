@@ -28,7 +28,7 @@ Depends on shipped US-40 / US-46. Independent of US-47; do not start US-47 in th
 - [x] **Pick / none** — Commit via `commitMaterialColorMapChange`; export only active
 - [x] **Remove entry** — Dispose; clear live map if it was active (one undo restores entry + map)
 - [x] **Library rows** — One row per list entry; selected = active
-- [ ] **Seed** — Existing imported `.map` becomes the first entry (active) on add / replace / load
+- [x] **Seed** — Existing imported `.map` becomes the first entry (active) on add / replace / load
 - [ ] **Unit tests** — Append keeps previous; pick none clears material; remove active; dispose on unload; failed decode adds nothing
 
 ## Verify

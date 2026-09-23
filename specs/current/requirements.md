@@ -483,7 +483,7 @@ As an editor user, when I apply a texture to a created part or a skinned model, 
 - [x] Multi-mesh: apply still follows `resolveSkinnedTextureTarget` (selected skinned mesh, else sole mesh); list is **per model**, not one independent wardrobe per mesh
 - [x] Rows update after apply / pick / clear / undo / redo; empty list when the model has no session skins
 - [x] Model remove / replace / unload disposes remaining list textures (no GPU leak)
-- [ ] On skinned model add / replace / load, if the resolved US-40 target already has a `.map`, **seed** one list entry from it (active; label from `texture.name` / fallback “Texture”); otherwise the list stays empty until first apply
+- [x] On skinned model add / replace / load, if the resolved US-40 target already has a `.map`, **seed** one list entry from it (active; label from `texture.name` / fallback “Texture”); otherwise the list stays empty until first apply
 
 #### Shared
 

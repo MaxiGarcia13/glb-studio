@@ -9,6 +9,7 @@ import {
   importClipsFromAnimations,
   removeClipsByOwner,
 } from '@/modules/animation/stores/clip-store';
+import { seedSessionSkinsFromModel } from '@/modules/create/actions/seed-session-skins';
 import {
   disposeAllSessionSkins,
   disposeSessionSkinsForModel,
@@ -91,6 +92,10 @@ export function importModelResults(
     phase: 'loaded',
     error: failureText,
   });
+
+  for (const entry of loadedEntries) {
+    seedSessionSkinsFromModel(entry);
+  }
 
   return loadedEntries;
 }
@@ -254,13 +259,14 @@ export async function replaceModel(id: string, file: File): Promise<void> {
     clearBindPoseOverrides(id);
 
     const models = [...state.models];
-    models[currentIndex] = {
+    const nextEntry = {
       ...previous,
       fileName: result.fileName,
       blobUrl: result.blobUrl,
       scene: result.scene,
       source: result.source,
     };
+    models[currentIndex] = nextEntry;
 
     $model.set({
       ...state,
@@ -275,6 +281,7 @@ export async function replaceModel(id: string, file: File): Promise<void> {
       result.fileName,
       id,
     );
+    seedSessionSkinsFromModel(nextEntry);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to replace model';
     $model.setKey('error', message);

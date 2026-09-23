@@ -9,6 +9,7 @@ import { disposeScene } from '@/modules/viewport/utils/scene-dispose';
 import { canSkinModel } from '../domain/skinning/can-skin-model';
 import { convertCreatedSceneToSkinned } from '../domain/skinning/convert-created-scene-to-skinned';
 import { bumpCreatePartsRevision } from '../stores/create-parts-revision-store';
+import { seedSessionSkinsFromModel } from './seed-session-skins';
 
 export interface SkinCreatedModelResult {
   ok: boolean;
@@ -75,6 +76,7 @@ export function skinCreatedModel(modelId: string): SkinCreatedModelResult {
     disposeScene(previous.scene);
     disposeScene(snapshot);
     bumpCreatePartsRevision();
+    seedSessionSkinsFromModel(nextEntry);
 
     return { ok: true };
   } catch (error) {
