@@ -200,4 +200,12 @@ describe('loadImageTexture', () => {
     expect(dispose).toHaveBeenCalledOnce();
     expect(previousClose).toHaveBeenCalledOnce();
   });
+
+  it('honors flipY: false for glTF / skinned UV atlases', async () => {
+    stubBitmap();
+    const texture = await loadImageTexture(imageFile('skin.png'), null, {
+      flipY: false,
+    });
+    expect(texture.flipY).toBe(false);
+  });
 });

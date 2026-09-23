@@ -16,8 +16,8 @@ Tick only after acceptance.
 
 ## UI
 
-- [ ] **Skinned texture control** — Apply / replace / clear when skinned focus + valid target; disabled reason otherwise
-- [ ] **Create path untouched** — PartTextureTool / US-39 still created-only
+- [x] **Skinned texture control** — Apply / replace / clear when skinned focus + valid target; disabled reason otherwise
+- [x] **Create path untouched** — PartTextureTool / US-39 still created-only
 
 ## Verify
 

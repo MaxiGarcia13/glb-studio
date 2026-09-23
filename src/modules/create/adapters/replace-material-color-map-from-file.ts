@@ -5,14 +5,15 @@ import { loadImageTexture } from './load-image-texture';
 
 /**
  * Decode a local image and assign it as the material color map.
- * Failed decode leaves the live map untouched (no dispose). Shared by created
- * parts (when applying without a prep draft) and skinned albedo (US-40).
+ * Failed decode leaves the live map untouched (no dispose).
+ * Uses `flipY: false` so UV atlas skins land correctly on glTF / skinned meshes
+ * (US-40). Create-part prep keeps the default `flipY: true` via `loadImageTexture`.
  */
 export async function replaceMaterialColorMapFromFile(
   material: MeshStandardMaterial,
   file: File,
 ): Promise<Texture> {
-  const texture = await loadImageTexture(file);
+  const texture = await loadImageTexture(file, undefined, { flipY: false });
   replaceColorMap(material, texture);
   return texture;
 }

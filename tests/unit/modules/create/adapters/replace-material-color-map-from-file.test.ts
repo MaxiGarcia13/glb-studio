@@ -58,6 +58,7 @@ describe('replaceMaterialColorMapFromFile', () => {
 
     expect(material.map).toBe(texture);
     expect(material.color.getHex()).toBe(0xABCDEF);
+    expect(texture.flipY).toBe(false);
     expect(dispose).toHaveBeenCalledOnce();
     expect(close).toHaveBeenCalledOnce();
   });

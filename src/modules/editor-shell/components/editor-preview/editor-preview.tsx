@@ -1,6 +1,8 @@
 import { cn } from '@maxigarcia/js-utils';
 import { CreateToolbar } from '@/modules/create/components/create-toolbar';
+import { SkinnedTextureToolbar } from '@/modules/create/components/skinned-texture-toolbar';
 import { useIsCreatedModelFocused } from '@/modules/create/hooks/use-selected-created-part';
+import { useIsSkinnedLibraryModelFocused } from '@/modules/create/hooks/use-skinned-texture';
 import { EditMoveToolbar } from '@/modules/viewport/components/edit-move-toolbar';
 import { SelectionNameOverlay } from '@/modules/viewport/components/selection-name-overlay';
 import { TransformModeToolbar } from '@/modules/viewport/components/transform-mode-toolbar';
@@ -12,6 +14,8 @@ import { EditorPreviewBar } from './editor-preview-bar';
 export function EditorPreview() {
   const isMobile = isMobileViewport();
   const createFocused = useIsCreatedModelFocused();
+  const skinnedFocused = useIsSkinnedLibraryModelFocused();
+  const bottomChromeFocused = createFocused || skinnedFocused;
 
   return (
     <div className="relative flex-1 flex flex-col min-w-0 h-full bg-canvas">
@@ -38,7 +42,7 @@ export function EditorPreview() {
           <SelectionNameOverlay />
         </div>
 
-        {/* Create tools: bottom center. Edit stacks above them on mobile. */}
+        {/* Create / skinned texture: bottom center. Edit stacks above on mobile. */}
         <div
           className={cn(
             'pointer-events-none absolute z-10 flex left-1/2 -translate-x-1/2',
@@ -46,6 +50,7 @@ export function EditorPreview() {
           )}
         >
           <CreateToolbar />
+          <SkinnedTextureToolbar />
         </div>
 
         <div
@@ -54,7 +59,7 @@ export function EditorPreview() {
             isMobile
               ? cn(
                   'left-1/2 -translate-x-1/2',
-                  createFocused ? 'bottom-18' : 'bottom-4',
+                  bottomChromeFocused ? 'bottom-18' : 'bottom-4',
                 )
               : 'left-4 bottom-4',
           )}

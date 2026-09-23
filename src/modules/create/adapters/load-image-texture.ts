@@ -98,11 +98,12 @@ export function canvasFromDrawable(
 export function colorMapTextureFromCanvas(
   canvas: HTMLCanvasElement,
   name: string,
+  flipY = true,
 ): Texture {
   const texture = new Texture(canvas);
   texture.colorSpace = SRGBColorSpace;
   texture.needsUpdate = true;
-  texture.flipY = true;
+  texture.flipY = flipY;
   texture.name = name;
   return texture;
 }
@@ -116,6 +117,14 @@ export function dataUrlFromCanvas(canvas: HTMLCanvasElement): string | null {
   }
 }
 
+export interface LoadImageTextureOptions {
+  /**
+   * Three.js / create-part default is `true`.
+   * Use `false` for maps on glTF / skinned meshes (glTF UV origin is top-left).
+   */
+  flipY?: boolean;
+}
+
 /**
  * Decode a local image file into an sRGB `Texture`.
  * Disposes `previous` only after a successful decode so a failed pick cannot
@@ -124,6 +133,7 @@ export function dataUrlFromCanvas(canvas: HTMLCanvasElement): string | null {
 export async function loadImageTexture(
   file: File,
   previous?: Texture | null,
+  options?: LoadImageTextureOptions,
 ): Promise<Texture> {
   assertSupportedImageFile(file);
 
@@ -158,7 +168,8 @@ export async function loadImageTexture(
   }
   bitmap.close();
 
-  const texture = colorMapTextureFromCanvas(canvas, file.name);
+  const flipY = options?.flipY ?? true;
+  const texture = colorMapTextureFromCanvas(canvas, file.name, flipY);
 
   if (previous && previous !== texture) {
     disposeImageTexture(previous);
