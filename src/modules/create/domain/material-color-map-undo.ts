@@ -7,6 +7,7 @@ import { Texture } from 'three';
 
 import { $model } from '@/modules/viewport/stores/model-store';
 import { disposeImageTexture } from '@/utils/dispose-image-texture';
+import { bumpMaterialMapsRevision } from '../stores/material-maps-revision-store';
 import { findMeshStandardMaterial } from '../utils/selected-part';
 import { applyColorMap } from './material-color-map';
 import { syncMaterialMapAlpha } from './texture-map-alpha';
@@ -255,4 +256,5 @@ export function applyMaterialColorMapCommand(
     command.before.map,
     command.after.map,
   ]);
+  bumpMaterialMapsRevision();
 }

@@ -7,6 +7,7 @@ import {
   releaseOrphanColorMap,
   snapshotMaterialColorMap,
 } from '../domain/material-color-map-undo';
+import { bumpMaterialMapsRevision } from '../stores/material-maps-revision-store';
 
 /**
  * Assign a color map (or clear) and push one `materialColorMap` undo entry.
@@ -34,4 +35,5 @@ export function commitMaterialColorMapChange(options: {
     before,
     after,
   });
+  bumpMaterialMapsRevision();
 }

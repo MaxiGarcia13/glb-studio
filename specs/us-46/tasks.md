@@ -19,7 +19,7 @@ Tick only after acceptance.
 ## Domain — library data
 
 - [ ] **List textured skinned meshes** — Helper: skinned meshes under a model scene that have a standard-material `.map`; label from `texture.name` / mesh name
-- [ ] **Revision bump** — Store signal so Library / chrome re-render after apply, clear, undo, redo
+- [x] **Revision bump** — Store signal so Library / chrome re-render after apply, clear, undo, redo
 
 ## UI
 

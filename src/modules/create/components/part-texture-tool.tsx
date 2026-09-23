@@ -9,6 +9,7 @@ import {
   useCanOpenTexturePrep,
   useSelectedCreatedPart,
 } from '../hooks/use-selected-created-part';
+import { $materialMapsRevision } from '../stores/material-maps-revision-store';
 import { findMeshStandardMaterial } from '../utils/selected-part';
 import { TexturePrepModal } from './texture-prep-modal';
 
@@ -25,6 +26,7 @@ function toolTitle(enabled: boolean, hasMap: boolean): string {
 export function PartTextureTool() {
   const part = useSelectedCreatedPart();
   const activeModel = useStore($activeModel);
+  const mapsRevision = useStore($materialMapsRevision);
   const canOpen = useCanOpenTexturePrep();
   const material = part ? findMeshStandardMaterial(part.mesh) : null;
   const { object: selected } = useStore($selection, { keys: ['object'] });
@@ -39,7 +41,7 @@ export function PartTextureTool() {
     if (!enabled) {
       setPrepOpen(false);
     }
-  }, [material, selected, enabled]);
+  }, [material, selected, enabled, mapsRevision]);
 
   const handleClear = () => {
     if (!material?.map || !part || !activeModel) {

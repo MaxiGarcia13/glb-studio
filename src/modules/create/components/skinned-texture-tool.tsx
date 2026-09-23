@@ -12,6 +12,7 @@ import {
 } from '../adapters/load-image-texture';
 import { loadSkinnedColorMapFromFile } from '../adapters/replace-material-color-map-from-file';
 import { useSkinnedTextureAvailability } from '../hooks/use-skinned-texture';
+import { $materialMapsRevision } from '../stores/material-maps-revision-store';
 
 function toolTitle(
   enabled: boolean,
@@ -38,6 +39,7 @@ function toolTitle(
 export function SkinnedTextureTool() {
   const availability = useSkinnedTextureAvailability();
   const activeModel = useStore($activeModel);
+  const mapsRevision = useStore($materialMapsRevision);
   const target = availability.target;
   const material = target?.material ?? null;
   const { object: selected } = useStore($selection, { keys: ['object'] });
@@ -50,7 +52,7 @@ export function SkinnedTextureTool() {
   useEffect(() => {
     setHasMap(Boolean(material?.map));
     setError(null);
-  }, [material, selected, target?.mesh]);
+  }, [material, selected, target?.mesh, mapsRevision]);
 
   const handleClear = () => {
     if (!material?.map || !target || !activeModel || busy) {

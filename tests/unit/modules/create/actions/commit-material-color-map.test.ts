@@ -19,6 +19,9 @@ import {
 import { commitMaterialColorMapChange } from '@/modules/create/actions/commit-material-color-map';
 import { applyColorMap } from '@/modules/create/domain/material-color-map';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
+import {
+  $materialMapsRevision,
+} from '@/modules/create/stores/material-maps-revision-store';
 import { $model } from '@/modules/viewport/stores/model-store';
 
 function namedTexture(name: string): Texture {
@@ -54,6 +57,7 @@ function skinnedTarget(): SkinnedMesh {
 describe('commitMaterialColorMapChange', () => {
   beforeEach(() => {
     clearUndoStack();
+    $materialMapsRevision.set(0);
     $model.set({
       models: [],
       activeModelId: null,
@@ -180,5 +184,38 @@ describe('commitMaterialColorMapChange', () => {
 
     applyUndoableCommand(takeUndoCommand()!, 'undo');
     expect(material.map?.name).toBe('atlas.png');
+  });
+
+  it('bumps materialMapsRevision on commit and on undo', () => {
+    const mesh = stampedPart();
+    const scene = new Group();
+    scene.add(mesh);
+    $model.set({
+      models: [
+        {
+          id: 'model-1',
+          fileName: 'created.glb',
+          scene,
+          source: 'created',
+        },
+      ],
+      activeModelId: 'model-1',
+      previewModelIds: ['model-1'],
+      phase: 'idle',
+      error: null,
+    });
+
+    const material = mesh.material as MeshStandardMaterial;
+    commitMaterialColorMapChange({
+      modelId: 'model-1',
+      meshUuid: mesh.uuid,
+      material,
+      next: namedTexture('logo.png'),
+    });
+    expect($materialMapsRevision.get()).toBe(1);
+
+    applyUndoableCommand(takeUndoCommand()!, 'undo');
+    expect($materialMapsRevision.get()).toBe(2);
+    expect(material.map).toBeNull();
   });
 });
