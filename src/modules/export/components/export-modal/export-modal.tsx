@@ -31,6 +31,7 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
   } = useExportZip();
   const [format, setFormat] = useState<ExportFormat>('glb');
   const [zipBaseName, setZipBaseName] = useState(() => defaultZipBaseName('glb'));
+  const [exportAsFolders, setExportAsFolders] = useState(false);
   const [modelBaseNames, setModelBaseNames] = useState<Record<string, string>>(
     {},
   );
@@ -50,6 +51,7 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
         .flatMap((unit) => unit.models);
       setError(null);
       setFormat('glb');
+      setExportAsFolders(false);
       setZipBaseName(defaultZipBaseName('glb'));
       setModelBaseNames(defaultModelNames(singleModels));
       setGroupBaseNames(
@@ -81,6 +83,7 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
     try {
       await download({
         format,
+        layout: exportAsFolders ? 'folders' : 'flat',
         zipFileName: zipBaseName,
         groupFileNames: groupBaseNames,
         modelFileNames: modelBaseNames,
@@ -104,18 +107,21 @@ export function ExportModal({ open, onClose }: ExportModalProps) {
           groupCount={groupCount}
           singleCount={singleCount}
           sharedCount={sharedCount}
+          exportAsFolders={exportAsFolders}
         />
 
         <ExportFileNames
           format={format}
           busy={busy}
           zipBaseName={zipBaseName}
+          exportAsFolders={exportAsFolders}
           groupBaseNames={groupBaseNames}
           modelBaseNames={modelBaseNames}
           multiModelGroups={multiModelGroups}
           exportUnits={exportUnits}
           onFormatChange={handleFormatChange}
           onZipBaseNameChange={setZipBaseName}
+          onExportAsFoldersChange={setExportAsFolders}
           onGroupBaseNameChange={(groupId, value) => {
             setGroupBaseNames((previous) => ({
               ...previous,

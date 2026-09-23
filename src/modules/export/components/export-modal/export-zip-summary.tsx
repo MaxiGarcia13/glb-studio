@@ -7,6 +7,7 @@ interface ExportZipSummaryProps {
   groupCount: number;
   singleCount: number;
   sharedCount: number;
+  exportAsFolders: boolean;
 }
 
 export function ExportZipSummary({
@@ -14,6 +15,7 @@ export function ExportZipSummary({
   groupCount,
   singleCount,
   sharedCount,
+  exportAsFolders,
 }: ExportZipSummaryProps) {
   const summaryParts: string[] = [];
   if (groupCount > 0) {
@@ -47,6 +49,13 @@ export function ExportZipSummary({
           {`Model groups pack as one ${formatLabel(format, false)} each (namespaced bones + each model’s owned clips). Shared animations stay separate. Ungrouped models stay separate.`}
         </Text>
       )}
+      {exportAsFolders && singleCount > 0
+        ? (
+            <Text size="sm" variant="muted">
+              Folder layout nests each ungrouped model with animations/ and skins/ sidecars.
+            </Text>
+          )
+        : null}
     </div>
   );
 }

@@ -10,19 +10,71 @@ import {
 } from '@/modules/animation/domain/clip-validate';
 import { exportGlbBinary } from '../adapters/gltf-exporter';
 import { stripGlbExtension } from '../utils/file-name';
+import { attachSessionSkinsForExport } from './attach-session-skins-for-export';
 
 export interface ModelGlbResult {
   arrayBuffer: ArrayBuffer;
   fileName: string;
 }
 
+export interface PackModelGlbOptions {
+  /**
+   * When false, pack mesh (+ active maps) with no embedded clips
+   * (folder layout sidecars — US-49). Default true.
+   */
+  includeClips?: boolean;
+  /**
+   * When true (default), embed every session wardrobe texture in the GLB via
+   * temporary helper meshes (flat zip). Folder layout passes false (PNG sidecars).
+   */
+  embedSessionSkins?: boolean;
+}
+
 /** Collect clips that belong in an imported model GLB (owned + matching shared). */
 function collectImportedModelAnimations(
   model: ModelEntry,
-  clips: ClipEntry[],
+  clips: readonly ClipEntry[],
 ): AnimationClip[] {
+  return collectModelExportClips(model, clips).map((entry) =>
+    bakeTimeScale(entry.clip!, entry.timeScale),
+  );
+}
+
+/** Collect owned ready clips for a created model (mesh animation, no shared pack). */
+function collectCreatedModelAnimations(
+  model: ModelEntry,
+  clips: readonly ClipEntry[],
+): AnimationClip[] {
+  return collectModelExportClips(model, clips).map((entry) =>
+    bakeTimeScale(entry.clip!, entry.timeScale),
+  );
+}
+
+/**
+ * Library clips that pack with this model (owned ready, or validating shared
+ * for imported models). Same set as embedded animations when `includeClips`.
+ */
+export function collectModelExportClips(
+  model: ModelEntry,
+  clips: readonly ClipEntry[],
+): ClipEntry[] {
+  if (model.source === 'created') {
+    const animations: ClipEntry[] = [];
+    for (const entry of clips) {
+      if (
+        entry.ownerModelId !== model.id
+        || !entry.clip
+        || entry.status !== 'ready'
+      ) {
+        continue;
+      }
+      animations.push(entry);
+    }
+    return animations;
+  }
+
   const nodeNames = buildSkeletonNodeSet(model.scene);
-  const animations: AnimationClip[] = [];
+  const animations: ClipEntry[] = [];
 
   for (const entry of clips) {
     if (!entry.clip) {
@@ -35,47 +87,45 @@ function collectImportedModelAnimations(
     // Owned clips for this model: already validated at sync time, include if ready.
     if (entry.ownerModelId === model.id) {
       if (entry.status === 'ready') {
-        animations.push(bakeTimeScale(entry.clip, entry.timeScale));
+        animations.push(entry);
       }
       continue;
     }
     // Shared clips: validate against this model, skip conflicted.
     if (validateClipAgainstSkeleton(entry.clip, nodeNames).valid) {
-      animations.push(bakeTimeScale(entry.clip, entry.timeScale));
+      animations.push(entry);
     }
   }
 
-  return animations;
-}
-
-/** Collect owned ready clips for a created model (mesh animation, no shared pack). */
-function collectCreatedModelAnimations(
-  model: ModelEntry,
-  clips: ClipEntry[],
-): AnimationClip[] {
-  const animations: AnimationClip[] = [];
-  for (const entry of clips) {
-    if (entry.ownerModelId !== model.id || !entry.clip || entry.status !== 'ready') {
-      continue;
-    }
-    animations.push(bakeTimeScale(entry.clip, entry.timeScale));
-  }
   return animations;
 }
 
 /**
  * Serialize a library model scene as `{fileName}.glb`.
  * Created models pack the mesh scene plus owned ready clips (when authored).
+ * Flat pack embeds the full session skin wardrobe when present (US-49).
  */
 export async function packModelGlb(
   model: ModelEntry,
-  clips: ClipEntry[],
+  clips: readonly ClipEntry[],
+  options: PackModelGlbOptions = {},
 ): Promise<ModelGlbResult> {
-  const animations
-    = model.source === 'created'
+  const includeClips = options.includeClips !== false;
+  const embedSessionSkins = options.embedSessionSkins !== false;
+  const animations = includeClips
+    ? model.source === 'created'
       ? collectCreatedModelAnimations(model, clips)
-      : collectImportedModelAnimations(model, clips);
+      : collectImportedModelAnimations(model, clips)
+    : [];
 
-  const arrayBuffer = await exportGlbBinary(model.scene, animations);
-  return { arrayBuffer, fileName: `${stripGlbExtension(model.fileName)}.glb` };
+  const detachSkins = embedSessionSkins
+    ? attachSessionSkinsForExport(model.scene, model.id)
+    : () => {};
+
+  try {
+    const arrayBuffer = await exportGlbBinary(model.scene, animations);
+    return { arrayBuffer, fileName: `${stripGlbExtension(model.fileName)}.glb` };
+  } finally {
+    detachSkins();
+  }
 }

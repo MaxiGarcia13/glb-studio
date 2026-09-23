@@ -17,12 +17,14 @@ interface ExportFileNamesProps {
   format: ExportFormat;
   busy: boolean;
   zipBaseName: string;
+  exportAsFolders: boolean;
   groupBaseNames: Record<string, string>;
   modelBaseNames: Record<string, string>;
   multiModelGroups: ExportUnitLike[];
   exportUnits: ExportUnitLike[];
   onFormatChange: (format: ExportFormat) => void;
   onZipBaseNameChange: (value: string) => void;
+  onExportAsFoldersChange: (value: boolean) => void;
   onGroupBaseNameChange: (groupId: string, value: string) => void;
   onModelBaseNameChange: (modelId: string, value: string) => void;
 }
@@ -36,12 +38,14 @@ export function ExportFileNames({
   format,
   busy,
   zipBaseName,
+  exportAsFolders,
   groupBaseNames,
   modelBaseNames,
   multiModelGroups,
   exportUnits,
   onFormatChange,
   onZipBaseNameChange,
+  onExportAsFoldersChange,
   onGroupBaseNameChange,
   onModelBaseNameChange,
 }: ExportFileNamesProps) {
@@ -62,6 +66,23 @@ export function ExportFileNames({
           }
         }}
       />
+      <label className="flex items-center gap-2 cursor-pointer shrink-0">
+        <input
+          type="checkbox"
+          checked={exportAsFolders}
+          disabled={busy}
+          onChange={(event) => onExportAsFoldersChange(event.target.checked)}
+          className="size-4 shrink-0 rounded-sm border-border-strong accent-accent"
+        />
+        <Text variant="muted">Export as folders</Text>
+      </label>
+      {exportAsFolders
+        ? (
+            <Text size="sm" variant="muted">
+              {`Each model gets a folder with the mesh .${format}, animations/, and skins/ (PNG).`}
+            </Text>
+          )
+        : null}
       <Input
         label="Zip archive"
         value={zipBaseName}
@@ -111,7 +132,9 @@ export function ExportFileNames({
           );
         })}
       <Text size="sm" variant="muted">
-        {`Shared animation files keep their library names. .${format} is added automatically.`}
+        {exportAsFolders
+          ? `Clip and skin file names stay library / session labels. .${format} is added for models and clips.`
+          : `Shared animation files keep their library names. .${format} is added automatically.`}
       </Text>
     </div>
   );

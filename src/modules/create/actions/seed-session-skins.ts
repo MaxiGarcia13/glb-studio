@@ -2,15 +2,17 @@ import type { ModelEntry } from '@/modules/viewport/types/model';
 
 import { isSkinnedLibraryModel } from '@/modules/import/domain/model-scene-kind';
 import { resolveSkinnedTextureTarget } from '../domain/resolve-skinned-texture-target';
+import { restoreSessionSkinsFromScene } from '../domain/restore-session-skins-from-scene';
 import {
   appendSessionSkin,
   getSessionSkinWardrobe,
 } from '../stores/session-skins-store';
 
 /**
- * If a skinned library model already has a color map on the resolved US-40
- * target, seed one wardrobe entry (active). No-op when the list is non-empty
- * or there is no map (US-48 import seed).
+ * Restore the session wardrobe after model load.
+ * Prefers embedded multi-skin helpers / manifest (US-49 flat export).
+ * Falls back to a single entry from the live color map (US-48).
+ * No-op when the list is already non-empty.
  */
 export function seedSessionSkinsFromModel(model: ModelEntry): boolean {
   if (!isSkinnedLibraryModel(model)) {
@@ -20,6 +22,10 @@ export function seedSessionSkinsFromModel(model: ModelEntry): boolean {
   const wardrobe = getSessionSkinWardrobe(model.id);
   if (wardrobe.skins.length > 0) {
     return false;
+  }
+
+  if (restoreSessionSkinsFromScene(model)) {
+    return true;
   }
 
   const target = resolveSkinnedTextureTarget(model.scene, null);

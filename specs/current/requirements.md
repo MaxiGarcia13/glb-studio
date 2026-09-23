@@ -101,6 +101,26 @@ As an editor user, when I choose **File → Export** I can confirm the zip conte
 - [x] Modal edits zip basename + per-group / per-model basenames; empty/invalid → defaults; extensions auto-applied for the selected format; animation files keep library names
 - [x] Convert / oversize failures stay in the modal (busy spans pack + convert + zip; dismiss blocked while busy) (US-36)
 
+### US-49 — Export as folders (model + animations + skins)
+
+As an editor user, when I export I can opt into a folder layout so each ungrouped model lands in its own folder with separate animation and skin files.
+
+**Depends on:** US-5 / US-22 / US-36 (export zip + modal + format); US-48 (session skins).
+
+**Status:** Implemented — fold on ship (delta [`specs/us-49/`](../us-49/)).
+
+**Acceptance**
+
+- [x] Export modal offers **Export as folders** (opt-in; default off = flat zip)
+- [x] When on, each **ungrouped** model packs as `{Base}/{Base}.{glb|fbx}`, `{Base}/animations/{Clip}.{glb|fbx}`, `{Base}/skins/{Skin}.png` (every session wardrobe entry; PNG even when Format is FBX)
+- [x] Folder-layout model file is mesh + **active** color map only (no embedded clips / no embedded unused skins — skins are PNG sidecars)
+- [x] **Flat** layout embeds every session wardrobe texture inside the model GLB (editor extras + helper meshes); re-import restores the full list + active id
+- [x] Model groups stay one packed file (optional `{GroupBase}/{GroupBase}.{ext}` wrap); not split into member folders
+- [x] Shared animation-only zip-root sidecars are omitted for clips already packed under a model folder; shared-only export (no models) stays flat at zip root
+- [x] Flat layout otherwise unchanged when folders is off; collision suffixes and no-partial-zip rules still apply
+
+**Out of scope:** Drag-and-drop re-import of folder trees; per-mesh skin folders; splitting groups into member folders; FBX round-trip of the session-skins extras (GLB is the contract).
+
 ### US-36 — Export format GLB | FBX
 
 As an editor user, when I choose **File → Export** I can pick **GLB** (default) or **FBX** so the zip uses the chosen extension without changing pack rules.
@@ -489,7 +509,7 @@ As an editor user, when I apply a texture to a created part or a skinned model, 
 #### Shared
 
 - [x] Failed decode / rejected file does not add a list entry and does not push undo
-- [x] Export GLB includes only the **active** map on the material; inactive skins are session-only
+- [x] Flat export GLB embeds **every** session wardrobe texture (editor helper meshes + `threeEditorSessionSkins` extras; live material keeps the **active** map). Folder export still ships wardrobe PNGs under `skins/` and keeps the model file active-map only (US-49)
 - [x] Prep modal remains the authoring path for created parts; skinned still has no US-39 prep (US-47 is the atlas editor)
 
 **Out of scope:** US-47 Skin editor UI; full PBR maps; UV unwrap / painting; durable skins across reload; Kenney / vendor auto-picker; drag-and-drop onto Library rows; multi-skin candidate list on every created part; one independent skin list per skinned mesh (MVP: one list per model).
