@@ -10,7 +10,7 @@ Depends on shipped US-40 / US-46. Independent of US-47; do not start US-47 in th
 - [x] **Changelog Open row** — Add US-48 to `specs/CHANGELOG.md` Open
 - [x] **Decide undo on remove-active** — **One command**: remove list entry + clear live map when it was active (single undo restores both)
 - [x] **Decide file apply** — **Always append**: new file apply adds a list entry and sets it active; previous entries stay (no replace-in-place)
-- [ ] **Decide none UI** — Explicit “No skin” row vs deselect
+- [x] **Decide none UI** — **Explicit “No skin” row** under the model (not deselect-only); selecting it clears the live map and leaves `activeSkinId` null
 - [ ] **Decide import seed** — Seed list from existing `.map` vs empty until first apply (recommend seed)
 - [ ] **Carve scope in current** — Library texture rows for created parts; skinned session list + pick/none; keep US-47 atlas editor separate
 - [ ] **Fold on ship** — Fold into `current/`, changelog Shipped row, delete this folder

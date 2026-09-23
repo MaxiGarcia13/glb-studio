@@ -21,7 +21,7 @@
 
 4. **UI**
    - Created: nested texture row under the part (label, clear).
-   - Skinned: nested skin rows under the model; selected = active; affordance for none; remove; add still from existing file toolbar (optional “add without replacing list” is default).
+   - Skinned: nested skin rows under the model; selected = active; **always include an explicit “No skin” row** (select → clear live map, `activeSkinId = null`); remove on each skin entry; add still from existing file toolbar (append).
    - Tokens: `editor-ui-tokens`; `AssetEntry` / Library collapsible patterns.
 
 5. **Module placement**
@@ -41,5 +41,5 @@
 |-------|----------|
 | Undo on **remove active** | **One command** — drop list entry + clear live map together; one undo restores both. Avoids a confusing half-state (row back / map still cleared or the reverse). |
 | File apply | **Always append** — successful US-40 / toolbar / file apply adds a new `skins[]` entry and makes it active; earlier entries remain until the user removes them. No in-place replace of the active entry. |
-| None UI | *Open* — explicit “No skin” row vs deselect-all |
+| None UI | **Explicit “No skin” row** — always shown under a skinned model that has (or can have) session skins; selecting it clears the live map and sets `activeSkinId` to `null`. Deselect-all alone is not the primary affordance (too easy to miss). |
 | Import seed | *Open* — seed from existing `.map` vs empty until first apply (recommend: **seed**) |

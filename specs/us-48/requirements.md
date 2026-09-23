@@ -27,7 +27,7 @@ As an editor user, when I apply a texture to a created part or a skinned model, 
 - [ ] Each skinned library model has a session list: `skins[]` + `activeSkinId | null` (not GLB extras; not durable across reload)
 - [ ] Applying a new image (US-40 file path) **always appends** a list entry and makes it active; previous entries stay unless the user removes them (no replace-in-place of the active entry)
 - [ ] Library under the model shows **one row per list entry** (not only meshes that currently have `.map`)
-- [ ] Selecting a row applies that skin to the resolved US-40 target (`commitMaterialColorMapChange`); selecting **none** / deselect clears the live map
+- [ ] Selecting a skin row applies that skin to the resolved US-40 target (`commitMaterialColorMapChange`); an explicit **“No skin”** row clears the live map and sets `activeSkinId` to `null` (deselect-all is not the primary none path)
 - [ ] Removing a list entry disposes that session texture; if it was active, live map clears as **one** undoable command (remove entry + clear map; one undo restores both)
 - [ ] Multi-mesh: apply still follows `resolveSkinnedTextureTarget` (selected skinned mesh, else sole mesh); list is **per model**, not one independent wardrobe per mesh unless kickoff explicitly splits
 - [ ] Rows update after apply / pick / clear / undo / redo; empty list when the model has no session skins
@@ -51,7 +51,7 @@ As an editor user, when I apply a texture to a created part or a skinned model, 
 ## Product intent
 
 1. User textures a created part → Library shows the map under the part → can clear from Library.
-2. User applies skin A on a character → Library lists A (active). Applies skin B → list is A + B, B active. Picks A → A live. Picks none → no map. Removes B → B gone from list.
+2. User applies skin A on a character → Library lists A (active). Applies skin B → list is A + B, B active. Picks A → A live. Picks **No skin** → no map. Removes B → B gone from list.
 3. Export only what is currently on the mesh.
 
 ## Cross-links
