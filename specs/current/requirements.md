@@ -432,7 +432,28 @@ As an editor user, when I focus a skinned model (imported character, skinned kit
 - [x] Created (non-skinned) models stay on US-28 / US-39 path only
 - [x] Skinned apply uses `flipY: false` so glTF / UV atlas skins (e.g. Kenney) orient correctly
 
-**Out of scope:** texture prep modal on imported / skinned materials; full PBR maps; UV unwrap / painting; Kenney auto skin picker; editing materials on non-skinned imported mesh-only scenes beyond the created path. Session undo for maps + Library texture rows are **US-46** (in progress) — see [`specs/us-46/`](../us-46/)
+**Out of scope:** texture prep modal on imported / skinned materials; full PBR maps; UV unwrap / painting; Kenney auto skin picker; editing materials on non-skinned imported mesh-only scenes beyond the created path. Session undo for maps + Library texture rows are **US-46**.
+
+### US-46 — Color-map undo + library texture rows
+
+As an editor user, when I apply, replace, or clear a color map on a created part or a skinned library model, I can undo and redo that change in the session; and when a skinned model has a map, I can see it under that model in the Library and clear it without hunting for the floating toolbar.
+
+**Acceptance**
+
+- [x] Apply / replace / clear of `MeshStandardMaterial.map` on a **created** stamped part pushes one undo entry; Cmd/Ctrl+Z restores the previous map (or no map); redo restores the committed map
+- [x] Apply / replace / clear on a **skinned** library target (US-40 path) pushes the same command kind; undo/redo restores correctly
+- [x] Failed decode / rejected file does **not** push an undo entry; live map unchanged
+- [x] Undo does not leave a black / disposed map on the material (snapshot owns clones; live dispose only when safe)
+- [x] Stack pruning / replacing redo branch disposes orphaned texture clones (no GPU leak)
+- [x] Existing undo kinds (pose, trim, create scene/hierarchy) still work; texture commits interleave on the same session stack
+- [x] Under each `isSkinnedLibraryModel` in the Library, when any skinned mesh has a `.map`, show a nested row (or rows) with a clear label (prefer `texture.name` / file name; fallback “Texture”)
+- [x] Multi-mesh: one row per textured skinned mesh (include mesh name when useful)
+- [x] Row offers **clear** (and optionally replace) without opening US-39 prep
+- [x] Clearing from the Library uses the same clear + undo path as the floating tool
+- [x] Rows update after apply / clear / undo / redo (`$materialMapsRevision`)
+- [x] No texture row when the model has no maps; created models keep existing part toolbar / prep clear
+
+**Out of scope:** texture prep modal on skinned / imported materials; full PBR maps; UV unwrap / painting; undo for color-only edits (`material.color` without map); durable undo across reloads; Kenney kit auto-picker; drag-and-drop texture onto library rows.
 
 ### US-25 — Grid and rotation snap
 
@@ -627,7 +648,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 
 ## Out of scope (still excluded)
 
-- Full material / texture editing on **imported** characters beyond albedo on skinned meshes (PBR maps, prep modal, painting, mesh-only non-skinned imports beyond the created path). Created-model color maps + prep remain US-28 / US-39. Skinned albedo apply / clear is **US-40** (shipped). **Exception (US-46, in progress):** session undo/redo for albedo apply/replace/clear (created + skinned) and Library texture rows under skinned models — see [`specs/us-46/`](../us-46/). Prep modal on skinned, full PBR, and durable undo across reloads stay out
+- Full material / texture editing on **imported** characters beyond albedo on skinned meshes (PBR maps, prep modal, painting, mesh-only non-skinned imports beyond the created path). Created-model color maps + prep remain US-28 / US-39. Skinned albedo apply / clear is **US-40** (shipped). Session undo/redo for albedo apply/replace/clear (created + skinned) and Library texture rows under skinned models are **US-46** (shipped). Prep modal on skinned, full PBR, and durable undo across reloads stay out
 - Kit marketplace / remote download; user-authored kit save/share; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid

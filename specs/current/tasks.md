@@ -336,6 +336,20 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] `TexturePrepModal` — live preview, choose/replace, guidance, crop/flip, wrap presets, client bg-remove
 - [x] Apply commits draft; Cancel disposes; created-part gate; no server image pipeline
 
+## US-40 — Albedo maps on skinned models
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] Skinned toolbar apply / replace / clear; `flipY: false` for glTF atlases
+- [x] Target resolution (selected / sole skinned mesh); created path unchanged
+
+## US-46 — Color-map undo + library texture rows
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] `materialColorMap` undo command + safe dispose / `$materialMapsRevision`
+- [x] Wire create + skinned apply/clear; Library `SkinnedTextureRows` under skinned models
+
 ## Open deltas
 
 | US                              | Status                | Tasks                                     |
