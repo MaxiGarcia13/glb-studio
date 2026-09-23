@@ -10,6 +10,8 @@ import {
 } from 'three';
 
 import { describe, expect, it } from 'vitest';
+
+import { ARMATURE_GROUP_NAME } from '@/modules/create/constants/armature';
 import {
   writeCreateGroup,
   writeCreateJoint,
@@ -130,7 +132,7 @@ describe('canSkinModel', () => {
 
   it('disables when only an Armature joint exists', () => {
     const scene = new Group();
-    const armature = createJoint('Armature');
+    const armature = createJoint(ARMATURE_GROUP_NAME);
     armature.add(createPart('box'));
     scene.add(armature);
 

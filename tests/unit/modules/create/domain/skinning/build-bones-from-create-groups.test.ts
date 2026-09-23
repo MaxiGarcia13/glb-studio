@@ -2,8 +2,8 @@ import { Bone, Group, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 
 import { writeCreateGroup, writeCreateJoint } from '@/modules/create/domain/hierarchy/group-data';
+import { ARMATURE_GROUP_NAME } from '@/modules/create/constants/armature';
 import {
-  ARMATURE_GROUP_NAME,
   buildBonesFromCreateGroups,
 } from '@/modules/create/domain/skinning/build-bones-from-create-groups';
 

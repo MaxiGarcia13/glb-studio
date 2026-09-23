@@ -5,6 +5,7 @@ import { writeCreateJoint } from '@/modules/create/domain/hierarchy/group-data';
 import { writeCreatePart } from '@/modules/create/domain/part-data';
 import { convertCreatedSceneToSkinned } from '@/modules/create/domain/skinning/convert-created-scene-to-skinned';
 import { isUsableSkinnedModelScene } from '@/modules/import/domain/model-scene-kind';
+import { ARMATURE_GROUP_NAME } from '@/modules/create/constants/armature';
 
 function createPart(name: string): Mesh {
   const mesh = new Mesh(new BoxGeometry(1, 1, 1), new MeshStandardMaterial());
@@ -59,7 +60,7 @@ describe('convertCreatedSceneToSkinned', () => {
 
   it('parents bones under Armature when present', () => {
     const scene = new Group();
-    const armature = createGroup('Armature');
+    const armature = createGroup(ARMATURE_GROUP_NAME);
     const hips = createGroup('Hips');
     hips.position.set(0, 1, 0);
     scene.add(armature);
@@ -68,7 +69,7 @@ describe('convertCreatedSceneToSkinned', () => {
 
     const skinned = convertCreatedSceneToSkinned(scene);
     const hipsBone = skinned.getObjectByName('Hips');
-    const armatureNode = skinned.getObjectByName('Armature');
+    const armatureNode = skinned.getObjectByName(ARMATURE_GROUP_NAME);
 
     expect(armatureNode).toBeTruthy();
     expect(hipsBone?.parent).toBe(armatureNode);

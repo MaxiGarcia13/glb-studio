@@ -6,9 +6,10 @@ import {
   Uint16BufferAttribute,
 } from 'three';
 
+import { ARMATURE_GROUP_NAME } from '@/modules/create/constants/armature';
+
 import { isCreateJoint } from '../hierarchy/group-data';
 import { listCreatedParts } from '../list-created-parts';
-import { ARMATURE_GROUP_NAME } from './build-bones-from-create-groups';
 
 export interface BindMeshesRigidResult {
   skinnedMeshes: SkinnedMesh[];

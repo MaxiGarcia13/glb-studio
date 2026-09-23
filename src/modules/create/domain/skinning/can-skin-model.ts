@@ -1,11 +1,10 @@
 import type { Object3D } from 'three';
 import type { ModelEntry } from '@/modules/viewport/types/model';
 
+import { ARMATURE_GROUP_NAME } from '@/modules/create/constants/armature';
+
 import { listCreatedPartEntries, listCreatedParts } from '../list-created-parts';
-import {
-  ARMATURE_GROUP_NAME,
-  isSkinArmatureNode,
-} from './build-bones-from-create-groups';
+import { isSkinArmatureNode } from './build-bones-from-create-groups';
 
 export interface SkinModelAvailability {
   enabled: boolean;

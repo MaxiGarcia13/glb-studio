@@ -1,6 +1,7 @@
 import { Bone, Matrix4, Quaternion, SkinnedMesh, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 
+import { ARMATURE_GROUP_NAME } from '@/modules/create/constants/armature';
 import { buildRigidSkinnedSceneFromKit } from '@/modules/create/domain/build-rigid-skinned-kit-scene';
 import { BLOCK_ROBOT_MESH_RECIPE } from '@/modules/create/domain/kits/block-robot';
 
@@ -13,7 +14,7 @@ describe('buildRigidSkinnedSceneFromKit', () => {
     let armature = false;
 
     scene.traverse((object) => {
-      if (object.name === 'Armature') {
+      if (object.name === ARMATURE_GROUP_NAME) {
         armature = true;
       }
       if (object instanceof Bone) {

@@ -1,9 +1,11 @@
+import { ARMATURE_GROUP_NAME } from './armature';
+
 /**
  * Unprefixed Mixamo-style joint names for **Make joint** suggestions.
  * Matches the Block robot / kits README contract (no `mixamorig` prefix).
  */
 export const SUGGESTED_JOINT_NAMES = [
-  'Armature',
+  ARMATURE_GROUP_NAME,
   'Hips',
   'Spine',
   'Chest',

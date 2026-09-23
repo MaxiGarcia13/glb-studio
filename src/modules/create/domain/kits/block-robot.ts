@@ -2,6 +2,8 @@ import type { GroupRecipe, PartRecipe } from '@/modules/create/types/kit';
 
 import { Euler, Quaternion, Vector3 } from 'three';
 
+import { ARMATURE_GROUP_NAME } from '@/modules/create/constants/armature';
+
 const IDENTITY_ROTATION = [0, 0, 0] as const;
 
 /** White plating / black structure / cyan face ring (Optimus-style block approx). */
@@ -332,8 +334,8 @@ export interface BlockRobotMeshRecipe {
 export const BLOCK_ROBOT_MESH_RECIPE: BlockRobotMeshRecipe = {
   label: 'Block robot',
   groups: [
-    { name: 'Armature', position: [0, 0, 0] },
-    { name: 'Hips', parent: 'Armature', position: [0, hipsY, 0] },
+    { name: ARMATURE_GROUP_NAME, position: [0, 0, 0] },
+    { name: 'Hips', parent: ARMATURE_GROUP_NAME, position: [0, hipsY, 0] },
     { name: 'Spine', parent: 'Hips', position: [0, spineY, 0] },
     { name: 'Chest', parent: 'Spine', position: [0, chestY, 0] },
     { name: 'UpperChest', parent: 'Chest', position: [0, upperChestY, 0] },

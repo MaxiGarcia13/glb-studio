@@ -7,6 +7,7 @@ import {
   resolveJointPickTarget,
   resolveShiftCreatePartPick,
 } from '@/modules/create/domain/resolve-joint-pick';
+import { ARMATURE_GROUP_NAME } from '@/modules/create/constants/armature';
 
 function createPart(name: string): Mesh {
   const mesh = new Mesh(new BoxGeometry(1, 1, 1), new MeshStandardMaterial());
@@ -67,7 +68,7 @@ describe('resolveJointPickTarget', () => {
   });
 
   it('uses the nearest group, not an outer ancestor', () => {
-    const armature = createGroup('Armature');
+    const armature = createGroup(ARMATURE_GROUP_NAME);
     const hips = createGroup('Hips');
     const part = createPart('box');
     armature.add(hips);

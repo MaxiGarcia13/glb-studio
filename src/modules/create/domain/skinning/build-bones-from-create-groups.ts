@@ -1,11 +1,12 @@
 import type { Object3D } from 'three';
 import { Bone, Group } from 'three';
 
+import { ARMATURE_GROUP_NAME } from '@/modules/create/constants/armature';
+
 import { isCreateGroup, isCreateJoint } from '../hierarchy/group-data';
 import { listCreatedPartEntries } from '../list-created-parts';
 
-/** Matches offline kit skinning — container, not a Skeleton bone. */
-export const ARMATURE_GROUP_NAME = 'Armature';
+export { ARMATURE_GROUP_NAME };
 
 export interface CreateGroupBoneTree {
   /** Skeleton bones in joint pre-order (excludes Armature). */

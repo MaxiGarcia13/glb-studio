@@ -12,10 +12,10 @@ import {
   Uint16BufferAttribute,
 } from 'three';
 
+import { ARMATURE_GROUP_NAME } from '@/modules/create/constants/armature';
+
 import { orientSkeletonMixamoAxes } from './orient-skeleton-mixamo-axes';
 import { getPartKind } from './part-kind';
-
-const ARMATURE_NAME = 'Armature';
 
 /** Mesh recipe input for offline rigid skinning (registered MeshKit or maintainer recipe). */
 export interface RigidSkinnedKitRecipe {
@@ -43,12 +43,12 @@ export function buildRigidSkinnedSceneFromKit(kit: RigidSkinnedKitRecipe): Group
   const bones: Bone[] = [];
 
   const armature = new Group();
-  armature.name = ARMATURE_NAME;
+  armature.name = ARMATURE_GROUP_NAME;
   root.add(armature);
-  nodesByName.set(ARMATURE_NAME, armature);
+  nodesByName.set(ARMATURE_GROUP_NAME, armature);
 
   for (const recipe of groups) {
-    if (recipe.name === ARMATURE_NAME) {
+    if (recipe.name === ARMATURE_GROUP_NAME) {
       armature.position.set(...recipe.position);
       if (recipe.rotation) {
         armature.rotation.set(...recipe.rotation);
