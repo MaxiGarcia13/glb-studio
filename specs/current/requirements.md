@@ -101,13 +101,13 @@ As an editor user, when I choose **File → Export** I can confirm the zip conte
 - [x] Modal edits zip basename + per-group / per-model basenames; empty/invalid → defaults; extensions auto-applied for the selected format; animation files keep library names
 - [x] Convert / oversize failures stay in the modal (busy spans pack + convert + zip; dismiss blocked while busy) (US-36)
 
-### US-49 — Export as folders (model + animations + skins)
+### US-49 — Export as folders + flat wardrobe embed
 
-As an editor user, when I export I can opt into a folder layout so each ungrouped model lands in its own folder with separate animation and skin files.
+As an editor user, when I export flat I get every session skin inside the model GLB. When I opt into folders, each ungrouped model lands in its own folder with separate animation and skin files.
 
 **Depends on:** US-5 / US-22 / US-36 (export zip + modal + format); US-48 (session skins).
 
-**Status:** Implemented — fold on ship (delta [`specs/us-49/`](../us-49/)).
+**Status:** Shipped.
 
 **Acceptance**
 
