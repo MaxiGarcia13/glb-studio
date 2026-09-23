@@ -2,7 +2,7 @@
 
 Delta: session undo/redo for albedo apply / replace / clear, and library UI to see / remove maps on skinned models. Parent: [`specs/current/requirements.md`](../current/requirements.md).
 
-**Depends on:** US-10 (undo stack), US-28 / US-39 (created maps), **US-40** (skinned albedo apply — ship or land together).
+**Depends on:** US-10 (undo stack), US-28 / US-39 (created maps), **US-40** (shipped — skinned albedo apply).
 
 **Status:** Planned — not kicked off.
 
@@ -43,6 +43,6 @@ As an editor user, when I apply, replace, or clear a color map on a created part
 
 ## Cross-links
 
-- Skinned apply UI → [`specs/us-40/`](../us-40/)
+- Skinned apply UI → US-40 (shipped in `current/`)
 - Created maps + prep → US-28 / US-39 (shipped in `current/`)
 - Undo stack → US-10 (shipped in `current/`)

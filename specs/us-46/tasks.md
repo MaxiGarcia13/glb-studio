@@ -4,7 +4,7 @@ Tick only after acceptance. **Not kicked off** — do not implement until explic
 
 ## Spec / kickoff
 
-- [ ] **Confirm kickoff** — Explicit start (prefer after US-40 ships or is explicitly combined)
+- [ ] **Confirm kickoff** — Explicit start
 - [x] **Changelog Open row** — Add US-46 to `specs/CHANGELOG.md` Open
 - [ ] **Carve scope in current** — Note session undo for albedo maps + skinned Library texture rows; keep prep / PBR / durable undo out
 - [ ] **Fold on ship** — Fold into `current/`, changelog Shipped row, delete this folder

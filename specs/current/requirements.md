@@ -414,7 +414,25 @@ As an editor user, when I texture a created part I can open a prep modal, see a 
 - [x] Imported / non-created focus never opens this modal
 - [x] No Sharp / server texture endpoint in this US
 
-**Out of scope:** server-side Sharp / resize / normalize API; full UV unwrap or projection painting; full PBR map authoring; auto bg-remove on every upload; texture prep on imported / skinned materials (crop / wrap / bg-remove stay created-only); texture painting. Albedo (`.map`) apply / clear on skinned library models is **US-40** — not this modal.
+**Out of scope:** server-side Sharp / resize / normalize API; full UV unwrap or projection painting; full PBR map authoring; auto bg-remove on every upload; texture prep on imported / skinned materials (crop / wrap / bg-remove stay created-only); texture painting. Skinned albedo apply / clear is **US-40** (not this modal).
+
+### US-40 — Albedo maps on skinned (imported) models
+
+As an editor user, when I focus a skinned model (imported character, skinned kit, or created-then-skinned), I can apply or clear an image color map on its mesh material so UV atlas skins (e.g. Kenney) and custom albedos show in the viewport and export.
+
+**Acceptance**
+
+- [x] When focused model is a skinned library model (`isSkinnedLibraryModel`), user can **apply** an image (png/jpeg/webp, US-28 caps) as `MeshStandardMaterial.map` on a target skinned mesh
+- [x] User can **clear** the map and return to flat / previous non-map appearance (material `color` stays multiplier)
+- [x] Target resolution: selected `SkinnedMesh` when selected; else sole skinned mesh under the focused model; multi-mesh with no clear target → disabled + clear reason
+- [x] Entry UI available for skinned focus (`SkinnedTextureToolbar` — not the create-only toolbar); created-part Texture / US-39 prep unchanged
+- [x] Post–Skin model models are included (same gate — no special case)
+- [x] Oversized / failed decode shows a clear error; material not left in a broken black state
+- [x] Exported GLB includes the applied map
+- [x] Created (non-skinned) models stay on US-28 / US-39 path only
+- [x] Skinned apply uses `flipY: false` so glTF / UV atlas skins (e.g. Kenney) orient correctly
+
+**Out of scope:** texture prep modal on imported / skinned materials; full PBR maps; UV unwrap / painting; Kenney auto skin picker; session undo / Library texture rows (US-46); editing materials on non-skinned imported mesh-only scenes beyond the created path
 
 ### US-25 — Grid and rotation snap
 
@@ -609,7 +627,7 @@ Not started; do not implement until explicitly kicked off. Full requirements, de
 
 ## Out of scope (still excluded)
 
-- Full material / texture editing on **imported** characters (PBR maps, prep modal, painting, mesh-only non-skinned imports beyond the created path). Created-model color maps + prep remain US-28 / US-39. **Exception (US-40, in progress):** albedo (`.map`) apply / replace / clear on skinned library models (`isSkinnedLibraryModel`) — see [`specs/us-40/`](../us-40/)
+- Full material / texture editing on **imported** characters beyond albedo on skinned meshes (PBR maps, prep modal, painting, mesh-only non-skinned imports beyond the created path). Created-model color maps + prep remain US-28 / US-39. Skinned albedo apply / clear is **US-40** (shipped). Session undo + Library texture rows → [`specs/us-46/`](../us-46/)
 - Kit marketplace / remote download; user-authored kit save/share; optional clothed block kit variant (extra shirt/pants meshes — content-only if ever added)
 - Full Blender-style collections / drag-and-drop reparent in the part outliner; boolean mesh fuse
 - Vertex / edge snap between parts; magnet snap to other part pivots; click-to-place spawn on grid

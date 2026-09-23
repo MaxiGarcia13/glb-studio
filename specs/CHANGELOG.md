@@ -17,13 +17,13 @@
 | **US-43** | Round corners (parametric bevel on box) — planned, not kicked off |
 | **US-42** | Craft brushes + sanding (push/pull, smooth, inflate) — planned, not kicked off |
 | **US-41** | Mesh craft foundation (bake + geometry undo/clipboard) — planned, not kicked off |
-| **US-40** | Albedo maps on skinned (imported) models — in progress |
 | **US-8** | Morph-target editing (post-MVP) |
 
 ## Shipped
 
 | ID | Summary |
 |----|---------|
+| **US-40** | Albedo maps on skinned (imported) models |
 | **US-39** | Texture prep modal — crop, wrap presets, client bg-remove, live preview |
 | **US-28** | Part color maps (textures) on created models only |
 | **US-38** | Add-part MRU menu (5 slots + See more) + browse modal with type groups + 3D preview |
