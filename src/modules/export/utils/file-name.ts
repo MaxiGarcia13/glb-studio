@@ -50,9 +50,6 @@ export function defaultExportZipFileName(format: ExportFormat): string {
   return `${defaultZipBaseName(format)}.zip`;
 }
 
-/** Default download zip name for GLB format (`glb-export.zip`). */
-export const EXPORT_ZIP_FILE_NAME = defaultExportZipFileName('glb');
-
 /** Ensure a `.glb` / `.fbx` basename; falls back to `fallback` when empty/invalid. */
 export function resolveExportFileName(
   raw: string | undefined,
