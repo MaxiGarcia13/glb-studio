@@ -16,11 +16,11 @@ As an editor user, when I apply a texture to a created part or a skinned model, 
 
 ### Created parts (Library rows)
 
-- [ ] After Apply from the US-39 prep modal (or equivalent created color-map commit), the focused created model’s Library entry shows a nested texture row **under that part**
-- [ ] Row label prefers `texture.name` / file name; fallback “Texture”
-- [ ] Row offers **clear** (and optionally replace) without requiring the prep modal; uses the same `materialColorMap` undo path as existing created apply/clear
-- [ ] No texture row when the part has no `.map`; rows update after apply / clear / undo / redo (`$materialMapsRevision` or equivalent)
-- [ ] Created parts do **not** get a multi-skin candidate list in this US (current map only)
+- [x] After Apply from the US-39 prep modal (or equivalent created color-map commit), the focused created model’s Library entry shows a nested texture row **under that part**
+- [x] Row label prefers `texture.name` / file name; fallback “Texture”
+- [x] Row offers **clear** (and optionally replace) without requiring the prep modal; uses the same `materialColorMap` undo path as existing created apply/clear
+- [x] No texture row when the part has no `.map`; rows update after apply / clear / undo / redo (`$materialMapsRevision` or equivalent)
+- [x] Created parts do **not** get a multi-skin candidate list in this US (current map only)
 
 ### Skinned models — session skin list
 

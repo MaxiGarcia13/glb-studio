@@ -17,9 +17,9 @@ Depends on shipped US-40 / US-46. Independent of US-47; do not start US-47 in th
 
 ## Created parts — Library
 
-- [ ] **Part texture rows** — Nested row under textured created parts; label; clear (+ optional replace)
-- [ ] **Revision sync** — Rows after prep Apply / undo / redo
-- [ ] **Unit / UI check** — No row when no map
+- [x] **Part texture rows** — Nested row under textured created parts; label; clear (+ optional replace)
+- [x] **Revision sync** — Rows after prep Apply / undo / redo
+- [x] **Unit / UI check** — No row when no map
 
 ## Skinned — session list
 

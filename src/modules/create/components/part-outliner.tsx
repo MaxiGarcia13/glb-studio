@@ -14,7 +14,10 @@ import {
 } from '@/modules/viewport/stores/selection-store';
 import { isCreateHierarchyNode } from '../domain/group-data';
 import { listCreatedPartEntries } from '../domain/list-created-parts';
+import { readPartColorMapEntry } from '../domain/read-part-color-map';
 import { $createPartsRevision } from '../stores/create-parts-revision-store';
+import { $materialMapsRevision } from '../stores/material-maps-revision-store';
+import { PartTextureRow } from './part-texture-row';
 
 interface PartOutlinerProps {
   modelId: string;
@@ -25,11 +28,12 @@ interface PartOutlinerProps {
 /**
  * Library outliner of stamped parts and empty groups for a created model.
  * Parents use `LibrarySectionCollapsible` (closed by default). BoneIcon marks part rows.
- * Click a row to focus the model (if needed), switch to Edit, and select the node.
- * Shift+click toggles membership.
+ * Textured parts nest a Library texture row (US-48). Click a row to focus the model
+ * (if needed), switch to Edit, and select the node. Shift+click toggles membership.
  */
 export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
   useStore($createPartsRevision);
+  useStore($materialMapsRevision);
   const { object: active, objects } = useStore($selection, {
     keys: ['object', 'objects'],
   });
@@ -58,6 +62,21 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
     selectObject(object);
   }
 
+  function renderTextureRow(object: Object3D) {
+    const colorMap = readPartColorMapEntry(object);
+    if (!colorMap) {
+      return null;
+    }
+    return (
+      <PartTextureRow
+        modelId={modelId}
+        mesh={colorMap.mesh}
+        material={colorMap.material}
+        label={colorMap.label}
+      />
+    );
+  }
+
   function renderNode(object: Object3D) {
     const entry = entryByUuid.get(object.uuid);
     if (!entry) {
@@ -69,6 +88,7 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
     const isSelected = objects.includes(object);
     const isActive = active === object;
     const { isGroup } = entry;
+    const textureRow = renderTextureRow(object);
 
     const title = (
       <button
@@ -97,9 +117,8 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
     );
 
     if (children.length === 0) {
-      return (
+      const partRow = (
         <div
-          key={object.uuid}
           role="treeitem"
           aria-selected={isSelected}
           className={cn(
@@ -140,6 +159,17 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
           </button>
         </div>
       );
+
+      if (!textureRow) {
+        return <div key={object.uuid}>{partRow}</div>;
+      }
+
+      return (
+        <div key={object.uuid} className="flex flex-col gap-2">
+          {partRow}
+          <div className="pl-4">{textureRow}</div>
+        </div>
+      );
     }
 
     return (
@@ -151,6 +181,7 @@ export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
         showChevron
         showTreeGuide
       >
+        {textureRow}
         {children.map((child) => renderNode(child))}
       </LibrarySectionCollapsible>
     );

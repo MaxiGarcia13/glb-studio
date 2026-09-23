@@ -6,6 +6,7 @@ import type {
 } from 'three';
 
 import { findMeshStandardMaterial } from '../utils/selected-part';
+import { labelForColorMap } from './color-map-label';
 import { listSkinnedMeshes } from './resolve-skinned-texture-target';
 
 export interface TexturedSkinnedMeshEntry {
@@ -13,11 +14,6 @@ export interface TexturedSkinnedMeshEntry {
   material: MeshStandardMaterial;
   /** Library row label (texture name, optionally with mesh name). */
   label: string;
-}
-
-function mapLabel(texture: Texture): string {
-  const name = texture.name.trim();
-  return name.length > 0 ? name : 'Texture';
 }
 
 function meshLabel(mesh: SkinnedMesh): string | null {
@@ -35,7 +31,7 @@ export function labelForTexturedSkinnedMesh(
   texture: Texture,
   options: { includeMeshName: boolean },
 ): string {
-  const fromMap = mapLabel(texture);
+  const fromMap = labelForColorMap(texture);
   if (!options.includeMeshName) {
     return fromMap;
   }
