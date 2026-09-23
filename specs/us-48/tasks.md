@@ -29,12 +29,12 @@ Depends on shipped US-40 / US-46. Independent of US-47; do not start US-47 in th
 - [x] **Remove entry** — Dispose; clear live map if it was active (one undo restores entry + map)
 - [x] **Library rows** — One row per list entry; selected = active
 - [x] **Seed** — Existing imported `.map` becomes the first entry (active) on add / replace / load
-- [ ] **Unit tests** — Append keeps previous; pick none clears material; remove active; dispose on unload; failed decode adds nothing
+- [x] **Unit tests** — Append keeps previous; pick none clears material; remove active; dispose on unload; failed decode adds nothing
 
 ## Verify
 
 - [ ] **Created** — Apply in prep modal → Library row → clear from Library → undo restores map
-- [ ] **Skinned add two** — Apply A, apply B → both rows, B live → pick A → A live → none → no map
-- [ ] **Remove** — Remove inactive keeps live; remove active clears
-- [ ] **US-40 file apply still works** — Feeds the list
-- [ ] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md)
+- [x] **Skinned add two** — Apply A, apply B → both rows, B live → pick A → A live → none → no map
+- [x] **Remove** — Remove inactive keeps live; remove active clears
+- [x] **US-40 file apply still works** — Feeds the list
+- [x] **Acceptance checklist** — All boxes in [`requirements.md`](./requirements.md)
