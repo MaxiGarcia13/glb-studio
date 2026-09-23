@@ -77,7 +77,7 @@ Product surface is already large (format × layout × unit × imported/created �
 
 ### Defensive zip naming
 
-- [ ] Decide and document: either rely on orchestrator uniquify **or** `buildZipArchive` uniquify — not both silently. Prefer single owner + assertion/test that collisions are resolved before zip; drop the second pass if redundant
+- [x] Decide and document: either rely on orchestrator uniquify **or** `buildZipArchive` uniquify — not both silently. Prefer single owner + assertion/test that collisions are resolved before zip; drop the second pass if redundant
 
 ## Export — when next touching
 
