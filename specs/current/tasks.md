@@ -352,15 +352,17 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 
 ## US-48 — Session skin list + Library texture rows
 
-**Kicked off** — scope carved into `current/`. Work queue: [`specs/us-48/tasks.md`](../us-48/tasks.md). Independent of US-47.
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] Created-part Library texture rows; skinned session wardrobe (append / multi-select / pick / none / seed / dispose)
+- [x] Model ⋯ Add skins; remove-active one undo restores entry + map
 
 ## Open deltas
 
-| US                                                   | Status                          | Tasks                                       |
-| ---------------------------------------------------- | ------------------------------- | ------------------------------------------- |
-| **US-48** — Session skin list + Library texture rows | kicked off, carved into current | [`specs/us-48/tasks.md`](../us-48/tasks.md) |
-| **US-47** — Skinned atlas skin editor                | planned, not kicked off         | [`specs/us-47/tasks.md`](../us-47/tasks.md) |
-| **US-8** — Morph-target editing                      | post-MVP, not started           | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
+| US                                    | Status                  | Tasks                                       |
+| ------------------------------------- | ----------------------- | ------------------------------------------- |
+| **US-47** — Skinned atlas skin editor | planned, not kicked off | [`specs/us-47/tasks.md`](../us-47/tasks.md) |
+| **US-8** — Morph-target editing       | post-MVP, not started   | [`specs/us-8/tasks.md`](../us-8/tasks.md)   |
 
 ## Tech debt
 
