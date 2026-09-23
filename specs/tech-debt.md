@@ -35,6 +35,31 @@ Not copy-pasted files. Extract only if the helper stays small.
 - [x] `replaceClip` should call `toEntry()` instead of inlining the same `ClipEntry` shape
 - [x] `CollapsibleAside`: the closed path already returns `OpenButton`, so `[marginDirection]: sidebarOpen ? 0 : calc(-1 * width)` never runs. Remove the dead branch, or finish the slide animation
 
+### Hierarchy descendant + selection roots
+
+Same “is strict descendant” walk and “roots among selection (skip nodes nested under another selected node)” filter are copy-pasted. One shared pair; keep call-site names if clearer.
+
+- [ ] One shared `isStrictDescendantOf` — today duplicated in `create/domain/parent-part.ts` (exported), `create/domain/create-part-clipboard.ts` (exported), private copy in `viewport/domain/resolve-position-edit-targets.ts`, and private `isDescendant` in `create/actions/group-selected-parts.ts`. Prefer `parent-part` (or a tiny `create/domain` / shared util) as the single owner; viewport may import create domain for this pure helper, or lift to `src/utils/` if cross-module ownership feels wrong
+- [ ] One shared `resolveHierarchyRoots(objects)` (or equivalent) used by `resolveClipboardRoots`, `resolveSelectionRoots`, and the nest filter inside `resolveMultiPartContext` / `group-selected-parts` — same algorithm, three call sites
+- [ ] Unit tests for descendant + roots (parent+child multi-select drops child; unrelated siblings kept); update existing group / clipboard / pose-target tests if they assert behavior
+
+## Export — small leftovers
+
+Follow-ups after the priority export cleanup (below). No product behavior change.
+
+- [ ] Drop `stripGlbExtension` from `export/utils/file-name.ts` (and its unit tests) — production uses `stripExportExtension` / `stripAssetExtension` only; GLB-only strip is unused outside tests
+- [ ] Inline or align `uniqueClipName` in `merge-namespace.ts` with `uniqueTakenName` call-site convention (wrapper also mutates `taken`; `uniqueFileName` leaves mutation to the caller) — pick one style when next touching merge export
+
+## Create — when next touching
+
+Same class of smell as the finished export store-free pack work. Do **not** start for neatness.
+
+- [ ] Create domain that reads nanostores (`material-color-map-undo`, `create-scene-undo`, `create-hierarchy-undo`, `selected-create-roots`, `create-graph-lookup`) — pass models / selection in from actions when the next undo or selection change would otherwise fight store coupling
+- [ ] `material-color-map-undo.ts` (~300) — split dispose / clone / apply / stack-ownership helpers if the next skins undo change mixes concerns further
+- [ ] `create-part-clipboard.ts` (~318) — after hierarchy-roots extract, split snapshot vs instantiate only if clipboard paste / hierarchy work grows further
+- [ ] Texture prep modal pieces (`texture-prep-crop-editor`, modal shell) — already folder-split for draft hook; further split only if crop UI vs apply lifecycle collide in one PR
+- [ ] Revisit export ↔ create skins coupling (`attachSessionSkinsForExport`, folder PNG skins) when US-47 (Skin editor) or further wardrobe export rules land; keep contract in `specs/current/design.md` Export section
+
 ## Not debt
 
 - Timeline lives in `src/components/timeline-scrubber/` only (the animation-module copy is gone)
@@ -46,6 +71,10 @@ Not copy-pasted files. Extract only if the helper stays small.
 - `part-kind.ts` and kit recipe files (`simple-building`, `block-robot`) are large data registries — split only if editing becomes painful
 - `mixer-session.ts` / `transform-readout-store.ts` — medium size; split when next touching blend vs transport or readout vs apply
 - Export files under ~150 lines (`download-export-zip`, `model-glb`, modal pieces) — do not split by line count; cognitive load is the format×layout×unit matrix (see Export sections above)
+- `ensureGltfFile` / `ensureFbxFile` — parallel fetch shape, different endpoints and rules; do not merge into one generic converter
+- Availability helpers (`getGroupPartsAvailability`, `getGroupModelsAvailability`, …) — shared `{ enabled, reason }` shape, different product rules; intentional
+- `$createPartsRevision` / `$materialMapsRevision` — two revision atoms by design
+- Model-group vs session-skins manifest parsers — same userData pattern, different schemas; do not unify
 
 ## Complex splits
 
