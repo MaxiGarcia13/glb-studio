@@ -79,20 +79,9 @@ Product surface is already large (format × layout × unit × imported/created �
 
 - [x] Decide and document: either rely on orchestrator uniquify **or** `buildZipArchive` uniquify — not both silently. Prefer single owner + assertion/test that collisions are resolved before zip; drop the second pass if redundant
 
-## Export — when next touching
-
-Do **not** start these for neatness. Extract when the next export/skins US would otherwise make `download-export-zip` / folder pack painful.
+### Layout packers
 
 - [x] Flat vs folders layout strategy (or two small packers) so group/single path rules are not re-implemented in the orchestrator — only when adding another layout or skin packing rule
-- [ ] Revisit export ↔ create coupling (`attachSessionSkinsForExport`, folder PNG skins) when US-47 (Skin editor) or further wardrobe export rules land; keep contract in `specs/current/design.md` Export section
-
-## Create — when next touching
-
-Large but owned. Split only when the next edit would otherwise be painful (same rule as Complex splits).
-
-- [ ] `material-color-map-undo.ts` (~300) — split dispose / clone / apply / stack-ownership helpers if the next skins undo change mixes concerns further
-- [ ] `create-part-clipboard.ts` (~318) — split snapshot vs instantiate if clipboard paste / hierarchy work grows
-- [ ] Texture prep modal pieces (`texture-prep-crop-editor`, modal shell) — already folder-split for draft hook; further split only if crop UI vs apply lifecycle collide in one PR
 
 ## Unit tests
 
