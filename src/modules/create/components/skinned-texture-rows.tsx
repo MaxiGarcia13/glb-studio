@@ -8,12 +8,12 @@ import { Text } from '@/components/text';
 import { setEditTool } from '@/modules/viewport/stores/edit-tool-store';
 import { $model, selectModel } from '@/modules/viewport/stores/model-store';
 import { $selection, selectObject } from '@/modules/viewport/stores/selection-store';
+import { applySkinnedSessionSkinFromFile } from '../actions/apply-skinned-session-skin';
 import { commitMaterialColorMapChange } from '../actions/commit-material-color-map';
 import {
   ImageTextureError,
   PART_COLOR_MAP_ACCEPT,
 } from '../adapters/load-image-texture';
-import { loadSkinnedColorMapFromFile } from '../adapters/replace-material-color-map-from-file';
 import { listTexturedSkinnedMeshes } from '../domain/list-textured-skinned-meshes';
 import { $materialMapsRevision } from '../stores/material-maps-revision-store';
 
@@ -91,12 +91,11 @@ export function SkinnedTextureRows({
     setBusy(true);
     setError(null);
     try {
-      const texture = await loadSkinnedColorMapFromFile(file);
-      commitMaterialColorMapChange({
+      await applySkinnedSessionSkinFromFile({
         modelId,
         meshUuid: pending.mesh.uuid,
         material: pending.material,
-        next: texture,
+        file,
       });
     } catch (cause) {
       if (cause instanceof ImageTextureError) {

@@ -24,7 +24,7 @@ Depends on shipped US-40 / US-46. Independent of US-47; do not start US-47 in th
 ## Skinned — session list
 
 - [x] **Store** — Per `modelId` `skins[]` + `activeSkinId`; dispose on model remove/replace
-- [ ] **Add on apply** — US-40 / toolbar / file path appends entry and sets active
+- [x] **Add on apply** — US-40 / toolbar / file path appends entry and sets active
 - [ ] **Pick / none** — Commit via `commitMaterialColorMapChange`; export only active
 - [ ] **Remove entry** — Dispose; clear live map if it was active
 - [ ] **Library rows** — One row per list entry; selected = active

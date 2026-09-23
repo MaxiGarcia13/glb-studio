@@ -9,13 +9,13 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { collectLiveColorMaps } from '@/modules/create/domain/collect-live-color-maps';
 import {
+  $sessionSkinsByModel,
   appendSessionSkin,
   disposeSessionSkinsForModel,
   getSessionSkinWardrobe,
   removeSessionSkinEntry,
   resetSessionSkinsStoreForTests,
   setActiveSessionSkinId,
-  $sessionSkinsByModel,
 } from '@/modules/create/stores/session-skins-store';
 
 function namedTexture(name: string): Texture {

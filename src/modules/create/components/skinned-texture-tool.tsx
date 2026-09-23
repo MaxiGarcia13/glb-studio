@@ -5,12 +5,12 @@ import { TextureIcon } from '@/components/icons/texture-icon';
 import { Text } from '@/components/text';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
+import { applySkinnedSessionSkinFromFile } from '../actions/apply-skinned-session-skin';
 import { commitMaterialColorMapChange } from '../actions/commit-material-color-map';
 import {
   ImageTextureError,
   PART_COLOR_MAP_ACCEPT,
 } from '../adapters/load-image-texture';
-import { loadSkinnedColorMapFromFile } from '../adapters/replace-material-color-map-from-file';
 import { useSkinnedTextureAvailability } from '../hooks/use-skinned-texture';
 import { $materialMapsRevision } from '../stores/material-maps-revision-store';
 
@@ -80,12 +80,11 @@ export function SkinnedTextureTool() {
     setBusy(true);
     setError(null);
     try {
-      const texture = await loadSkinnedColorMapFromFile(file);
-      commitMaterialColorMapChange({
+      await applySkinnedSessionSkinFromFile({
         modelId: activeModel.id,
         meshUuid: target.mesh.uuid,
         material,
-        next: texture,
+        file,
       });
       setHasMap(true);
     } catch (cause) {

@@ -40,6 +40,11 @@ export function getSessionSkin(
   );
 }
 
+/** Wardrobe-owned textures for a model (must not be freed as live orphans). */
+export function collectSessionSkinTextures(modelId: string): Texture[] {
+  return getSessionSkinWardrobe(modelId).skins.map((entry) => entry.texture);
+}
+
 /**
  * Append a wardrobe entry and make it active.
  * Caller owns decode; this store takes ownership of `texture`.
