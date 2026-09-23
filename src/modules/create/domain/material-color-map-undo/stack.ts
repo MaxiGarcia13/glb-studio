@@ -4,9 +4,8 @@ import type {
   UndoableCommand,
 } from '@/modules/animation/types/undo-stack';
 import type { ModelEntry } from '@/modules/viewport/types/model';
-
+import { findMeshStandardMaterial } from '@/modules/create/utils/selected-part';
 import { disposeImageTexture } from '@/utils/dispose-image-texture';
-import { findMeshStandardMaterial } from '../../utils/selected-part';
 import { applyColorMap } from '../material-color-map';
 import { cloneColorMapTexture } from './clone';
 
