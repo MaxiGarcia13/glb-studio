@@ -24,21 +24,21 @@ As an editor user, when I apply a texture to a created part or a skinned model, 
 
 ### Skinned models — session skin list
 
-- [ ] Each skinned library model has a session list: `skins[]` + `activeSkinId | null` (not GLB extras; not durable across reload)
+- [x] Each skinned library model has a session list: `skins[]` + `activeSkinId | null` (not GLB extras; not durable across reload)
 - [x] Applying a new image (US-40 file path) **always appends** a list entry and makes it active; previous entries stay unless the user removes them (no replace-in-place of the active entry)
-- [ ] Library under the model shows **one row per list entry** (not only meshes that currently have `.map`)
-- [ ] Selecting a skin row applies that skin to the resolved US-40 target (`commitMaterialColorMapChange`); an explicit **“No skin”** row clears the live map and sets `activeSkinId` to `null` (deselect-all is not the primary none path)
+- [x] Library under the model shows **one row per list entry** (not only meshes that currently have `.map`)
+- [x] Selecting a skin row applies that skin to the resolved US-40 target (`commitMaterialColorMapChange`); an explicit **“No skin”** row clears the live map and sets `activeSkinId` to `null` (deselect-all is not the primary none path)
 - [ ] Removing a list entry disposes that session texture; if it was active, live map clears as **one** undoable command (remove entry + clear map; one undo restores both)
-- [ ] Multi-mesh: apply still follows `resolveSkinnedTextureTarget` (selected skinned mesh, else sole mesh); list is **per model**, not one independent wardrobe per mesh unless kickoff explicitly splits
-- [ ] Rows update after apply / pick / clear / undo / redo; empty list when the model has no session skins
-- [ ] Model remove / replace / unload disposes remaining list textures (no GPU leak)
+- [x] Multi-mesh: apply still follows `resolveSkinnedTextureTarget` (selected skinned mesh, else sole mesh); list is **per model**, not one independent wardrobe per mesh unless kickoff explicitly splits
+- [x] Rows update after apply / pick / clear / undo / redo; empty list when the model has no session skins
+- [x] Model remove / replace / unload disposes remaining list textures (no GPU leak)
 - [ ] On skinned model add / replace / load, if the resolved US-40 target already has a `.map`, **seed** one list entry from it (active; label from `texture.name` / fallback “Texture”); otherwise the list stays empty until first apply
 
 ### Shared
 
-- [ ] Failed decode / rejected file does not add a list entry and does not push undo
-- [ ] Export GLB includes only the **active** map on the material; inactive skins are session-only
-- [ ] Prep modal remains the authoring path for created parts; skinned still has no US-39 prep (US-47 is the atlas editor)
+- [x] Failed decode / rejected file does not add a list entry and does not push undo
+- [x] Export GLB includes only the **active** map on the material; inactive skins are session-only
+- [x] Prep modal remains the authoring path for created parts; skinned still has no US-39 prep (US-47 is the atlas editor)
 
 ## Out of scope
 

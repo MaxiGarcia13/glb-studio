@@ -16,9 +16,11 @@ import { $clips } from '@/modules/animation/stores/clip-store';
 import { PartOutliner } from '@/modules/create/components/part-outliner';
 import { SkinnedTextureRows } from '@/modules/create/components/skinned-texture-rows';
 import { listCreatedParts } from '@/modules/create/domain/list-created-parts';
-import { listTexturedSkinnedMeshes } from '@/modules/create/domain/list-textured-skinned-meshes';
 import { $createPartsRevision } from '@/modules/create/stores/create-parts-revision-store';
 import { $materialMapsRevision } from '@/modules/create/stores/material-maps-revision-store';
+import {
+  $sessionSkinsByModel,
+} from '@/modules/create/stores/session-skins-store';
 import { LibrarySectionCollapsible } from '@/modules/editor-shell/components/library-section-collapsible';
 import { isSkinnedLibraryModel } from '@/modules/import/domain/model-scene-kind';
 import { openContextMenuForModel } from '@/modules/viewport/actions/open-selection-context-menu';
@@ -50,6 +52,7 @@ export function LibraryModel({ model }: LibraryModelProps) {
   const { kind, modelIds } = useStore($selection, { keys: ['kind', 'modelIds'] });
   useStore($createPartsRevision);
   useStore($materialMapsRevision);
+  useStore($sessionSkinsByModel);
   const focused = model.id === activeModelId;
   const inModelMulti = kind === 'models' && modelIds.includes(model.id);
   const isActiveModelAnchor = kind === 'models'
@@ -62,13 +65,11 @@ export function LibraryModel({ model }: LibraryModelProps) {
   const skinned = isSkinnedLibraryModel(model);
   const partCount = isCreated ? listCreatedParts(model.scene).length : 0;
   const boneCount = skinned ? listBoneEntries(model.scene).length : 0;
-  const textureCount = skinned
-    ? listTexturedSkinnedMeshes(model.scene).length
-    : 0;
+  // Skinned models always show at least the “No skin” row (US-48).
   const hasNested
     = (isCreated && partCount > 0)
       || boneCount > 0
-      || textureCount > 0
+      || skinned
       || ownedClips.length > 0;
   const nodeNames = buildSkeletonNodeSet(model.scene);
   const conflictedClipIds = clips.flatMap((entry) => {

@@ -6,7 +6,7 @@ import { Text } from '@/components/text';
 import { $activeModel } from '@/modules/viewport/stores/model-store';
 import { $selection } from '@/modules/viewport/stores/selection-store';
 import { applySkinnedSessionSkinFromFile } from '../actions/apply-skinned-session-skin';
-import { commitMaterialColorMapChange } from '../actions/commit-material-color-map';
+import { pickNoSessionSkin } from '../actions/pick-session-skin';
 import {
   ImageTextureError,
   PART_COLOR_MAP_ACCEPT,
@@ -58,11 +58,10 @@ export function SkinnedTextureTool() {
     if (!material?.map || !target || !activeModel || busy) {
       return;
     }
-    commitMaterialColorMapChange({
+    pickNoSessionSkin({
       modelId: activeModel.id,
-      meshUuid: target.mesh.uuid,
-      material,
-      next: null,
+      scene: activeModel.scene,
+      selected,
     });
     setHasMap(false);
     setError(null);
