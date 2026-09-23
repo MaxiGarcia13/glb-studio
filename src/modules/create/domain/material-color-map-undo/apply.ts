@@ -1,21 +1,21 @@
 import type { MeshStandardMaterial, Texture } from 'three';
+import type { MaterialColorMapCommand } from './stack';
 import type { MaterialColorMapSnapshot } from '@/modules/animation/types/undo-stack';
 import type { ModelEntry } from '@/modules/viewport/types/model';
-
-import { disposeImageTexture } from '@/utils/dispose-image-texture';
-import { bumpMaterialMapsRevision } from '../../stores/material-maps-revision-store';
+import { bumpMaterialMapsRevision } from '@/modules/create/stores/material-maps-revision-store';
 import {
   insertSessionSkinAt,
   removeSessionSkinEntry,
   setActiveSessionSkinId,
-} from '../../stores/session-skins-store';
-import { findMeshStandardMaterial } from '../../utils/selected-part';
+} from '@/modules/create/stores/session-skins-store';
+import { findMeshStandardMaterial } from '@/modules/create/utils/selected-part';
+import { disposeImageTexture } from '@/utils/dispose-image-texture';
 import { applyColorMap } from '../material-color-map';
 import { syncMaterialMapAlpha } from '../texture-map-alpha';
 import { cloneColorMapTexture } from './clone';
 import {
+
   releaseOrphanColorMap,
-  type MaterialColorMapCommand,
 } from './stack';
 
 export type { MaterialColorMapCommand } from './stack';
