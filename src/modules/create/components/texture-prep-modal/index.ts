@@ -1,1 +1,1 @@
-export { TexturePrepModal } from './texture-prep-modal';
+export { LazyTexturePrepModal } from './lazy-texture-prep-modal';

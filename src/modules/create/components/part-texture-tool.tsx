@@ -11,7 +11,7 @@ import {
 } from '../hooks/use-selected-created-part';
 import { $materialMapsRevision } from '../stores/material-maps-revision-store';
 import { findMeshStandardMaterial } from '../utils/selected-part';
-import { TexturePrepModal } from './texture-prep-modal';
+import { LazyTexturePrepModal } from './texture-prep-modal';
 
 function toolTitle(enabled: boolean, hasMap: boolean): string {
   if (!enabled) {
@@ -81,7 +81,7 @@ export function PartTextureTool() {
       >
         <TextureIcon aria-hidden />
       </Button>
-      <TexturePrepModal
+      <LazyTexturePrepModal
         open={modalOpen}
         onClose={() => setPrepOpen(false)}
         onApplied={() => setHasMap(true)}
