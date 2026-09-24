@@ -1,6 +1,8 @@
 import type { ActionMenuItem } from '@/components/action-menu';
 import { useStore } from '@nanostores/react';
 import { ActionMenu } from '@/components/action-menu';
+import { RedoIcon } from '@/components/icons/redo-icon';
+import { UndoIcon } from '@/components/icons/undo-icon';
 import {
   $canRedo,
   $canUndo,
@@ -36,6 +38,7 @@ export function EditorEditMenu({ open, onOpenChange }: EditorEditMenuProps) {
     {
       id: undo.id,
       label: undo.label,
+      icon: <UndoIcon />,
       shortcut: undoShortcut
         ? formatEditorCommandChord(undoShortcut, isMac)
         : undefined,
@@ -48,6 +51,7 @@ export function EditorEditMenu({ open, onOpenChange }: EditorEditMenuProps) {
     {
       id: redo.id,
       label: redo.label,
+      icon: <RedoIcon />,
       shortcut: redoShortcut
         ? formatEditorCommandChord(redoShortcut, isMac)
         : undefined,
@@ -58,6 +62,7 @@ export function EditorEditMenu({ open, onOpenChange }: EditorEditMenuProps) {
       onSelect: () => runEditorCommand('redo'),
     },
   ];
+
 
   return (
     <ActionMenu
