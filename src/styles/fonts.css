@@ -1,0 +1,40 @@
+/* Inter 18pt — UI optical size (text-xs / text-sm). Only weights used in chrome. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Inter_18pt-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/Inter_18pt-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/Inter_18pt-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Inter_18pt-Italic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/Inter_18pt-SemiBoldItalic.ttf') format('truetype');
+}
