@@ -16,8 +16,8 @@ import {
   isMacPlatform,
   runEditorCommand,
 } from '@/modules/commands';
-import { FromKitModal } from '@/modules/create/components/from-kit-modal';
-import { ExportModal, useExportZip } from '@/modules/export';
+import { LazyFromKitModal } from '@/modules/create/components/lazy-from-kit-modal';
+import { LazyExportModal, useExportZip } from '@/modules/export';
 import { importContentFiles } from '@/modules/import/actions/import-content-files';
 import { useActiveModel } from '@/modules/viewport/hooks/use-active-model';
 import { $model } from '@/modules/viewport/stores/model-store';
@@ -96,8 +96,8 @@ export function EditorFileMenu({ open, onOpenChange }: EditorFileMenuProps) {
         open={open}
         onOpenChange={onOpenChange}
       />
-      <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} />
-      <FromKitModal open={fromKitOpen} onClose={() => setFromKitOpen(false)} />
+      <LazyExportModal open={exportOpen} onClose={() => setExportOpen(false)} />
+      <LazyFromKitModal open={fromKitOpen} onClose={() => setFromKitOpen(false)} />
     </>
   );
 }

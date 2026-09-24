@@ -37,7 +37,7 @@ import {
   toggleModelId,
 } from '@/modules/viewport/stores/selection-store';
 import { LibraryModelActions } from './library-model-actions';
-import { LibraryModelAddAnimationModal } from './library-model-add-animation-modal';
+import { LazyLibraryModelAddAnimationModal } from './lazy-library-model-add-animation-modal';
 import { LibraryModelTitle } from './library-model-title';
 
 interface LibraryModelProps {
@@ -158,7 +158,7 @@ export function LibraryModel({ model }: LibraryModelProps) {
 
       {replaceInput}
 
-      <LibraryModelAddAnimationModal
+      <LazyLibraryModelAddAnimationModal
         open={addAnimationOpen}
         onClose={() => setAddAnimationOpen(false)}
         ownerModelId={model.id}

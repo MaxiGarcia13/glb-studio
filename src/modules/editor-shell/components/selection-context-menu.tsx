@@ -15,7 +15,7 @@ import {
   getUnjointPartsAvailability,
   unjointSelectedParts,
 } from '@/modules/create/actions/unjoint-selected-parts';
-import { MakeJointModal } from '@/modules/create/components/make-joint-modal';
+import { LazyMakeJointModal } from '@/modules/create/components/lazy-make-joint-modal';
 import { openMakeJointModal } from '@/modules/create/stores/make-joint-ui-store';
 import {
   getGroupModelsAvailability,
@@ -136,7 +136,7 @@ export function SelectionContextMenu() {
         onClose={onClose}
         aria-label="Selection actions"
       />
-      <MakeJointModal />
+      <LazyMakeJointModal />
     </>
   );
 }

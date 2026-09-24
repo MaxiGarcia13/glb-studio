@@ -59,7 +59,10 @@ function RetargetClipPicker({
   );
 }
 
-export function RetargetModal() {
+interface RetargetModalProps {
+}
+
+export function RetargetModal(_props: RetargetModalProps) {
   const clipId = useStore($retargetClipId);
   const candidateIds = useStore($retargetCandidateIds);
   const { clips } = useStore($clips, { keys: ['clips'] });

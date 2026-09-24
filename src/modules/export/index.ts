@@ -1,4 +1,4 @@
-export { ExportModal } from './components/export-modal';
+export { LazyExportModal } from './components/export-modal';
 export type { ExportZipLayout, ExportZipOptions } from './domain/zip-download';
 export { useExportZip } from './hooks/use-export-zip';
 export type { ExportFormat } from './utils/file-name';

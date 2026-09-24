@@ -1,5 +1,5 @@
 import { CollapsibleAside } from '@/components/collapsible-aside/collapsible-aside';
-import { RetargetModal } from '@/modules/animation/components/retarget-modal';
+import { LazyRetargetModal } from '@/modules/animation/components/lazy-retarget-modal';
 import { STORAGE_KEYS } from '@/utils/local-storage';
 import { LibraryModels } from './library-models';
 import { LibrarySharedAnimations } from './library-shared-animations';
@@ -15,7 +15,7 @@ export function EditorLibrarySidebar() {
         <LibraryModels />
         <LibrarySharedAnimations />
       </section>
-      <RetargetModal />
+      <LazyRetargetModal />
     </CollapsibleAside>
   );
 }

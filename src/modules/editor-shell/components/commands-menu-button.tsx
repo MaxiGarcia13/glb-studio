@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/button';
 import { Text } from '@/components/text';
-import { CommandsModal } from '@/modules/commands';
+import { LazyCommandsModal } from '@/modules/commands';
 
 interface CommandsMenuButtonProps {
   /** Called when opening Commands so sibling menus can close. */
@@ -28,7 +28,7 @@ export function CommandsMenuButton({ onOpen }: CommandsMenuButtonProps) {
           Commands
         </Text>
       </Button>
-      <CommandsModal open={commandsOpen} onClose={() => setCommandsOpen(false)} />
+      <LazyCommandsModal open={commandsOpen} onClose={() => setCommandsOpen(false)} />
     </>
   );
 }

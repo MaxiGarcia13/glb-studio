@@ -1,7 +1,7 @@
 export { runEditorCommand } from './actions/run-editor-command';
-export { CommandsModal } from './components/commands-modal';
 export { EditorCommandChordDisplay } from './components/editor-command-chord-display';
 export { EditorCommandChordsDisplay } from './components/editor-command-chords-display';
+export { LazyCommandsModal } from './components/lazy-commands-modal';
 export {
   EDITOR_COMMANDS,
   formatEditorCommandChord,

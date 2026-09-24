@@ -1,1 +1,1 @@
-export { ExportModal } from './export-modal';
+export { LazyExportModal } from './lazy-export-modal';

@@ -11,7 +11,7 @@ import {
   recordRecentKind,
   resolveCompactMenuKinds,
 } from '../domain/recent-part-kinds';
-import { BrowsePartKindsModal } from './browse-part-kinds-modal';
+import { LazyBrowsePartKindsModal } from './lazy-browse-part-kinds-modal';
 
 /**
  * Compact Add-part menu for the create rail: five MRU/suggested kinds + See more.
@@ -62,7 +62,7 @@ export function AddPartPalette() {
           },
         ]}
       />
-      <BrowsePartKindsModal
+      <LazyBrowsePartKindsModal
         open={browseOpen}
         onClose={() => setBrowseOpen(false)}
         onPickKind={(kindId) => {
