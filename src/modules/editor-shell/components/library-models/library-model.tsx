@@ -36,8 +36,8 @@ import {
   selectModelIds,
   toggleModelId,
 } from '@/modules/viewport/stores/selection-store';
-import { LibraryModelActions } from './library-model-actions';
 import { LazyLibraryModelAddAnimationModal } from './lazy-library-model-add-animation-modal';
+import { LibraryModelActions } from './library-model-actions';
 import { LibraryModelTitle } from './library-model-title';
 
 interface LibraryModelProps {

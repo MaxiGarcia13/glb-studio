@@ -63,7 +63,6 @@ export function EditorEditMenu({ open, onOpenChange }: EditorEditMenuProps) {
     },
   ];
 
-
   return (
     <ActionMenu
       label="Edit"

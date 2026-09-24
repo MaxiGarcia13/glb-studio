@@ -48,11 +48,11 @@ Name the **constraint**, not the ticket. If you need to keep a useful parentheti
 
 ## Where US-N belongs
 
-| Place | US-N OK? |
-| --- | --- |
-| `specs/` (requirements, design, tasks, CHANGELOG) | Yes |
-| Commit messages / PR titles & bodies | Yes |
-| Code comments / JSDoc | **No** |
-| Test `describe` / `it` titles | Prefer no; not a substitute for specs |
+| Place                                             | US-N OK?                              |
+| ------------------------------------------------- | ------------------------------------- |
+| `specs/` (requirements, design, tasks, CHANGELOG) | Yes                                   |
+| Commit messages / PR titles & bodies              | Yes                                   |
+| Code comments / JSDoc                             | **No**                                |
+| Test `describe` / `it` titles                     | Prefer no; not a substitute for specs |
 
 Link behavior to `US-*` only in `specs/`. Code comments describe surviving hazards, not shipped tickets.
