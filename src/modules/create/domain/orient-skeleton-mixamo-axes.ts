@@ -2,7 +2,7 @@ import { Bone, Matrix4, Quaternion, Vector3 } from 'three';
 
 /**
  * Mixamo / Y Bot rest convention: each bone’s local +Y points at its chain
- * continuation so child local position is ~(0, length, 0). US-6 retarget copies
+ * continuation so child local position is ~(0, length, 0). Retarget copies
  * source quaternions into that frame — world-axis bind bones break limb motion.
  *
  * Extra local-+Y twist after alignment matches Mixamo body-block secondary axes

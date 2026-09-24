@@ -58,7 +58,7 @@ export function TransformControlsDriver({ controlsRef }: TransformControlsDriver
   const gizmoMode = mode;
   const gizmoSpace = isMove ? 'world' : 'local';
 
-  // Built-in TC snaps (US-25): created models only. Rotation snap is radians.
+  // Built-in TC snaps: created models only. Rotation snap is radians.
   const created = activeModel?.source === 'created';
   const translationSnap = created && snapToGrid ? gridStepMetres : null;
   const rotationSnap

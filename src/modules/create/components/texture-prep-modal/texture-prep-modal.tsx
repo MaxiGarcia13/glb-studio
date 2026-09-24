@@ -24,7 +24,7 @@ interface TexturePrepModalProps {
 }
 
 /**
- * Prep modal for created-part color maps (US-39). Created stamped parts only —
+ * Prep modal for created-part color maps. Created stamped parts only
  * imported / non-created focus never yields a part, so the modal stays closed.
  */
 export function TexturePrepModal({

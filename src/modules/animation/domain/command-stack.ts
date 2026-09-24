@@ -1,7 +1,7 @@
 import type { UndoableCommand } from '@/modules/animation/types/undo-stack';
 
 /**
- * In-memory undo/redo stack (US-10). Unbounded; no persistence.
+ * In-memory undo/redo stack. Unbounded; no persistence.
  * Callers apply `before` / `after` snapshots after `undoCommand` / `redoCommand`.
  */
 export interface CommandStackState {

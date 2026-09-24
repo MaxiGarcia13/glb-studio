@@ -13,7 +13,7 @@ import {
 
 /**
  * Create a model from a registered starter kit (not `empty`).
- * Mesh kits → created path; skinned kits → imported path (US-33).
+ * Mesh kits → created path; skinned kits → imported path.
  */
 export async function createFromKit(kitId: Exclude<KitId, 'empty'>): Promise<void> {
   const kit = getKit(kitId);

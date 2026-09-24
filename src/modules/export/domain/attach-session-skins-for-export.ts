@@ -11,7 +11,7 @@ import {
 
 /**
  * Temporarily parent invisible meshes whose materials reference every session
- * wardrobe texture so `GLTFExporter` embeds them (flat zip — US-49).
+ * wardrobe texture so `GLTFExporter` embeds them (flat zip).
  * Returns a cleanup that removes helpers and restores prior root extras.
  * Does not dispose wardrobe textures.
  */

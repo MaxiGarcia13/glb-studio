@@ -21,7 +21,7 @@ function createSkinId(): string {
   return `skin-${nextSkinId++}`;
 }
 
-/** Session-only skinned wardrobe keyed by library `modelId` (US-48). */
+/** Session-only skinned wardrobe keyed by library `modelId`. */
 export const $sessionSkinsByModel = atom<SessionSkinsByModel>({});
 
 export function getSessionSkinWardrobe(

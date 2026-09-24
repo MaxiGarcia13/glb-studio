@@ -1,4 +1,4 @@
-/** Root / helper-node `userData` keys persisted via GLTF `extras` (US-49 flat embed). */
+/** Root / helper-node `userData` keys persisted via GLTF `extras` (flat embed). */
 export const SESSION_SKINS_MANIFEST_KEY = 'threeEditorSessionSkins';
 export const SESSION_SKIN_NODE_KEY = 'threeEditorSessionSkin';
 

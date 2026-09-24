@@ -2,7 +2,7 @@ import type * as THREE from 'three';
 
 export type ClipStatus = 'ready' | 'error' | 'draft';
 
-/** Rest-pose local TRS frame for a bone (US-18 hips rebase). */
+/** Rest-pose local TRS frame for a bone (hips rebase). */
 export interface BoneBindFrame {
   localPosition: [number, number, number];
   parentWorldQuaternion: [number, number, number, number];
@@ -20,7 +20,7 @@ export interface ClipEntry {
   timeScale: number;
   /** Bone name → rest-pose local-position length captured from the source GLB. */
   sourceBindLengths: Record<string, number>;
-  /** Bone name → rest-pose local position + parent world quaternion (US-18). */
+  /** Bone name → rest-pose local position + parent world quaternion. */
   sourceBindFrames: Record<string, BoneBindFrame>;
   /** Owning model id; null = shared (listed under Shared Animations). */
   ownerModelId: string | null;

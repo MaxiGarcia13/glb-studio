@@ -1,6 +1,6 @@
 import type { PartKindId, PartSizeParams } from './part';
 
-/** Kit ids — New model stays `empty`; optional presets are US-27 / US-33. */
+/** Kit ids — New model stays `empty`; optional presets available. */
 export type KitId
   = | 'empty'
     | 'simple-building'

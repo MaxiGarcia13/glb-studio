@@ -11,7 +11,7 @@ const PLATE = '#f2f2f2';
 const FRAME = '#1a1a1a';
 const FACE_GLOW = '#3db4ff';
 
-/** Segment sizes tuned to Mixamo `body-block` local bone lengths (cm÷100) for US-6 retarget. */
+/** Segment sizes tuned to Mixamo `body-block` local bone lengths (cm÷100) for retarget. */
 const FOOT_H = 0.055;
 const FOOT_W = 0.11;
 const FOOT_D = 0.2;
@@ -147,7 +147,7 @@ const hipConnectorY = yHip - HIP_CONNECTOR_H + 0.02;
  * Ankle bone / sphere center at `footY` (= foot top).
  *
  * Mixamo `body-block` Foot +Y is forward and down (~32°), not flat +Z.
- * US-6 copies Mixamo quaternions into that frame — a horizontal toe made
+ * Retarget copies Mixamo quaternions into that frame — a horizontal toe made
  * rest-pose foot pitch plant the boxes into the floor. Toe sits on the sole
  * so the helper stays on-grid; pitch matches body-block Δy/Δz.
  */

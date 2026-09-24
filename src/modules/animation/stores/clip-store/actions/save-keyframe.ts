@@ -308,7 +308,7 @@ export function saveKeyframe(options?: { holdToEnd?: boolean }): void {
     ? state.clips.find((entry) => entry.id === targetClipId)
     : undefined;
 
-  // Created parts (US-23): Hold Pose only into a ready clip **owned by this model**.
+  // Created parts: Hold Pose only into a ready clip **owned by this model**.
   // Shared / other-owned driving clips must not gain part tracks (e.g. `capsule.*`),
   // or character clips pick up Needs-retarget mismatches.
   // Still push sceneNode undo so Edit gizmo / inspector TRS can be reversed.

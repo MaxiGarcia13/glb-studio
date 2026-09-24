@@ -20,7 +20,7 @@ export function isUsableSkinnedModelScene(scene: ModelLoadResult['scene']): bool
 }
 
 /**
- * Library models that should get SkeletonHelper + bone outliner (US-31 / US-34).
+ * Library models that should get SkeletonHelper + bone outliner.
  * Imported skinned kits and in-editor skinned created models (`source → imported`).
  */
 export function isSkinnedLibraryModel(model: ModelEntry): boolean {

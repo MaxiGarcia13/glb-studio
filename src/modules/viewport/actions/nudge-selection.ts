@@ -32,7 +32,7 @@ function applyWorldStep(object: Object3D, axis: NudgeAxis, step: number): void {
 }
 
 /**
- * Nudge every position-edit target by one step on a world/local axis (US-10).
+ * Nudge every position-edit target by one step on a world/local axis.
  * Step matches TRS position input spinners (`POSITION_EDIT_STEP_METRES`).
  * Edit = local space + selection roots; Move = world space + model root;
  * model multi-select = world space on each selected model root.

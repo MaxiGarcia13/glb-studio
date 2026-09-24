@@ -37,7 +37,7 @@ function summarizeApplyErrors(errors: readonly string[]): string | null {
 }
 
 /**
- * Library session skin rows for a skinned model (US-48).
+ * Library session skin rows for a skinned model.
  * One row per wardrobe entry (selected = active) plus an explicit “No skin” row.
  * File apply supports multi-select append.
  */

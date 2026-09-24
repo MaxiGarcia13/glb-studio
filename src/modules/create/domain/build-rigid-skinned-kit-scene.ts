@@ -27,8 +27,8 @@ export interface RigidSkinnedKitRecipe {
 
 /**
  * Build a bind-pose skinned scene from a mesh kit recipe (rigid weights).
- * Offline / maintainer use (US-33 kit GLB); not generated at runtime in the app.
- * Bones are reoriented to Mixamo local-+Y chain axes so US-6 retarget quats land correctly.
+ * Offline / maintainer use (kit GLB); not generated at runtime in the app.
+ * Bones are reoriented to Mixamo local-+Y chain axes so retarget quats land correctly.
  */
 export function buildRigidSkinnedSceneFromKit(kit: RigidSkinnedKitRecipe): Group {
   const root = new Group();

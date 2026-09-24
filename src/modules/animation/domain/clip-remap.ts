@@ -15,14 +15,14 @@ export interface RemapResult {
 }
 
 export interface RemapClipOptions {
-  /** US-17 median rest-pose length ratio for position tracks. */
+  /** Median rest-pose length ratio for position tracks. */
   positionScale?: number;
   /**
-   * US-18: keep `.position` only for this source bone (hips); drop other
+   * Keep `.position` only for this source bone (hips); drop other
    * position tracks. Required with `hipsRebase` when the clip has positions.
    */
   hipsSourceBone?: string;
-  /** US-18: parent-bind rebase for hips position + quaternion tracks. */
+  /** Parent-bind rebase for hips position + quaternion tracks. */
   hipsRebase?: HipsRebaseFrames;
 }
 
@@ -31,7 +31,7 @@ export function remapClipTracks(
   mapping: Map<string, string>,
   options: RemapClipOptions | number = {},
 ): RemapResult {
-  // Legacy positional `positionScale` from early US-17 call sites.
+  // Legacy positional `positionScale` from early call sites.
   const opts: RemapClipOptions
     = typeof options === 'number' ? { positionScale: options } : options;
   const positionScale = opts.positionScale ?? 1;

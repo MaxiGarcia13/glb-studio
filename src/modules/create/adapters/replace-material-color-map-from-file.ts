@@ -5,7 +5,7 @@ import { loadImageTexture } from './load-image-texture';
 
 /**
  * Decode a local image for a skinned / glTF UV atlas (`flipY: false`).
- * Does not assign — caller commits via `commitMaterialColorMapChange` (US-46)
+ * Does not assign — caller commits via `commitMaterialColorMapChange`
  * or `replaceColorMap` for non-undo paths. Failed decode throws; live map untouched.
  */
 export async function loadSkinnedColorMapFromFile(file: File): Promise<Texture> {

@@ -1,7 +1,7 @@
 import type { PartKindId } from '@/modules/create/types/part';
 
 /**
- * Cold-start / fill order for the compact Add-part menu (US-38).
+ * Cold-start / fill order for the compact Add-part menu.
  * Unused defaults pad MRU slots until five distinct kinds have been used.
  */
 export const DEFAULT_PART_SUGGESTION_ORDER = [

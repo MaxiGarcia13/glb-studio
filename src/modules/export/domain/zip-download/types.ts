@@ -4,7 +4,7 @@ import type { ExportFormat } from '@/modules/export/utils/file-name';
 import type { ModelEntry } from '@/modules/viewport/types/model';
 import type { ModelGroup } from '@/modules/viewport/types/model-group';
 
-/** Zip entry layout. `folders` nests each ungrouped model (US-49). */
+/** Zip entry layout. `folders` nests each ungrouped model. */
 export type ExportZipLayout = 'flat' | 'folders';
 
 export interface ExportZipOptions {

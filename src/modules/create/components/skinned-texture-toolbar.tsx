@@ -7,7 +7,7 @@ interface SkinnedTextureToolbarProps {
   className?: string;
 }
 
-/** Compact texture control for skinned library focus (US-40). No prep modal. */
+/** Compact texture control for skinned library focus. No prep modal. */
 export function SkinnedTextureToolbar({ className }: SkinnedTextureToolbarProps) {
   const isFocused = useIsSkinnedLibraryModelFocused();
 

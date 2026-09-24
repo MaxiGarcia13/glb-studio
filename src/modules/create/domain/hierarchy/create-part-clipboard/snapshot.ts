@@ -18,7 +18,7 @@ import { resolveHierarchyRoots } from '../parent-part';
 import { readTrs } from './trs';
 
 export interface SnapshotClipboardOptions {
-  /** Include Object3D.uuid (+ exact name) for undo restore (US-37). */
+  /** Include Object3D.uuid (+ exact name) for undo restore. */
   includeIdentity?: boolean;
 }
 

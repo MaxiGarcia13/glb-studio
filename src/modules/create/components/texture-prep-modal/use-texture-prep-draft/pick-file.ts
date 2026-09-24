@@ -5,7 +5,7 @@ import {
   loadImageTexture,
 } from '@/modules/create/adapters/load-image-texture';
 
-/** File pick → owned draft texture (US-28 decode path). */
+/** File pick → owned draft texture (decode path). */
 export function createPickFile(
   owned: OwnedDraft,
 ): (file: File | undefined) => Promise<void> {

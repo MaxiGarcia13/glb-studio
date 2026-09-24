@@ -1,6 +1,6 @@
 import type { Texture } from 'three';
 
-/** One session skin candidate for a skinned library model (US-48). */
+/** One session skin candidate for a skinned library model. */
 export interface SessionSkinEntry {
   id: string;
   label: string;

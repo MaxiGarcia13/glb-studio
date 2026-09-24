@@ -138,7 +138,7 @@ export function captureBindLengthsFromNodeNames(
 
 /**
  * Rest-pose local-position lengths (bone name → ‖position‖) from a GLB scene.
- * Same bone set as `buildTargetBoneNames`, used to derive the US-17 position
+ * Same bone set as `buildTargetBoneNames`, used to derive the position
  * scale ratio at Apply.
  *
  * When the scene has no Bones/SkinnedMesh and `clips` are provided, falls back

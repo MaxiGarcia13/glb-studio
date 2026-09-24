@@ -1,6 +1,6 @@
 import type { SkinnedKit } from '@/modules/create/types/kit';
 
-/** Pre-skinned Block robot GLB (US-33). Mesh recipe lives in `block-robot.ts`. */
+/** Pre-skinned Block robot GLB. Mesh recipe lives in `block-robot.ts`. */
 export const BLOCK_ROBOT_SKINNED_KIT: SkinnedKit<'block-robot'> = {
   id: 'block-robot',
   label: 'Block robot',

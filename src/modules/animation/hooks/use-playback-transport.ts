@@ -20,7 +20,7 @@ export function usePlaybackTransport(): PlaybackTransport {
   });
   const { previewModelIds } = useStore($model, { keys: ['previewModelIds'] });
 
-  // Clip selection drives play; model focus is not required (US-20 play is global).
+  // Clip selection drives play; model focus is not required (play is global).
   const enabled = activeClipId !== null && previewModelIds.length > 0;
 
   return {

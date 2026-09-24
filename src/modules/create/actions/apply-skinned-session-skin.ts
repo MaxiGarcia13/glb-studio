@@ -80,7 +80,7 @@ export async function applySkinnedSessionSkinsFromFiles(options: {
 }
 
 /**
- * Decode a local image and append it as the active session skin (US-40 / US-48).
+ * Decode a local image and append it as the active session skin.
  * Throws on failed decode — wardrobe and undo stack stay unchanged.
  */
 export async function applySkinnedSessionSkinFromFile(options: {

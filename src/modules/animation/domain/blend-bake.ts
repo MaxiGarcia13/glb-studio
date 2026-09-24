@@ -100,7 +100,7 @@ function blendTrack(
  * Bake the current steady-state blend of `primary` + `secondary` at `blendWeight`
  * into one `AnimationClip` lasting `primary.duration` (the timeline window).
  * Secondary is clamped to its last key past its end; a live A→B cross-fade folds
- * in at the destination weight per the US-7 export contract.
+ * in at the destination weight per the export contract.
  */
 export function bakeBlendClip(
   primary: AnimationClip,

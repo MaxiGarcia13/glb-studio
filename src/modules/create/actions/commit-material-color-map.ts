@@ -13,7 +13,7 @@ import { collectSessionSkinTextures } from '../stores/session-skins-store';
 /**
  * Assign a color map (or clear) and push one `materialColorMap` undo entry.
  * Failed decode must not call this — only successful commits.
- * Session wardrobe textures for `modelId` are never freed as live orphans (US-48).
+ * Session wardrobe textures for `modelId` are never freed as live orphans.
  */
 export function commitMaterialColorMapChange(options: {
   modelId: string;

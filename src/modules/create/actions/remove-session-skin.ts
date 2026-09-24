@@ -20,7 +20,7 @@ import {
 
 /**
  * Drop a wardrobe entry. If it was active, clear the live map and drop the
- * entry in **one** `materialColorMap` undo command (US-48): one undo restores
+ * entry in **one** `materialColorMap` undo command: one undo restores
  * both the list entry and the map.
  */
 export function removeSessionSkin(options: {

@@ -20,7 +20,7 @@ export function applyColorMap(
 
 /**
  * Assign a color map and free the previous map when it is a different texture
- * instance. Shared by US-39 prep Apply and US-40 skinned replace.
+ * instance. Shared by prep Apply and skinned replace.
  */
 export function replaceColorMap(
   material: MeshStandardMaterial,

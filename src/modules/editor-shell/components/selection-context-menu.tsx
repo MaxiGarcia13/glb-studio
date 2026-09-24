@@ -62,7 +62,7 @@ function buildMenuItems(): ActionMenuItem[] {
     ];
   }
 
-  // Part hierarchy actions only on created models (hidden after US-34 skin).
+  // Part hierarchy actions only on created models (hidden after skin).
   const anchor = objects[0];
   const owner = anchor
     ? findModelEntryForObject(anchor, $model.get().models)

@@ -1,6 +1,6 @@
 /**
  * True when keyboard focus is in a control that owns typing, so editor
- * shortcuts must not fire (US-10 focus rules).
+ * shortcuts must not fire (focus rules).
  */
 export function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) {

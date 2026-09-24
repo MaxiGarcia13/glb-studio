@@ -1,4 +1,4 @@
-/** Prefer ≤ this long edge; larger still allowed up to US-28 hard max. */
+/** Prefer ≤ this long edge; larger still allowed up to the hard max. */
 export const TEXTURE_PREP_SOFT_EDGE_PX = 2048;
 
 /** Warn when longer/shorter side ratio exceeds this (non-square-ish). */

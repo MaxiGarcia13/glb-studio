@@ -2,7 +2,7 @@ import type { Kit, KitId } from '@/modules/create/types/kit';
 import { BLOCK_ROBOT_SKINNED_KIT } from './kits/block-robot-skinned';
 import { SIMPLE_BUILDING_KIT } from './kits/simple-building';
 
-/** Starter kits. New model always uses empty; From kit is a separate entry (US-27 / US-33). */
+/** Starter kits. New model always uses empty; From kit is a separate entry. */
 export const KITS: { [K in KitId]: Kit<K> } = {
   'empty': {
     id: 'empty',

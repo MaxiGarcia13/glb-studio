@@ -22,7 +22,7 @@ interface PartTextureRowProps {
 }
 
 /**
- * Nested Library row for a created part’s current color map (US-48).
+ * Nested Library row for a created part’s current color map.
  * Clear / replace use the same `materialColorMap` undo path as the prep modal.
  */
 export function PartTextureRow({

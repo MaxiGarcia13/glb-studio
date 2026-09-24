@@ -221,7 +221,7 @@ function windowPane(
 
 /**
  * Modern two-storey gable house from existing primitives — metres, grounded, named parts.
- * From kit flow (US-27); New model stays empty.
+ * From kit flow; New model stays empty.
  */
 export const SIMPLE_BUILDING_KIT: Kit<'simple-building'> = {
   id: 'simple-building',

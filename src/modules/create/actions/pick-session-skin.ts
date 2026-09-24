@@ -20,7 +20,7 @@ function resolveTarget(
 }
 
 /**
- * Make a wardrobe entry live on the resolved US-40 target and mark it active.
+ * Make a wardrobe entry live on the resolved target and mark it active.
  * Export continues to pack only the live material map.
  */
 export function pickSessionSkin(options: {

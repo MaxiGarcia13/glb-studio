@@ -10,8 +10,8 @@ import {
 
 /**
  * Restore the session wardrobe after model load.
- * Prefers embedded multi-skin helpers / manifest (US-49 flat export).
- * Falls back to a single entry from the live color map (US-48).
+ * Prefers embedded multi-skin helpers / manifest (flat export).
+ * Falls back to a single entry from the live color map.
  * No-op when the list is already non-empty.
  */
 export function seedSessionSkinsFromModel(model: ModelEntry): boolean {

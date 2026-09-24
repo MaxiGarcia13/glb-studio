@@ -79,7 +79,7 @@ export interface CreateHierarchySnapshot {
   selectUuids: readonly string[];
 }
 
-/** One create tree root for Add / Paste / Delete undo (US-37). */
+/** One create tree root for Add / Paste / Delete undo. */
 export interface CreateSceneTreeRoot {
   /** `null` = model scene root. */
   parentUuid: string | null;
@@ -113,7 +113,7 @@ export interface TimeScaleSnapshot {
 }
 
 /**
- * Color-map commit snapshot (US-46). `map` is a stack-owned clone (or null).
+ * Color-map commit snapshot. `map` is a stack-owned clone (or null).
  * Dispose only when the stack entry is pruned — not on undo/redo assign.
  */
 export interface MaterialColorMapSnapshot {
@@ -161,7 +161,7 @@ export type UndoableCommand
     before: MaterialColorMapSnapshot;
     after: MaterialColorMapSnapshot;
     /**
-     * US-48 remove-active: one undo restores wardrobe entry + live map.
+     * Remove-active: one undo restores wardrobe entry + live map.
      * Texture pixels live on `before.map` (stack-owned clone).
      */
     sessionSkinRemoval?: {

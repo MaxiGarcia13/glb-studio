@@ -53,7 +53,7 @@ function SelectionNameEditor({ object }: { object: Object3D }) {
 /**
  * Settings Name field for the current selection (any mesh or bone).
  * Click to edit; Enter / blur commit, Escape cancel — same hook as library rename.
- * Stays out of edit mode by default so editor hotkeys keep working (US-10).
+ * Stays out of edit mode by default so editor hotkeys keep working.
  */
 export function SelectionNameField() {
   const { object: selected } = useStore($selection, { keys: ['object'] });

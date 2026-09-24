@@ -65,7 +65,7 @@ export function LibraryModel({ model }: LibraryModelProps) {
   const skinned = isSkinnedLibraryModel(model);
   const partCount = isCreated ? listCreatedParts(model.scene).length : 0;
   const boneCount = skinned ? listBoneEntries(model.scene).length : 0;
-  // Skinned models always show at least the “No skin” row (US-48).
+  // Skinned models always show at least the “No skin” row.
   const hasNested
     = (isCreated && partCount > 0)
       || boneCount > 0

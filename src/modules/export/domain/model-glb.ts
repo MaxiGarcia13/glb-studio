@@ -21,7 +21,7 @@ export interface ModelGlbResult {
 export interface PackModelGlbOptions {
   /**
    * When false, pack mesh (+ active maps) with no embedded clips
-   * (folder layout sidecars — US-49). Default true.
+   * (folder layout sidecars). Default true.
    */
   includeClips?: boolean;
   /**
@@ -96,7 +96,7 @@ export function collectModelExportClips(
 /**
  * Serialize a library model scene as `{fileName}.glb`.
  * Created models pack the mesh scene plus owned ready clips (when authored).
- * Flat pack embeds the full session skin wardrobe when present (US-49).
+ * Flat pack embeds the full session skin wardrobe when present.
  */
 export async function packModelGlb(
   model: ModelEntry,

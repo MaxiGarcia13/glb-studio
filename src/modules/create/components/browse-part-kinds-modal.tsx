@@ -17,7 +17,7 @@ interface BrowsePartKindsModalProps {
 }
 
 /**
- * Full part-kind catalog grouped Solids / Planar / Polyhedra (US-38 See more).
+ * Full part-kind catalog grouped Solids / Planar / Polyhedra (See more).
  * Slim kind rail (left) + hero 3D preview; a kind is always selected.
  */
 export function BrowsePartKindsModal({

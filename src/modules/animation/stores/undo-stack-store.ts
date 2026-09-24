@@ -26,7 +26,7 @@ function disposeCommands(commands: readonly UndoableCommand[]): void {
   }
 }
 
-/** Push a committed edit; dispose resources on the dropped redo branch (US-46). */
+/** Push a committed edit; dispose resources on the dropped redo branch. */
 export function pushUndoableCommand(command: UndoableCommand): void {
   const stack = $commandStack.get();
   if (stack.future.length > 0) {

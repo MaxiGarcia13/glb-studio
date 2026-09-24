@@ -18,7 +18,7 @@ export interface SelectedCreatedPart {
 /**
  * Resolve a stamped create part on the focused created model.
  * Returns null for imported focus, missing selection, or unstamped meshes
- * so texture prep never opens outside the created-part gate (US-39).
+ * so texture prep never opens outside the created-part gate.
  */
 export function resolveSelectedCreatedPart(
   activeModel: ModelEntry | null | undefined,

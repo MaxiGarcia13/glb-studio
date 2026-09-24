@@ -8,7 +8,7 @@ export interface UseTexturePrepDraftArgs {
   partId: string | null;
   seededMap: Texture | null;
   onClose: () => void;
-  /** Model + mesh for undoable apply (US-46). */
+  /** Model + mesh for undoable apply. */
   resolveApplyTarget: () => ApplyDraftTarget | null;
 }
 

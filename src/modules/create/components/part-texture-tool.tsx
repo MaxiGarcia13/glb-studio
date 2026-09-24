@@ -33,7 +33,7 @@ export function PartTextureTool() {
   const [hasMap, setHasMap] = useState(false);
   const [prepOpen, setPrepOpen] = useState(false);
   const enabled = canOpen && material !== null;
-  // Imported / non-created focus must never keep the modal open (US-39).
+  // Imported / non-created focus must never keep the modal open.
   const modalOpen = prepOpen && enabled;
 
   useEffect(() => {

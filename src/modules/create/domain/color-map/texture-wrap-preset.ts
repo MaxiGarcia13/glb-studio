@@ -1,7 +1,7 @@
 import type { Texture } from 'three';
 import { ClampToEdgeWrapping, RepeatWrapping } from 'three';
 
-/** UI / draft wrap choices for created-part color maps (US-39). */
+/** UI / draft wrap choices for created-part color maps. */
 export type TextureWrapPresetId = 'clamp' | 'tile-2' | 'tile-4';
 
 export interface TextureWrapPresetOption {

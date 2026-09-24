@@ -11,7 +11,7 @@ export function useIsSkinnedLibraryModelFocused(): boolean {
   return activeModel ? isSkinnedLibraryModel(activeModel) : false;
 }
 
-/** Availability + target for skinned albedo apply / clear (US-40). */
+/** Availability + target for skinned albedo apply / clear. */
 export function useSkinnedTextureAvailability(): SkinnedTextureAvailability {
   const activeModel = useStore($activeModel);
   const { object: selected } = useStore($selection, { keys: ['object'] });

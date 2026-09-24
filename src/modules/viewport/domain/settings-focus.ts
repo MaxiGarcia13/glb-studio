@@ -11,7 +11,7 @@ import { $selection } from '../stores/selection-store';
  * - bone: Selection name + Animation (Keys filter); no Model / Part
  * - multi: position XYZ only (shared delta); primary bound for readout
  *
- * Part / group focus is create-model only (US-34: after skin, source → imported).
+ * Part / group focus is create-model only (after skin, source → imported).
  */
 export type SettingsFocusKind = 'idle' | 'multi' | 'part' | 'group' | 'bone';
 

@@ -34,7 +34,7 @@ function blobFromCanvas(canvas: HTMLCanvasElement): Promise<Blob> {
 }
 
 /**
- * Encode a Three.js texture image as PNG bytes for zip sidecars (US-49).
+ * Encode a Three.js texture image as PNG bytes for zip sidecars.
  * Supports canvas-backed maps and ImageBitmap / HTMLImageElement sources.
  */
 export async function pngArrayBufferFromTexture(

@@ -28,7 +28,7 @@ interface PartOutlinerProps {
 /**
  * Library outliner of stamped parts and empty groups for a created model.
  * Parents use `LibrarySectionCollapsible` (closed by default). BoneIcon marks part rows.
- * Textured parts nest a Library texture row (US-48). Click a row to focus the model
+ * Textured parts nest a Library texture row. Click a row to focus the model
  * (if needed), switch to Edit, and select the node. Shift+click toggles membership.
  */
 export function PartOutliner({ modelId, scene, className }: PartOutlinerProps) {
