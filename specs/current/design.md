@@ -19,6 +19,7 @@ flowchart LR
 
 - [`src/pages/index.astro`](../../src/pages/index.astro) mounts `EditorToolbar` above a flex row of `EditorLibrarySidebar`, `EditorPreview`, and `EditorSettingsSidebar` as `client:only="react"` islands
 - Domains: `editor-shell`, `commands`, `viewport`, `animation`, `export`, `import`, `create` under `src/modules/`
+- **Installable shell (US-50):** [`src/layouts/base-layout.astro`](../../src/layouts/base-layout.astro) links [`public/site.webmanifest`](../../public/site.webmanifest) (`display: standalone`, theme/background `#18181b` = `--color-canvas`) and uses existing `android-chrome-192x192.png` / `android-chrome-512x512.png` plus `apple-touch-icon-180x180.png`. No service worker in this US — Chromium install + iOS Add to Home Screen only
 
 ## Assets
 

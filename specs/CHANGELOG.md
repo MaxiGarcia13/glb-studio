@@ -23,6 +23,7 @@
 
 | ID | Summary |
 |----|---------|
+| **US-50** | Installable web app — site.webmanifest + shell install meta (standalone) |
 | **US-49** | Export as folders (model + animations/ + skins/) + flat GLB embeds all session skins |
 | **US-48** | Session skin list + Library texture rows (created parts + skinned pick/none) |
 | **US-46** | Color-map undo + skinned Library texture rows |

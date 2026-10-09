@@ -121,6 +121,20 @@ As an editor user, when I export flat I get every session skin inside the model 
 
 **Out of scope:** Drag-and-drop re-import of folder trees; per-mesh skin folders; splitting groups into member folders; FBX round-trip of the session-skins extras (GLB is the contract).
 
+### US-50 — Installable web app (manifest)
+
+As a visitor, I can install GLB Studio from the browser (Add to Home Screen / Install app) so it opens as a standalone window.
+
+**Status:** Shipped.
+
+**Acceptance**
+
+- [x] Site serves a Web App Manifest (`/site.webmanifest`) with name, short_name, start_url `/`, display `standalone`, theme/background `#18181b` (canvas), and 192 + 512 PNG icons
+- [x] Astro shell links the manifest and theme-color; apple-touch icon path matches the file in `public/`
+- [x] Existing favicon / OG assets remain; no service worker required for this US
+
+**Out of scope:** Offline caching / service worker; custom install UI / beforeinstallprompt prompt; store listing packaging
+
 ### US-36 — Export format GLB | FBX
 
 As an editor user, when I choose **File → Export** I can pick **GLB** (default) or **FBX** so the zip uses the chosen extension without changing pack rules.

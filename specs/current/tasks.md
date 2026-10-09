@@ -357,6 +357,13 @@ MVP status board. Detailed work lives in the open delta’s `tasks.md`; tick acc
 - [x] Created-part Library texture rows; skinned session wardrobe (append / multi-select / pick / none / seed / dispose)
 - [x] Model ⋯ Add skins; remove-active one undo restores entry + map
 
+## US-50 — Installable web app (manifest)
+
+**Shipped** — folded into `current/`. See [`CHANGELOG.md`](../CHANGELOG.md).
+
+- [x] `public/site.webmanifest` (standalone, canvas theme, 192 + 512 icons)
+- [x] Link manifest + theme-color + apple-web-app meta in `base-layout.astro`; fix apple-touch path
+
 ## Open deltas
 
 | US                                    | Status                  | Tasks                                       |
